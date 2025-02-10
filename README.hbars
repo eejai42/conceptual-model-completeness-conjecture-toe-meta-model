@@ -1,12 +1,12 @@
-# {{meta.title}}
+# {{title}}
 
 ## Overview
-{{meta.abstract}}
+{{abstract}}
 
 ## Theory of Everything (TOE) Domains
 Below is a list of TOE models included in this repository:
 
-{{#each meta.ToEMM_Domains}}
+{{#each meta.CMCC_ToEMM_Domains}}
 - **[{{name}}]({{link}})**  
   {{description}}
 {{/each}}
