@@ -1,19 +1,59 @@
 # {{title}}
 
 ## Overview
-{{abstract}}
+{{description}}
+
+The Conceptual Model Completeness Conjecture (CMCC) provides a unified, self‐describing framework for modeling domains as diverse as Mathematics, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, and Economics. Underpinned by five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—the CMCC model is both declarative and operational. It guarantees Turing-completeness and aligns with Wolfram’s multiway systems, offering a universal substrate for capturing the "what" of domain knowledge while leaving the "how" to the runtime.
 
 ## Theory of Everything (TOE) Domains
-Below is a list of TOE models included in this repository:
+
+Below is a list of TOE models included in this repository. Click on any domain to read its detailed meta-model documentation:
 
 {{#each meta.CMCC_ToEMM_Domains}}
-- **[{{name}}]({{link}})**  
-  {{description}}
+### {{fullname}}
+**{{name}}**
+
+{{description}}
+
+For further details, see [the domain model]({{link}}).
+
 {{/each}}
-6
+
+## Example: Mathematical Details
+
+The Mathematics TOE Meta-Model illustrates how fundamental mathematical concepts are declaratively defined. For example:
+
+### Sets
+- **Definition:** A Set is a fundamental collection of mathematical objects. It defines the universe in which arithmetic and number theory are formulated.
+- **Notable Aggregations:**  
+  - *is_empty*: `COUNT(elements) = 0`  
+  - *is_finite*: `countable AND cardinality != 'aleph_0'`
+- **Lambda Functions:**  
+  - *subset*: `CreateSet(elements.filter(predicate))`  
+  - *power_set*: `GenerateAllSubsets(this)`
+
+### Functions
+- **Definition:** A Function maps a domain Set to a codomain Set and formalizes arithmetic operations and other transformations.
+- **Notable Aggregations:**  
+  - *is_injective*: `CheckInjectivity(rule)`  
+  - *is_surjective*: `CheckSurjectivity(rule, codomain_set_id)`  
+  - *is_bijective*: `is_injective AND is_surjective`
+- **Lambda Functions:**  
+  - *compose*: `ComposeRules(this.rule, LOOKUP(other_function_id).rule)`  
+  - *inverse*: `IF is_bijective THEN InvertRule(rule) ELSE null`
+
+### Structures
+- **Definition:** Structures formalize algebraic systems (e.g., groups, rings, fields) by combining a base set with defined operations (like addition and multiplication) and relations.
+- **Example:**  
+  - *Ring of Integers*: Defines a ring over ℤ with operations for addition and multiplication, and an equality relation.
+
+These examples (along with many formulas and lambda definitions) illustrate how the model not only documents the domain but also makes it directly executable.
+
 ## About
-This repository is part of the **{{meta.title}}** framework, developed by {{meta.authors.[0].name}} ({{meta.authors.[0].affiliations.[0]}}).  
-For more information, contact **{{meta.authors.[0].contact}}**.
+This repository is part of **{{meta.title}}**, developed by **{{meta.authors.[0].name}}** ({{meta.authors.[0].affiliations.[0]}}). For more information, please contact **{{meta.authors.[0].contact}}**.
 
 ---
-**Generated from CMCC Metadata** – Any updates to the `"meta"` section will automatically propagate to this README.
+*Generated from CMCC Metadata – Any updates to the metadata automatically update this README.*
+
+
+LICENSE NON COMMERCIAL USE ONLY!  NO WARRANTY EITHER EXPRESSED OR IMPLIED.

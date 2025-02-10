@@ -27,7 +27,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/Math",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Math.hbars -o ./../CMCC_Complete_ToEMM_Math.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Math.hbars -o ./README.md",
       "TranspilerGroup": "math"
     }
   ]

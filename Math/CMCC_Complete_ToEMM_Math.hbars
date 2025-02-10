@@ -1,48 +1,70 @@
-# {{meta.title}}
+# {{title}}
 
 ## Overview
-{{meta.description}}
+{{description}}
 
 {{meta.overview}}
 
-## Mathematical Schema
-{{#with CMCC_ToEMM_Domains.CMCC_Complete_ToEMM_Math}}
+## Mathematical Schema  
+(**[Full Domain List](./../README.md)**)
 ### {{meta.title}}
+{{meta.description}}
 
-{{meta.title}}
-
+{{#with CMCC_ToEMM_Domains.CMCC_Complete_ToEMM_Math}}
 {{#each schema.entities}}
-### {{name}}
+#### {{name}}
 {{description}}
 
 **Fields:**
 {{#if fields}}
-{{#each fields}}
+  {{#each fields}}
 - **{{name}}** ({{datatype}}){{#if note}}: {{note}}{{/if}}
-{{/each}}
+  {{/each}}
 {{else}}
-_No fields defined._
+  _No fields defined._
 {{/if}}
 
+{{#if aggregations}}
+**Aggregations:**
+  {{#each aggregations}}
+- **{{name}}**: `{{formula}}`
+  {{/each}}
+{{/if}}
+
+{{#if lambdas}}
+**Lambda Functions:**
+  {{#each lambdas}}
+- **{{name}}** (Parameters: {{#each parameters}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}): `{{formula}}`{{#if note}} – {{note}}{{/if}}
+  {{/each}}
+{{/if}}
+
+{{#if constraints}}
+**Constraints:**
+  {{#each constraints}}
+- **{{name}}**: `{{formula}}`{{#if error_message}} (Error: {{error_message}}){{/if}}
+  {{/each}}
+{{/if}}
+
+---
 {{/each}}
 
 ## Data Examples
 
 {{#if data.Set}}
 ### Sets
-{{#each data.Set}}
+  {{#each data.Set}}
 - **{{name}}**: {{description}}
-{{/each}}
+  {{/each}}
 {{/if}}
 
 {{#if data.Structure}}
 ### Structures
-{{#each data.Structure}}
+  {{#each data.Structure}}
 - **{{name}}**: {{description}}
-{{/each}}
+  {{/each}}
 {{/if}}
+{{/with}}
 
 ---
-{{/with}}
 
 *This document was generated from the CMCC Complete Mathematics TOE Meta Model. Any changes to the meta information or schema definitions in the JSON file will automatically update this README.*

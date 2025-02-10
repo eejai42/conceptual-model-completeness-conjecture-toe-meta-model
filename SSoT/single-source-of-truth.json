@@ -43,48 +43,56 @@
     "CMCC_ToEMM_Domains": [
       {
         "id": "CMCC_Complete_ToEMM_Math",
-        "name": "CMCC Complete Mathematics ToE Meta-Model",
+        "fullname": "CMCC Complete Mathematics ToE Meta-Model",
+        "name": "Mathematics CMCC Meta-Model",
         "description": "A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.",
-        "link": "./CMCC_Complete_ToEMM_Math.md"
+        "link": "./Math/README.md"
       },
       {
         "id": "CMCC_Complete_ToEMM_Physics",
-        "name": "CMCC Complete Physics ToE Meta-Model",
+        "fullname": "CMCC Complete Physics ToE Meta-Model",
+        "name": "Physics ToE Meta-Model",
         "description": "A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.",
         "link": "./CMCC_Complete_ToEMM_Physics.md"
       },
       {
         "id": "CMCC_Complete_ToEMM_Chemistry",
-        "name": "CMCC Complete Chemistry ToE Meta-Model",
+        "fullname": "CMCC Complete Chemistry ToE Meta-Model",
+        "name": "Chemistry ToE Meta-Model",
         "description": "Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.",
         "link": "./CMCC_Complete_ToEMM_Chemistry.md"
       },
       {
         "id": "CMCC_Complete_ToEMM_Biology",
-        "name": "CMCC Complete Biology ToE Meta-Model",
+        "fullname": "CMCC Complete Biology ToE Meta-Model",
+        "name": "Biology ToE Meta-Model",
         "description": "Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.",
         "link": "./CMCC_Complete_ToEMM_Biology.md"
       },
       {
         "id": "CMCC_Complete_ToEMM_AI",
-        "name": "CMCC Complete Artificial Intelligence ToE Meta-Model",
+        "fullname": "CMCC Complete Artificial Intelligence ToE Meta-Model",
+        "name": "Artificial Intelligence ToE Meta-Model",
         "description": "Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.",
         "link": "./CMCC_Complete_ToEMM_AI.md"
       },
       {
         "id": "CMCC_Complete_ToEMM_Economics",
-        "name": "CMCC Complete Economics ToE Meta-Model",
+        "fullname": "CMCC Complete Economics ToE Meta-Model",
+        "name": "Economics ToE Meta-Model",
         "description": "A computational model for economic agents, markets, transactions, and supply-demand constraints.",
         "link": "./CMCC_Complete_ToEMM_Economics.md"
       },
       {
         "id": "CMCC_Complete_ToEMM_Astronomy",
-        "name": "CMCC Complete Astronomy ToE Meta-Model",
+        "fullname": "CMCC Complete Astronomy ToE Meta-Model",
+        "name": "Astronomy ToE Meta-Model",
         "description": "An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.",
         "link": "./CMCC_Complete_ToEMM_Astronomy.md"
       },
       {
         "id": "CMCC_Complete_ToEMM_Geology",
+        "fullname": "CMCC Complete Geology oE Meta-Model",
         "name": "Geology",
         "description": "A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.",
         "link": "./CMCC_Complete_ToEMM_Geology.md"
