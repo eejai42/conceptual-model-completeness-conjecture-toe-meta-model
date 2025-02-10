@@ -1,0 +1,3730 @@
+{
+  "meta": {
+    "title": "The CMCC Complete Theory-of-Everything Meta Model",
+    "description": "This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more.  These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework",
+    "cmcc_paper_title": "The Conceptual Model Completeness Conjecture (CMCC): A Universal Declarative Computational Framework",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": ["SSoT.me", "EffortlessAPI.com"]
+      }
+    ],
+    "date": "January 2025",
+    "abstract": "The Conceptual Model Completeness Conjecture (CMCC) posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework.",
+    "executive_summary": {
+      "key_points": [
+        "CMCC proposes that five primitives (S, D, L, A, F) suffice to model all computable domain rules.",
+        "It achieves Turing-completeness by mapping to Lambda Calculus and Rule 110.",
+        "Aligns structurally with Wolfram’s multiway systems (the Ruliad).",
+        "Demonstrates broad applicability in Physics, Chemistry, Biology, Math, etc.",
+        "A purely declarative approach: 'what' is separate from 'how' (the runtime)."
+      ],
+      "implications": [
+        "Potential unification of domain modeling under a single declarative rulebook.",
+        "Scalable approach to cross-domain data management and knowledge representation.",
+        "Opens possibilities for AI, simulation, and multiway branching analyses."
+      ]
+    },
+    "table_of_contents": [
+      { "section": 1, "title": "Introduction" },
+      { "section": 2, "title": "Formal Definitions" },
+      { "section": 3, "title": "Breaking the Imperative Mindset" },
+      { "section": 4, "title": "Mapping CMCC to Turing-Complete Models" },
+      { "section": 5, "title": "CMCC as a Multiway Computational System" },
+      { "section": 6, "title": "Extensions to Genetics, Physics, etc." },
+      { "section": 7, "title": "Formal Proof Sketch of Turing-Completeness" },
+      { "section": 8, "title": "Practical Considerations and Caveats" },
+      { "section": 9, "title": "Conclusion and Future Work" },
+      { "section": 10, "title": "Relevance to Wolfram's Work" },
+      { "section": 11, "title": "Recommendations" },
+      { "section": 12, "title": "Final Vision" }
+    ],
+    "CMCC_ToEMM_Domains": [
+      {
+        "id": "CMCC_Complete_ToEMM_Math",
+        "name": "CMCC Complete Mathematics ToE Meta-Model",
+        "description": "A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.",
+        "link": "./CMCC_Complete_ToEMM_Math.md"
+      },
+      {
+        "id": "CMCC_Complete_ToEMM_Physics",
+        "name": "CMCC Complete Physics ToE Meta-Model",
+        "description": "A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.",
+        "link": "./CMCC_Complete_ToEMM_Physics.md"
+      },
+      {
+        "id": "CMCC_Complete_ToEMM_Chemistry",
+        "name": "CMCC Complete Chemistry ToE Meta-Model",
+        "description": "Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.",
+        "link": "./CMCC_Complete_ToEMM_Chemistry.md"
+      },
+      {
+        "id": "CMCC_Complete_ToEMM_Biology",
+        "name": "CMCC Complete Biology ToE Meta-Model",
+        "description": "Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.",
+        "link": "./CMCC_Complete_ToEMM_Biology.md"
+      },
+      {
+        "id": "CMCC_Complete_ToEMM_AI",
+        "name": "CMCC Complete Artificial Intelligence ToE Meta-Model",
+        "description": "Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.",
+        "link": "./CMCC_Complete_ToEMM_AI.md"
+      },
+      {
+        "id": "CMCC_Complete_ToEMM_Economics",
+        "name": "CMCC Complete Economics ToE Meta-Model",
+        "description": "A computational model for economic agents, markets, transactions, and supply-demand constraints.",
+        "link": "./CMCC_Complete_ToEMM_Economics.md"
+      },
+      {
+        "id": "CMCC_Complete_ToEMM_Astronomy",
+        "name": "CMCC Complete Astronomy ToE Meta-Model",
+        "description": "An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.",
+        "link": "./CMCC_Complete_ToEMM_Astronomy.md"
+      },
+      {
+        "id": "CMCC_Complete_ToEMM_Geology",
+        "name": "Geology",
+        "description": "A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.",
+        "link": "./CMCC_Complete_ToEMM_Geology.md"
+      }
+    ]
+  },
+
+  "CMCC_ToEMM_Domains": {
+    "CMCC_Complete_ToEMM_Math": {
+      "meta": {
+        "title": "CMCC Complete Mathematics TOE Meta Model",
+        "description": "A unified meta-model capturing the foundational elements of mathematics, including set theory, arithmetic operations, functions, algebraic structures, logical propositions, and category theory. This model provides a declarative and operational substrate for representing and reasoning about mathematical concepts.",
+        "overview": "At its core, this model describes how arithmetic emerges from basic set–theoretic constructions and functional mappings. It lays out the ideas behind number systems, the nature of functions as mappings that support addition, subtraction, multiplication, and division, and formalizes algebraic structures (like groups, rings, and fields) through declarative definitions. Logical propositions and categorical abstractions complete the picture by enabling formal proof and high–level abstraction."
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "Set",
+            "description": "A fundamental collection of mathematical objects. Sets define the universe in which arithmetic and number theory are formulated, with properties such as countability and cardinality that underlie the notion of size and infinity.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "countable",
+                "type": "scalar",
+                "datatype": "boolean"
+              },
+              {
+                "name": "cardinality",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "parent_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": false
+              },
+              {
+                "name": "construction_rule",
+                "type": "scalar",
+                "datatype": "json"
+              }
+            ],
+            "lookups": [
+              {
+                "name": "elements",
+                "target_entity": "Element",
+                "type": "one_to_many",
+                "join_condition": "Element.containing_set_id = this.id"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "is_empty",
+                "type": "rollup",
+                "formula": "COUNT(elements) = 0"
+              },
+              {
+                "name": "is_finite",
+                "type": "rollup",
+                "formula": "countable AND cardinality != 'aleph_0'"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "subset",
+                "parameters": ["predicate"],
+                "formula": "CreateSet(elements.filter(predicate))"
+              },
+              {
+                "name": "power_set",
+                "parameters": [],
+                "formula": "GenerateAllSubsets(this)"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "valid_cardinality",
+                "formula": "cardinality IN ['finite', 'aleph_0', 'aleph_1', 'c']",
+                "error_message": "Invalid cardinality specification"
+              }
+            ]
+          },
+          {
+            "name": "Element",
+            "description": "An atomic or composite member of a Set. Elements are the basic units from which numbers and other mathematical objects are built.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "containing_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true
+              },
+              {
+                "name": "value_type",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "value",
+                "type": "scalar",
+                "datatype": "json"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "Function",
+            "description": "A mapping from a domain Set to a codomain Set. Functions capture the essence of arithmetic operations and other transformations, supporting properties such as injectivity, surjectivity, and bijectivity.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "domain_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true
+              },
+              {
+                "name": "codomain_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true
+              },
+              {
+                "name": "rule",
+                "type": "scalar",
+                "datatype": "json"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "is_injective",
+                "type": "rollup",
+                "formula": "CheckInjectivity(rule)"
+              },
+              {
+                "name": "is_surjective",
+                "type": "rollup",
+                "formula": "CheckSurjectivity(rule, codomain_set_id)"
+              },
+              {
+                "name": "is_bijective",
+                "type": "rollup",
+                "formula": "is_injective AND is_surjective"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "compose",
+                "parameters": ["other_function_id"],
+                "formula": "ComposeRules(this.rule, LOOKUP(other_function_id).rule)"
+              },
+              {
+                "name": "inverse",
+                "parameters": [],
+                "formula": "IF is_bijective THEN InvertRule(rule) ELSE null"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "Structure",
+            "description": "An algebraic or mathematical structure defined by a base set, operations, and relations. Examples include groups, rings, and fields, which form the backbone of arithmetic and algebra.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "base_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true
+              },
+              {
+                "name": "structure_type",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "operations",
+                "type": "scalar",
+                "datatype": "json"
+              },
+              {
+                "name": "relations",
+                "type": "scalar",
+                "datatype": "json"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "is_group",
+                "type": "rollup",
+                "formula": "CheckGroupAxioms(operations)"
+              },
+              {
+                "name": "is_ring",
+                "type": "rollup",
+                "formula": "CheckRingAxioms(operations)"
+              },
+              {
+                "name": "is_field",
+                "type": "rollup",
+                "formula": "CheckFieldAxioms(operations)"
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "Proposition",
+            "description": "A formal mathematical statement paired with its proof. Propositions enable automated verification of logical reasoning within the model.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "statement",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "proof_type",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "proof_steps",
+                "type": "scalar",
+                "datatype": "json"
+              },
+              {
+                "name": "depends_on",
+                "type": "scalar",
+                "datatype": "json"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "is_proven",
+                "type": "rollup",
+                "formula": "ValidateProof(proof_steps)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "apply",
+                "parameters": ["context"],
+                "formula": "ApplyProposition(this, context)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "Category",
+            "description": "A high-level abstraction grouping mathematical objects and morphisms. Categories provide a unified framework to discuss mathematical structures and their relationships.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "objects",
+                "type": "scalar",
+                "datatype": "json"
+              },
+              {
+                "name": "morphisms",
+                "type": "scalar",
+                "datatype": "json"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "is_small",
+                "type": "rollup",
+                "formula": "IsSetSized(objects)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "functor",
+                "parameters": ["target_category_id"],
+                "formula": "ConstructFunctor(this, LOOKUP(target_category_id))"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "composition_closed",
+                "formula": "CheckCompositionClosure(morphisms)",
+                "error_message": "Category must be closed under composition"
+              }
+            ]
+          }
+        ]
+      },
+      "data": {
+        "Set": [
+          {
+            "id": "naturals",
+            "name": "ℕ",
+            "description": "The natural numbers, forming the basis of arithmetic through inductive construction.",
+            "countable": true,
+            "cardinality": "aleph_0",
+            "construction_rule": {
+              "type": "inductive",
+              "base": 0,
+              "successor": "n -> n + 1"
+            }
+          },
+          {
+            "id": "integers",
+            "name": "ℤ",
+            "description": "The integers, extending the natural numbers to include negatives.",
+            "countable": true,
+            "cardinality": "aleph_0",
+            "parent_set_id": null
+          },
+          {
+            "id": "reals",
+            "name": "ℝ",
+            "description": "The real numbers, encompassing continuous quantities used in calculus and analysis.",
+            "countable": false,
+            "cardinality": "c",
+            "parent_set_id": null
+          }
+        ],
+        "Structure": [
+          {
+            "id": "integer_ring",
+            "name": "Ring of Integers",
+            "description": "An algebraic structure that formalizes addition and multiplication over the set of integers.",
+            "base_set_id": "integers",
+            "structure_type": "ring",
+            "operations": {
+              "addition": "+",
+              "multiplication": "*"
+            },
+            "relations": {
+              "equality": "="
+            }
+          }
+        ]
+      }
+    },
+    "CMCC_Complete_ToEMM_Physics": {
+      "name": "All-In-One CMCC Physics Model",
+      "description": "A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.",
+
+      "schema": {
+        "entities": [
+          {
+            "name": "PhysicalConstants",
+            "description": "Stores fundamental constants (Planck, c, G, Boltzmann, etc.) possibly with uncertainties.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "symbol", "type": "scalar", "datatype": "string" },
+              { "name": "value", "type": "scalar", "datatype": "float" },
+              { "name": "units", "type": "scalar", "datatype": "string" },
+              {
+                "name": "uncertainty",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Optional error"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+
+          {
+            "name": "ReferenceFrame",
+            "description": "Coordinate system definition, e.g. 3D classical or 4D Minkowski.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "name", "type": "scalar", "datatype": "string" },
+              { "name": "dimensions", "type": "scalar", "datatype": "int" },
+              {
+                "name": "spatial_coordinates_model",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "time_coordinate_label",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+
+          {
+            "name": "Potential",
+            "description": "For classical or quantum usage, e.g. harmonic oscillator or gravitational well.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "potential_name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "functional_form",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Symbolic or param-based, e.g. 'V(x)=0.5*k*x^2'."
+              },
+              {
+                "name": "reference_frame_id",
+                "type": "lookup",
+                "target_entity": "ReferenceFrame",
+                "foreign_key": true
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "value_at_position",
+                "type": "rollup",
+                "parameters": ["x_coord"],
+                "formula": "Evaluate(functional_form.expression, x_coord)"
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+
+          {
+            "name": "Hamiltonian",
+            "description": "Stores T + V for quantum or classical contexts. E.g. p^2/2m + potential.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "description", "type": "scalar", "datatype": "string" },
+              {
+                "name": "kinetic_term",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Symbolic or param for T(p)."
+              },
+              {
+                "name": "potential_id",
+                "type": "lookup",
+                "target_entity": "Potential",
+                "foreign_key": true
+              },
+              {
+                "name": "domain_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. 'quantum', 'classical'."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+
+          {
+            "name": "Wavefunction",
+            "description": "Single or multi-particle wavefunction, storing discrete amplitude data or references.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "wavefunction_label",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "system_description",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              { "name": "dimensionality", "type": "scalar", "datatype": "int" },
+              { "name": "num_particles", "type": "scalar", "datatype": "int" },
+              {
+                "name": "spin_states",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "E.g. total spin or spin config for multi-particle"
+              },
+              {
+                "name": "wavefunction_symmetry",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. 'symmetric','antisymmetric','undefined'."
+              },
+              {
+                "name": "wavefunction_data",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Grid or param eqn of complex amplitudes."
+              },
+              {
+                "name": "reference_frame_id",
+                "type": "lookup",
+                "target_entity": "ReferenceFrame",
+                "foreign_key": true
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "probability_sum",
+                "type": "rollup",
+                "formula": "Σ(|ψ|^2 over wavefunction_data)"
+              },
+              {
+                "name": "selected_hamiltonian_id",
+                "type": "rollup",
+                "formula": "DetermineWhichHamiltonianApplies(this)"
+              },
+              {
+                "name": "hamiltonian_operator_form",
+                "type": "rollup",
+                "formula": "ConstructOperator(selected_hamiltonian_id, wavefunction_data)"
+              },
+              {
+                "name": "expected_energy",
+                "type": "rollup",
+                "formula": "Integrate( wavefunction_data * hamiltonian_operator_form )"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "normalize_wavefunction",
+                "parameters": [],
+                "formula": "wavefunction_data / sqrt(probability_sum)",
+                "note": "Ensures wavefunction sums to 1."
+              },
+              {
+                "name": "project_measurement",
+                "parameters": ["operator_description", "outcome_label"],
+                "formula": "Functional projection of wavefunction_data -> new wavefunction_data"
+              },
+              {
+                "name": "time_evolution",
+                "parameters": ["dt"],
+                "formula": "Solve( iħ dψ/dt = H ψ ) for time dt"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "unitarity_constraint",
+                "formula": "probability_sum = 1 ± ε",
+                "error_message": "Wavefunction must be normalized unless measured."
+              },
+              {
+                "name": "spin_sum",
+                "formula": "ComputeSumOfSpins(spin_states)",
+                "note": "Helper aggregator-like constraint to compute total spin."
+              },
+              {
+                "name": "spin_statistics_constraint",
+                "formula": "IF (spin_sum is integer) THEN wavefunction_symmetry='symmetric' ELSE wavefunction_symmetry='antisymmetric'",
+                "error_message": "Spin-statistics violation."
+              }
+            ]
+          },
+
+          {
+            "name": "Particle",
+            "description": "Classical or quantum entity. Use bridging table for multi-particle wavefunctions.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "label", "type": "scalar", "datatype": "string" },
+              { "name": "mass", "type": "scalar", "datatype": "float" },
+              { "name": "charge", "type": "scalar", "datatype": "float" },
+              { "name": "spin", "type": "scalar", "datatype": "float" },
+              {
+                "name": "single_particle_wf_id",
+                "type": "lookup",
+                "target_entity": "Wavefunction",
+                "foreign_key": false,
+                "note": "If truly single-particle only."
+              },
+              {
+                "name": "classical_position",
+                "type": "scalar",
+                "datatype": "vector3"
+              },
+              {
+                "name": "classical_velocity",
+                "type": "scalar",
+                "datatype": "vector3"
+              },
+              {
+                "name": "classical_system_id",
+                "type": "lookup",
+                "target_entity": "ClassicalSystem",
+                "foreign_key": false,
+                "note": "Which classical system this particle belongs to."
+              },
+              {
+                "name": "reference_frame_id",
+                "type": "lookup",
+                "target_entity": "ReferenceFrame",
+                "foreign_key": true
+              },
+              {
+                "name": "characteristic_size",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "alias_c",
+                "type": "rollup",
+                "formula": "LOOKUP(PhysicalConstants where symbol='c').value"
+              },
+              {
+                "name": "alias_h",
+                "type": "rollup",
+                "formula": "LOOKUP(PhysicalConstants where symbol='h').value"
+              },
+              {
+                "name": "velocity_magnitude",
+                "type": "rollup",
+                "formula": "SQRT(classical_velocity.x^2 + classical_velocity.y^2 + classical_velocity.z^2)"
+              },
+              {
+                "name": "kinetic_energy_classical",
+                "type": "rollup",
+                "formula": "0.5 * mass * (velocity_magnitude^2)"
+              },
+              {
+                "name": "de_broglie_wavelength",
+                "type": "rollup",
+                "formula": "alias_h / (mass * velocity_magnitude)"
+              },
+              {
+                "name": "is_wavelength_small",
+                "type": "rollup",
+                "formula": "de_broglie_wavelength < (characteristic_size / 100.0)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "update_position",
+                "parameters": ["delta_t"],
+                "formula": "classical_position + classical_velocity * delta_t"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "quantum_classical_bridging",
+                "formula": "IF is_wavelength_small THEN classical_position != null",
+                "error_message": "Particle with tiny wavelength must have classical data."
+              }
+            ]
+          },
+
+          {
+            "name": "ParticleWavefunctionMapping",
+            "description": "For multi-particle wavefunctions, bridging table references each Particle to the same Wavefunction record.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "particle_id",
+                "type": "lookup",
+                "target_entity": "Particle",
+                "foreign_key": true
+              },
+              {
+                "name": "wavefunction_id",
+                "type": "lookup",
+                "target_entity": "Wavefunction",
+                "foreign_key": true
+              },
+              {
+                "name": "role_label",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Optional label: e.g. 'Electron #1 in 2e wavefunction'"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+
+          {
+            "name": "DensityMatrix",
+            "description": "Stores ρ for a (sub)system, possibly partial trace of multi-particle wavefunction.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "system_description",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "matrix_data",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Complex NxN data"
+              },
+              {
+                "name": "reference_wavefunction_id",
+                "type": "lookup",
+                "target_entity": "Wavefunction",
+                "foreign_key": false
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "density_trace",
+                "type": "rollup",
+                "formula": "Tr(matrix_data)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "create_density_matrix",
+                "parameters": [],
+                "formula": "OuterProduct( wavefunction_data, wavefunction_data^* )"
+              },
+              {
+                "name": "partial_trace",
+                "parameters": ["subsystem_label"],
+                "formula": "TraceOut( create_density_matrix(), subsystem_label )"
+              },
+              {
+                "name": "von_neumann_entropy",
+                "parameters": [],
+                "formula": "-Tr(ρ log(ρ))"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "density_matrix_positive",
+                "formula": "AllEigenvalues(matrix_data) >= 0",
+                "error_message": "Density matrix must be positive semidefinite"
+              },
+              {
+                "name": "trace_one",
+                "formula": "density_trace = 1 ± ε",
+                "error_message": "Density matrix must have unit trace"
+              }
+            ]
+          },
+
+          {
+            "name": "Force",
+            "description": "Classical force on a particle. Aggregations can unify with quantum if we wish.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "force_type", "type": "scalar", "datatype": "string" },
+              {
+                "name": "particle_id",
+                "type": "lookup",
+                "target_entity": "Particle",
+                "foreign_key": true
+              },
+              {
+                "name": "force_vector",
+                "type": "scalar",
+                "datatype": "vector3"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "alias_G",
+                "type": "rollup",
+                "formula": "LOOKUP(PhysicalConstants where symbol='G').value"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "compute_newtonian_force",
+                "parameters": ["other_particles"],
+                "formula": "Σ( alias_G*m1*m2 / r^2 ), referencing constants"
+              }
+            ],
+            "constraints": []
+          },
+
+          {
+            "name": "GaugeField",
+            "description": "Stores e.g. (E,B) or (Aμ) for a U(1), SU(3), etc. Physical observables must be gauge-invariant.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "gauge_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. 'U(1)', 'SU(3)', etc."
+              },
+              {
+                "name": "field_components",
+                "type": "scalar",
+                "datatype": "json"
+              },
+              {
+                "name": "reference_frame_id",
+                "type": "lookup",
+                "target_entity": "ReferenceFrame",
+                "foreign_key": true
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "field_strength_tensor",
+                "type": "rollup",
+                "formula": "ConstructFμν(field_components)"
+              },
+              {
+                "name": "field_energy",
+                "type": "rollup",
+                "formula": "Integrate(E^2 + B^2) dV"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "perform_gauge_transformation",
+                "parameters": ["gauge_function"],
+                "formula": "Aμ -> Aμ + ∂μ(gauge_function)"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "gauge_invariance_constraint",
+                "formula": "CheckGaugeInvariance(field_strength_tensor)",
+                "error_message": "Gauge field must preserve physically observable quantities"
+              }
+            ]
+          },
+
+          {
+            "name": "MeasurementEvent",
+            "description": "Records an observation, can produce multiple wavefunction branches in a fully declarative manner.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "time_of_measurement",
+                "type": "scalar",
+                "datatype": "datetime"
+              },
+              {
+                "name": "wavefunction_id",
+                "type": "lookup",
+                "target_entity": "Wavefunction",
+                "foreign_key": false
+              },
+              {
+                "name": "particle_id",
+                "type": "lookup",
+                "target_entity": "Particle",
+                "foreign_key": false
+              },
+              {
+                "name": "measurement_operator",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Field storing operator info"
+              },
+              {
+                "name": "possible_outcomes",
+                "type": "scalar",
+                "datatype": "json"
+              },
+              {
+                "name": "outcome_distribution",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Stores probabilities for each outcome if known"
+              },
+              {
+                "name": "outcome",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "new_wavefunction_id",
+                "type": "lookup",
+                "target_entity": "Wavefunction",
+                "foreign_key": false
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "outcome_probabilities",
+                "type": "rollup",
+                "formula": "ComputeOutcomeDistribution(wavefunction_id, measurement_operator)"
+              },
+              {
+                "name": "most_likely_outcome",
+                "type": "rollup",
+                "formula": "MaxKey(outcome_probabilities)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "collapse_wavefunction",
+                "parameters": [],
+                "formula": "Wavefunction(wavefunction_id).project_measurement(measurement_operator, outcome)"
+              },
+              {
+                "name": "multiway_collapse",
+                "parameters": ["outcome_label"],
+                "formula": "Wavefunction(wavefunction_id).project_measurement(measurement_operator, outcome_label)"
+              }
+            ],
+            "constraints": []
+          },
+
+          {
+            "name": "ClassicalSystem",
+            "description": "Groups multiple particles. Summarizes total mass, momentum, energy, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "system_name", "type": "scalar", "datatype": "string" },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [
+              {
+                "name": "members",
+                "description": "Particles in this system",
+                "target_entity": "Particle",
+                "type": "one_to_many",
+                "join_condition": "Particle.classical_system_id = this.id"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "sum_of_particle_energies",
+                "type": "rollup",
+                "formula": "SUM(members.kinetic_energy_classical + members.mass * c^2)"
+              },
+              {
+                "name": "sum_of_wavefunction_energies",
+                "type": "rollup",
+                "formula": "SUM( any_wfs_associated_if_needed.expected_energy )"
+              },
+              {
+                "name": "total_system_energy",
+                "type": "rollup",
+                "formula": "sum_of_particle_energies + sum_of_wavefunction_energies"
+              },
+              {
+                "name": "total_system_mass",
+                "type": "rollup",
+                "formula": "SUM(members.mass)"
+              },
+              {
+                "name": "total_system_momentum",
+                "type": "rollup",
+                "formula": "Σ(members.mass * members.classical_velocity)"
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+
+          {
+            "name": "SpacetimeMetric",
+            "description": "Stores a 3+1 or 4D metric. Einstein eq aggregator referencing total stress-energy, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "metric_tensor",
+                "type": "scalar",
+                "datatype": "matrix4x4"
+              },
+              {
+                "name": "reference_frame_id",
+                "type": "lookup",
+                "target_entity": "ReferenceFrame",
+                "foreign_key": true
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "ricci_scalar",
+                "type": "rollup",
+                "formula": "ComputeRicciScalar(metric_tensor)"
+              },
+              {
+                "name": "ricci_tensor",
+                "type": "rollup",
+                "formula": "ComputeRicciTensor(metric_tensor)"
+              },
+              {
+                "name": "einstein_tensor",
+                "type": "rollup",
+                "formula": "ComputeEinsteinTensor(ricci_tensor, ricci_scalar)"
+              },
+              {
+                "name": "system_stress_energy",
+                "type": "rollup",
+                "formula": "ComputeSystemTμν(...)"
+              },
+              {
+                "name": "einstein_equation_residual",
+                "type": "rollup",
+                "formula": "einstein_tensor - (8π * G * system_stress_energy)"
+              }
+            ],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "einstein_field_equations",
+                "formula": "ABS(einstein_equation_residual) < small_epsilon",
+                "error_message": "Metric must match system's stress-energy distribution"
+              }
+            ]
+          },
+
+          {
+            "name": "BlackHoleSystem",
+            "description": "Entity for horizon radius, Hawking temp, etc., referencing total mass.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "bh_label", "type": "scalar", "datatype": "string" },
+              { "name": "approx_mass", "type": "scalar", "datatype": "float" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "alias_c",
+                "type": "rollup",
+                "formula": "LOOKUP(PhysicalConstants where symbol='c').value"
+              },
+              {
+                "name": "alias_G",
+                "type": "rollup",
+                "formula": "LOOKUP(PhysicalConstants where symbol='G').value"
+              },
+              {
+                "name": "schwarzschild_radius",
+                "type": "rollup",
+                "formula": "(2 * alias_G * approx_mass) / (alias_c^2)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "hawking_temperature",
+                "parameters": [],
+                "formula": "ħ * alias_c^3 / (8π * alias_G * approx_mass * k_B)"
+              }
+            ],
+            "constraints": []
+          }
+        ]
+      },
+      "data": {
+        "PhysicalConstants": [
+          {
+            "id": "planck_h",
+            "symbol": "h",
+            "value": 6.62607015e-34,
+            "units": "J*s",
+            "uncertainty": 0.0,
+            "notes": "Planck's constant"
+          },
+          {
+            "id": "reduced_planck_hbar",
+            "symbol": "ħ",
+            "value": 1.054571817e-34,
+            "units": "J*s",
+            "uncertainty": 0.0,
+            "notes": "Reduced Planck's constant"
+          },
+          {
+            "id": "speed_of_light",
+            "symbol": "c",
+            "value": 199792458,
+            "units": "m/s",
+            "uncertainty": 0.0,
+            "notes": "Exact by definition"
+          },
+          {
+            "id": "grav_const_g",
+            "symbol": "G",
+            "value": 6.6743e-11,
+            "units": "m^3/(kg*s^2)",
+            "uncertainty": 1.5e-15,
+            "notes": "Newton's constant"
+          },
+          {
+            "id": "boltzmann_kb",
+            "symbol": "k_B",
+            "value": 1.380649e-23,
+            "units": "J/K",
+            "uncertainty": 0.0,
+            "notes": "Boltzmann's constant"
+          }
+        ],
+
+        "ReferenceFrame": [
+          {
+            "id": "lab_frame",
+            "name": "Lab Frame",
+            "dimensions": 3,
+            "spatial_coordinates_model": "Cartesian",
+            "time_coordinate_label": "t",
+            "notes": "Non-relativistic approx"
+          },
+          {
+            "id": "minkowski_frame",
+            "name": "Minkowski Frame",
+            "dimensions": 4,
+            "spatial_coordinates_model": "Cartesian",
+            "time_coordinate_label": "t",
+            "notes": "SR usage"
+          },
+          {
+            "id": "cylindrical_frame",
+            "name": "Cylindrical Frame",
+            "dimensions": 3,
+            "spatial_coordinates_model": "Cylindrical",
+            "time_coordinate_label": "t",
+            "notes": "Cylindrical coordinates (r, phi, z)"
+          }
+        ],
+
+        "Potential": [
+          {
+            "id": "harmonic_potential_1d",
+            "potential_name": "1D Harmonic Oscillator",
+            "functional_form": {
+              "expression": "V(x)=0.5*k*x^2",
+              "k": 5.0
+            },
+            "reference_frame_id": "lab_frame",
+            "notes": "Simple 1D HO"
+          },
+          {
+            "id": "gravitational_well",
+            "potential_name": "Inverse Square Gravity",
+            "functional_form": {
+              "expression": "V(r)=-G*M*m/r",
+              "M": 5.97e24
+            },
+            "reference_frame_id": "lab_frame",
+            "notes": "Earth-like gravity"
+          },
+          {
+            "id": "morse_potential",
+            "potential_name": "Morse Potential",
+            "functional_form": {
+              "expression": "D_e [1 - exp(-a(r - r_e))]^2",
+              "D_e": 0.1,
+              "a": 1.5,
+              "r_e": 0.9
+            },
+            "reference_frame_id": "lab_frame",
+            "notes": "Used for diatomic molecular vibrations"
+          }
+        ],
+
+        "Hamiltonian": [
+          {
+            "id": "harmonic_oscillator_H",
+            "description": "Quantum 1D HO Hamiltonian",
+            "kinetic_term": {
+              "expression": "p^2/(2*m)"
+            },
+            "potential_id": "harmonic_potential_1d",
+            "quantum_or_classical": "quantum_operator"
+          },
+          {
+            "id": "classical_gravity_H",
+            "description": "Classical gravity Hamiltonian",
+            "kinetic_term": {
+              "expression": "p^2/(2*m)"
+            },
+            "potential_id": "gravitational_well",
+            "quantum_or_classical": "classical_H"
+          },
+          {
+            "id": "morse_hamiltonian",
+            "description": "Quantum Morse oscillator",
+            "kinetic_term": {
+              "expression": "p^2/(2*m)"
+            },
+            "potential_id": "morse_potential",
+            "quantum_or_classical": "quantum"
+          }
+        ],
+
+        "Wavefunction": [
+          {
+            "id": "psi_electron_1d",
+            "wavefunction_label": "Electron in 1D HO",
+            "system_description": "Single electron, 1D harmonic oscillator",
+            "dimensionality": 1,
+            "num_particles": 1,
+            "spin_states": {
+              "spin_total": 0.5
+            },
+            "wavefunction_data": {
+              "grid_points": [
+                { "x": -1.0, "psi_re": 0.1, "psi_im": 0.0 },
+                { "x": -0.5, "psi_re": 0.4, "psi_im": 0.0 },
+                { "x": 0.0, "psi_re": 0.7, "psi_im": 0.0 },
+                { "x": 0.5, "psi_re": 0.4, "psi_im": 0.0 },
+                { "x": 1.0, "psi_re": 0.1, "psi_im": 0.0 }
+              ]
+            },
+            "reference_frame_id": "lab_frame",
+            "notes": "Previously had probability_sum ~0.81. Now computed by aggregator 'probability_sum'."
+          },
+          {
+            "id": "psi_two_electrons",
+            "wavefunction_label": "2-electron entangled",
+            "system_description": "Two electrons in 1D, spin singlet",
+            "dimensionality": 2,
+            "num_particles": 2,
+            "spin_states": {
+              "particle1_spin": 0.5,
+              "particle2_spin": 0.5,
+              "configuration": "singlet"
+            },
+            "wavefunction_data": {
+              "grid_points": [
+                { "x1": -1.0, "x2": -1.0, "psi_re": 0.0, "psi_im": 0.0 },
+                { "x1": -1.0, "x2": -0.5, "psi_re": 0.02, "psi_im": 0.01 },
+                { "x1": -0.5, "x2": -0.5, "psi_re": 0.05, "psi_im": -0.02 },
+                { "x1": 0.0, "x2": 0.0, "psi_re": 0.1, "psi_im": 0.0 },
+                { "x1": 0.5, "x2": 0.5, "psi_re": 0.02, "psi_im": 0.01 }
+              ]
+            },
+            "reference_frame_id": "lab_frame",
+            "notes": "Spin singlet. Probability sum aggregator should be ~1.0"
+          },
+          {
+            "id": "psi_spin1_boson",
+            "wavefunction_label": "Spin-1 Boson in 1D",
+            "system_description": "Single massive boson, spin=1, 1D domain",
+            "dimensionality": 1,
+            "num_particles": 1,
+            "spin_states": {
+              "spin_total": 1.0
+            },
+            "wavefunction_symmetry": "symmetric",
+            "wavefunction_data": {
+              "grid_points": [
+                { "x": -2.0, "psi_re": 0.0, "psi_im": 0.0 },
+                { "x": -1.0, "psi_re": 0.25, "psi_im": 0.0 },
+                { "x": 0.0, "psi_re": 0.5, "psi_im": 0.0 },
+                { "x": 1.0, "psi_re": 0.25, "psi_im": 0.0 },
+                { "x": 2.0, "psi_re": 0.0, "psi_im": 0.0 }
+              ]
+            },
+            "reference_frame_id": "lab_frame",
+            "notes": "Example for integer spin wavefunction => symmetric by spin-statistics constraint"
+          }
+        ],
+
+        "Particle": [
+          {
+            "id": "electron_1",
+            "label": "Electron (HO)",
+            "mass": 9.109e-31,
+            "charge": -1.602e-19,
+            "spin": 0.5,
+            "single_particle_wf_id": "psi_electron_1d",
+            "classical_position": null,
+            "classical_velocity": null,
+            "reference_frame_id": "lab_frame",
+            "characteristic_size": 1.0e-10,
+            "notes": "Single-particle wavefunction in HO"
+          },
+          {
+            "id": "cannonball_1",
+            "label": "Cannonball",
+            "mass": 5.0,
+            "charge": 0.0,
+            "spin": 0.0,
+            "single_particle_wf_id": null,
+            "classical_position": [0.0, 1.0, 0.0],
+            "classical_velocity": [10.0, 0.0, 0.0],
+            "reference_frame_id": "lab_frame",
+            "characteristic_size": 0.2,
+            "notes": "Macroscopic object (classical only)"
+          },
+          {
+            "id": "electron_a",
+            "label": "Electron A",
+            "mass": 9.109e-31,
+            "charge": -1.602e-19,
+            "spin": 0.5,
+            "classical_position": null,
+            "classical_velocity": null,
+            "reference_frame_id": "lab_frame",
+            "characteristic_size": 1.0e-10,
+            "notes": "Part of 2-electron wavefunction"
+          },
+          {
+            "id": "electron_b",
+            "label": "Electron B",
+            "mass": 9.109e-31,
+            "charge": -1.602e-19,
+            "spin": 0.5,
+            "classical_position": null,
+            "classical_velocity": null,
+            "reference_frame_id": "lab_frame",
+            "characteristic_size": 1.0e-10,
+            "notes": "Part of 2-electron wavefunction"
+          },
+          {
+            "id": "photon_1",
+            "label": "Single Photon",
+            "mass": 0.0,
+            "charge": 0.0,
+            "spin": 1.0,
+            "single_particle_wf_id": null,
+            "classical_position": null,
+            "classical_velocity": null,
+            "reference_frame_id": "minkowski_frame",
+            "characteristic_size": 1.0e-12,
+            "notes": "Massless spin-1 particle"
+          },
+          {
+            "id": "massive_body_A",
+            "label": "Central Star",
+            "mass": 1.989e30,
+            "charge": 0.0,
+            "spin": 0.0,
+            "single_particle_wf_id": null,
+            "classical_position": [0.0, 0.0, 0.0],
+            "classical_velocity": [0.0, 0.0, 0.0],
+            "classical_system_id": "two_body_system",
+            "reference_frame_id": "lab_frame",
+            "characteristic_size": 6.96e8,
+            "notes": "Large mass star"
+          },
+          {
+            "id": "orbiting_body_B",
+            "label": "Planet",
+            "mass": 5.972e24,
+            "charge": 0.0,
+            "spin": 0.0,
+            "single_particle_wf_id": null,
+            "classical_position": [1.496e11, 0.0, 0.0],
+            "classical_velocity": [0.0, 30000.0, 0.0],
+            "classical_system_id": "two_body_system",
+            "reference_frame_id": "lab_frame",
+            "characteristic_size": 6.37e6,
+            "notes": "Smaller orbiting body"
+          }
+        ],
+
+        "ParticleWavefunctionMapping": [
+          {
+            "id": "map_eA_psiTwo",
+            "particle_id": "electron_a",
+            "wavefunction_id": "psi_two_electrons",
+            "role_label": "Electron A"
+          },
+          {
+            "id": "map_eB_psiTwo",
+            "particle_id": "electron_b",
+            "wavefunction_id": "psi_two_electrons",
+            "role_label": "Electron B"
+          }
+        ],
+
+        "DensityMatrix": [
+          {
+            "id": "rho_2e_full",
+            "system_description": "Full 2e entangled state",
+            "matrix_data": {
+              "00": { "re": 0.7, "im": 0.0 },
+              "01": { "re": 0.0, "im": 0.1 },
+              "10": { "re": 0.0, "im": -0.1 },
+              "11": { "re": 0.3, "im": 0.0 }
+            },
+            "reference_wavefunction_id": "psi_two_electrons",
+            "notes": "trace_rho and von_neumann_entropy now come from aggregations, not stored here."
+          },
+          {
+            "id": "rho_eA_partial",
+            "system_description": "Partial trace over electron B",
+            "matrix_data": {
+              "0": {
+                "0": { "re": 0.8, "im": 0.0 }
+              },
+              "1": {
+                "1": { "re": 0.2, "im": 0.0 }
+              }
+            },
+            "reference_wavefunction_id": "psi_two_electrons",
+            "notes": "Same idea; aggregator fields give trace=1 etc."
+          },
+          {
+            "id": "rho_mixed_2level",
+            "system_description": "Mixed 2-level system with classical probability",
+            "matrix_data": {
+              "00": { "re": 0.6, "im": 0.0 },
+              "01": { "re": 0.0, "im": 0.0 },
+              "10": { "re": 0.0, "im": 0.0 },
+              "11": { "re": 0.4, "im": 0.0 }
+            },
+            "reference_wavefunction_id": null,
+            "notes": "Purely classical mixture of two states"
+          }
+        ],
+
+        "Force": [
+          {
+            "id": "grav_force_cannon",
+            "force_type": "gravitational",
+            "particle_id": "cannonball_1",
+            "force_vector": [0.0, -49.0, 0.0],
+            "notes": "Approx mg downward"
+          }
+        ],
+
+        "GaugeField": [
+          {
+            "id": "em_field_lab",
+            "gauge_type": "U(1)",
+            "field_components": {
+              "E": [100.0, 0.0, 0.0],
+              "B": [0.0, 0.0, 0.0]
+            },
+            "reference_frame_id": "lab_frame",
+            "notes": "Uniform E in +x direction"
+          },
+          {
+            "id": "nonabelian_field_su2",
+            "gauge_type": "SU(2)",
+            "field_components": {
+              "A_mu": [
+                {
+                  "component": 0,
+                  "matrix": [
+                    [0, 0.1],
+                    [0.1, 0]
+                  ]
+                },
+                {
+                  "component": 1,
+                  "matrix": [
+                    [0, 0],
+                    [0, 0]
+                  ]
+                },
+                {
+                  "component": 2,
+                  "matrix": [
+                    [0.2, 0],
+                    [0, -0.2]
+                  ]
+                },
+                {
+                  "component": 3,
+                  "matrix": [
+                    [0, 0],
+                    [0, 0]
+                  ]
+                }
+              ]
+            },
+            "reference_frame_id": "minkowski_frame",
+            "notes": "A toy non-Abelian gauge field example"
+          }
+        ],
+
+        "MeasurementEvent": [
+          {
+            "id": "meas_1",
+            "time_of_measurement": "2025-02-09T12:00:00Z",
+            "wavefunction_id": "psi_electron_1d",
+            "particle_id": "electron_1",
+            "operator_description": "Position near x=0.0",
+            "possible_outcomes": null,
+            "outcome": "Detected at x=0.1",
+            "new_wavefunction_id": null,
+            "notes": "Collapsed wavefunction near x=0.1"
+          },
+          {
+            "id": "meas_2_slits",
+            "time_of_measurement": "2025-02-09T12:10:00Z",
+            "wavefunction_id": "psi_two_electrons",
+            "particle_id": null,
+            "operator_description": "Which slit? SlitA or SlitB",
+            "possible_outcomes": ["SlitA", "SlitB"],
+            "outcome": null,
+            "new_wavefunction_id": null,
+            "notes": "Multiway scenario"
+          },
+          {
+            "id": "meas_boson_spin",
+            "time_of_measurement": "2025-02-09T12:30:00Z",
+            "wavefunction_id": "psi_spin1_boson",
+            "particle_id": null,
+            "measurement_operator": {
+              "type": "Spin_z",
+              "matrix_size": 3
+            },
+            "possible_outcomes": ["m_s = -1", "m_s = 0", "m_s = +1"],
+            "outcome_distribution": {
+              "-1": 0.2,
+              "0": 0.6,
+              "+1": 0.2
+            },
+            "outcome": null,
+            "new_wavefunction_id": null,
+            "notes": "Demonstrates multi-level spin measurement"
+          }
+        ],
+
+        "ClassicalSystem": [
+          {
+            "id": "cannon_system",
+            "system_name": "Just the Cannonball",
+            "notes": "Single-particle system"
+          },
+          {
+            "id": "two_body_system",
+            "system_name": "Two-Body Orbital System",
+            "notes": "Earth-sun type minimal example"
+          }
+        ],
+
+        "SpacetimeMetric": [
+          {
+            "id": "flat_minkowski_lab",
+            "metric_tensor": [
+              [1, 0, 0, 0],
+              [0, -1, 0, 0],
+              [0, 0, -1, 0],
+              [0, 0, 0, -1]
+            ],
+            "reference_frame_id": "minkowski_frame",
+            "notes": "Standard flat metric"
+          }
+        ],
+
+        "BlackHoleSystem": [
+          {
+            "id": "bh_example_1",
+            "bh_label": "10-solar-mass BH (toy)",
+            "approx_mass": 2e31,
+            "notes": "schwarzschild_radius, hawking_temperature now aggregator/lambda-based"
+          },
+          {
+            "id": "bh_mid_mass",
+            "bh_label": "Intermediate BH ~1000 solar masses",
+            "approx_mass": 2e33,
+            "notes": "Check aggregator outputs for radius, temperature, etc."
+          }
+        ]
+      }
+    },
+    "CMCC_Complete_ToEMM_Chemistry": {
+      "name": "All-In-One CMCC Chemistry Model",
+      "description": "A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.",
+
+      "depends_on": ["CMCC_Complete_ToEMM_Physics"],
+
+      "schema": {
+        "entities": [
+          {
+            "name": "Atom",
+            "description": "Represents a single element or ion, referencing the underlying physics Particle optionally.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "element_symbol",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              { "name": "atomic_number", "type": "scalar", "datatype": "int" },
+              {
+                "name": "mass_override",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "If present, use this mass instead of Particle.mass, e.g. for isotopes"
+              },
+              {
+                "name": "charge_state",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Net charge, e.g. +1 for Na+"
+              },
+              {
+                "name": "underlying_particle_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Physics.Particle",
+                "foreign_key": false,
+                "note": "Optional link to the physics-level Particle if we want to unify mass, spin, etc."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "effective_mass",
+                "type": "rollup",
+                "formula": "IF mass_override != null THEN mass_override ELSE (LOOKUP(underlying_particle_id).mass)"
+              },
+              {
+                "name": "ion_electrons",
+                "type": "rollup",
+                "formula": "atomic_number - charge_state"
+              }
+            ],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "integer_atom_number",
+                "formula": "atomic_number > 0",
+                "error_message": "Atomic number must be positive integer"
+              },
+              {
+                "name": "valid_charge_state",
+                "formula": "charge_state >= -atomic_number",
+                "error_message": "Cannot have more electrons than Z+some large number, toy rule"
+              }
+            ]
+          },
+
+          {
+            "name": "Bond",
+            "description": "Represents a chemical bond between two atoms (intra-molecular or otherwise).",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "bond_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. single, double, triple, ionic, etc."
+              },
+              {
+                "name": "atom_id_1",
+                "type": "lookup",
+                "target_entity": "Atom",
+                "foreign_key": true
+              },
+              {
+                "name": "atom_id_2",
+                "type": "lookup",
+                "target_entity": "Atom",
+                "foreign_key": true
+              },
+              { "name": "bond_order", "type": "scalar", "datatype": "float" }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "bond_atoms_different",
+                "formula": "atom_id_1 != atom_id_2",
+                "error_message": "No self-bonds"
+              },
+              {
+                "name": "bond_order_valid",
+                "formula": "bond_order > 0 AND bond_order <= 3",
+                "error_message": "Toy constraint: bond_order must be between 0 and 3"
+              }
+            ]
+          },
+
+          {
+            "name": "Molecule",
+            "description": "Collection of atoms connected by bonds, plus optional reference to quantum wavefunction.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "name", "type": "scalar", "datatype": "string" },
+              { "name": "notes", "type": "scalar", "datatype": "string" },
+              {
+                "name": "wavefunction_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Physics.Wavefunction",
+                "foreign_key": false,
+                "note": "If we have a quantum wavefunction at the molecular level"
+              }
+            ],
+            "lookups": [
+              {
+                "name": "atoms",
+                "description": "Atoms in the molecule",
+                "target_entity": "Atom",
+                "type": "many_to_many",
+                "join_entity": "MoleculeAtomMapping",
+                "join_condition": "MoleculeAtomMapping.molecule_id = this.id AND MoleculeAtomMapping.atom_id = Atom.id"
+              },
+              {
+                "name": "bonds",
+                "description": "Bonds referencing this molecule (optionally)",
+                "target_entity": "Bond",
+                "type": "one_to_many",
+                "join_condition": "Bond.atom_id_1 IN atoms OR Bond.atom_id_2 IN atoms"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "molecular_mass",
+                "type": "rollup",
+                "formula": "SUM( atoms.effective_mass )"
+              },
+              {
+                "name": "total_net_charge",
+                "type": "rollup",
+                "formula": "SUM( atoms.charge_state )"
+              },
+              {
+                "name": "formula_string",
+                "type": "rollup",
+                "formula": "ComputeStoichiometricFormula(atoms)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "optimize_geometry",
+                "parameters": [],
+                "formula": "PerformMolecularGeometryOptimization(bonds, wavefunction_id)"
+              },
+              {
+                "name": "compute_properties",
+                "parameters": ["temperature"],
+                "formula": "RunQuantumChemistryCalc(wavefunction_id, temperature)"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "bond_connectivity_check",
+                "formula": "CheckIfAllAtomsConnected(bonds)",
+                "error_message": "All atoms in a molecule must be connected via bonds"
+              }
+            ]
+          },
+
+          {
+            "name": "MoleculeAtomMapping",
+            "description": "Bridging table for many-to-many: which atoms belong to which molecule and in what count (for coarse stoichiometric models).",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "molecule_id",
+                "type": "lookup",
+                "target_entity": "Molecule",
+                "foreign_key": true
+              },
+              {
+                "name": "atom_id",
+                "type": "lookup",
+                "target_entity": "Atom",
+                "foreign_key": true
+              },
+              {
+                "name": "count_in_molecule",
+                "type": "scalar",
+                "datatype": "int",
+                "note": "If >1, e.g. for repeated subunits"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "nonnegative_count",
+                "formula": "count_in_molecule >= 1",
+                "error_message": "Must have at least one"
+              }
+            ]
+          },
+
+          {
+            "name": "Reaction",
+            "description": "A chemical reaction with references to reactants, products, and optional details.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "label", "type": "scalar", "datatype": "string" },
+              {
+                "name": "activation_energy",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "In Joules or eV, etc."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [
+              {
+                "name": "reactants",
+                "description": "Reactant molecules",
+                "target_entity": "Molecule",
+                "type": "many_to_many",
+                "join_entity": "ReactionParticipant",
+                "join_condition": "ReactionParticipant.reaction_id = this.id AND ReactionParticipant.role='reactant'"
+              },
+              {
+                "name": "products",
+                "description": "Product molecules",
+                "target_entity": "Molecule",
+                "type": "many_to_many",
+                "join_entity": "ReactionParticipant",
+                "join_condition": "ReactionParticipant.reaction_id = this.id AND ReactionParticipant.role='product'"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "alias_R",
+                "type": "rollup",
+                "formula": "LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='R').value",
+                "note": "Universal gas constant (toy). If not in your physics constants, you can store it there or do partial reference."
+              },
+              {
+                "name": "delta_mass",
+                "type": "rollup",
+                "formula": "SUM(products.molecular_mass) - SUM(reactants.molecular_mass)"
+              },
+              {
+                "name": "arrhenius_rate",
+                "type": "rollup",
+                "parameters": ["temperature", "pre_exponential_factor"],
+                "formula": "pre_exponential_factor * EXP( -activation_energy / (alias_R * temperature) )"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "perform_reaction_step",
+                "parameters": ["time_step", "reactant_concentrations"],
+                "formula": "UpdateConcentrationsUsingKinetics( this, time_step, reactant_concentrations )"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "mass_conservation",
+                "formula": "ABS( delta_mass ) < tiny_epsilon",
+                "error_message": "Mass must be conserved (toy constraint ignoring binding energy)."
+              },
+              {
+                "name": "charge_conservation",
+                "formula": "SUM(products.total_net_charge) = SUM(reactants.total_net_charge) ± tiny_epsilon",
+                "error_message": "Charge must be conserved"
+              }
+            ]
+          },
+
+          {
+            "name": "ReactionParticipant",
+            "description": "Bridging entity for Reaction, specifying which Molecule is a reactant or product.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "reaction_id",
+                "type": "lookup",
+                "target_entity": "Reaction",
+                "foreign_key": true
+              },
+              {
+                "name": "molecule_id",
+                "type": "lookup",
+                "target_entity": "Molecule",
+                "foreign_key": true
+              },
+              {
+                "name": "role",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "'reactant' or 'product' etc."
+              },
+              {
+                "name": "stoichiometric_coefficient",
+                "type": "scalar",
+                "datatype": "float"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "valid_role",
+                "formula": "role IN ('reactant','product','catalyst')",
+                "error_message": "Role must be recognized"
+              }
+            ]
+          }
+        ]
+      },
+
+      "data": {
+        "Atom": [
+          {
+            "id": "atom_H1",
+            "element_symbol": "H",
+            "atomic_number": 1,
+            "mass_override": 1.008,
+            "charge_state": 0
+          },
+          {
+            "id": "atom_O1",
+            "element_symbol": "O",
+            "atomic_number": 8,
+            "mass_override": 15.999,
+            "charge_state": 0
+          }
+        ],
+        "Molecule": [{ "id": "water_mol", "name": "H2O", "notes": "Water" }],
+        "MoleculeAtomMapping": [
+          {
+            "id": "map_H1",
+            "molecule_id": "water_mol",
+            "atom_id": "atom_H1",
+            "count_in_molecule": 2
+          },
+          {
+            "id": "map_O1",
+            "molecule_id": "water_mol",
+            "atom_id": "atom_O1",
+            "count_in_molecule": 1
+          }
+        ],
+        "Reaction": [
+          {
+            "id": "reaction_water_formation",
+            "label": "2H2 + O2 -> 2H2O",
+            "activation_energy": 2.0e5
+          }
+        ],
+        "ReactionParticipant": [
+          {
+            "id": "rp1",
+            "reaction_id": "reaction_water_formation",
+            "molecule_id": "water_mol",
+            "role": "product",
+            "stoichiometric_coefficient": 2.0
+          }
+        ]
+      }
+    },
+    "CMCC_Complete_ToEMM_Biology": {
+      "depends_on": [
+        "CMCC_Complete_ToEMM_Chemistry",
+        "CMCC_Complete_ToEMM_Physics"
+      ],
+      "schema": {
+        "entities": [
+          {
+            "name": "Gene",
+            "description": "Represents a segment of DNA with regulatory + coding regions, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "gene_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "dna_sequence",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Toy example storing raw A/C/G/T"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "sequence_length",
+                "type": "rollup",
+                "formula": "LENGTH(dna_sequence)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "transcribe_to_rna",
+                "parameters": [],
+                "formula": "Replace(dna_sequence, T->U) // extremely simplified"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "valid_nucleotides",
+                "formula": "dna_sequence contains only {A,C,G,T}",
+                "error_message": "Gene must have valid DNA characters"
+              }
+            ]
+          },
+
+          {
+            "name": "Protein",
+            "description": "A polypeptide chain. Optionally references a Molecule record in chemistry-schema if modeled at that level.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "protein_name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "amino_acid_sequence",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Single-letter code for amino acids, e.g. 'MKT...' etc."
+              },
+              {
+                "name": "encoded_by_gene_id",
+                "type": "lookup",
+                "target_entity": "Gene",
+                "foreign_key": false,
+                "note": "Which gene codes for this protein"
+              },
+              {
+                "name": "associated_molecule_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Chemistry.Molecule",
+                "foreign_key": false,
+                "note": "Optional link to a Molecule entry that represents the 3D structure or partial info"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "sequence_length",
+                "type": "rollup",
+                "formula": "LENGTH(amino_acid_sequence)"
+              },
+              {
+                "name": "approx_molecular_mass",
+                "type": "rollup",
+                "formula": "sequence_length * 110.0 // Toy approx: 110 Da per residue"
+              },
+              {
+                "name": "chemistry_mass",
+                "type": "rollup",
+                "formula": "IF associated_molecule_id != null THEN LOOKUP(associated_molecule_id).molecular_mass ELSE approx_molecular_mass"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "fold_protein",
+                "parameters": [],
+                "formula": "ComputeFoldingConformation(amino_acid_sequence)"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "valid_amino_acids",
+                "formula": "amino_acid_sequence contains only {ACDEFGHIKLMNPQRSTVWY}",
+                "error_message": "Protein must have valid single-letter amino acids (toy example)."
+              }
+            ]
+          },
+
+          {
+            "name": "Cell",
+            "description": "Basic cellular entity containing genes, proteins, or referencing molecules. Could be prokaryote or eukaryote.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "cell_type", "type": "scalar", "datatype": "string" },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [
+              {
+                "name": "genes",
+                "description": "Genes present in the cell (toy assumption: we store them in bridging table).",
+                "target_entity": "Gene",
+                "type": "many_to_many",
+                "join_entity": "CellGeneMapping",
+                "join_condition": "CellGeneMapping.cell_id = this.id AND CellGeneMapping.gene_id = Gene.id"
+              },
+              {
+                "name": "proteins",
+                "description": "Proteins present in the cell (toy bridging).",
+                "target_entity": "Protein",
+                "type": "many_to_many",
+                "join_entity": "CellProteinMapping",
+                "join_condition": "CellProteinMapping.cell_id = this.id AND CellProteinMapping.protein_id = Protein.id"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "total_protein_mass",
+                "type": "rollup",
+                "formula": "SUM(proteins.chemistry_mass)"
+              },
+              {
+                "name": "gene_count",
+                "type": "rollup",
+                "formula": "COUNT(genes)"
+              },
+              {
+                "name": "protein_count",
+                "type": "rollup",
+                "formula": "COUNT(proteins)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "transcribe_all_genes",
+                "parameters": [],
+                "formula": "FOR each g in genes => g.transcribe_to_rna()"
+              },
+              {
+                "name": "translate_all_rna",
+                "parameters": [],
+                "formula": "FOR each r in transcribe_all_genes => ConvertRNAtoProtein(r) // toy placeholder"
+              }
+            ],
+            "constraints": []
+          },
+
+          {
+            "name": "CellGeneMapping",
+            "description": "Bridging table for which genes exist in which cell, toy model ignoring diploidy, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "cell_id",
+                "type": "lookup",
+                "target_entity": "Cell",
+                "foreign_key": true
+              },
+              {
+                "name": "gene_id",
+                "type": "lookup",
+                "target_entity": "Gene",
+                "foreign_key": true
+              },
+              {
+                "name": "copy_number",
+                "type": "scalar",
+                "datatype": "int",
+                "note": "How many copies of this gene in the cell (toy)."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "positive_copy_number",
+                "formula": "copy_number >= 1",
+                "error_message": "Must have at least one copy if present."
+              }
+            ]
+          },
+
+          {
+            "name": "CellProteinMapping",
+            "description": "Bridging table for which proteins exist in which cell, plus concentration or copy number info.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "cell_id",
+                "type": "lookup",
+                "target_entity": "Cell",
+                "foreign_key": true
+              },
+              {
+                "name": "protein_id",
+                "type": "lookup",
+                "target_entity": "Protein",
+                "foreign_key": true
+              },
+              {
+                "name": "abundance",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "e.g. # molecules or concentration"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "non_negative_abundance",
+                "formula": "abundance >= 0",
+                "error_message": "Protein abundance cannot be negative"
+              }
+            ]
+          },
+
+          {
+            "name": "MetabolicReaction",
+            "description": "A biological reaction that references a chemistry Reaction for stoichiometry, plus an enzyme (Protein).",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "reaction_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Chemistry.Reaction",
+                "foreign_key": true,
+                "note": "Underlying stoichiometric details from the chemistry schema"
+              },
+              {
+                "name": "enzyme_id",
+                "type": "lookup",
+                "target_entity": "Protein",
+                "foreign_key": false,
+                "note": "If there is a specific enzyme (protein) catalyzing it"
+              },
+              {
+                "name": "cell_id",
+                "type": "lookup",
+                "target_entity": "Cell",
+                "foreign_key": false,
+                "note": "Which cell it occurs in, if needed"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "baseline_rate",
+                "type": "rollup",
+                "parameters": ["temperature", "pre_exponential_factor"],
+                "formula": "LOOKUP(reaction_id).arrhenius_rate(temperature, pre_exponential_factor)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "perform_metabolic_step",
+                "parameters": ["time_step", "substrate_concs"],
+                "formula": "UpdateCellSubstratesUsingKinetics(reaction_id, enzyme_id, time_step, substrate_concs)"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "enzyme_is_protein",
+                "formula": "IF enzyme_id != null THEN enzyme_id must reference a valid Protein record",
+                "error_message": "Enzyme must be a protein entity (toy example)."
+              }
+            ]
+          }
+        ]
+      },
+
+      "data": {
+        "Gene": [
+          {
+            "id": "gene_lacZ",
+            "gene_name": "lacZ",
+            "dna_sequence": "ATGGT...TAG",
+            "notes": "Encodes beta-galactosidase in E. coli (toy partial seq)."
+          },
+          {
+            "id": "gene_insulin",
+            "gene_name": "INS",
+            "dna_sequence": "ATGGCC...TAA",
+            "notes": "Human insulin gene (toy partial seq)."
+          }
+        ],
+
+        "Protein": [
+          {
+            "id": "protein_lacZ",
+            "protein_name": "Beta-galactosidase",
+            "amino_acid_sequence": "MKIP...VVKM",
+            "encoded_by_gene_id": "gene_lacZ",
+            "associated_molecule_id": null,
+            "notes": "E. coli enzyme that hydrolyzes lactose."
+          },
+          {
+            "id": "protein_insulin",
+            "protein_name": "Insulin",
+            "amino_acid_sequence": "MALWMRLLPLLALLALWGPDPAAA...",
+            "encoded_by_gene_id": "gene_insulin",
+            "associated_molecule_id": null,
+            "notes": "Human insulin (toy partial)."
+          }
+        ],
+
+        "Cell": [
+          {
+            "id": "cell_ecoli_1",
+            "cell_type": "E. coli",
+            "notes": "Toy E. coli cell"
+          },
+          {
+            "id": "cell_pancreatic_beta",
+            "cell_type": "Human pancreatic beta cell",
+            "notes": "Insulin-producing cell"
+          }
+        ],
+
+        "CellGeneMapping": [
+          {
+            "id": "cg_ecoli_lacZ",
+            "cell_id": "cell_ecoli_1",
+            "gene_id": "gene_lacZ",
+            "copy_number": 1
+          },
+          {
+            "id": "cg_beta_ins",
+            "cell_id": "cell_pancreatic_beta",
+            "gene_id": "gene_insulin",
+            "copy_number": 2
+          }
+        ],
+
+        "CellProteinMapping": [
+          {
+            "id": "cp_ecoli_lacZ",
+            "cell_id": "cell_ecoli_1",
+            "protein_id": "protein_lacZ",
+            "abundance": 1500
+          },
+          {
+            "id": "cp_beta_insulin",
+            "cell_id": "cell_pancreatic_beta",
+            "protein_id": "protein_insulin",
+            "abundance": 800
+          }
+        ],
+
+        "MetabolicReaction": [
+          {
+            "id": "mr_lactose_hydrolysis",
+            "reaction_id": "reaction_lactose_hydrolysis",
+            "enzyme_id": "protein_lacZ",
+            "cell_id": "cell_ecoli_1",
+            "notes": "Beta-gal catalyzes lactose -> glucose + galactose (toy)."
+          }
+        ]
+      }
+    },
+    "CMCC_Complete_ToEMM_AI": {
+      "name": "All-In-One CMCC AI Model",
+      "description": "Models core AI/ML artifacts: neural nets, training data, inference events, etc.",
+      "depends_on": ["CMCC_Complete_ToEMM_Math"],
+
+      "schema": {
+        "entities": [
+          {
+            "name": "TrainingDataset",
+            "description": "Dataset used to train AI models, referencing domain/size.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "dataset_name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "num_samples",
+                "type": "scalar",
+                "datatype": "int",
+                "note": "Approx number of records or examples"
+              },
+              {
+                "name": "domain_area",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "E.g. 'image classification','text NLP','reinforcement environment'"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "average_label_value",
+                "type": "rollup",
+                "formula": "ComputeAvgLabel(...)",
+                "note": "Example aggregator referencing underlying data"
+              }
+            ],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "positive_samples",
+                "formula": "num_samples > 0",
+                "error_message": "Training dataset must have at least 1 sample"
+              }
+            ]
+          },
+
+          {
+            "name": "NeuralNetworkModel",
+            "description": "Stores metadata for a trained or untrained neural network model.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "model_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "architecture",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "E.g. 'CNN','Transformer','RNN','MLP'"
+              },
+              {
+                "name": "hyperparameters",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Learning rate, batch size, etc."
+              },
+              {
+                "name": "training_dataset_id",
+                "type": "lookup",
+                "target_entity": "TrainingDataset",
+                "foreign_key": false
+              },
+              {
+                "name": "model_parameters",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Weights/biases or references to an external storage location"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "num_parameters",
+                "type": "rollup",
+                "formula": "CountParameters(model_parameters)"
+              },
+              {
+                "name": "model_size_mb",
+                "type": "rollup",
+                "formula": "ComputeMemoryFootprint(model_parameters)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "train_model",
+                "parameters": ["training_epochs"],
+                "formula": "PerformTraining(this, training_dataset_id, hyperparameters, training_epochs)"
+              },
+              {
+                "name": "evaluate_model",
+                "parameters": ["test_dataset_id"],
+                "formula": "ComputeMetrics(this.model_parameters, test_dataset_id)"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "valid_architecture",
+                "formula": "architecture IN ['CNN','Transformer','RNN','MLP','Other']",
+                "error_message": "Model architecture must be recognized (toy example)."
+              }
+            ]
+          },
+
+          {
+            "name": "InferenceEvent",
+            "description": "Represents a single inference/prediction call made to a trained AI model.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "model_id",
+                "type": "lookup",
+                "target_entity": "NeuralNetworkModel",
+                "foreign_key": true
+              },
+              {
+                "name": "input_data",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Content to be inferred upon"
+              },
+              {
+                "name": "prediction_output",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Result of inference"
+              },
+              {
+                "name": "inference_timestamp",
+                "type": "scalar",
+                "datatype": "datetime"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "model_accuracy_estimate",
+                "type": "rollup",
+                "formula": "LOOKUP(model_id).SomeEvaluatedAccuracy"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "run_inference",
+                "parameters": [],
+                "formula": "NeuralNetworkModel(model_id).ForwardPass(input_data)"
+              }
+            ],
+            "constraints": []
+          },
+
+          {
+            "name": "ReinforcementAgent",
+            "description": "Stores an RL agent’s policy and environment references.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "agent_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "policy_model_id",
+                "type": "lookup",
+                "target_entity": "NeuralNetworkModel",
+                "foreign_key": false,
+                "note": "Which neural net controls the agent's policy"
+              },
+              {
+                "name": "environment_description",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Short text about environment (toy)."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "policy_parameters_count",
+                "type": "rollup",
+                "formula": "LOOKUP(policy_model_id).num_parameters"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "perform_action",
+                "parameters": ["state_obs"],
+                "formula": "ComputeActionFromPolicy(policy_model_id, state_obs)"
+              },
+              {
+                "name": "update_policy",
+                "parameters": ["reward_signal"],
+                "formula": "Train(policy_model_id, reward_signal)"
+              }
+            ],
+            "constraints": []
+          }
+        ]
+      },
+
+      "data": {
+        "TrainingDataset": [
+          {
+            "id": "imagenet_toy",
+            "dataset_name": "ImageNet (Toy Subset)",
+            "description": "A small subset of ImageNet for demonstration",
+            "num_samples": 10000,
+            "domain_area": "image classification"
+          },
+          {
+            "id": "cartpole_v1",
+            "dataset_name": "CartPole RL Env",
+            "description": "Toy environment states for RL",
+            "num_samples": 5000,
+            "domain_area": "reinforcement environment"
+          }
+        ],
+        "NeuralNetworkModel": [
+          {
+            "id": "model_resnet18",
+            "model_name": "ResNet18_Sample",
+            "architecture": "CNN",
+            "hyperparameters": { "learning_rate": 0.001, "batch_size": 32 },
+            "training_dataset_id": "imagenet_toy",
+            "model_parameters": { "weights": "...", "biases": "..." }
+          },
+          {
+            "id": "model_dqn_cartpole",
+            "model_name": "DQN_CartPole",
+            "architecture": "MLP",
+            "hyperparameters": { "learning_rate": 0.0005, "gamma": 0.99 },
+            "training_dataset_id": "cartpole_v1",
+            "model_parameters": {}
+          }
+        ],
+        "InferenceEvent": [
+          {
+            "id": "inf_1",
+            "model_id": "model_resnet18",
+            "input_data": { "image_id": "sample_1234" },
+            "prediction_output": null,
+            "inference_timestamp": "2025-02-09T12:00:00Z"
+          }
+        ],
+        "ReinforcementAgent": [
+          {
+            "id": "agent_cartpole_1",
+            "agent_name": "CartPoleAgent",
+            "policy_model_id": "model_dqn_cartpole",
+            "environment_description": "OpenAI Gym CartPole v1",
+            "notes": "Basic DQN approach"
+          }
+        ]
+      }
+    },
+    "CMCC_Complete_ToEMM_Economics": {
+      "name": "All-In-One CMCC Economics Model",
+      "description": "Covers basic economic entities: agents, markets, goods, transactions, supply-demand constraints, etc.",
+      "depends_on": ["CMCC_Complete_ToEMM_Math"],
+
+      "schema": {
+        "entities": [
+          {
+            "name": "EconomicAgent",
+            "description": "Individual or organization participating in an economy.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "agent_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "agent_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. 'consumer','producer','government','firm','bank', etc."
+              },
+              {
+                "name": "liquid_assets",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Cash or near-cash holdings"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "non_negative_assets",
+                "formula": "liquid_assets >= 0",
+                "error_message": "Agent's assets cannot be negative"
+              }
+            ]
+          },
+
+          {
+            "name": "GoodOrService",
+            "description": "A product or service being traded in the economy.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "name", "type": "scalar", "datatype": "string" },
+              { "name": "category", "type": "scalar", "datatype": "string" },
+              {
+                "name": "unit_of_measure",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. 'kg','liters','hours','units'"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+
+          {
+            "name": "Market",
+            "description": "A marketplace or exchange for a particular good/service. Summaries for supply, demand, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "market_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "good_id",
+                "type": "lookup",
+                "target_entity": "GoodOrService",
+                "foreign_key": true
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [
+              {
+                "name": "transactions",
+                "target_entity": "Transaction",
+                "type": "one_to_many",
+                "join_condition": "Transaction.market_id = this.id"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "total_supply",
+                "type": "rollup",
+                "formula": "SUM(transactions.quantity) WHERE transactions.type='supply'"
+              },
+              {
+                "name": "total_demand",
+                "type": "rollup",
+                "formula": "SUM(transactions.quantity) WHERE transactions.type='demand'"
+              },
+              {
+                "name": "equilibrium_check",
+                "type": "rollup",
+                "formula": "total_supply - total_demand"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "clear_market",
+                "parameters": [],
+                "formula": "MatchSupplyDemand(transactions)"
+              }
+            ],
+            "constraints": []
+          },
+
+          {
+            "name": "Transaction",
+            "description": "Represents a supply or demand action by an agent in a market.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "market_id",
+                "type": "lookup",
+                "target_entity": "Market",
+                "foreign_key": true
+              },
+              {
+                "name": "agent_id",
+                "type": "lookup",
+                "target_entity": "EconomicAgent",
+                "foreign_key": true
+              },
+              {
+                "name": "type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "'supply' or 'demand'"
+              },
+              {
+                "name": "quantity",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "price_per_unit",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "transaction_timestamp",
+                "type": "scalar",
+                "datatype": "datetime"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "total_value",
+                "type": "rollup",
+                "formula": "quantity * price_per_unit"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "execute_transaction",
+                "parameters": [],
+                "formula": "UpdateAgentAssets(agent_id, type, total_value)"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "valid_type",
+                "formula": "type IN ['supply','demand']",
+                "error_message": "Transaction must be either supply or demand."
+              },
+              {
+                "name": "positive_quantity",
+                "formula": "quantity > 0",
+                "error_message": "Transaction quantity must be positive."
+              },
+              {
+                "name": "positive_price",
+                "formula": "price_per_unit >= 0",
+                "error_message": "Price per unit cannot be negative."
+              }
+            ]
+          }
+        ]
+      },
+
+      "data": {
+        "EconomicAgent": [
+          {
+            "id": "agent_alice",
+            "agent_name": "Alice Smith",
+            "agent_type": "consumer",
+            "liquid_assets": 1000.0,
+            "notes": "Looking to buy produce"
+          },
+          {
+            "id": "agent_bob_farm",
+            "agent_name": "Bob's Farm",
+            "agent_type": "producer",
+            "liquid_assets": 5000.0,
+            "notes": "Sells fresh vegetables"
+          }
+        ],
+        "GoodOrService": [
+          {
+            "id": "good_tomatoes",
+            "name": "Tomatoes",
+            "category": "food",
+            "unit_of_measure": "kg",
+            "notes": "Fresh produce"
+          }
+        ],
+        "Market": [
+          {
+            "id": "farmer_market_1",
+            "market_name": "Local Farmer's Market",
+            "good_id": "good_tomatoes",
+            "notes": "Open every weekend"
+          }
+        ],
+        "Transaction": [
+          {
+            "id": "tx_supply_1",
+            "market_id": "farmer_market_1",
+            "agent_id": "agent_bob_farm",
+            "type": "supply",
+            "quantity": 50.0,
+            "price_per_unit": 2.0,
+            "transaction_timestamp": "2025-02-15T08:00:00Z",
+            "notes": "Bob is supplying 50 kg of tomatoes"
+          },
+          {
+            "id": "tx_demand_1",
+            "market_id": "farmer_market_1",
+            "agent_id": "agent_alice",
+            "type": "demand",
+            "quantity": 5.0,
+            "price_per_unit": 2.5,
+            "transaction_timestamp": "2025-02-15T08:30:00Z",
+            "notes": "Alice wants 5 kg of tomatoes"
+          }
+        ]
+      }
+    },
+    "CMCC_Complete_ToEMM_Astronomy": {
+      "name": "All-In-One CMCC Astronomy Model",
+      "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
+      "depends_on": ["CMCC_Complete_ToEMM_Physics", "CMCC_Complete_ToEMM_Math"],
+      "schema": {
+        "entities": [
+          {
+            "name": "CelestialBody",
+            "description": "Generic celestial object: star, planet, asteroid, etc. References physics Particle or black hole if needed.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "body_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "body_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. star, planet, dwarf, asteroid, black_hole, etc."
+              },
+              {
+                "name": "approx_mass",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "In kg, or another standard unit."
+              },
+              {
+                "name": "radius",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Mean radius in meters."
+              },
+              {
+                "name": "reference_particle_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Physics.Particle",
+                "foreign_key": false,
+                "note": "If you want to unify with a Particle record from physics."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "gravitational_parameter",
+                "type": "rollup",
+                "formula": "approx_mass * LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='G').value"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "compute_escape_velocity",
+                "parameters": [],
+                "formula": "SQRT( (2 * gravitational_parameter) / radius )"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "mass_positive",
+                "formula": "approx_mass > 0",
+                "error_message": "Celestial body mass must be positive"
+              }
+            ]
+          },
+          {
+            "name": "StarSystem",
+            "description": "Collection of celestial bodies orbiting a primary star. Summaries for total mass, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "system_name", "type": "scalar", "datatype": "string" },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [
+              {
+                "name": "members",
+                "description": "Celestial bodies in this star system",
+                "target_entity": "CelestialBody",
+                "type": "many_to_many",
+                "join_entity": "StarSystemMembership",
+                "join_condition": "StarSystemMembership.system_id = this.id AND StarSystemMembership.body_id = CelestialBody.id"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "total_system_mass",
+                "type": "rollup",
+                "formula": "SUM(members.approx_mass)"
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "StarSystemMembership",
+            "description": "Bridging table linking CelestialBody to StarSystem with orbital data, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "system_id",
+                "type": "lookup",
+                "target_entity": "StarSystem",
+                "foreign_key": true
+              },
+              {
+                "name": "body_id",
+                "type": "lookup",
+                "target_entity": "CelestialBody",
+                "foreign_key": true
+              },
+              {
+                "name": "semimajor_axis",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Orbital semimajor axis in meters."
+              },
+              {
+                "name": "eccentricity",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Orbital eccentricity"
+              },
+              {
+                "name": "orbital_period",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Orbital period in seconds."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "perihelion_distance",
+                "type": "rollup",
+                "formula": "semimajor_axis * (1 - eccentricity)"
+              },
+              {
+                "name": "aphelion_distance",
+                "type": "rollup",
+                "formula": "semimajor_axis * (1 + eccentricity)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "compute_orbital_period",
+                "parameters": [],
+                "formula": "2π * SQRT( semimajor_axis^3 / (G * mass_of_primary_star) )"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "valid_eccentricity",
+                "formula": "eccentricity >= 0 AND eccentricity < 1.0",
+                "error_message": "Eccentricity must be between 0 and 1 (excluding parabolic orbits)."
+              }
+            ]
+          },
+          {
+            "name": "Galaxy",
+            "description": "A large-scale structure containing multiple star systems.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "galaxy_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "galaxy_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g., spiral, elliptical, irregular"
+              },
+              {
+                "name": "approx_stellar_mass_sum",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Crude sum of star masses in the galaxy"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          }
+        ]
+      },
+      "data": {
+        "CelestialBody": [
+          {
+            "id": "sun",
+            "body_name": "Sun",
+            "body_type": "star",
+            "approx_mass": 1.989e30,
+            "radius": 6.9634e8,
+            "reference_particle_id": null,
+            "notes": "G-type main-sequence star"
+          },
+          {
+            "id": "earth",
+            "body_name": "Earth",
+            "body_type": "planet",
+            "approx_mass": 5.972e24,
+            "radius": 6.371e6,
+            "reference_particle_id": "orbiting_body_B",
+            "notes": "Third planet of the Solar System"
+          }
+        ],
+        "StarSystem": [
+          {
+            "id": "sol_system",
+            "system_name": "Solar System",
+            "notes": "Includes the Sun, Earth, etc."
+          }
+        ],
+        "StarSystemMembership": [
+          {
+            "id": "sol_sun",
+            "system_id": "sol_system",
+            "body_id": "sun",
+            "semimajor_axis": 0.0,
+            "eccentricity": 0.0,
+            "orbital_period": 0.0
+          },
+          {
+            "id": "sol_earth",
+            "system_id": "sol_system",
+            "body_id": "earth",
+            "semimajor_axis": 1.496e11,
+            "eccentricity": 0.0167,
+            "orbital_period": "365.25 * 24.0 * 3600.0"
+          }
+        ],
+        "Galaxy": [
+          {
+            "id": "milky_way",
+            "galaxy_name": "Milky Way",
+            "galaxy_type": "spiral",
+            "approx_stellar_mass_sum": 1.5e12,
+            "notes": "Contains the Solar System among ~100-400 billion stars"
+          }
+        ]
+      }
+    },
+    "CMCC_Complete_ToEMM_Geology": {
+      "name": "All-In-One CMCC Geology Model",
+      "description": "Extends Physics and Chemistry to handle minerals, rock formations, tectonic plates, etc.",
+      "depends_on": [
+        "CMCC_Complete_ToEMM_Physics",
+        "CMCC_Complete_ToEMM_Chemistry"
+      ],
+      "schema": {
+        "entities": [
+          {
+            "name": "Mineral",
+            "description": "Basic mineral with chemical composition, crystal structure, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "mineral_name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "chemical_formula",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. SiO2 for quartz"
+              },
+              {
+                "name": "hardness_mohs",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Mohs hardness scale"
+              },
+              {
+                "name": "lattice_structure",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. hexagonal, cubic, tetragonal"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "RockFormation",
+            "description": "A body of rock with one or more minerals, geologic age, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "formation_name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "rock_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "igneous, sedimentary, metamorphic, etc."
+              },
+              {
+                "name": "geologic_age_mya",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Approx age in million years"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [
+              {
+                "name": "minerals_in_formation",
+                "description": "Bridging to list which minerals appear",
+                "target_entity": "Mineral",
+                "type": "many_to_many",
+                "join_entity": "FormationMineralMapping",
+                "join_condition": "FormationMineralMapping.formation_id = this.id AND FormationMineralMapping.mineral_id = Mineral.id"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "num_mineral_types",
+                "type": "rollup",
+                "formula": "COUNT( minerals_in_formation )"
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "FormationMineralMapping",
+            "description": "Bridge many minerals to many rock formations",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "formation_id",
+                "type": "lookup",
+                "target_entity": "RockFormation",
+                "foreign_key": true
+              },
+              {
+                "name": "mineral_id",
+                "type": "lookup",
+                "target_entity": "Mineral",
+                "foreign_key": true
+              },
+              {
+                "name": "percentage_estimate",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Approx percentage by volume or mass"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "TectonicPlate",
+            "description": "Major or minor plate in Earth's lithosphere, referencing geometry if needed.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              { "name": "plate_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "approx_area",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Area in sq. km or m^2"
+              },
+              { "name": "notes", "type": "scalar", "datatype": "string" }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "PlateBoundaryEvent",
+            "description": "Captures interactions between tectonic plates (divergent, convergent, transform).",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "plate1_id",
+                "type": "lookup",
+                "target_entity": "TectonicPlate",
+                "foreign_key": true
+              },
+              {
+                "name": "plate2_id",
+                "type": "lookup",
+                "target_entity": "TectonicPlate",
+                "foreign_key": true
+              },
+              {
+                "name": "boundary_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "divergent, convergent, transform"
+              },
+              {
+                "name": "activity_level",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. high, moderate, low"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "different_plates",
+                "formula": "plate1_id != plate2_id",
+                "error_message": "Boundary must involve two distinct plates"
+              }
+            ]
+          }
+        ]
+      },
+      "data": {
+        "Mineral": [
+          {
+            "id": "min_quartz",
+            "mineral_name": "Quartz",
+            "chemical_formula": "SiO2",
+            "hardness_mohs": 7.0,
+            "lattice_structure": "hexagonal",
+            "notes": "One of the most common minerals in Earth's crust"
+          },
+          {
+            "id": "min_calcite",
+            "mineral_name": "Calcite",
+            "chemical_formula": "CaCO3",
+            "hardness_mohs": 3.0,
+            "lattice_structure": "trigonal",
+            "notes": "Major component of limestone"
+          }
+        ],
+        "RockFormation": [
+          {
+            "id": "grand_canyon_strata",
+            "formation_name": "Grand Canyon Strata",
+            "rock_type": "sedimentary",
+            "geologic_age_mya": 500.0,
+            "notes": "Layered sedimentary rocks"
+          }
+        ],
+        "FormationMineralMapping": [
+          {
+            "id": "map_gcs_quartz",
+            "formation_id": "grand_canyon_strata",
+            "mineral_id": "min_quartz",
+            "percentage_estimate": 30.0
+          },
+          {
+            "id": "map_gcs_calcite",
+            "formation_id": "grand_canyon_strata",
+            "mineral_id": "min_calcite",
+            "percentage_estimate": 10.0
+          }
+        ],
+        "TectonicPlate": [
+          {
+            "id": "pacific_plate",
+            "plate_name": "Pacific Plate",
+            "approx_area": 103300000.0,
+            "notes": "Largest tectonic plate"
+          },
+          {
+            "id": "north_american_plate",
+            "plate_name": "North American Plate",
+            "approx_area": 75000000.0,
+            "notes": "Significant portion covers North America"
+          }
+        ],
+        "PlateBoundaryEvent": [
+          {
+            "id": "boundary_san_andreas",
+            "plate1_id": "pacific_plate",
+            "plate2_id": "north_american_plate",
+            "boundary_type": "transform",
+            "activity_level": "high",
+            "notes": "San Andreas Fault system"
+          }
+        ]
+      }
+    }
+  }
+}

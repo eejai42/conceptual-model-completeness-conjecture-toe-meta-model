@@ -1,0 +1,48 @@
+# {{meta.title}}
+
+## Overview
+{{meta.description}}
+
+{{meta.overview}}
+
+## Mathematical Schema
+{{#with CMCC_ToEMM_Domains.CMCC_Complete_ToEMM_Math}}
+### {{meta.title}}
+
+{{meta.title}}
+
+{{#each schema.entities}}
+### {{name}}
+{{description}}
+
+**Fields:**
+{{#if fields}}
+{{#each fields}}
+- **{{name}}** ({{datatype}}){{#if note}}: {{note}}{{/if}}
+{{/each}}
+{{else}}
+_No fields defined._
+{{/if}}
+
+{{/each}}
+
+## Data Examples
+
+{{#if data.Set}}
+### Sets
+{{#each data.Set}}
+- **{{name}}**: {{description}}
+{{/each}}
+{{/if}}
+
+{{#if data.Structure}}
+### Structures
+{{#each data.Structure}}
+- **{{name}}**: {{description}}
+{{/each}}
+{{/if}}
+
+---
+{{/with}}
+
+*This document was generated from the CMCC Complete Mathematics TOE Meta Model. Any changes to the meta information or schema definitions in the JSON file will automatically update this README.*

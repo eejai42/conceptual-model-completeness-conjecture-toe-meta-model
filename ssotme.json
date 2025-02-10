@@ -1,0 +1,34 @@
+{
+  "ShowHidden": false,
+  "ShowAllFiles": false,
+  "Name": "theory-of-everything",
+  "ProjectSettings": [
+    {
+      "Name": "project-name",
+      "Value": "theory-of-everything"
+    }
+  ],
+  "ProjectTranspilers": [
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "",
+      "CommandLine": "json-hbars-transform -i .\\SSoT\\single-source-of-truth.json -i .\\README.hbars -o README.md"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/Math",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Math.hbars -o ./../CMCC_Complete_ToEMM_Math.md",
+      "TranspilerGroup": "math"
+    }
+  ]
+}
