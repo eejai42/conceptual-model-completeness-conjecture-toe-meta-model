@@ -1,0 +1,23 @@
+# 
+
+## Overview
+Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.
+
+
+
+## Domain Meta Models
+
+---
+### CMCC Complete Biology ToE Meta-Model (Biology ToE Meta-Model)
+Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.
+
+[Read More →]()
+
+  
+**Schema Overview:**
+- **Gene**: Represents a segment of DNA with regulatory + coding regions, etc.
+- **Protein**: A polypeptide chain. Optionally references a Molecule record in chemistry-schema if modeled at that level.
+- **Cell**: Basic cellular entity containing genes, proteins, or referencing molecules. Could be prokaryote or eukaryote.
+- **CellGeneMapping**: Bridging table for which genes exist in which cell, toy model ignoring diploidy, etc.
+- **CellProteinMapping**: Bridging table for which proteins exist in which cell, plus concentration or copy number info.
+- **MetabolicReaction**: A biological reaction that references a chemistry Reaction for stoichiometry, plus an enzyme (Protein).

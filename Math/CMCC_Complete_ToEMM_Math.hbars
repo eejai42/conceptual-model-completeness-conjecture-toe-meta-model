@@ -1,12 +1,13 @@
-# {{title}}
+# {{title}}  (**[Full Domain List](./../README.md)**)
 
 ## Overview
 {{description}}
 
 {{meta.overview}}
 
-## Mathematical Schema  
-(**[Full Domain List](./../README.md)**)
+
+## Mathematical Schema 
+
 ### {{meta.title}}
 {{meta.description}}
 

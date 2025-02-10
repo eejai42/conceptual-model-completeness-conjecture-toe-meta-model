@@ -14,56 +14,56 @@ Below is a list of TOE models included in this repository. Click on any domain t
 
 A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.
 
-For further details, see [the domain model](./Math/README.md).
+For further details, see [the domain model](math/README.md).
 
 ### CMCC Complete Physics ToE Meta-Model
 **Physics ToE Meta-Model**
 
 A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.
 
-For further details, see [the domain model](./CMCC_Complete_ToEMM_Physics.md).
+For further details, see [the domain model](physics/README.md).
 
 ### CMCC Complete Chemistry ToE Meta-Model
 **Chemistry ToE Meta-Model**
 
 Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.
 
-For further details, see [the domain model](./CMCC_Complete_ToEMM_Chemistry.md).
+For further details, see [the domain model](chemistry/README.md).
 
 ### CMCC Complete Biology ToE Meta-Model
 **Biology ToE Meta-Model**
 
 Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.
 
-For further details, see [the domain model](./CMCC_Complete_ToEMM_Biology.md).
+For further details, see [the domain model](biology/README.md).
 
 ### CMCC Complete Artificial Intelligence ToE Meta-Model
 **Artificial Intelligence ToE Meta-Model**
 
 Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.
 
-For further details, see [the domain model](./CMCC_Complete_ToEMM_AI.md).
+For further details, see [the domain model](biology/README.md).
 
 ### CMCC Complete Economics ToE Meta-Model
 **Economics ToE Meta-Model**
 
 A computational model for economic agents, markets, transactions, and supply-demand constraints.
 
-For further details, see [the domain model](./CMCC_Complete_ToEMM_Economics.md).
+For further details, see [the domain model](biology/README.md).
 
 ### CMCC Complete Astronomy ToE Meta-Model
 **Astronomy ToE Meta-Model**
 
 An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.
 
-For further details, see [the domain model](./CMCC_Complete_ToEMM_Astronomy.md).
+For further details, see [the domain model](biology/README.md).
 
 ### CMCC Complete Geology oE Meta-Model
 **Geology**
 
 A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.
 
-For further details, see [the domain model](./CMCC_Complete_ToEMM_Geology.md).
+For further details, see [the domain model](geology/README.md).
 
 
 ## Example: Mathematical Details
@@ -102,3 +102,5 @@ This repository is part of **The Conceptual Model Completeness Conjecture (CMCC)
 ---
 *Generated from CMCC Metadata – Any updates to the metadata automatically update this README.*
 
+
+LICENSE NON COMMERCIAL USE ONLY!  NO WARRANTY EITHER EXPRESSED OR IMPLIED.
