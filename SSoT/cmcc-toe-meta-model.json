@@ -138,14 +138,14 @@
     "CMCC_Complete_ToEMM_Math": {
       "meta": {
         "title": "CMCC Complete Mathematics TOE Meta Model",
-        "description": "A unified meta-model capturing the foundational elements of mathematics, including set theory, arithmetic operations, functions, algebraic structures, logical propositions, and category theory. This model provides a declarative and operational substrate for representing and reasoning about mathematical concepts.",
-        "overview": "At its core, this model describes how arithmetic emerges from basic set–theoretic constructions and functional mappings. It lays out the ideas behind number systems, the nature of functions as mappings that support addition, subtraction, multiplication, and division, and formalizes algebraic structures (like groups, rings, and fields) through declarative definitions. Logical propositions and categorical abstractions complete the picture by enabling formal proof and high–level abstraction."
+        "description": "A unified meta-model capturing the foundational elements of mathematics, including set theory, arithmetic operations, functions, algebraic structures, logical propositions, category theory, and supporting constructs like equations and operators. This model provides a declarative and operational substrate for representing and reasoning about mathematical concepts.",
+        "overview": "At its core, this model describes how arithmetic emerges from basic set–theoretic constructions and functional mappings. It lays out the ideas behind number systems, the nature of functions as mappings (including standard arithmetic operators), formalizes algebraic structures (like groups, rings, and fields) through declarative definitions, and captures higher abstractions in category theory. Logical propositions and newly added equation references complete the picture by enabling formal proof and high-level reasoning."
       },
       "schema": {
         "entities": [
           {
             "name": "Set",
-            "description": "A fundamental collection of mathematical objects. Sets define the universe in which arithmetic and number theory are formulated, with properties such as countability and cardinality that underlie the notion of size and infinity.",
+            "description": "A fundamental collection of mathematical objects. Sets define the universe in which arithmetic and number theory are formulated, with properties such as countability, cardinality, and discrete/continuous classification.",
             "fields": [
               {
                 "name": "id",
@@ -171,7 +171,14 @@
               {
                 "name": "cardinality",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "note": "E.g. 'finite', 'aleph_0', 'aleph_1', 'c', etc."
+              },
+              {
+                "name": "discrete_or_continuous",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Optional classification, e.g. 'discrete', 'continuous', or 'mixed'"
               },
               {
                 "name": "parent_set_id",
@@ -225,6 +232,7 @@
               }
             ]
           },
+
           {
             "name": "Element",
             "description": "An atomic or composite member of a Set. Elements are the basic units from which numbers and other mathematical objects are built.",
@@ -257,6 +265,49 @@
             "lambdas": [],
             "constraints": []
           },
+
+          {
+            "name": "ArithmeticOperator",
+            "description": "Represents a standard arithmetic operator (e.g., +, −, ×, ÷, ^) along with optional domain/codomain details.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "symbol",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Examples: '+', '-', '*', '/', '^'"
+              },
+              {
+                "name": "domain_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": false,
+                "note": "If relevant, the set in which the operator is defined"
+              },
+              {
+                "name": "codomain_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": false,
+                "note": "If relevant, the set to which results belong"
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+
           {
             "name": "Function",
             "description": "A mapping from a domain Set to a codomain Set. Functions capture the essence of arithmetic operations and other transformations, supporting properties such as injectivity, surjectivity, and bijectivity.",
@@ -322,9 +373,10 @@
             ],
             "constraints": []
           },
+
           {
-            "name": "Structure",
-            "description": "An algebraic or mathematical structure defined by a base set, operations, and relations. Examples include groups, rings, and fields, which form the backbone of arithmetic and algebra.",
+            "name": "AlgebraicStructure",
+            "description": "An algebraic/mathematical structure defined by a base set, operations, and relations. Examples include groups, rings, and fields, which form the backbone of arithmetic and algebra.",
             "fields": [
               {
                 "name": "id",
@@ -344,14 +396,16 @@
                 "foreign_key": true
               },
               {
-                "name": "structure_type",
+                "name": "algebraic_structure_type",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "note": "e.g., 'group', 'ring', 'field', etc."
               },
               {
-                "name": "operations",
+                "name": "algebraic_operations",
                 "type": "scalar",
-                "datatype": "json"
+                "datatype": "json",
+                "note": "Definitions or references to the operations used, e.g. { 'addition': '+', 'multiplication': '*' }"
               },
               {
                 "name": "relations",
@@ -364,25 +418,26 @@
               {
                 "name": "is_group",
                 "type": "rollup",
-                "formula": "CheckGroupAxioms(operations)"
+                "formula": "CheckGroupAxioms(algebraic_operations)"
               },
               {
                 "name": "is_ring",
                 "type": "rollup",
-                "formula": "CheckRingAxioms(operations)"
+                "formula": "CheckRingAxioms(algebraic_operations)"
               },
               {
                 "name": "is_field",
                 "type": "rollup",
-                "formula": "CheckFieldAxioms(operations)"
+                "formula": "CheckFieldAxioms(algebraic_operations)"
               }
             ],
             "lambdas": [],
             "constraints": []
           },
+
           {
             "name": "Proposition",
-            "description": "A formal mathematical statement paired with its proof. Propositions enable automated verification of logical reasoning within the model.",
+            "description": "A formal mathematical statement with a proof or derivation. Propositions enable automated verification of logical reasoning within the model.",
             "fields": [
               {
                 "name": "id",
@@ -396,14 +451,21 @@
                 "datatype": "string"
               },
               {
+                "name": "result_type",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "E.g. 'lemma', 'proposition', 'theorem', 'corollary'"
+              },
+              {
                 "name": "proof_type",
                 "type": "scalar",
                 "datatype": "string"
               },
               {
-                "name": "proof_steps",
+                "name": "derivation_steps",
                 "type": "scalar",
-                "datatype": "json"
+                "datatype": "json",
+                "note": "Renamed from 'proof_steps' to be more generalizable"
               },
               {
                 "name": "depends_on",
@@ -416,7 +478,7 @@
               {
                 "name": "is_proven",
                 "type": "rollup",
-                "formula": "ValidateProof(proof_steps)"
+                "formula": "ValidateProof(derivation_steps)"
               }
             ],
             "lambdas": [
@@ -428,6 +490,47 @@
             ],
             "constraints": []
           },
+
+          {
+            "name": "Equation",
+            "description": "A symbolic expression representing an equality or functional relationship (e.g. polynomial, differential, wave equation). Useful for referencing in advanced math or cross-domain usage.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "equation_text",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Raw or human-readable form"
+              },
+              {
+                "name": "latex_repr",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Optional LaTeX representation for display"
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "related_sets",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Any sets or variables the equation references"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+
           {
             "name": "Category",
             "description": "A high-level abstraction grouping mathematical objects and morphisms. Categories provide a unified framework to discuss mathematical structures and their relationships.",
@@ -487,6 +590,7 @@
             "description": "The natural numbers, forming the basis of arithmetic through inductive construction.",
             "countable": true,
             "cardinality": "aleph_0",
+            "discrete_or_continuous": "discrete",
             "construction_rule": {
               "type": "inductive",
               "base": 0,
@@ -499,6 +603,7 @@
             "description": "The integers, extending the natural numbers to include negatives.",
             "countable": true,
             "cardinality": "aleph_0",
+            "discrete_or_continuous": "discrete",
             "parent_set_id": null
           },
           {
@@ -507,17 +612,18 @@
             "description": "The real numbers, encompassing continuous quantities used in calculus and analysis.",
             "countable": false,
             "cardinality": "c",
+            "discrete_or_continuous": "continuous",
             "parent_set_id": null
           }
         ],
-        "Structure": [
+        "AlgebraicStructure": [
           {
             "id": "integer_ring",
             "name": "Ring of Integers",
             "description": "An algebraic structure that formalizes addition and multiplication over the set of integers.",
             "base_set_id": "integers",
-            "structure_type": "ring",
-            "operations": {
+            "algebraic_structure_type": "ring",
+            "algebraic_operations": {
               "addition": "+",
               "multiplication": "*"
             },
@@ -531,7 +637,7 @@
     "CMCC_Complete_ToEMM_Physics": {
       "name": "All-In-One CMCC Physics Model",
       "description": "A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.",
-
+  
       "schema": {
         "entities": [
           {
@@ -560,7 +666,7 @@
             "lambdas": [],
             "constraints": []
           },
-
+  
           {
             "name": "ReferenceFrame",
             "description": "Coordinate system definition, e.g. 3D classical or 4D Minkowski.",
@@ -590,7 +696,7 @@
             "lambdas": [],
             "constraints": []
           },
-
+  
           {
             "name": "Potential",
             "description": "For classical or quantum usage, e.g. harmonic oscillator or gravitational well.",
@@ -613,6 +719,13 @@
                 "note": "Symbolic or param-based, e.g. 'V(x)=0.5*k*x^2'."
               },
               {
+                "name": "equation_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Math.Equation",
+                "foreign_key": false,
+                "note": "Optional reference to a formal equation in the Math model"
+              },
+              {
                 "name": "reference_frame_id",
                 "type": "lookup",
                 "target_entity": "ReferenceFrame",
@@ -632,7 +745,7 @@
             "lambdas": [],
             "constraints": []
           },
-
+  
           {
             "name": "Hamiltonian",
             "description": "Stores T + V for quantum or classical contexts. E.g. p^2/2m + potential.",
@@ -649,6 +762,13 @@
                 "type": "scalar",
                 "datatype": "json",
                 "note": "Symbolic or param for T(p)."
+              },
+              {
+                "name": "kinetic_equation_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Math.Equation",
+                "foreign_key": false,
+                "note": "Optional reference if kinetic term has a formal equation"
               },
               {
                 "name": "potential_id",
@@ -668,7 +788,7 @@
             "lambdas": [],
             "constraints": []
           },
-
+  
           {
             "name": "Wavefunction",
             "description": "Single or multi-particle wavefunction, storing discrete amplitude data or references.",
@@ -708,6 +828,13 @@
                 "type": "scalar",
                 "datatype": "json",
                 "note": "Grid or param eqn of complex amplitudes."
+              },
+              {
+                "name": "amplitude_algebraic_structure_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Math.AlgebraicStructure",
+                "foreign_key": false,
+                "note": "E.g. complex vector space for wavefunction amplitudes"
               },
               {
                 "name": "reference_frame_id",
@@ -775,7 +902,7 @@
               }
             ]
           },
-
+  
           {
             "name": "Particle",
             "description": "Classical or quantum entity. Use bridging table for multi-particle wavefunctions.",
@@ -787,8 +914,18 @@
                 "primary_key": true
               },
               { "name": "label", "type": "scalar", "datatype": "string" },
-              { "name": "mass", "type": "scalar", "datatype": "float" },
-              { "name": "charge", "type": "scalar", "datatype": "float" },
+              {
+                "name": "mass",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Could optionally reference a PhysicalQuantity entity if desired"
+              },
+              {
+                "name": "charge",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Likewise for charge"
+              },
               { "name": "spin", "type": "scalar", "datatype": "float" },
               {
                 "name": "single_particle_wf_id",
@@ -875,7 +1012,7 @@
               }
             ]
           },
-
+  
           {
             "name": "ParticleWavefunctionMapping",
             "description": "For multi-particle wavefunctions, bridging table references each Particle to the same Wavefunction record.",
@@ -910,7 +1047,7 @@
             "lambdas": [],
             "constraints": []
           },
-
+  
           {
             "name": "DensityMatrix",
             "description": "Stores ρ for a (sub)system, possibly partial trace of multi-particle wavefunction.",
@@ -977,7 +1114,7 @@
               }
             ]
           },
-
+  
           {
             "name": "Force",
             "description": "Classical force on a particle. Aggregations can unify with quantum if we wish.",
@@ -1019,7 +1156,7 @@
             ],
             "constraints": []
           },
-
+  
           {
             "name": "GaugeField",
             "description": "Stores e.g. (E,B) or (Aμ) for a U(1), SU(3), etc. Physical observables must be gauge-invariant.",
@@ -1035,6 +1172,13 @@
                 "type": "scalar",
                 "datatype": "string",
                 "note": "e.g. 'U(1)', 'SU(3)', etc."
+              },
+              {
+                "name": "gauge_group_id",
+                "type": "lookup",
+                "target_entity": "CMCC_Complete_ToEMM_Math.AlgebraicStructure",
+                "foreign_key": false,
+                "note": "Reference an algebraic structure (group) for the gauge symmetry"
               },
               {
                 "name": "field_components",
@@ -1077,7 +1221,7 @@
               }
             ]
           },
-
+  
           {
             "name": "MeasurementEvent",
             "description": "Records an observation, can produce multiple wavefunction branches in a fully declarative manner.",
@@ -1162,7 +1306,7 @@
             ],
             "constraints": []
           },
-
+  
           {
             "name": "ClassicalSystem",
             "description": "Groups multiple particles. Summarizes total mass, momentum, energy, etc.",
@@ -1215,7 +1359,7 @@
             "lambdas": [],
             "constraints": []
           },
-
+  
           {
             "name": "SpacetimeMetric",
             "description": "Stores a 3+1 or 4D metric. Einstein eq aggregator referencing total stress-energy, etc.",
@@ -1276,7 +1420,7 @@
               }
             ]
           },
-
+  
           {
             "name": "BlackHoleSystem",
             "description": "Entity for horizon radius, Hawking temp, etc., referencing total mass.",
@@ -1319,6 +1463,7 @@
           }
         ]
       },
+  
       "data": {
         "PhysicalConstants": [
           {
@@ -1362,7 +1507,7 @@
             "notes": "Boltzmann's constant"
           }
         ],
-
+  
         "ReferenceFrame": [
           {
             "id": "lab_frame",
@@ -1389,7 +1534,7 @@
             "notes": "Cylindrical coordinates (r, phi, z)"
           }
         ],
-
+  
         "Potential": [
           {
             "id": "harmonic_potential_1d",
@@ -1398,6 +1543,7 @@
               "expression": "V(x)=0.5*k*x^2",
               "k": 5.0
             },
+            "equation_id": null,
             "reference_frame_id": "lab_frame",
             "notes": "Simple 1D HO"
           },
@@ -1408,6 +1554,7 @@
               "expression": "V(r)=-G*M*m/r",
               "M": 5.97e24
             },
+            "equation_id": null,
             "reference_frame_id": "lab_frame",
             "notes": "Earth-like gravity"
           },
@@ -1420,11 +1567,12 @@
               "a": 1.5,
               "r_e": 0.9
             },
+            "equation_id": null,
             "reference_frame_id": "lab_frame",
             "notes": "Used for diatomic molecular vibrations"
           }
         ],
-
+  
         "Hamiltonian": [
           {
             "id": "harmonic_oscillator_H",
@@ -1432,8 +1580,9 @@
             "kinetic_term": {
               "expression": "p^2/(2*m)"
             },
+            "kinetic_equation_id": null,
             "potential_id": "harmonic_potential_1d",
-            "quantum_or_classical": "quantum_operator"
+            "domain_type": "quantum_operator"
           },
           {
             "id": "classical_gravity_H",
@@ -1441,8 +1590,9 @@
             "kinetic_term": {
               "expression": "p^2/(2*m)"
             },
+            "kinetic_equation_id": null,
             "potential_id": "gravitational_well",
-            "quantum_or_classical": "classical_H"
+            "domain_type": "classical_H"
           },
           {
             "id": "morse_hamiltonian",
@@ -1450,11 +1600,12 @@
             "kinetic_term": {
               "expression": "p^2/(2*m)"
             },
+            "kinetic_equation_id": null,
             "potential_id": "morse_potential",
-            "quantum_or_classical": "quantum"
+            "domain_type": "quantum"
           }
         ],
-
+  
         "Wavefunction": [
           {
             "id": "psi_electron_1d",
@@ -1465,6 +1616,7 @@
             "spin_states": {
               "spin_total": 0.5
             },
+            "wavefunction_symmetry": null,
             "wavefunction_data": {
               "grid_points": [
                 { "x": -1.0, "psi_re": 0.1, "psi_im": 0.0 },
@@ -1474,6 +1626,7 @@
                 { "x": 1.0, "psi_re": 0.1, "psi_im": 0.0 }
               ]
             },
+            "amplitude_algebraic_structure_id": null,
             "reference_frame_id": "lab_frame",
             "notes": "Previously had probability_sum ~0.81. Now computed by aggregator 'probability_sum'."
           },
@@ -1488,6 +1641,7 @@
               "particle2_spin": 0.5,
               "configuration": "singlet"
             },
+            "wavefunction_symmetry": null,
             "wavefunction_data": {
               "grid_points": [
                 { "x1": -1.0, "x2": -1.0, "psi_re": 0.0, "psi_im": 0.0 },
@@ -1497,6 +1651,7 @@
                 { "x1": 0.5, "x2": 0.5, "psi_re": 0.02, "psi_im": 0.01 }
               ]
             },
+            "amplitude_algebraic_structure_id": null,
             "reference_frame_id": "lab_frame",
             "notes": "Spin singlet. Probability sum aggregator should be ~1.0"
           },
@@ -1519,11 +1674,12 @@
                 { "x": 2.0, "psi_re": 0.0, "psi_im": 0.0 }
               ]
             },
+            "amplitude_algebraic_structure_id": null,
             "reference_frame_id": "lab_frame",
             "notes": "Example for integer spin wavefunction => symmetric by spin-statistics constraint"
           }
         ],
-
+  
         "Particle": [
           {
             "id": "electron_1",
@@ -1557,6 +1713,7 @@
             "mass": 9.109e-31,
             "charge": -1.602e-19,
             "spin": 0.5,
+            "single_particle_wf_id": null,
             "classical_position": null,
             "classical_velocity": null,
             "reference_frame_id": "lab_frame",
@@ -1569,6 +1726,7 @@
             "mass": 9.109e-31,
             "charge": -1.602e-19,
             "spin": 0.5,
+            "single_particle_wf_id": null,
             "classical_position": null,
             "classical_velocity": null,
             "reference_frame_id": "lab_frame",
@@ -1617,7 +1775,7 @@
             "notes": "Smaller orbiting body"
           }
         ],
-
+  
         "ParticleWavefunctionMapping": [
           {
             "id": "map_eA_psiTwo",
@@ -1632,7 +1790,7 @@
             "role_label": "Electron B"
           }
         ],
-
+  
         "DensityMatrix": [
           {
             "id": "rho_2e_full",
@@ -1673,7 +1831,7 @@
             "notes": "Purely classical mixture of two states"
           }
         ],
-
+  
         "Force": [
           {
             "id": "grav_force_cannon",
@@ -1683,11 +1841,12 @@
             "notes": "Approx mg downward"
           }
         ],
-
+  
         "GaugeField": [
           {
             "id": "em_field_lab",
             "gauge_type": "U(1)",
+            "gauge_group_id": null,
             "field_components": {
               "E": [100.0, 0.0, 0.0],
               "B": [0.0, 0.0, 0.0]
@@ -1698,6 +1857,7 @@
           {
             "id": "nonabelian_field_su2",
             "gauge_type": "SU(2)",
+            "gauge_group_id": null,
             "field_components": {
               "A_mu": [
                 {
@@ -1734,7 +1894,7 @@
             "notes": "A toy non-Abelian gauge field example"
           }
         ],
-
+  
         "MeasurementEvent": [
           {
             "id": "meas_1",
@@ -1778,7 +1938,7 @@
             "notes": "Demonstrates multi-level spin measurement"
           }
         ],
-
+  
         "ClassicalSystem": [
           {
             "id": "cannon_system",
@@ -1791,7 +1951,7 @@
             "notes": "Earth-sun type minimal example"
           }
         ],
-
+  
         "SpacetimeMetric": [
           {
             "id": "flat_minkowski_lab",
@@ -1805,7 +1965,7 @@
             "notes": "Standard flat metric"
           }
         ],
-
+  
         "BlackHoleSystem": [
           {
             "id": "bh_example_1",
