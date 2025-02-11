@@ -7,7 +7,7 @@
 ## TL;DR;
 ### The Model
 
-To skip the rigamarole, and just cut to the chase, this is the [CMCC ToE Meta-Model](SSoT/single-source-of-truth.).
+To skip the rigamarole, and just cut to the chase, this is the [CMCC ToE Meta-Model](SSoT/cmcc-toe-meta-model.json).
 
 The Conceptual Model Completeness Conjecture (CMCC) provides a unified, self‐describing framework for modeling domains as diverse as Mathematics, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, and Economics. Underpinned by five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—the CMCC model is both declarative and operational. It guarantees Turing-completeness and aligns with Wolfram’s multiway systems, offering a universal substrate for capturing the "what" of domain knowledge while leaving the "how" to the runtime.
 

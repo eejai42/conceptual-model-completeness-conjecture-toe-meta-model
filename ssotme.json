@@ -17,7 +17,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "",
-      "CommandLine": "json-hbars-transform -i .\\SSoT\\single-source-of-truth.json -i .\\README.hbars -o README.md"
+      "CommandLine": "json-hbars-transform -i .\\SSoT\\cmcc-toe-meta-model.json -i .\\README.hbars -o README.md"
     },
     {
       "MatchedTranspiler": {
@@ -27,7 +27,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/math",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Math.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_Math.hbars -o ./README.md",
       "TranspilerGroup": "math"
     },
     {
@@ -38,7 +38,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/physics",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Physics.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_Physics.hbars -o ./README.md",
       "TranspilerGroup": "physics"
     },
     {
@@ -49,7 +49,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/chemistry",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Chemistry.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_Chemistry.hbars -o ./README.md",
       "TranspilerGroup": "chemistry"
     },
     {
@@ -60,7 +60,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/biology",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Biology.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_Biology.hbars -o ./README.md",
       "TranspilerGroup": "biology"
     },
     {
@@ -71,7 +71,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/ai",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_AI.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_AI.hbars -o ./README.md",
       "TranspilerGroup": "ai"
     },
     {
@@ -82,7 +82,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/economics",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Economics.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_Economics.hbars -o ./README.md",
       "TranspilerGroup": "economics"
     },
     {
@@ -93,7 +93,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/astronomy",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Astronomy.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_Astronomy.hbars -o ./README.md",
       "TranspilerGroup": "astronomy"
     },
     {
@@ -104,7 +104,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/geology",
-      "CommandLine": "json-hbars-transform -i ./../SSoT/single-source-of-truth.json -i .\\CMCC_Complete_ToEMM_Geology.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_Geology.hbars -o ./README.md",
       "TranspilerGroup": "geology"
     }
   ]
