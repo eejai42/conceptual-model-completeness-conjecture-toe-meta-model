@@ -1,5 +1,12 @@
 # CMCC Research Efforts
 
+[Home](../README.md)
+
+All of these different domains cooperate effortlessly under the same 
+unbrella because of the Conceptual Model Completeness Conjecture, and 
+the power of the 5 primitives that it posites are sufficient to capture
+the declarative semantics for any conceptual model.
+
 ### The Business Rule Completeness Conjecture (BRCC)
 #### Eliminating the “Ripple Effect” in Model Evolution
 
