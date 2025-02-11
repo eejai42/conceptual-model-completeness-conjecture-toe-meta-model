@@ -1,8 +1,8 @@
-# Chemistry ToE Meta-Model
+# Geology
 ### 
 
 ## Overview
-Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.
+A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.
 
 
 [More about CMCC →](../README.md)
@@ -11,12 +11,11 @@ Extends the Physics TOE with atomic structures, molecular interactions, bonds, a
 
   
 **Schema Overview:**
-- **Atom**: Represents a single element or ion, referencing the underlying physics Particle optionally.
-- **Bond**: Represents a chemical bond between two atoms (intra-molecular or otherwise).
-- **Molecule**: Collection of atoms connected by bonds, plus optional reference to quantum wavefunction.
-- **MoleculeAtomMapping**: Bridging table for many-to-many: which atoms belong to which molecule and in what count (for coarse stoichiometric models).
-- **Reaction**: A chemical reaction with references to reactants, products, and optional details.
-- **ReactionParticipant**: Bridging entity for Reaction, specifying which Molecule is a reactant or product.
+- **Mineral**: Basic mineral with chemical composition, crystal structure, etc.
+- **RockFormation**: A body of rock with one or more minerals, geologic age, etc.
+- **FormationMineralMapping**: Bridge many minerals to many rock formations
+- **TectonicPlate**: Major or minor plate in Earth's lithosphere, referencing geometry if needed.
+- **PlateBoundaryEvent**: Captures interactions between tectonic plates (divergent, convergent, transform).
 
 
 

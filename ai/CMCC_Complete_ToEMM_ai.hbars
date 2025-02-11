@@ -1,8 +1,8 @@
-# Chemistry ToE Meta-Model
+# Artificial Intelligence ToE Meta-Model
 ### 
 
 ## Overview
-Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.
+Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.
 
 
 [More about CMCC →](../README.md)
@@ -11,12 +11,10 @@ Extends the Physics TOE with atomic structures, molecular interactions, bonds, a
 
   
 **Schema Overview:**
-- **Atom**: Represents a single element or ion, referencing the underlying physics Particle optionally.
-- **Bond**: Represents a chemical bond between two atoms (intra-molecular or otherwise).
-- **Molecule**: Collection of atoms connected by bonds, plus optional reference to quantum wavefunction.
-- **MoleculeAtomMapping**: Bridging table for many-to-many: which atoms belong to which molecule and in what count (for coarse stoichiometric models).
-- **Reaction**: A chemical reaction with references to reactants, products, and optional details.
-- **ReactionParticipant**: Bridging entity for Reaction, specifying which Molecule is a reactant or product.
+- **TrainingDataset**: Dataset used to train AI models, referencing domain/size.
+- **NeuralNetworkModel**: Stores metadata for a trained or untrained neural network model.
+- **InferenceEvent**: Represents a single inference/prediction call made to a trained AI model.
+- **ReinforcementAgent**: Stores an RL agent’s policy and environment references.
 
 
 

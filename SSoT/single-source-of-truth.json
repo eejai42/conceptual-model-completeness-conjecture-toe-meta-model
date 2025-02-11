@@ -74,21 +74,21 @@
         "fullname": "CMCC Complete Artificial Intelligence ToE Meta-Model",
         "name": "Artificial Intelligence ToE Meta-Model",
         "description": "Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.",
-        "nickname": "biology"
+        "nickname": "ai"
       },
       {
         "id": "CMCC_Complete_ToEMM_Economics",
         "fullname": "CMCC Complete Economics ToE Meta-Model",
         "name": "Economics ToE Meta-Model",
         "description": "A computational model for economic agents, markets, transactions, and supply-demand constraints.",
-        "nickname": "biology"
+        "nickname": "economics"
       },
       {
         "id": "CMCC_Complete_ToEMM_Astronomy",
         "fullname": "CMCC Complete Astronomy ToE Meta-Model",
         "name": "Astronomy ToE Meta-Model",
         "description": "An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.",
-        "nickname": "biology"
+        "nickname": "astronomy"
       },
       {
         "id": "CMCC_Complete_ToEMM_Geology",

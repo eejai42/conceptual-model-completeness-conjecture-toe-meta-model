@@ -1,8 +1,8 @@
-# Chemistry ToE Meta-Model
+# Economics ToE Meta-Model
 ### 
 
 ## Overview
-Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.
+A computational model for economic agents, markets, transactions, and supply-demand constraints.
 
 
 [More about CMCC →](../README.md)
@@ -11,12 +11,10 @@ Extends the Physics TOE with atomic structures, molecular interactions, bonds, a
 
   
 **Schema Overview:**
-- **Atom**: Represents a single element or ion, referencing the underlying physics Particle optionally.
-- **Bond**: Represents a chemical bond between two atoms (intra-molecular or otherwise).
-- **Molecule**: Collection of atoms connected by bonds, plus optional reference to quantum wavefunction.
-- **MoleculeAtomMapping**: Bridging table for many-to-many: which atoms belong to which molecule and in what count (for coarse stoichiometric models).
-- **Reaction**: A chemical reaction with references to reactants, products, and optional details.
-- **ReactionParticipant**: Bridging entity for Reaction, specifying which Molecule is a reactant or product.
+- **EconomicAgent**: Individual or organization participating in an economy.
+- **GoodOrService**: A product or service being traded in the economy.
+- **Market**: A marketplace or exchange for a particular good/service. Summaries for supply, demand, etc.
+- **Transaction**: Represents a supply or demand action by an agent in a market.
 
 
 

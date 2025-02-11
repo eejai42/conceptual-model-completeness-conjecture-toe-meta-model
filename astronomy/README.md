@@ -1,8 +1,8 @@
-# Chemistry ToE Meta-Model
+# Astronomy ToE Meta-Model
 ### 
 
 ## Overview
-Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.
+An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.
 
 
 [More about CMCC →](../README.md)
@@ -11,12 +11,10 @@ Extends the Physics TOE with atomic structures, molecular interactions, bonds, a
 
   
 **Schema Overview:**
-- **Atom**: Represents a single element or ion, referencing the underlying physics Particle optionally.
-- **Bond**: Represents a chemical bond between two atoms (intra-molecular or otherwise).
-- **Molecule**: Collection of atoms connected by bonds, plus optional reference to quantum wavefunction.
-- **MoleculeAtomMapping**: Bridging table for many-to-many: which atoms belong to which molecule and in what count (for coarse stoichiometric models).
-- **Reaction**: A chemical reaction with references to reactants, products, and optional details.
-- **ReactionParticipant**: Bridging entity for Reaction, specifying which Molecule is a reactant or product.
+- **CelestialBody**: Generic celestial object: star, planet, asteroid, etc. References physics Particle or black hole if needed.
+- **StarSystem**: Collection of celestial bodies orbiting a primary star. Summaries for total mass, etc.
+- **StarSystemMembership**: Bridging table linking CelestialBody to StarSystem with orbital data, etc.
+- **Galaxy**: A large-scale structure containing multiple star systems.
 
 
 

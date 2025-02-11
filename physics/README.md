@@ -1,17 +1,13 @@
-# 
+# Physics ToE Meta-Model
+### 
 
 ## Overview
 A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.
 
 
-
-## Domain Meta Models
+[More about CMCC →](../README.md)
 
 ---
-### CMCC Complete Physics ToE Meta-Model (Physics ToE Meta-Model)
-A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.
-
-[Read More →]()
 
   
 **Schema Overview:**
@@ -29,3 +25,37 @@ A unified model for physics, including classical mechanics, quantum mechanics, g
 - **ClassicalSystem**: Groups multiple particles. Summarizes total mass, momentum, energy, etc.
 - **SpacetimeMetric**: Stores a 3+1 or 4D metric. Einstein eq aggregator referencing total stress-energy, etc.
 - **BlackHoleSystem**: Entity for horizon radius, Hawking temp, etc., referencing total mass.
+
+
+
+---
+
+## Other Domains in the Model
+
+  # math
+- **Mathematics CMCC Meta-Model** – A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.  
+  [View Domain]()
+  # physics
+- **Physics ToE Meta-Model** – A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.  
+  [View Domain]()
+  # chemistry
+- **Chemistry ToE Meta-Model** – Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.  
+  [View Domain]()
+  # biology
+- **Biology ToE Meta-Model** – Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.  
+  [View Domain]()
+  # ai
+- **Artificial Intelligence ToE Meta-Model** – Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.  
+  [View Domain]()
+  # economics
+- **Economics ToE Meta-Model** – A computational model for economic agents, markets, transactions, and supply-demand constraints.  
+  [View Domain]()
+  # astronomy
+- **Astronomy ToE Meta-Model** – An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.  
+  [View Domain]()
+  # geology
+- **Geology** – A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.  
+  [View Domain]()
+
+
+*This document was generated from the CMCC Complete Domain Meta Models. Any updates to the metadata automatically update this README.*

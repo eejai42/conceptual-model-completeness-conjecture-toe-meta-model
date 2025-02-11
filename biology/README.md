@@ -1,8 +1,8 @@
-# Chemistry ToE Meta-Model
+# Biology ToE Meta-Model
 ### 
 
 ## Overview
-Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.
+Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.
 
 
 [More about CMCC →](../README.md)
@@ -11,12 +11,12 @@ Extends the Physics TOE with atomic structures, molecular interactions, bonds, a
 
   
 **Schema Overview:**
-- **Atom**: Represents a single element or ion, referencing the underlying physics Particle optionally.
-- **Bond**: Represents a chemical bond between two atoms (intra-molecular or otherwise).
-- **Molecule**: Collection of atoms connected by bonds, plus optional reference to quantum wavefunction.
-- **MoleculeAtomMapping**: Bridging table for many-to-many: which atoms belong to which molecule and in what count (for coarse stoichiometric models).
-- **Reaction**: A chemical reaction with references to reactants, products, and optional details.
-- **ReactionParticipant**: Bridging entity for Reaction, specifying which Molecule is a reactant or product.
+- **Gene**: Represents a segment of DNA with regulatory + coding regions, etc.
+- **Protein**: A polypeptide chain. Optionally references a Molecule record in chemistry-schema if modeled at that level.
+- **Cell**: Basic cellular entity containing genes, proteins, or referencing molecules. Could be prokaryote or eukaryote.
+- **CellGeneMapping**: Bridging table for which genes exist in which cell, toy model ignoring diploidy, etc.
+- **CellProteinMapping**: Bridging table for which proteins exist in which cell, plus concentration or copy number info.
+- **MetabolicReaction**: A biological reaction that references a chemistry Reaction for stoichiometry, plus an enzyme (Protein).
 
 
 

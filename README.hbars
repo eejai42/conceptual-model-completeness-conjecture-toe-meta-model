@@ -11,8 +11,8 @@ The Conceptual Model Completeness Conjecture (CMCC) provides a unified, self‐d
 Below is a list of TOE models included in this repository. Click on any domain to read its detailed meta-model documentation:
 
 {{#each meta.CMCC_ToEMM_Domains}}
-### {{fullname}}
-**{{name}}**
+### {{name}}
+**{{fullname}}**
 
 {{description}}
 
@@ -69,21 +69,17 @@ LICENSE NON COMMERCIAL USE ONLY!  NO WARRANTY EITHER EXPRESSED OR IMPLIED.
 
 {{#each meta.CMCC_ToEMM_Domains}}
 [[FileSetFile/RelativePath[/{{nickname}}/CMCC_Complete_ToEMM_{{nickname}}.hbars:never]]]
-# {{title}}
+# {{name}}
+### {{title}}
 
 ## Overview
 {{description}}
 
 {{meta.overview}}
-
-## Domain Meta Models
+[More about CMCC →](../README.md)
 
 {{!-- Loop over the list of domain summaries in the meta --}}
 ---
-### {{fullname}} ({{name}})
-{{description}}
-
-[Read More →]({{link}})
 
 {{!-- Optionally, look up the full details for this domain from the top-level CMCC_ToEMM_Domains object --}}
 {{#with (lookup ../CMCC_ToEMM_Domains this.id)}}
@@ -107,9 +103,20 @@ For example:
 {{/if}}
 --}}
 
-{{/with}}
-{{/each}}
 
 ---
 
+## Other Domains in the Model
+
+{{#each @root/meta.CMCC_ToEMM_Domains}}
+  {{!-- Exclude the Math domain from this list (assuming its id is "CMCC_Complete_ToEMM_Math") --}}
+  # {{nickname}}
+- **{{name}}** – {{description}}  
+  [View Domain]({{link}})
+{{/each}}
+
+
 *This document was generated from the CMCC Complete Domain Meta Models. Any updates to the metadata automatically update this README.*
+
+{{/with}}
+{{/each}}

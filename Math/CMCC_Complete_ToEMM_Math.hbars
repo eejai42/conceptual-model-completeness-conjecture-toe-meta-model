@@ -1,17 +1,16 @@
-# {{title}}  (**[Full Domain List](./../README.md)**)
+{{#with CMCC_ToEMM_Domains.CMCC_Complete_ToEMM_Math}}
+
+# {{meta.title}}  
+### - **[Full Domain List](./../README.md)**
 
 ## Overview
-{{description}}
+{{meta.description}}
 
 {{meta.overview}}
-
-
-## Mathematical Schema 
 
 ### {{meta.title}}
 {{meta.description}}
 
-{{#with CMCC_ToEMM_Domains.CMCC_Complete_ToEMM_Math}}
 {{#each schema.entities}}
 #### {{name}}
 {{description}}
@@ -65,6 +64,18 @@
   {{/each}}
 {{/if}}
 {{/with}}
+
+---
+
+## Other Domains in the Model
+
+{{#each meta.CMCC_ToEMM_Domains}}
+  {{!-- Exclude the Math domain from this list (assuming its id is "CMCC_Complete_ToEMM_Math") --}}
+  {{#unless (eq id "CMCC_Complete_ToEMM_Math")}}
+- **{{fullname}}** – {{description}}  
+  [View Domain]({{link}})
+  {{/unless}}
+{{/each}}
 
 ---
 
