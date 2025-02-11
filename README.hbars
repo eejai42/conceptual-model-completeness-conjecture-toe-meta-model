@@ -4,6 +4,11 @@
 ## Overview
 {{description}}
 
+## TL;DR;
+### The Model
+
+To skip the rigamarole, and just cut to the chase, this is the [CMCC ToE Meta-Model](SSoT/single-source-of-truth.).
+
 The Conceptual Model Completeness Conjecture (CMCC) provides a unified, self‐describing framework for modeling domains as diverse as Mathematics, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, and Economics. Underpinned by five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—the CMCC model is both declarative and operational. It guarantees Turing-completeness and aligns with Wolfram’s multiway systems, offering a universal substrate for capturing the "what" of domain knowledge while leaving the "how" to the runtime.
 
 ## Theory of Everything (TOE) Domains
@@ -14,9 +19,7 @@ Below is a list of TOE models included in this repository. Click on any domain t
 ### {{name}}
 **{{fullname}}**
 
-{{description}}
-
-For further details, see [the domain model]({{nickname}}/README.md).
+{{description}}. Read more about the [{{nickname}}]({{nickname}}/README.md) CMCC Complete Meta-Model.
 
 {{/each}}
 
@@ -113,7 +116,7 @@ For example:
 {{#each @root/meta.CMCC_ToEMM_Domains}}
   {{!-- Exclude the Math domain from this list (assuming its id is "CMCC_Complete_ToEMM_Math") --}}
   ### {{nickname}}
-**{{name}}** – {{description}}. [Read more - {{nickname}}]({{link}})
+**{{name}}** – {{description}}. [Read more about {{nickname}}](../{{nickname}}/README.md)
 {{/each}}
 
 *This document was generated from the CMCC Complete Domain Meta Models. Any updates to the metadata automatically update this README.*
