@@ -1,0 +1,45 @@
+# CMCC Research Efforts
+
+{{#each Airtable.Papers.Paper}}
+### {{Type}}: {{Title}} ({{Name}})
+{{#if SubTitle}}
+#### {{SubTitle}}
+{{/if}}
+
+{{#if DescriptionForBusinessUser}}
+{{DescriptionForBusinessUser}}
+{{/if}}
+
+{{#if DescriptionForExperts}}
+**Domain Experts:**  
+{{DescriptionForExperts}}
+{{/if}}
+
+{{#if PaperPdf.url}}
+**View Online:** [{{Url}}]({{Url}})
+**Download PDF:** [{{PaperPdf.filename}}]({{PaperPdf.url}})
+{{/if}}
+**Status:** {{Status}}  
+**Created:** {{CreatedTime}}  
+
+---
+
+{{/each}}
+
+## Other Domains in the CMCC Model
+
+The Conceptual Model Completeness Conjecture (CMCC) spans multiple domains. Explore the following meta-models for additional context and complementary research:
+
+{{#each meta.CMCC_ToEMM_Domains}}
+- **{{fullname}}** – {{description}}  
+  [Read Domain Details]({{link}})
+{{/each}}
+
+---
+
+*This document was generated automatically from the single source of truth. Any updates to the JSON data will automatically update this README.*
+
+---
+
+## About
+This repository is part of **{{meta.title}}**, developed by **{{meta.authors.[0].name}}** ({{meta.authors.[0].affiliations.[0]}}). For further inquiries, please contact **{{meta.authors.[0].contact}}**.

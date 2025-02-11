@@ -106,6 +106,26 @@
       "RelativePath": "/geology",
       "CommandLine": "json-hbars-transform -i ./../SSoT/cmcc-toe-meta-model.json -i .\\CMCC_Complete_ToEMM_Geology.hbars -o ./README.md",
       "TranspilerGroup": "geology"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "AirtableToJson",
+        "Description": "Export an Airtable Base as json"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "AirtableToJson",
+      "RelativePath": "/SSoT",
+      "CommandLine": "airtable/airtable-to-json -p baseId=appgP3aSe89g7R1cw -p entities=Papers -o papers.json -p view=ToE -p airtable=true -p nest-collections=false"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/research",
+      "CommandLine": "json-hbars-transform -i ..\\SSoT\\papers.json -i README.hbars -o README.md"
     }
   ]
 }

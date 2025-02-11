@@ -13,6 +13,8 @@ The Conceptual Model Completeness Conjecture (CMCC) provides a unified, self‐d
 
 ## Theory of Everything (TOE) Domains
 
+This entire self describing model is based on the Conceptual Model Completeness conjecture.  For a full list of thepapers, please see the [CMCC Research](/research/README.md) section.
+
 Below is a list of TOE models included in this repository. Click on any domain to read its detailed meta-model documentation:
 
 {{#each meta.CMCC_ToEMM_Domains}}
