@@ -1,7 +1,7 @@
 # CMCC Research Efforts
 
 {{#each Airtable.Papers.Paper}}
-### {{Type}}: {{Title}} ({{Name}})
+### {{Title}}
 {{#if SubTitle}}
 #### {{SubTitle}}
 {{/if}}
@@ -16,11 +16,12 @@
 {{/if}}
 
 {{#if PaperPdf.url}}
-**View Online:** [{{Url}}]({{Url}})
-**Download PDF:** [{{PaperPdf.filename}}]({{PaperPdf.url}})
+**Download {{Type}} PDF:** [{{PaperPdf.filename}}]({{PaperPdf.url}})
 {{/if}}
-**Status:** {{Status}}  
-**Created:** {{CreatedTime}}  
+
+**View Online:** [{{Url}}]({{Url}})
+**{{Name}} Status:** {{Status}}  
+**Published:** {{CreatedTime}}  
 
 ---
 
