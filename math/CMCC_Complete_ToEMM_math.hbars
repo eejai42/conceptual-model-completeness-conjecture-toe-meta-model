@@ -66,17 +66,16 @@
 {{/with}}
 
 ---
+# Appendices
+---
 
 ## Other Domains in the Model
 
-{{#each meta.CMCC_ToEMM_Domains}}
+{{#each @root/meta.CMCC_ToEMM_Domains}}
   {{!-- Exclude the Math domain from this list (assuming its id is "CMCC_Complete_ToEMM_Math") --}}
-  {{#unless (eq id "CMCC_Complete_ToEMM_Math")}}
-- **{{fullname}}** – {{description}}  
-  [View Domain]({{link}})
-  {{/unless}}
+  ### {{nickname}}
+**{{name}}** – {{description}}. [Read more about {{nickname}}](../{{nickname}}/README.md)
 {{/each}}
-
 ---
 
 *This document was generated from the CMCC Complete Mathematics TOE Meta Model. Any changes to the meta information or schema definitions in the JSON file will automatically update this README.*
