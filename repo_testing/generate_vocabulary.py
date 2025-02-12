@@ -59,7 +59,7 @@ def main():
         for w in words:
             f.write(w + "\n")
 
-    print(f"Dictionary file created: {output_file}")
+    print(f"vocabulary file created: {output_file}")
     print(f"Total entries: {len(words)}")
 
 if __name__ == "__main__":
