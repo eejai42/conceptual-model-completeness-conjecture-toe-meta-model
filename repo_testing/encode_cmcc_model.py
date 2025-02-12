@@ -5,6 +5,55 @@ import random
 import os
 import re
 
+"""¡
+¢
+£
+¤
+¥
+¦
+§
+©
+ª
+«
+¬
+®
+°
+±
+²
+³
+µ
+¶
+¹
+º
+»
+¼
+½
+¾
+¿
+À
+Æ
+Ç
+Ð
+Ñ
+Ò
+×
+Ø
+Ý
+Þ
+ß
+å
+æ
+ö
+÷
+ø
+ð
+ñ
+ò
+ç
+è
+à
+"""
+
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -12,7 +61,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 EXCEPTIONS = ["http://", "https://"]
 
 # Regular expression to match **standalone** words (case-insensitive)
-WORD_PATTERN = re.compile(r'\b[a-zA-Z]+\b')
+# WORD_PATTERN = re.compile(r'(?:(?<=^)|(?<=[^A-Za-z]))[A-Za-z]+(?=$|[^A-Za-z])')
+WORD_PATTERN = re.compile(r'\b\w+\b')
 
 def load_dictionary():
     """

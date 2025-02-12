@@ -3,6 +3,9 @@ import sys
 import random
 import string
 
+
+
+
 def generate_dictionary(n=50):
     """
     Generate n 'words' in a 'fake language' dictionary.
