@@ -8,13 +8,19 @@ import re
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Define exception list (these are preserved as-is)
+EXCEPTIONS = ["http://", "https://"]
+
+# Regular expression to match **standalone** words (case-insensitive)
+WORD_PATTERN = re.compile(r'\b[a-zA-Z]+\b')
+
 def load_dictionary():
     """
-    Load the vocabulary from a fixed dictionary file (`vocabulary.txt`) in the script directory.
+    Load the vocabulary from 'vocabulary.txt' in the script directory.
     """
     dict_path = os.path.join(SCRIPT_DIR, 'vocabulary.txt')
     with open(dict_path, 'r', encoding='utf-8') as f:
-        words = [line.strip() for line in f if line.strip()]
+        words = [line.strip().lower() for line in f if line.strip()]
     random.shuffle(words)
     return words
 
@@ -28,74 +34,69 @@ def save_json(data, filename):
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
-def group_dictionary_words(dictionary_words):
+def extract_words_from_json(obj, word_set):
     """
-    Group words by length for structured replacements.
+    Recursively scan a JSON object and extract all standalone words.
     """
-    dict_by_length = {}
-    for word in dictionary_words:
-        dict_by_length.setdefault(len(word), []).append(word)
-    # Shuffle within each length bucket
-    for bucket in dict_by_length.values():
-        random.shuffle(bucket)
-    return dict_by_length
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            word_set.update(WORD_PATTERN.findall(k))  # Extract words from keys
+            extract_words_from_json(v, word_set)
+    elif isinstance(obj, list):
+        for item in obj:
+            extract_words_from_json(item, word_set)
+    elif isinstance(obj, str):
+        word_set.update(WORD_PATTERN.findall(obj))  # Extract words from values
 
-def pick_replacement_word(token, dict_by_length, global_mapping):
+def create_word_mapping(words, dict_by_length):
     """
-    Pick a consistent replacement for `token`, based on its length.
+    Create a dictionary mapping English words to new fake words.
     """
-    if token in global_mapping:
-        return global_mapping[token]
+    word_mapping = {}
+    for word in words:
+        lower_word = word.lower()
+        if lower_word not in word_mapping:
+            word_mapping[lower_word] = pick_replacement_word(lower_word, dict_by_length)
+    return word_mapping
 
-    original_length = len(token)
-    if original_length == 1:
-        desired_lengths = [1]
-    elif original_length == 2:
-        desired_lengths = [2, 3]
-    else:
-        min_len = max(3, original_length - 1)
-        max_len = original_length + 1
-        desired_lengths = list(range(min_len, max_len + 1))
-
-    chosen = None
-    candidate_lengths = [L for L in desired_lengths if L in dict_by_length and dict_by_length[L]]
-
-    if candidate_lengths:
-        chosen_length = random.choice(candidate_lengths)
-        chosen = dict_by_length[chosen_length].pop()
-
-    if chosen is None:
-        chosen = token
-
-    global_mapping[token] = chosen
-    return chosen
-
-def split_and_replace_string(s, dict_by_length, global_mapping):
+def pick_replacement_word(word, dict_by_length):
     """
-    Replace words while keeping punctuation and spaces untouched.
+    Pick a replacement for a word while maintaining consistent length.
     """
-    tokens = re.findall(r'\w+|\s+|[^\w\s]+', s)
-    return "".join(
-        pick_replacement_word(t, dict_by_length, global_mapping) if re.match(r'^\w+$', t) else t
-        for t in tokens
-    )
+    original_length = len(word)
+    desired_lengths = [original_length] if original_length >= 3 else [3]
 
-def replace_tokens_in_data(obj, dict_by_length, global_mapping):
+    for length in desired_lengths:
+        if length in dict_by_length and dict_by_length[length]:
+            return dict_by_length[length].pop()
+
+    return word  # Fallback to original if no match is found
+
+def replace_words_in_text(text, word_mapping):
     """
-    Recursively replace words in JSON keys/values.
+    Replace words in a text using the mapping, preserving punctuation.
+    """
+    def replace_match(match):
+        word = match.group(0)
+        return word_mapping.get(word.lower(), word)  # Keep case consistency
+
+    return re.sub(WORD_PATTERN, replace_match, text)
+
+def replace_words_in_json(obj, word_mapping):
+    """
+    Recursively replace words in JSON keys/values while keeping structure intact.
     """
     if isinstance(obj, dict):
         return {
-            split_and_replace_string(k, dict_by_length, global_mapping):
-                replace_tokens_in_data(v, dict_by_length, global_mapping)
+            replace_words_in_text(k, word_mapping): replace_words_in_json(v, word_mapping)
             for k, v in obj.items()
         }
     elif isinstance(obj, list):
-        return [replace_tokens_in_data(item, dict_by_length, global_mapping) for item in obj]
+        return [replace_words_in_json(item, word_mapping) for item in obj]
     elif isinstance(obj, str):
-        return split_and_replace_string(obj, dict_by_length, global_mapping)
+        return replace_words_in_text(obj, word_mapping)
     else:
-        return split_and_replace_string(str(obj), dict_by_length, global_mapping)
+        return obj  # Keep non-string values unchanged
 
 def main():
     if len(sys.argv) < 2:
@@ -107,22 +108,30 @@ def main():
 
     # Load dictionary & group by length
     dictionary_words = load_dictionary()
-    dict_by_length = group_dictionary_words(dictionary_words)
+    dict_by_length = {}
+    for word in dictionary_words:
+        dict_by_length.setdefault(len(word), []).append(word)
+    for bucket in dict_by_length.values():
+        random.shuffle(bucket)
 
     # Load JSON data
     data = load_json(json_filename)
 
-    # Track consistent word replacements
-    global_mapping = {}
+    # Step 1: Extract words from JSON
+    unique_words = set()
+    extract_words_from_json(data, unique_words)
 
-    # Replace words consistently
-    replaced_data = replace_tokens_in_data(data, dict_by_length, global_mapping)
+    # Step 2: Create a consistent word mapping
+    word_mapping = create_word_mapping(unique_words, dict_by_length)
+
+    # Step 3: Replace words in JSON using the mapping
+    replaced_data = replace_words_in_json(data, word_mapping)
 
     # Save output files in the script directory
     mystery_file = f"{base_name}_mystery.json"
     answer_key_file = f"{base_name}_answer_key.json"
     save_json(replaced_data, mystery_file)
-    save_json(global_mapping, answer_key_file)
+    save_json(word_mapping, answer_key_file)
 
     print(f"Done!\n - Mystery JSON: {mystery_file}\n - Answer Key   : {answer_key_file}")
 
