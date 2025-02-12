@@ -5,54 +5,18 @@ import random
 import os
 import re
 
-"""¡
-¢
-£
-¤
-¥
-¦
-§
-©
-ª
-«
-¬
-®
-°
-±
-²
-³
-µ
-¶
-¹
-º
-»
-¼
-½
-¾
-¿
-À
-Æ
-Ç
-Ð
-Ñ
-Ò
-×
-Ø
-Ý
-Þ
-ß
-å
-æ
-ö
-÷
-ø
-ð
-ñ
-ò
-ç
-è
-à
-"""
+# A pool of special characters (taken from your block comment)
+SPECIAL_CHARACTER_POOL = (
+    "¡¢£¤¥¦§©ª«¬®°±²³µ¶¹º»¼½¾¿ÀÆÇÐÑÒ×ØÝÞßåæö÷øðñòçèà"
+)
+
+# The substitution mapping for digits and '/' will be generated randomly each run.
+# (Digit 7's symbol will also be used for '/'.)
+def generate_substitution_mapping():
+    selected_chars = random.sample(SPECIAL_CHARACTER_POOL, 10)
+    mapping = {str(i): selected_chars[i] for i in range(10)}
+    mapping['/'] = mapping['7']
+    return mapping, selected_chars
 
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -61,7 +25,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 EXCEPTIONS = ["http://", "https://"]
 
 # Regular expression to match **standalone** words (case-insensitive)
-# WORD_PATTERN = re.compile(r'(?:(?<=^)|(?<=[^A-Za-z]))[A-Za-z]+(?=$|[^A-Za-z])')
+# (You can adjust this pattern as needed.)
 WORD_PATTERN = re.compile(r'\b\w+\b')
 
 def load_dictionary():
@@ -148,6 +112,32 @@ def replace_words_in_json(obj, word_mapping):
     else:
         return obj  # Keep non-string values unchanged
 
+def convert_values_to_strings(obj):
+    """
+    Recursively convert every non-dict and non-list value to a string.
+    This ensures that numbers (and other primitives) become strings.
+    """
+    if isinstance(obj, dict):
+        return {k: convert_values_to_strings(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_values_to_strings(item) for item in obj]
+    else:
+        return str(obj)
+
+def substitute_digits_and_slash_in_file(filename, mapping):
+    """
+    Reads the file content, replaces all digits (0-9) and '/' characters
+    using the provided mapping, and writes the result back.
+    """
+    with open(filename, 'r', encoding='utf-8') as f:
+        content = f.read()
+    # Regex that matches any digit or '/'
+    pattern = re.compile(r'[0-9/]')
+    # Replace each occurrence using the mapping
+    new_content = pattern.sub(lambda m: mapping[m.group(0)], content)
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python encoder.py <input.json>")
@@ -177,11 +167,30 @@ def main():
     # Step 3: Replace words in JSON using the mapping
     replaced_data = replace_words_in_json(data, word_mapping)
 
+    # IMPORTANT STEP: Convert every value in the JSON to a string
+    replaced_data = convert_values_to_strings(replaced_data)
+
     # Save output files in the script directory
     mystery_file = f"{base_name}_mystery.json"
     answer_key_file = f"{base_name}_answer_key.json"
     save_json(replaced_data, mystery_file)
-    save_json(word_mapping, answer_key_file)
+
+    # Generate a random mapping for digits and '/'
+    substitution_mapping, selected_special_chars = generate_substitution_mapping()
+
+    # Final Step: Substitute all digits (0-9) and '/' characters in the mystery file
+    substitute_digits_and_slash_in_file(mystery_file, substitution_mapping)
+
+    # Build an answer key that includes both the word mapping and substitution metadata
+    answer_key = {
+        "word_mapping": word_mapping,
+        "special_substitution": {
+            "special_character_pool": SPECIAL_CHARACTER_POOL,
+            "selected_characters": selected_special_chars,
+            "digit_mapping": substitution_mapping
+        }
+    }
+    save_json(answer_key, answer_key_file)
 
     print(f"Done!\n - Mystery JSON: {mystery_file}\n - Answer Key   : {answer_key_file}")
 
