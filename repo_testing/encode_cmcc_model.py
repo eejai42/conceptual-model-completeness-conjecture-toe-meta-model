@@ -14,7 +14,7 @@ SPECIAL_CHARACTER_POOL = (
 )
 
 # The symbols we will map: digits and certain math operators.
-SYMBOLS_TO_MAP = ['0','1','2','3','4','5','6','7','8','9','+','-','/','=', '^']
+SYMBOLS_TO_MAP = ['0','1','2','3','4','5','6','7','8','9','+','-','/','=', '*', '#', '@', '^']
 
 # We will use dots to visually illustrate digits: 
 # '0' -> '.',  '1' -> '..', '2' -> '...', etc.
@@ -121,7 +121,7 @@ def pick_replacement_word(word, dict_by_length):
             return dict_by_length[length].pop()
 
     # fallback: just keep the original word
-    return word
+    return "mizdig_" + word
 
 def replace_words_in_text(text, word_mapping):
     """

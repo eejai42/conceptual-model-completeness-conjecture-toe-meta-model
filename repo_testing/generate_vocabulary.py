@@ -38,7 +38,7 @@ def generate_dictionary(n=50):
         return "".join(random.choice(letters) for _ in range(length))
 
     while len(dictionary_set) < n:
-        length = random.randint(1, 10)
+        length = random.randint(1, 20)
         if length >= 3:
             w = make_pronounceable_word(length)
         else:
