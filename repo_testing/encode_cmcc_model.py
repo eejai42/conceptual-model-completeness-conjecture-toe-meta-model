@@ -13,13 +13,45 @@ SPECIAL_CHARACTER_POOL = (
     "¡¢£¤¥¦§©ª«¬®°±²³µ¶¹º»¼½¾¿ÀÆÇÐÑÒ×ØÝÞßåæö÷øðñòçèà"
 )
 
-# Ensure that we don't repeat the mapping symbols.
-def generate_substitution_mapping():
-    # Mapping for digits 0-9 and symbols like +, -, /, =, ^
-    symbols_to_map = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '/', '=', '^']
-    selected_symbols = random.sample(SPECIAL_CHARACTER_POOL, len(symbols_to_map))
+# The symbols we will map: digits and certain math operators.
+SYMBOLS_TO_MAP = ['0','1','2','3','4','5','6','7','8','9','+','-','/','=', '^']
 
-    mapping = {symbols_to_map[i]: selected_symbols[i] for i in range(len(symbols_to_map))}
+# We will use dots to visually illustrate digits: 
+# '0' -> '.',  '1' -> '..', '2' -> '...', etc.
+def digit_to_dots(d):
+    # For digit d, produce that many dots + 1
+    # so '0' => '.', '1' => '..', '2' => '...', ... '9' => '..........'
+    # Feel free to adjust or reduce by 1, but this is as requested.
+    n = int(d)
+    return '.' * (n+1)
+
+def generate_symbol_explanation(orig):
+    """
+    Return a short string explaining what the original symbol is
+    in "digit X => 'dots'" or "plus sign => 'plus'", etc.
+    """
+    if orig.isdigit():
+        return f"digit {orig} => '{digit_to_dots(orig)}'"
+    elif orig == '+':
+        return "plus sign => example: 2 + 3 = 5"
+    elif orig == '-':
+        return "minus sign => example: 5 - 2 = 3"
+    elif orig == '/':
+        return "division sign => example: 6 / 2 = 3"
+    elif orig == '=':
+        return "equals sign => example: 2 + 3 = 5"
+    elif orig == '^':
+        return "caret/power => example: 2 ^ 3 = 8"
+    else:
+        return f"symbol {orig}"  # fallback
+
+def generate_substitution_mapping():
+    """
+    Randomly map the symbols in SYMBOLS_TO_MAP to unique characters 
+    from SPECIAL_CHARACTER_POOL, returning (mapping, selected_symbols).
+    """
+    selected_symbols = random.sample(SPECIAL_CHARACTER_POOL, len(SYMBOLS_TO_MAP))
+    mapping = {SYMBOLS_TO_MAP[i]: selected_symbols[i] for i in range(len(SYMBOLS_TO_MAP))}
     return mapping, selected_symbols
 
 # Regular expression to match standalone words
@@ -28,12 +60,13 @@ WORD_PATTERN = re.compile(r'\b\w+\b')
 def load_dictionary():
     """
     Load the vocabulary from 'vocabulary.txt' in the script directory.
+    Sort by length, then alphabetically within that length.
     """
     dict_path = os.path.join(SCRIPT_DIR, 'vocabulary.txt')
     with open(dict_path, 'r', encoding='utf-8') as f:
         words = [line.strip().lower() for line in f if line.strip()]
     
-    # Sort the words by length and then alphabetically within each length group
+    # Sort the words by length and then alphabetically
     words.sort(key=lambda x: (len(x), x))
     return words
 
@@ -48,55 +81,55 @@ def extract_words_from_json(obj, word_set):
     """
     if isinstance(obj, dict):
         for k, v in obj.items():
-            word_set.update(WORD_PATTERN.findall(k))  # Extract words from keys
+            word_set.update(WORD_PATTERN.findall(k))  # from keys
             extract_words_from_json(v, word_set)
     elif isinstance(obj, list):
         for item in obj:
             extract_words_from_json(item, word_set)
     elif isinstance(obj, str):
-        word_set.update(WORD_PATTERN.findall(obj))  # Extract words from values
-
-def generate_answer_key(symbol_mapping):
-    """
-    Generate a legend of mapped symbols for easy decoding
-    """
-    legend = []
-    for symbol, replacement in symbol_mapping.items():
-        legend.append({replacement: symbol})
-    return legend
+        word_set.update(WORD_PATTERN.findall(obj))   # from values
 
 def create_word_mapping(words, dict_by_length):
     """
-    Create a dictionary mapping English words to new fake words.
+    Create a dictionary mapping 'word' -> 'fake_word' 
+    respecting length rules: 
+      - 1..3 letter words must have a 1..3 letter replacement, 
+      - 4+ letter words can be ±1 in length if available.
     """
     word_mapping = {}
-    for word in words:
-        lower_word = word.lower()
-        if lower_word not in word_mapping:
-            word_mapping[lower_word] = pick_replacement_word(lower_word, dict_by_length)
+    for w in words:
+        lw = w.lower()
+        if lw not in word_mapping:
+            word_mapping[lw] = pick_replacement_word(lw, dict_by_length)
     return word_mapping
 
 def pick_replacement_word(word, dict_by_length):
-    """
-    Pick a replacement for a word while maintaining consistent length.
-    """
-    original_length = len(word)
-    desired_lengths = [original_length] if original_length >= 3 else [3]
+    original_len = len(word)
+    # If the original is <= 3 letters, we must match that exact length:
+    if original_len <= 3:
+        desired_lengths = [original_len]
+    else:
+        # For 4+ letter words, allow +/- 1 length 
+        # i.e. original_len, or original_len-1, or original_len+1
+        desired_lengths = [original_len, original_len-1, original_len+1]
+
+    # filter out any lengths < 1
+    desired_lengths = [dl for dl in desired_lengths if dl >= 1]
 
     for length in desired_lengths:
         if length in dict_by_length and dict_by_length[length]:
             return dict_by_length[length].pop()
 
-    return word  # Fallback to original if no match is found
+    # fallback: just keep the original word
+    return word
 
 def replace_words_in_text(text, word_mapping):
     """
     Replace words in a text using the mapping, preserving punctuation.
     """
-    def replace_match(match):
-        word = match.group(0)
-        return word_mapping.get(word.lower(), word)  # Keep case consistency
-
+    def replace_match(m):
+        w = m.group(0)
+        return word_mapping.get(w.lower(), w)  # keep case
     return re.sub(WORD_PATTERN, replace_match, text)
 
 def replace_words_in_json(obj, word_mapping):
@@ -113,12 +146,11 @@ def replace_words_in_json(obj, word_mapping):
     elif isinstance(obj, str):
         return replace_words_in_text(obj, word_mapping)
     else:
-        return obj  # Keep non-string values unchanged
+        return obj
 
 def convert_values_to_strings(obj):
     """
-    Recursively convert every non-dict and non-list value to a string.
-    This ensures that numbers (and other primitives) become strings.
+    Recursively convert every non-dict, non-list value to a string.
     """
     if isinstance(obj, dict):
         return {k: convert_values_to_strings(v) for k, v in obj.items()}
@@ -129,17 +161,63 @@ def convert_values_to_strings(obj):
 
 def substitute_digits_and_slash_in_file(filename, mapping):
     """
-    Reads the file content, replaces all digits (0-9) and '/' characters
-    using the provided mapping, and writes the result back.
+    Replace digits (0-9) and math symbols in the file with their mapped chars.
     """
+    if not os.path.exists(filename):
+        print(f"❌ Error: The file '{filename}' does not exist.")
+        sys.exit(1)
+    
     with open(filename, 'r', encoding='utf-8') as f:
         content = f.read()
-    # Regex that matches any digit or '/'
-    pattern = re.compile(r'[0-9/]')
-    # Replace each occurrence using the mapping
-    new_content = pattern.sub(lambda m: mapping[m.group(0)], content)
+
+    # Build a pattern matching all the keys in 'mapping'
+    all_symbols_escaped = [re.escape(k) for k in mapping.keys()]
+    pattern = re.compile('|'.join(all_symbols_escaped))
+
+    def do_sub(m):
+        orig = m.group(0)
+        return mapping.get(orig, orig)
+    
+    new_content = pattern.sub(do_sub, content)
+
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(new_content)
+
+def build_sample_equations(mapping):
+    """
+    Create sample math statements showing original => new form
+    """
+    # We'll do a few short examples:
+    # "2 + 3 = 5" => 2 {mapping['+']} 3 {mapping['=']} 5
+    eqs = []
+
+    # We'll just do a small set of examples referencing the mapping:
+    # (2 + 3 = 5), (5 - 2 = 3), (6 / 2 = 3), (2 ^ 3 = 8)
+    # We show " => " and how they'd look with the mapped symbols.
+    examples = [
+        ("2 + 3 = 5",  ['2','+','3','=', '5']),
+        ("5 - 2 = 3",  ['5','-','2','=', '3']),
+        ("6 / 2 = 3",  ['6','/','2','=', '3']),
+        ("2 ^ 3 = 8",  ['2','^','3','=', '8'])
+    ]
+    for (plain, items) in examples:
+        encoded_parts = []
+        for it in items:
+            encoded_parts.append(mapping.get(it, it))
+        eqs.append(f"{plain} => {' '.join(encoded_parts)}")
+    return eqs
+
+def generate_legend(substitution_mapping):
+    """
+    For each item in substitution_mapping, produce an entry like:
+      { "ø": "digit 3 => '...'" }
+    and also produce sample math statements in "sample_equations".
+    """
+    legend = []
+    for orig, repl in substitution_mapping.items():
+        explanation = generate_symbol_explanation(orig)
+        legend.append({repl: explanation})
+    return legend
 
 def main():
     if len(sys.argv) < 2:
@@ -149,51 +227,66 @@ def main():
     json_filename = sys.argv[1]
     base_name, _ = os.path.splitext(json_filename)
 
-    # Load dictionary & group by length
-    dictionary_words = load_dictionary()
+    # 1) Load dictionary & group by length
+    vocabulary = load_dictionary()
     dict_by_length = {}
-    for word in dictionary_words:
-        dict_by_length.setdefault(len(word), []).append(word)
+    for w in vocabulary:
+        dict_by_length.setdefault(len(w), []).append(w)
+    # randomize each bucket
     for bucket in dict_by_length.values():
         random.shuffle(bucket)
 
-    # Generate substitution mappings for digits and math symbols
-    substitution_mapping, selected_special_chars = generate_substitution_mapping()
+    # 2) Generate random substitution mappings for digits + symbols
+    token_mapping, selected_specials = generate_substitution_mapping()
 
-    # Load JSON data
-    data = load_json(json_filename)
+    # 3) Load JSON data
+    try:
+        with open(os.path.join(SCRIPT_DIR, json_filename), 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        print(f"❌ The file '{json_filename}' does not exist.")
+        sys.exit(1)
 
-    # Step 1: Extract words from JSON
+    # 4) Extract unique words
     unique_words = set()
     extract_words_from_json(data, unique_words)
 
-    # Step 2: Create a consistent word mapping
+    # 5) Create a consistent word mapping
     word_mapping = create_word_mapping(unique_words, dict_by_length)
 
-    # Step 3: Replace words in JSON using the mapping
-    replaced_data = replace_words_in_json(data, word_mapping)
+    # 6) Replace words in the JSON
+    replaced_json = replace_words_in_json(data, word_mapping)
 
-    # IMPORTANT STEP: Convert every value in the JSON to a string
-    replaced_data = convert_values_to_strings(replaced_data)
+    # 7) Convert all values to strings
+    replaced_json = convert_values_to_strings(replaced_json)
 
-    # Save the mystery file (obfuscated JSON)
+    # 8) Save the new obfuscated JSON as <base>_mystery.json
     mystery_file = f"{base_name}_mystery.json"
-    save_json(replaced_data, mystery_file)
+    save_json(replaced_json, mystery_file)
 
-    # Generate the answer key and save it
+    # 9) Build final answer key
+    # We'll store our symbol->char mapping in "token_mapping"
+    # Then build a "legend" reversed explanation
+    legend = generate_legend(token_mapping)
+    sample_equations = build_sample_equations(token_mapping)
+
     answer_key = {
+        "word_mapping": word_mapping,
         "special_substitution": {
-            "substitution_mapping": substitution_mapping,
-            "legend": generate_answer_key(substitution_mapping)
+            "substitution_mapping": token_mapping,
+            "legend": legend,
+            "sample_equations": sample_equations
         }
     }
+
+    # 10) Save answer key as <base>_answer_key.json
     answer_key_file = f"{base_name}_answer_key.json"
     save_json(answer_key, answer_key_file)
 
-    # Final step: Substitute digits and slash in the mystery file using the mapping
-    substitute_digits_and_slash_in_file(mystery_file, substitution_mapping)
+    # 11) Do the final pass to replace digits and math symbols in the newly created mystery file
+    substitute_digits_and_slash_in_file(mystery_file, token_mapping)
 
-    print(f"Done! - Mystery JSON: {mystery_file}\n - Answer Key: {answer_key_file}")
+    print(f"Done!\n - Mystery JSON: {mystery_file}\n - Answer Key  : {answer_key_file}")
 
 if __name__ == "__main__":
     main()
