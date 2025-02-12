@@ -32,13 +32,10 @@ def load_dictionary():
     dict_path = os.path.join(SCRIPT_DIR, 'vocabulary.txt')
     with open(dict_path, 'r', encoding='utf-8') as f:
         words = [line.strip().lower() for line in f if line.strip()]
-    random.shuffle(words)
+    
+    # Sort the words by length and then alphabetically within each length group
+    words.sort(key=lambda x: (len(x), x))
     return words
-
-def load_json(json_file):
-    json_path = os.path.join(SCRIPT_DIR, json_file)
-    with open(json_path, 'r', encoding='utf-8') as f:
-        return json.load(f)
 
 def save_json(data, filename):
     json_path = os.path.join(SCRIPT_DIR, filename)
@@ -58,6 +55,15 @@ def extract_words_from_json(obj, word_set):
             extract_words_from_json(item, word_set)
     elif isinstance(obj, str):
         word_set.update(WORD_PATTERN.findall(obj))  # Extract words from values
+
+def generate_answer_key(symbol_mapping):
+    """
+    Generate a legend of mapped symbols for easy decoding
+    """
+    legend = []
+    for symbol, replacement in symbol_mapping.items():
+        legend.append({replacement: symbol})
+    return legend
 
 def create_word_mapping(words, dict_by_length):
     """
@@ -129,20 +135,11 @@ def substitute_digits_and_slash_in_file(filename, mapping):
     with open(filename, 'r', encoding='utf-8') as f:
         content = f.read()
     # Regex that matches any digit or '/'
-    pattern = re.compile(r'[0-9/+^=-]')
+    pattern = re.compile(r'[0-9/]')
     # Replace each occurrence using the mapping
     new_content = pattern.sub(lambda m: mapping[m.group(0)], content)
     with open(filename, 'w', encoding='utf-8') as f:
         f.write(new_content)
-
-def generate_answer_key(symbol_mapping):
-    """
-    Generate a legend of mapped symbols for easy decoding
-    """
-    legend = []
-    for symbol, replacement in symbol_mapping.items():
-        legend.append({replacement: symbol})
-    return legend
 
 def main():
     if len(sys.argv) < 2:
@@ -160,6 +157,9 @@ def main():
     for bucket in dict_by_length.values():
         random.shuffle(bucket)
 
+    # Generate substitution mappings for digits and math symbols
+    substitution_mapping, selected_special_chars = generate_substitution_mapping()
+
     # Load JSON data
     data = load_json(json_filename)
 
@@ -176,30 +176,24 @@ def main():
     # IMPORTANT STEP: Convert every value in the JSON to a string
     replaced_data = convert_values_to_strings(replaced_data)
 
-    # Save the mystery JSON file
+    # Save the mystery file (obfuscated JSON)
     mystery_file = f"{base_name}_mystery.json"
     save_json(replaced_data, mystery_file)
 
-    # Generate substitution mappings for digits and math symbols
-    substitution_mapping, selected_special_chars = generate_substitution_mapping()
-
-    # Apply substitutions to the mystery file
-    substitute_digits_and_slash_in_file(mystery_file, substitution_mapping)
-
-    # Generate answer key with the symbol legend
+    # Generate the answer key and save it
     answer_key = {
-        "word_mapping": word_mapping,
         "special_substitution": {
             "substitution_mapping": substitution_mapping,
             "legend": generate_answer_key(substitution_mapping)
         }
     }
-
-    # Save the answer key
     answer_key_file = f"{base_name}_answer_key.json"
     save_json(answer_key, answer_key_file)
 
-    print(f"Done!\n - Mystery JSON: {mystery_file}\n - Answer Key   : {answer_key_file}")
+    # Final step: Substitute digits and slash in the mystery file using the mapping
+    substitute_digits_and_slash_in_file(mystery_file, substitution_mapping)
+
+    print(f"Done! - Mystery JSON: {mystery_file}\n - Answer Key: {answer_key_file}")
 
 if __name__ == "__main__":
     main()
