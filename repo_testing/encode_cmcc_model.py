@@ -1,119 +1,108 @@
 #!/usr/bin/env python3
 
-""" TO DO: {  Tis shoudl be the format of the answer key.   
-We should update python so that it works like this.  
-Also - currently the answer key does not match the actual 
-search/replace legend from the _mystery file.  Not sure how/why
-  "teyebet": [
-    {
-      "alienSymbol": "ç",
-      "dots": "",
-      "meaning": "digit 0"
-    },
-    {
-      "alienSymbol": "ª",
-      "dots": ".",
-      "meaning": "digit 1"
-    },
-    {
-      "alienSymbol": "r",
-      "dots": "..",
-      "meaning": "digit 2"
-    },
-    {
-      "alienSymbol": "£",
-      "dots": "...",
-      "meaning": "digit 3"
-    },
-    {
-      "alienSymbol": "y",
-      "dots": "....",
-      "meaning": "digit 4"
-    },
-    {
-      "alienSymbol": "i",
-      "dots": ".....",
-      "meaning": "digit 5"
-    },
-    {
-      "alienSymbol": "m",
-      "dots": "......",
-      "meaning": "digit 6"
-    },
-    {
-      "alienSymbol": "w",
-      "dots": ".......",
-      "meaning": "digit 7"
-    },
-    {
-      "alienSymbol": "©",
-      "dots": "........",
-      "meaning": "digit 8"
-    },
-    {
-      "alienSymbol": "§",
-      "dots": ".........",
-      "meaning": "digit 9"
-    },
+""" ENCODED MATH!
 
-    {
-      "alienSymbol": "+",
-      "alienEquivalent": "²",
-      "meaning": "addition",
-      "exampleEquationAlien": "r ² ª å £",
-      "exampleEquationExplanation": "2 + 1 = 3"
-    },
-    {
-      "alienSymbol": "-",
-      "alienEquivalent": "ø",
-      "meaning": "subtraction",
-      "exampleEquationAlien": "m ø r å y",
-      "exampleEquationExplanation": "6 - 2 = 4"
-    },
-    {
-      "alienSymbol": "/",
-      "alienEquivalent": "¶",
-      "meaning": "division",
-      "exampleEquationAlien": "m ¶ r å £",
-      "exampleEquationExplanation": "6 / 2 = 3"
-    },
-    {
-      "alienSymbol": "=",
-      "alienEquivalent": "å",
-      "meaning": "equals sign",
-      "exampleEquationAlien": "r ð r å y",
-      "exampleEquationExplanation": "2 * 2 = 4"
-    },
-    {
-      "alienSymbol": "*",
-      "alienEquivalent": "ð",
-      "meaning": "multiplication",
-      "exampleEquationAlien": "r ð r å y",
-      "exampleEquationExplanation": "2 × 2 = 4"
-    },
-    {
-      "alienSymbol": "#",
-      "alienEquivalent": "æ",
-      "meaning": "modulus (example guess)",
-      "exampleEquationAlien": "i æ r å ª",
-      "exampleEquationExplanation": "5 mod 2 = 1"
-    },
-    {
-      "alienSymbol": "@",
-      "alienEquivalent": "³",
-      "meaning": "cube/exponent 3 (example guess)",
-      "exampleEquationAlien": "r ³ å ©",
-      "exampleEquationExplanation": "2³ = 8"
-    },
-    {
-      "alienSymbol": "^",
-      "alienEquivalent": "ß",
-      "meaning": "general power exponent",
-      "exampleEquationAlien": "r ß £ å ©",
-      "exampleEquationExplanation": "2^3 = 8"
+"teyebezz": {
+      "teye": [
+        {
+          "symbol": "0",
+          "yobo": "ç",
+          "yeet": "",
+          "bez": ["ç", "¤ ø ç å ¤", "ç ¶ ¤ å ç"]
+        },
+        {
+          "symbol": "1",
+          "yobo": "ª",
+          "yeet": ".",
+          "bez": ["ª", "ª ² ª å ö", "ö ø ª å ª"]
+        },
+        {
+          "symbol": "2",
+          "yobo": "ö",
+          "yeet": "..",
+          "bez": ["ö", "ö ² À å §", "ö ¶ ö å ª"]
+        },
+        {
+          "symbol": "3",
+          "yobo": "£",
+          "yeet": "...",
+          "bez": ["£", "£ ð ö å ¥", "¥ ¶ £ å ö"]
+        },
+        {
+          "symbol": "4",
+          "yobo": "¤",
+          "yeet": "....",
+          "bez": ["¤", "¤ ² ¤ å ©", "§ ø ¤ å Ð"]
+        },
+        {
+          "symbol": "5",
+          "yobo": "Ð",
+          "yeet": ".....",
+          "bez": ["Ð", "Ð ² ¤ å §", "Ð ¶ Ð å ª"]
+        },
+        {
+          "symbol": "6",
+          "yobo": "¥",
+          "yeet": "......",
+          "bez": ["¥", "¥ ð ª å ¥", "¥ ¶ £ å ö"]
+        },
+        {
+          "symbol": "7",
+          "yobo": "À",
+          "yeet": ".......",
+          "bez": ["À", "À ² ö å ©", "À ø ¥ å ª"]
+        },
+        {
+          "symbol": "8",
+          "yobo": "©",
+          "yeet": "........",
+          "bez": ["©", "© ¶ ö å ¤", "© ¶ ¤ å ö"]
+        },
+        {
+          "symbol": "9",
+          "yobo": "§",
+          "yeet": ".........",
+          "bez": ["§", "§ ² § å ª©", "ª© ¶ § å ö"]
+        }
+      ],
+      "bezz": [
+        {
+          "symbol": "+",
+          "yobo": "²",
+          "bez": ["ö ² ª å £", "ö ² ¥ å ©", "ö ² Ð å À"]
+        },
+        {
+          "symbol": "-",
+          "yobo": "ø",
+          "bez": ["À ø ö å Ð", "© ø Ð å £", "¥ ø Ð å ª"]
+        },
+        {
+          "symbol": "*",
+          "yobo": "ð",
+          "bez": ["ö ð ö å ¤", "¤ ð ö å ©", "ö ð £ å ¥"]
+        },
+        {
+          "symbol": "/",
+          "yobo": "¶",
+          "bez": ["¥ ¶ ö å £", "© ¶ ö å ¤", "À ¶ À å ª"]
+        },
+        {
+          "symbol": "=",
+          "yobo": "å",
+          "bez": ["ö ð ö å ¤", "ö ð £ å ¥", "¥ ¶ ö å £"]
+        },
+        {
+          "symbol": "#",
+          "yobo": "æ",
+          "bez": ["Ð æ ö å ª", "Ð æ £ å ö", "Ð æ ¤ å ª"]
+        },
+        {
+          "symbol": "^",
+          "yobo": "ß",
+          "bez": ["ö ß £ å ©", "ö ß ö å ¤", "£ ß ö å §"]
+        }
+      ]
     }
-  ]
-}
 
 """
 
@@ -128,7 +117,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Special character pool for substitutions (excluding digits and basic symbols)
 SPECIAL_CHARACTER_POOL = (
-    "¡¢£¤¥¦§©ª«¬®°±²³µ¶¹º»¼½¾¿ÀÆÇÐÑÒ×ØÝÞßåæö÷øðñòçèà"
+    "¡¢£¤¥¦§©ª«¬®°±²³µ¶¹º»¼½¾¿ÀÆÇÐÑÒ×Ø¥Þßåæö÷øðñòçèà"
 )
 
 # The symbols we will map: digits and certain math operators.

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "current_generation": 33,
+    "current_generation": 43,
     "observations": "",
     "plan": ""
   },
@@ -766,8 +766,10 @@
       "v": 1
     },
     "ð": {
-      "english": [],
-      "v": 1
+      "english": [
+        "5"
+      ],
+      "v": 2
     },
     "ficez": {
       "english": [],
@@ -15634,6 +15636,60 @@
     "jiqe": {
       "english": [
         "axioms"
+      ],
+      "v": 1
+    },
+    "ç": {
+      "english": [
+        "0"
+      ],
+      "v": 1
+    },
+    "ª": {
+      "english": [
+        "1"
+      ],
+      "v": 1
+    },
+    "ö": {
+      "english": [
+        "2"
+      ],
+      "v": 1
+    },
+    "£": {
+      "english": [
+        "3"
+      ],
+      "v": 1
+    },
+    "¤": {
+      "english": [
+        "4"
+      ],
+      "v": 1
+    },
+    "ý": {
+      "english": [
+        "6"
+      ],
+      "v": 1
+    },
+    "à": {
+      "english": [
+        "7"
+      ],
+      "v": 1
+    },
+    "©": {
+      "english": [
+        "8"
+      ],
+      "v": 1
+    },
+    "§": {
+      "english": [
+        "9"
       ],
       "v": 1
     }
