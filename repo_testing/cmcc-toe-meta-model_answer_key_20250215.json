@@ -3484,13 +3484,13 @@
         "å": "equals sign => example: 2 + 3 = 5"
       },
       {
-        "ð": "symbol * => example: 2 * 3 = 6"
+        "ð": "symbol *"
       },
       {
-        "æ": "symbol # => example: 7 # 3 = 1"
+        "æ": "symbol #"
       },
       {
-        "³": "symbol @ => example: 3.14159..."
+        "³": "symbol @"
       },
       {
         "ß": "caret/power => example: 2 ^ 3 = 8"

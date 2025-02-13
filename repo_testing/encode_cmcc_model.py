@@ -1,4 +1,122 @@
 #!/usr/bin/env python3
+
+""" TO DO: {  Tis shoudl be the format of the answer key.   
+We should update python so that it works like this.  
+Also - currently the answer key does not match the actual 
+search/replace legend from the _mystery file.  Not sure how/why
+  "teyebet": [
+    {
+      "alienSymbol": "ç",
+      "dots": "",
+      "meaning": "digit 0"
+    },
+    {
+      "alienSymbol": "ª",
+      "dots": ".",
+      "meaning": "digit 1"
+    },
+    {
+      "alienSymbol": "r",
+      "dots": "..",
+      "meaning": "digit 2"
+    },
+    {
+      "alienSymbol": "£",
+      "dots": "...",
+      "meaning": "digit 3"
+    },
+    {
+      "alienSymbol": "y",
+      "dots": "....",
+      "meaning": "digit 4"
+    },
+    {
+      "alienSymbol": "i",
+      "dots": ".....",
+      "meaning": "digit 5"
+    },
+    {
+      "alienSymbol": "m",
+      "dots": "......",
+      "meaning": "digit 6"
+    },
+    {
+      "alienSymbol": "w",
+      "dots": ".......",
+      "meaning": "digit 7"
+    },
+    {
+      "alienSymbol": "©",
+      "dots": "........",
+      "meaning": "digit 8"
+    },
+    {
+      "alienSymbol": "§",
+      "dots": ".........",
+      "meaning": "digit 9"
+    },
+
+    {
+      "alienSymbol": "+",
+      "alienEquivalent": "²",
+      "meaning": "addition",
+      "exampleEquationAlien": "r ² ª å £",
+      "exampleEquationExplanation": "2 + 1 = 3"
+    },
+    {
+      "alienSymbol": "-",
+      "alienEquivalent": "ø",
+      "meaning": "subtraction",
+      "exampleEquationAlien": "m ø r å y",
+      "exampleEquationExplanation": "6 - 2 = 4"
+    },
+    {
+      "alienSymbol": "/",
+      "alienEquivalent": "¶",
+      "meaning": "division",
+      "exampleEquationAlien": "m ¶ r å £",
+      "exampleEquationExplanation": "6 / 2 = 3"
+    },
+    {
+      "alienSymbol": "=",
+      "alienEquivalent": "å",
+      "meaning": "equals sign",
+      "exampleEquationAlien": "r ð r å y",
+      "exampleEquationExplanation": "2 * 2 = 4"
+    },
+    {
+      "alienSymbol": "*",
+      "alienEquivalent": "ð",
+      "meaning": "multiplication",
+      "exampleEquationAlien": "r ð r å y",
+      "exampleEquationExplanation": "2 × 2 = 4"
+    },
+    {
+      "alienSymbol": "#",
+      "alienEquivalent": "æ",
+      "meaning": "modulus (example guess)",
+      "exampleEquationAlien": "i æ r å ª",
+      "exampleEquationExplanation": "5 mod 2 = 1"
+    },
+    {
+      "alienSymbol": "@",
+      "alienEquivalent": "³",
+      "meaning": "cube/exponent 3 (example guess)",
+      "exampleEquationAlien": "r ³ å ©",
+      "exampleEquationExplanation": "2³ = 8"
+    },
+    {
+      "alienSymbol": "^",
+      "alienEquivalent": "ß",
+      "meaning": "general power exponent",
+      "exampleEquationAlien": "r ß £ å ©",
+      "exampleEquationExplanation": "2^3 = 8"
+    }
+  ]
+}
+
+"""
+
 import sys
 import json
 import random
