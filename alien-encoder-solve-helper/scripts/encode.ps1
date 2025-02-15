@@ -1,0 +1,1 @@
+python ./encoder.py ../cmcc-toe-meta-model.json ../mystery.json
