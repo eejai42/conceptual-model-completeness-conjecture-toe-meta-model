@@ -9,7 +9,7 @@
 import re
 from typing import Any, Dict
 
-from .utils import read_json, write_json
+from utils import read_json, write_json
 # from .metadata_manager import MetadataManager  # Uncomment once implemented
 
 # Regex used to split the alien string into tokens (similar to encoder).

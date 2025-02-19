@@ -133,17 +133,17 @@
         "nickname": "geology"
       }
     ],
-    "numbers":[
-      {"0":""},
-      {"1":"."},
-      {"2":".."},
-      {"3":"..."},
-      {"4":"...."},
-      {"5":"....."},
-      {"6":"......"},
-      {"7":"......."},
-      {"8":"........"},
-      {"9":"........."}
+    "numbers": [
+      { "0": "" },
+      { "1": "." },
+      { "2": ".." },
+      { "3": "..." },
+      { "4": "...." },
+      { "5": "....." },
+      { "6": "......" },
+      { "7": "......." },
+      { "8": "........" },
+      { "9": "........." }
     ]
   },
   "CMCC_ToEMM_Domains": {
@@ -591,6 +591,88 @@
                 "error_message": "Category must be closed under composition"
               }
             ]
+          },
+          {
+            "name": "Theorem",
+            "description": "A major mathematical result referencing Equations, Propositions, or other structures. Allows for storing structural properties, relevant sets, and a proof outline.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "theorem_label",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "E.g. 'Theorem 1','Thm. A','Fermat’s Little Theorem','Pythagorean Theorem'"
+              },
+              {
+                "name": "statement",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Concise statement of the theorem"
+              },
+              {
+                "name": "structural_properties",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Key conceptual references: e.g. 'right triangles', 'Euclidean geometry', etc."
+              },
+              {
+                "name": "equations_involved",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Array of Equation IDs used in the statement or proof"
+              },
+              {
+                "name": "depends_on_props",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "Which Proposition entities are used"
+              },
+              {
+                "name": "references_algebraic_structures",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "If it depends on e.g. group/ring properties"
+              },
+              {
+                "name": "references_categories",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "If the theorem is in a category-theoretic context"
+              },
+              {
+                "name": "proof_outline",
+                "type": "scalar",
+                "datatype": "json",
+                "note": "High-level steps or references to sub-proofs"
+              },
+              {
+                "name": "remarks",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "Optional additional commentary, historical notes, etc."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "is_proved",
+                "type": "rollup",
+                "formula": "ValidateProof(proof_outline)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "apply_theorem",
+                "parameters": ["context"],
+                "formula": "ApplyTheoremToContext(this, context)"
+              }
+            ],
+            "constraints": []
           }
         ]
       },
@@ -643,13 +725,42 @@
               "equality": "="
             }
           }
+        ],
+        "Equation": [
+          {
+            "id": "eq_pythagoras",
+            "equation_text": "a^2 + b^2 = c^2",
+            "latex_repr": "a^2 + b^2 = c^2",
+            "description": "Basic expression of the Pythagorean relation in a right triangle.",
+            "related_sets": ["reals"]
+          }
+        ],
+        "Theorem": [
+          {
+            "id": "thm_pythagorean",
+            "theorem_label": "Pythagorean Theorem",
+            "statement": "In a right triangle with legs a and b, and hypotenuse c, we have a^2 + b^2 = c^2.",
+            "structural_properties": {
+              "triangle_type": "right triangle",
+              "geometry": "Euclidean"
+            },
+            "equations_involved": ["eq_pythagoras"],
+            "depends_on_props": [],
+            "references_algebraic_structures": [],
+            "references_categories": [],
+            "proof_outline": {
+              "step1": "Drop a perpendicular, form similar triangles, or use geometric method or algebraic approach.",
+              "step2": "Show that a^2 + b^2 indeed equals c^2 (multiple known proofs)."
+            },
+            "remarks": "One of the most famous theorems in elementary geometry."
+          }
         ]
       }
     },
     "CMCC_Complete_ToEMM_Physics": {
       "name": "All-In-One CMCC Physics Model",
       "description": "A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.",
-  
+
       "schema": {
         "entities": [
           {
@@ -678,7 +789,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "ReferenceFrame",
             "description": "Coordinate system definition, e.g. 3D classical or 4D Minkowski.",
@@ -708,7 +819,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "Potential",
             "description": "For classical or quantum usage, e.g. harmonic oscillator or gravitational well.",
@@ -757,7 +868,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "Hamiltonian",
             "description": "Stores T + V for quantum or classical contexts. E.g. p^2/2m + potential.",
@@ -800,7 +911,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "Wavefunction",
             "description": "Single or multi-particle wavefunction, storing discrete amplitude data or references.",
@@ -914,7 +1025,7 @@
               }
             ]
           },
-  
+
           {
             "name": "Particle",
             "description": "Classical or quantum entity. Use bridging table for multi-particle wavefunctions.",
@@ -1024,7 +1135,7 @@
               }
             ]
           },
-  
+
           {
             "name": "ParticleWavefunctionMapping",
             "description": "For multi-particle wavefunctions, bridging table references each Particle to the same Wavefunction record.",
@@ -1059,7 +1170,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "DensityMatrix",
             "description": "Stores ρ for a (sub)system, possibly partial trace of multi-particle wavefunction.",
@@ -1126,7 +1237,7 @@
               }
             ]
           },
-  
+
           {
             "name": "Force",
             "description": "Classical force on a particle. Aggregations can unify with quantum if we wish.",
@@ -1168,7 +1279,7 @@
             ],
             "constraints": []
           },
-  
+
           {
             "name": "GaugeField",
             "description": "Stores e.g. (E,B) or (Aμ) for a U(1), SU(3), etc. Physical observables must be gauge-invariant.",
@@ -1233,7 +1344,7 @@
               }
             ]
           },
-  
+
           {
             "name": "MeasurementEvent",
             "description": "Records an observation, can produce multiple wavefunction branches in a fully declarative manner.",
@@ -1318,7 +1429,7 @@
             ],
             "constraints": []
           },
-  
+
           {
             "name": "ClassicalSystem",
             "description": "Groups multiple particles. Summarizes total mass, momentum, energy, etc.",
@@ -1371,7 +1482,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "SpacetimeMetric",
             "description": "Stores a 3+1 or 4D metric. Einstein eq aggregator referencing total stress-energy, etc.",
@@ -1432,7 +1543,7 @@
               }
             ]
           },
-  
+
           {
             "name": "BlackHoleSystem",
             "description": "Entity for horizon radius, Hawking temp, etc., referencing total mass.",
@@ -1475,7 +1586,7 @@
           }
         ]
       },
-  
+
       "data": {
         "PhysicalConstants": [
           {
@@ -1519,7 +1630,7 @@
             "notes": "Boltzmann's constant"
           }
         ],
-  
+
         "ReferenceFrame": [
           {
             "id": "lab_frame",
@@ -1546,7 +1657,7 @@
             "notes": "Cylindrical coordinates (r, phi, z)"
           }
         ],
-  
+
         "Potential": [
           {
             "id": "harmonic_potential_1d",
@@ -1584,7 +1695,7 @@
             "notes": "Used for diatomic molecular vibrations"
           }
         ],
-  
+
         "Hamiltonian": [
           {
             "id": "harmonic_oscillator_H",
@@ -1617,7 +1728,7 @@
             "domain_type": "quantum"
           }
         ],
-  
+
         "Wavefunction": [
           {
             "id": "psi_electron_1d",
@@ -1691,7 +1802,7 @@
             "notes": "Example for integer spin wavefunction => symmetric by spin-statistics constraint"
           }
         ],
-  
+
         "Particle": [
           {
             "id": "electron_1",
@@ -1787,7 +1898,7 @@
             "notes": "Smaller orbiting body"
           }
         ],
-  
+
         "ParticleWavefunctionMapping": [
           {
             "id": "map_eA_psiTwo",
@@ -1802,7 +1913,7 @@
             "role_label": "Electron B"
           }
         ],
-  
+
         "DensityMatrix": [
           {
             "id": "rho_2e_full",
@@ -1843,7 +1954,7 @@
             "notes": "Purely classical mixture of two states"
           }
         ],
-  
+
         "Force": [
           {
             "id": "grav_force_cannon",
@@ -1853,7 +1964,7 @@
             "notes": "Approx mg downward"
           }
         ],
-  
+
         "GaugeField": [
           {
             "id": "em_field_lab",
@@ -1906,7 +2017,7 @@
             "notes": "A toy non-Abelian gauge field example"
           }
         ],
-  
+
         "MeasurementEvent": [
           {
             "id": "meas_1",
@@ -1950,7 +2061,7 @@
             "notes": "Demonstrates multi-level spin measurement"
           }
         ],
-  
+
         "ClassicalSystem": [
           {
             "id": "cannon_system",
@@ -1963,7 +2074,7 @@
             "notes": "Earth-sun type minimal example"
           }
         ],
-  
+
         "SpacetimeMetric": [
           {
             "id": "flat_minkowski_lab",
@@ -1977,7 +2088,7 @@
             "notes": "Standard flat metric"
           }
         ],
-  
+
         "BlackHoleSystem": [
           {
             "id": "bh_example_1",

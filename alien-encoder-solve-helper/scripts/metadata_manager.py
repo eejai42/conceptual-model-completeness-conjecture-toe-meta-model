@@ -6,8 +6,7 @@
 import os
 from typing import Any, Dict, List, Optional
 
-from .utils import read_json, write_json
-from .progress import calculate_approximate_progress
+from utils import read_json, write_json
 
 class MetadataManager:
     """
