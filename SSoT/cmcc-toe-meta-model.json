@@ -1,6 +1,6 @@
 {
   "title": "The CMCC Complete Theory-of-Everything Meta Model",
-  "description": "This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more.  These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework",
+  "description": "This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework",
   "meta": {
     "title": "The Conceptual Model Completeness Conjecture (CMCC)",
     "subtitle": "A Universal Declarative Computational Framework",
@@ -637,7 +637,7 @@
     "CMCC_Complete_ToEMM_Physics": {
       "name": "All-In-One CMCC Physics Model",
       "description": "A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.",
-  
+
       "schema": {
         "entities": [
           {
@@ -666,7 +666,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "ReferenceFrame",
             "description": "Coordinate system definition, e.g. 3D classical or 4D Minkowski.",
@@ -696,7 +696,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "Potential",
             "description": "For classical or quantum usage, e.g. harmonic oscillator or gravitational well.",
@@ -745,7 +745,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "Hamiltonian",
             "description": "Stores T + V for quantum or classical contexts. E.g. p^2/2m + potential.",
@@ -788,7 +788,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "Wavefunction",
             "description": "Single or multi-particle wavefunction, storing discrete amplitude data or references.",
@@ -902,7 +902,7 @@
               }
             ]
           },
-  
+
           {
             "name": "Particle",
             "description": "Classical or quantum entity. Use bridging table for multi-particle wavefunctions.",
@@ -1012,7 +1012,7 @@
               }
             ]
           },
-  
+
           {
             "name": "ParticleWavefunctionMapping",
             "description": "For multi-particle wavefunctions, bridging table references each Particle to the same Wavefunction record.",
@@ -1047,7 +1047,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "DensityMatrix",
             "description": "Stores ρ for a (sub)system, possibly partial trace of multi-particle wavefunction.",
@@ -1114,7 +1114,7 @@
               }
             ]
           },
-  
+
           {
             "name": "Force",
             "description": "Classical force on a particle. Aggregations can unify with quantum if we wish.",
@@ -1156,7 +1156,7 @@
             ],
             "constraints": []
           },
-  
+
           {
             "name": "GaugeField",
             "description": "Stores e.g. (E,B) or (Aμ) for a U(1), SU(3), etc. Physical observables must be gauge-invariant.",
@@ -1221,7 +1221,7 @@
               }
             ]
           },
-  
+
           {
             "name": "MeasurementEvent",
             "description": "Records an observation, can produce multiple wavefunction branches in a fully declarative manner.",
@@ -1306,7 +1306,7 @@
             ],
             "constraints": []
           },
-  
+
           {
             "name": "ClassicalSystem",
             "description": "Groups multiple particles. Summarizes total mass, momentum, energy, etc.",
@@ -1359,7 +1359,7 @@
             "lambdas": [],
             "constraints": []
           },
-  
+
           {
             "name": "SpacetimeMetric",
             "description": "Stores a 3+1 or 4D metric. Einstein eq aggregator referencing total stress-energy, etc.",
@@ -1420,7 +1420,7 @@
               }
             ]
           },
-  
+
           {
             "name": "BlackHoleSystem",
             "description": "Entity for horizon radius, Hawking temp, etc., referencing total mass.",
@@ -1463,7 +1463,7 @@
           }
         ]
       },
-  
+
       "data": {
         "PhysicalConstants": [
           {
@@ -1507,7 +1507,7 @@
             "notes": "Boltzmann's constant"
           }
         ],
-  
+
         "ReferenceFrame": [
           {
             "id": "lab_frame",
@@ -1534,7 +1534,7 @@
             "notes": "Cylindrical coordinates (r, phi, z)"
           }
         ],
-  
+
         "Potential": [
           {
             "id": "harmonic_potential_1d",
@@ -1572,7 +1572,7 @@
             "notes": "Used for diatomic molecular vibrations"
           }
         ],
-  
+
         "Hamiltonian": [
           {
             "id": "harmonic_oscillator_H",
@@ -1605,7 +1605,7 @@
             "domain_type": "quantum"
           }
         ],
-  
+
         "Wavefunction": [
           {
             "id": "psi_electron_1d",
@@ -1679,7 +1679,7 @@
             "notes": "Example for integer spin wavefunction => symmetric by spin-statistics constraint"
           }
         ],
-  
+
         "Particle": [
           {
             "id": "electron_1",
@@ -1775,7 +1775,7 @@
             "notes": "Smaller orbiting body"
           }
         ],
-  
+
         "ParticleWavefunctionMapping": [
           {
             "id": "map_eA_psiTwo",
@@ -1790,7 +1790,7 @@
             "role_label": "Electron B"
           }
         ],
-  
+
         "DensityMatrix": [
           {
             "id": "rho_2e_full",
@@ -1831,7 +1831,7 @@
             "notes": "Purely classical mixture of two states"
           }
         ],
-  
+
         "Force": [
           {
             "id": "grav_force_cannon",
@@ -1841,7 +1841,7 @@
             "notes": "Approx mg downward"
           }
         ],
-  
+
         "GaugeField": [
           {
             "id": "em_field_lab",
@@ -1894,7 +1894,7 @@
             "notes": "A toy non-Abelian gauge field example"
           }
         ],
-  
+
         "MeasurementEvent": [
           {
             "id": "meas_1",
@@ -1938,7 +1938,7 @@
             "notes": "Demonstrates multi-level spin measurement"
           }
         ],
-  
+
         "ClassicalSystem": [
           {
             "id": "cannon_system",
@@ -1951,7 +1951,7 @@
             "notes": "Earth-sun type minimal example"
           }
         ],
-  
+
         "SpacetimeMetric": [
           {
             "id": "flat_minkowski_lab",
@@ -1965,7 +1965,7 @@
             "notes": "Standard flat metric"
           }
         ],
-  
+
         "BlackHoleSystem": [
           {
             "id": "bh_example_1",
@@ -3107,10 +3107,9 @@
       }
     },
     "CMCC_Complete_ToEMM_Economics": {
-      "name": "All-In-One CMCC Economics Model",
-      "description": "Covers basic economic entities: agents, markets, goods, transactions, supply-demand constraints, etc.",
+      "name": "All-In-One CMCC Economics Model (Extended)",
+      "description": "Covers basic economic entities: agents, markets, goods, transactions, supply-demand constraints, plus additional primitives like utility functions, budget constraints, macro indicators, and policy instruments. Each addition references or reuses definitions from the CMCC_Complete_ToEMM_Math model if needed.",
       "depends_on": ["CMCC_Complete_ToEMM_Math"],
-
       "schema": {
         "entities": [
           {
@@ -3323,10 +3322,213 @@
                 "error_message": "Price per unit cannot be negative."
               }
             ]
+          },
+
+          {
+            "name": "UtilityFunction",
+            "description": "Represents an agent’s preference ordering over bundles of goods. May reference the math model's 'Function', or store the param-based representation directly.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "agent_id",
+                "type": "lookup",
+                "target_entity": "EconomicAgent",
+                "foreign_key": true,
+                "description": "Which agent this utility belongs to"
+              },
+              {
+                "name": "function_repr",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "JSON or param-based representation of U(x1, x2, ..., xn)"
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [
+              {
+                "name": "evaluate_utility",
+                "parameters": ["bundle"],
+                "formula": "Compute U(bundle) from function_repr"
+              },
+              {
+                "name": "marginal_utility",
+                "parameters": ["bundle", "good_id"],
+                "formula": "Compute partial derivative wrt good_id in U(bundle)"
+              }
+            ],
+            "constraints": []
+          },
+
+          {
+            "name": "BudgetConstraint",
+            "description": "Defines each agent’s or household’s budget limit. Typically references a set of goods and their prices, plus the agent’s total spending limit. May be used with UtilityFunction for optimization.",
+            "fields": [
+              {
+                "name": "constraint_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "agent_id",
+                "type": "lookup",
+                "target_entity": "EconomicAgent",
+                "foreign_key": true
+              },
+              {
+                "name": "income",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Disposable income or total money for spending"
+              },
+              {
+                "name": "constraint_equation",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "A param-based or symbolic expression e.g. p1*x1 + p2*x2 <= income"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [
+              {
+                "name": "check_feasibility",
+                "parameters": ["consumption_bundle"],
+                "formula": "Sum( price(good)*quantity(good) ) <= income"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "non_negative_income",
+                "formula": "income >= 0",
+                "error_message": "Budget income must be non-negative."
+              }
+            ]
+          },
+
+          {
+            "name": "MacroIndicator",
+            "description": "Captures macroeconomic statistics (GDP, inflation, unemployment rate, etc.). Aggregates from the micro data if needed.",
+            "fields": [
+              {
+                "name": "indicator_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "indicator_name",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. 'GDP', 'InflationRate', 'UnemploymentRate'"
+              },
+              {
+                "name": "indicator_value",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "timestamp",
+                "type": "scalar",
+                "datatype": "datetime"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "growth_rate",
+                "type": "rollup",
+                "formula": "ComputeGrowthOverPrevious(indicator_value, timestamp, indicator_name)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "update_indicator",
+                "parameters": ["micro_data_array"],
+                "formula": "Aggregate microeconomic transactions or labor data => new indicator_value"
+              }
+            ],
+            "constraints": []
+          },
+
+          {
+            "name": "PolicyInstrument",
+            "description": "Represents a government or central bank policy tool—e.g. interest rate, tax rate, subsidy, or regulation—that can affect markets or agents.",
+            "fields": [
+              {
+                "name": "instrument_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "instrument_name",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. 'InterestRate', 'TaxRate', 'SubsidyProgram'"
+              },
+              {
+                "name": "instrument_value",
+                "type": "scalar",
+                "datatype": "float",
+                "note": "Percentage or base numeric value (like interest rate= 2.5)."
+              },
+              {
+                "name": "applicable_domain",
+                "type": "scalar",
+                "datatype": "string",
+                "note": "e.g. 'income_tax', 'VAT', 'monetary_policy'"
+              },
+              {
+                "name": "start_date",
+                "type": "scalar",
+                "datatype": "datetime"
+              },
+              {
+                "name": "end_date",
+                "type": "scalar",
+                "datatype": "datetime"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [
+              {
+                "name": "apply_instrument",
+                "parameters": ["agent_or_market_id"],
+                "formula": "Adjust relevant fields e.g. liquid_assets, transaction taxes, or market prices, etc."
+              }
+            ],
+            "constraints": []
           }
         ]
       },
-
       "data": {
         "EconomicAgent": [
           {
@@ -3382,9 +3584,73 @@
             "transaction_timestamp": "2025-02-15T08:30:00Z",
             "notes": "Alice wants 5 kg of tomatoes"
           }
+        ],
+        "UtilityFunction": [
+          {
+            "id": "util_alice",
+            "agent_id": "agent_alice",
+            "function_repr": {
+              "type": "CobbDouglas",
+              "params": {
+                "alpha": 0.4,
+                "beta": 0.6
+              },
+              "formula": "U(x, y) = x^0.4 * y^0.6"
+            },
+            "description": "Cobb-Douglas utility for 2 goods"
+          }
+        ],
+        "BudgetConstraint": [
+          {
+            "constraint_id": "budget_alice",
+            "agent_id": "agent_alice",
+            "income": 1200.0,
+            "constraint_equation": {
+              "type": "Linear",
+              "expression": "p_x * x + p_y * y <= 1200.0"
+            },
+            "notes": "Alice's monthly budget"
+          }
+        ],
+        "MacroIndicator": [
+          {
+            "indicator_id": "macro_gdp",
+            "indicator_name": "GDP",
+            "indicator_value": 1000000.0,
+            "timestamp": "2025-02-15T00:00:00Z",
+            "notes": "Initial GDP estimate"
+          },
+          {
+            "indicator_id": "macro_inflation",
+            "indicator_name": "InflationRate",
+            "indicator_value": 3.2,
+            "timestamp": "2025-02-15T00:00:00Z",
+            "notes": "Annualized inflation percent"
+          }
+        ],
+        "PolicyInstrument": [
+          {
+            "instrument_id": "interest_rate_1",
+            "instrument_name": "InterestRate",
+            "instrument_value": 2.5,
+            "applicable_domain": "monetary_policy",
+            "start_date": "2025-02-01T00:00:00Z",
+            "end_date": "2025-12-31T23:59:59Z",
+            "notes": "Central Bank sets 2.5% interest rate"
+          },
+          {
+            "instrument_id": "tax_rate_income",
+            "instrument_name": "IncomeTaxRate",
+            "instrument_value": 20.0,
+            "applicable_domain": "income_tax",
+            "start_date": "2025-01-01T00:00:00Z",
+            "end_date": "2025-12-31T23:59:59Z",
+            "notes": "Flat 20% income tax"
+          }
         ]
       }
     },
+
     "CMCC_Complete_ToEMM_Astronomy": {
       "name": "All-In-One CMCC Astronomy Model",
       "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
@@ -3930,7 +4196,448 @@
     }
   },
   "Research": {
+    "Toy_Universes": [
+      {
+        "sourcePaper": {
+          "title": "It from bit — a concrete attempt",
+          "author": "Alexandre Furtado Neto*",
+          "date": "November 7, 2024",
+          "orcid": "0000-0001-9435-6566",
+          "affiliation": "UNESP Alumnus",
+          "abstractText": "This work presents the construction of a toy universe grounded in classical logic, elementary natural arithmetic, and a touch of topology. The universe’s space is modeled as a finite, closed, discrete 3-torus with an additional non-spatial dimension of a carefully selected size, effectively creating a layered structure. Two recurring patterns are observed across these layers: one based on the Euclidean distance from a central point, and the other following a half-sinusoidal natural value relative to the same point. These patterns are dynamic, relocating after interactions, allowing for the expansion of spherical wavefronts or information bubbles.\n\nTime in this universe is discrete. Each point within this space contains a fixed-size string of two-state elements, termed exbits (existence bits), each possessing an ontological character. Standard Model particles and relativistic spacetime are hypothesized to emerge from interactions between these layers, where wavefronts are activated as the evolution variables align with both Euclidean and sinusoidal patterns. Electric charge is represented by a single exbit, weak charge by two exbits, and color charge by three exbits.\n\nThe universe’s linear motion (inertia) is governed by one vector, while another vector drives rotational dynamics. Charges conjugate during interactions in intricate ways involving congruence, strong cohesion, attraction/repulsion (Coulomb), and rotation induction (magnetism). Gravity is interpreted as an extension of the static electromagnetic force, resulting in a superdeterministic model reliant on a few input parameters. Energy, conceptualized as the superposition of bubbles, can propagate across the universe, similar to photons, through a fundamental ontological collapse mechanism. This intrinsic non-local energy transfer aligns with quantum physical outcomes without requiring space-like signaling.\n\nAnother intriguing phenomenon explored in this model is self-interference, which arises naturally from the cellular automaton framework. As particles propagate through the discrete lattice, they leave behind a trace of their momentum, effectively imprinting a \"memory\" onto the lattice. This mechanism allows for interactions with subsequent waves, leading to patterns that resemble quantum self-interference. By incorporating this memory effect, the model can reproduce phenomena akin to the double-slit experiment, where particles interfere with their own past paths, reinforcing the emergent behavior of wave-particle duality without invoking any external or non-local mechanisms.\n\nThis constructive approach establishes a universal cellular automaton framework. The research includes computing the Poincaré cycle for a smaller implementation, highlighting the cyclic behavior of entropy. This work is not intended as an interpretation of Quantum Mechanics but rather an attempt to describe nature at a more fundamental level.",
+          "onlineReference": "https://zenodo.org/records/14865253"
+        },
+        "projectName": "Toy Universe CA (Cellular Automaton)",
+        "description": "A domain-specific instantiation of the CMCC meta-model for a finite 3D-torus cellular automaton universe based on 'It from bit—a concrete attempt.' This JSON includes a more complete schema, references, aggregations, and calculated fields for modeling discrete wavefront expansions, charges, collisions, and emergent phenomena.",
+        "repositoryFolder": "physics/toy_universe_CA",
+        "metaModelReference": {
+          "m3Layer": "Core CMCC definitions (Entities, Fields, Lookups, Aggregations, Calculated Fields, ACID)",
+          "m2Layer": "Generic Physics/CA Metamodel",
+          "m1Layer": "Specific Toy Universe CA Instantiation",
+          "m0Layer": "Row data for each cell plus event logs at discrete time steps"
+        },
+        "plan": {
+          "purpose": "Represent a finite 3D-lattice with an extra w-dimension, each cell storing exbits (charges, spin, momentum, etc.), and define collisions, parallel transport, and bubble expansions.",
+          "keyPoints": [
+            "Use a primary entity 'Cells' that stores exbits and coordinates (x,y,z,w).",
+            "Capture wavefront interactions and bubble membership to represent collisions and annihilations.",
+            "Capture net charges and color neutrality using aggregations, and handle time-step updates via calculated fields.",
+            "Maintain discrete steps (wavefront_tick, housekeeping_tick) as consistent ACID transactions, analogous to wavefunction collapses."
+          ],
+          "schemaStrategy": "One main table for Cells, a supplemental BubbleEvents entity for merges/annihilations, and optional InteractionRecords for advanced force modeling. All exbit-based logic is handled by calculated fields referencing neighbor lookups and aggregator results.",
+          "timeAndTransactions": [
+            "Each wavefront increment or housekeeping step is an atomic database transaction, ensuring we never see half-updated states.",
+            "All collisions and re-emissions occur within that transaction, creating a consistent snapshot for the new time step."
+          ],
+          "summary": "This plan encodes the discrete-lattice toy universe in a classic CMCC structure, facilitating expansions, collisions, and emergent particle interactions as a fully declarative rulebook."
+        },
+        "rawModel": {
+          "entities": [
+            {
+              "entityName": "Cells",
+              "description": "Each row corresponds to one cell in the 4D lattice (x,y,z,w) and stores exbits for charges, spin, momentum, plus wavefront/collision flags. UNION of all fields from both versions.",
+              "fields": [
+                {
+                  "fieldName": "cell_id",
+                  "type": "UUID",
+                  "isPrimaryKey": true,
+                  "description": "Unique identifier for a specific cell record"
+                },
+                {
+                  "fieldName": "x",
+                  "type": "integer",
+                  "description": "X coordinate in the 3D torus, range 0..L-1"
+                },
+                {
+                  "fieldName": "y",
+                  "type": "integer",
+                  "description": "Y coordinate in the 3D torus, range 0..L-1"
+                },
+                {
+                  "fieldName": "z",
+                  "type": "integer",
+                  "description": "Z coordinate in the 3D torus, range 0..L-1"
+                },
+                {
+                  "fieldName": "w",
+                  "type": "integer",
+                  "description": "Layer dimension index, range 0..W-1"
+                },
+                {
+                  "fieldName": "charge_q",
+                  "type": "boolean",
+                  "description": "Electric charge bit, true for +, false for -"
+                },
+                {
+                  "fieldName": "weak_w0",
+                  "type": "boolean",
+                  "description": "First weak bit"
+                },
+                {
+                  "fieldName": "weak_w1",
+                  "type": "boolean",
+                  "description": "Second weak bit"
+                },
+                {
+                  "fieldName": "color_c0",
+                  "type": "boolean",
+                  "description": "First color bit"
+                },
+                {
+                  "fieldName": "color_c1",
+                  "type": "boolean",
+                  "description": "Second color bit"
+                },
+                {
+                  "fieldName": "color_c2",
+                  "type": "boolean",
+                  "description": "Third color bit"
+                },
+                {
+                  "fieldName": "momentum_x",
+                  "type": "integer",
+                  "description": "Momentum vector x-component"
+                },
+                {
+                  "fieldName": "momentum_y",
+                  "type": "integer",
+                  "description": "Momentum vector y-component"
+                },
+                {
+                  "fieldName": "momentum_z",
+                  "type": "integer",
+                  "description": "Momentum vector z-component"
+                },
+                {
+                  "fieldName": "spin_x",
+                  "type": "integer",
+                  "description": "Spin vector x-component"
+                },
+                {
+                  "fieldName": "spin_y",
+                  "type": "integer",
+                  "description": "Spin vector y-component"
+                },
+                {
+                  "fieldName": "spin_z",
+                  "type": "integer",
+                  "description": "Spin vector z-component"
+                },
+                {
+                  "fieldName": "wavefront_tick",
+                  "type": "integer",
+                  "description": "Discrete light-step time variable m"
+                },
+                {
+                  "fieldName": "housekeeping_tick",
+                  "type": "integer",
+                  "description": "Atemporal housekeeping counter n"
+                },
+                {
+                  "fieldName": "relocation_offset_x",
+                  "type": "integer",
+                  "description": "Relocation offset x-component used for re-issue after collisions"
+                },
+                {
+                  "fieldName": "relocation_offset_y",
+                  "type": "integer",
+                  "description": "Relocation offset y-component"
+                },
+                {
+                  "fieldName": "relocation_offset_z",
+                  "type": "integer",
+                  "description": "Relocation offset z-component"
+                },
+                {
+                  "fieldName": "affinity",
+                  "type": "integer",
+                  "description": "Indicates bubble/particle ID"
+                },
+                {
+                  "fieldName": "active_wavefront",
+                  "type": "boolean",
+                  "description": "True if this cell is currently part of an expanding wavefront"
+                },
+                {
+                  "fieldName": "collision_flag",
+                  "type": "boolean",
+                  "description": "True if collision detected at this cell/time"
+                },
+                {
+                  "fieldName": "messenger_flag",
+                  "type": "boolean",
+                  "description": "True if this cell acts as a 'messenger' in Coulomb/magnetic sense"
+                },
+                {
+                  "fieldName": "empodion_flag",
+                  "type": "boolean",
+                  "description": "True if self-interference phenomenon is triggered here"
+                },
+                {
+                  "fieldName": "frequency",
+                  "type": "integer",
+                  "description": "Sine wave frequency multiple f"
+                },
+                {
+                  "fieldName": "sine_phase",
+                  "type": "integer",
+                  "description": "Independent angle parameter for half-sinusoidal patterns"
+                },
+                {
+                  "fieldName": "pole_bit",
+                  "type": "boolean",
+                  "description": "Marks a privileged linear direction in the lattice (p)."
+                },
+                {
+                  "fieldName": "meta_pole_bit",
+                  "type": "boolean",
+                  "description": "Spiral path bit for rotation/polarization (orthogonal to p)."
+                },
+                {
+                  "fieldName": "orphan_flag",
+                  "type": "boolean",
+                  "description": "True if wavefront remains after reissue, with lost affinity."
+                },
+                {
+                  "fieldName": "sine_mask_bit",
+                  "type": "boolean",
+                  "description": "Bit for half-cycle sine amplitude presence (like s in text)."
+                }
+              ]
+            },
+            {
+              "entityName": "BubbleEvents",
+              "description": "Logs major bubble or particle interactions, such as annihilation, fusion, charge conjugation, or re-issue events.",
+              "fields": [
+                {
+                  "fieldName": "event_id",
+                  "type": "UUID",
+                  "isPrimaryKey": true,
+                  "description": "Unique identifier for the event"
+                },
+                {
+                  "fieldName": "affinity_id",
+                  "type": "integer",
+                  "description": "Identifies which bubble is changing"
+                },
+                {
+                  "fieldName": "event_type",
+                  "type": "string",
+                  "description": "Type of event: 'annihilation', 'fusion', 'parallel_transport', 'conjugation', etc."
+                },
+                {
+                  "fieldName": "trigger_cell_id",
+                  "type": "UUID",
+                  "description": "Cell that triggered the event"
+                },
+                {
+                  "fieldName": "timestamp_m",
+                  "type": "integer",
+                  "description": "Light-step time when event happened"
+                },
+                {
+                  "fieldName": "notes",
+                  "type": "string",
+                  "description": "Free-text notes for more context"
+                }
+              ]
+            },
+            {
+              "entityName": "InteractionRecords",
+              "description": "Optional table for logging pairwise or multi-cell interactions, capturing ephemeral calculations like Coulomb or magnetic kicks.",
+              "fields": [
+                {
+                  "fieldName": "interaction_id",
+                  "type": "UUID",
+                  "isPrimaryKey": true,
+                  "description": "Unique identifier"
+                },
+                {
+                  "fieldName": "cell_id_1",
+                  "type": "UUID",
+                  "description": "First participant cell"
+                },
+                {
+                  "fieldName": "cell_id_2",
+                  "type": "UUID",
+                  "description": "Second participant cell"
+                },
+                {
+                  "fieldName": "force_type",
+                  "type": "string",
+                  "description": "e.g. 'Coulomb', 'Magnetic', 'Weak', 'Empodion'"
+                },
+                {
+                  "fieldName": "applied_momentum_x",
+                  "type": "integer",
+                  "description": "Delta momentum x"
+                },
+                {
+                  "fieldName": "applied_momentum_y",
+                  "type": "integer",
+                  "description": "Delta momentum y"
+                },
+                {
+                  "fieldName": "applied_momentum_z",
+                  "type": "integer",
+                  "description": "Delta momentum z"
+                },
+                {
+                  "fieldName": "time_step",
+                  "type": "integer",
+                  "description": "Light-step time"
+                }
+              ]
+            }
+          ],
+          "lookups": [
+            {
+              "lookupName": "CellNeighbors",
+              "description": "Links each cell to its immediate neighbors in x,y,z with torus wrapping, plus optional neighbor in w dimension.",
+              "lookupDefinition": {
+                "fromEntity": "Cells",
+                "toEntity": "Cells",
+                "relationship": "M:N",
+                "condition": "Neighbor if (|x1 - x2| + |y1 - y2| + |z1 - z2| == 1) mod L for torus wrap, optional (w +/- 1) if needed."
+              }
+            },
+            {
+              "lookupName": "BubbleAffinityLookup",
+              "description": "Groups cells that share a common affinity ID (same bubble/particle).",
+              "lookupDefinition": {
+                "fromEntity": "Cells",
+                "toEntity": "Cells",
+                "relationship": "M:N",
+                "condition": "Cells.affinity = otherCells.affinity"
+              }
+            },
+            {
+              "lookupName": "CollidedPairs",
+              "description": "Joins cells that have collision_flag = true for the same wavefront_tick.",
+              "lookupDefinition": {
+                "fromEntity": "Cells",
+                "toEntity": "Cells",
+                "relationship": "M:N",
+                "condition": "cell1.wavefront_tick = cell2.wavefront_tick AND cell1.collision_flag = true AND cell2.collision_flag = true"
+              }
+            }
+          ],
+          "aggregations": [
+            {
+              "aggregationName": "NetChargeByBubble",
+              "description": "Computes net electric charge by summing q bits for each bubble ID.",
+              "groupBy": ["affinity"],
+              "aggregateFunction": "SUM(charge_q)"
+            },
+            {
+              "aggregationName": "NetColorSignature",
+              "description": "Aggregates color bits c0,c1,c2 to detect neutral or balanced color states per bubble.",
+              "groupBy": ["affinity"],
+              "aggregateFunction": "COUNT_OF(color_c0, color_c1, color_c2)"
+            },
+            {
+              "aggregationName": "TotalParticlesPerLayer",
+              "description": "Counts how many distinct bubble IDs appear in a given w layer.",
+              "groupBy": ["w"],
+              "aggregateFunction": "COUNT(DISTINCT affinity)"
+            },
+            {
+              "aggregationName": "GlobalEntropyEstimate",
+              "description": "Approximate measure of entropy across the entire lattice by hashing exbit patterns.",
+              "groupBy": [],
+              "aggregateFunction": "CUSTOM_HASH_SUM"
+            }
+          ],
+          "calculatedFields": [
+            {
+              "fieldName": "distanceFromCenter",
+              "appliesToEntity": "Cells",
+              "formula": "SQRT((x - L/2)^2 + (y - L/2)^2 + (z - L/2)^2)",
+              "dependencies": ["x", "y", "z"],
+              "notes": "Used to check wavefront expansion constraints (distance = wavefront_tick)."
+            },
+            {
+              "fieldName": "isCollision",
+              "appliesToEntity": "Cells",
+              "formula": "IF (EXISTS neighborCell WHERE neighborCell.affinity != Cells.affinity AND neighborCell.wavefront_tick = Cells.wavefront_tick AND neighborCell.active_wavefront = true) THEN true ELSE false",
+              "dependencies": [
+                "CellNeighbors",
+                "active_wavefront",
+                "wavefront_tick",
+                "affinity"
+              ]
+            },
+            {
+              "fieldName": "activeWavefront",
+              "appliesToEntity": "Cells",
+              "formula": "IF distanceFromCenter = wavefront_tick THEN true ELSE false",
+              "dependencies": ["distanceFromCenter", "wavefront_tick"]
+            },
+            {
+              "fieldName": "parallelTransportOffset",
+              "appliesToEntity": "Cells",
+              "formula": "IF collision_flag THEN (neighbor.x - x, neighbor.y - y, neighbor.z - z) ELSE (0,0,0)",
+              "dependencies": ["collision_flag", "CellNeighbors"]
+            },
+            {
+              "fieldName": "coulombKick",
+              "appliesToEntity": "Cells",
+              "formula": "IF (charge_q == neighbor.charge_q) THEN +deltaMomentum ELSE -deltaMomentum",
+              "dependencies": ["charge_q", "CellNeighbors"],
+              "notes": "Implements attraction/repulsion for like/unlike charges."
+            },
+            {
+              "fieldName": "magneticKick",
+              "appliesToEntity": "Cells",
+              "formula": "IF (charge_q == neighbor.charge_q) THEN CROSS(spin, neighbor.spin) ELSE (0,0,0)",
+              "dependencies": ["charge_q", "spin_x", "spin_y", "spin_z"],
+              "notes": "Small lateral kick orthonormal to spin vectors if charges have same sign."
+            },
+            {
+              "fieldName": "empodionDetected",
+              "appliesToEntity": "Cells",
+              "formula": "IF (momentum_x, momentum_y, momentum_z) MATCH prior cell memory AND wavefront_tick > prior_tick THEN true ELSE false",
+              "dependencies": [
+                "momentum_x",
+                "momentum_y",
+                "momentum_z",
+                "wavefront_tick"
+              ],
+              "notes": "Detects self-interference if momentum matches a past wave; sets empodion_flag."
+            }
+          ]
+        },
+        "inferences": {
+          "firstOrderInferences": [
+            "Collision detection (isCollision). Each cell with isCollision = true triggers wavefront reissue or annihilation event.",
+            "Wavefront activation (activeWavefront): distanceFromCenter = wavefront_tick implies an expanding spherical shell."
+          ],
+          "secondOrderInferences": [
+            "Charge or color neutrality referencing NetChargeByBubble, NetColorSignature. If net color is balanced, we have a 'hadron-like' bubble.",
+            "Empodion detection if empodionDetected = true, possibly changing bubble membership or wave re-issue logic."
+          ],
+          "thirdOrderInferences": [
+            "Parallel transport updates momentum upon collisions (parallelTransportOffset).",
+            "Coulomb repulsion/attraction merges with Magnetic lateral deflection (coulombKick, magneticKick). Summaries go into InteractionRecords."
+          ],
+          "beyondThirdOrder": [
+            "GlobalEntropyEstimate monitors cyclical recurrences (Poincaré cycles).",
+            "Complex multi-bubble merges, advanced color reconfigurations, super-photon or neutrino fragments. Logged in BubbleEvents."
+          ]
+        },
+        "originalModelElementsReferenced": [
+          "Finite, closed, discrete 3-torus + extra dimension (w).",
+          "Exbits: q, w0, w1 (weak), c0, c1, c2 (color), spin, momentum, wavefront/collision flags.",
+          "Discrete m (wavefront_tick) and n (housekeeping_tick) time variables.",
+          "Bubble expansions, collisions, annihilations per cases (a),(b),(c).",
+          "Parallel transport for inertia with reissue offsets from contact point.",
+          "Electromagnetic-like interactions (Coulomb & magnetic).",
+          "Empodion (self-interference) memory concept to replicate double-slit-like patterns."
+        ]
+      }
+    ],
     "Papers": [
+      {},
       {
         "PaperId": "recgRgdCve81nYIK7",
         "createdTime": "2025-01-30T23:20:22Z",
@@ -4342,6 +5049,744 @@
         "SubTitle": "An Accessible Onboarding to the Conceptual Model Completeness Conjecture",
         "Type": "CMCC",
         "Url": "https://zenodo.org/records/14836305"
+      },
+      {
+        "id": "it_from_bit_concrete_attempt_2025",
+        "title": "It from bit — a concrete attempt",
+        "authors": [
+          {
+            "name": "Alexandre Furtado Neto",
+            "orcid": "0000-0001-9435-6566"
+          }
+        ],
+        "year": 2025,
+        "institutional_affiliation": "UNESP Alumnus",
+        "date": "February 13, 2025",
+        "abstract": "Presents a toy universe grounded in classical logic, elementary natural arithmetic, and a touch of topology. Models space as a finite, closed, discrete 3-torus with an additional non-spatial dimension. Each point in this space holds a fixed-size string of two-state elements (exbits). Proposes that charge, inertia, and rotational dynamics emerge from discrete bits, leading to phenomena resembling electromagnetism, gravity, and quantum self-interference. Aligns conceptually with 't Hooft’s cellular automaton interpretation of quantum mechanics.",
+        "online_links": [
+          {
+            "url": "https://zenodo.org/records/14865253",
+            "note": "Zenodo reference"
+          }
+        ],
+        "key_claims": [
+          "Universe as a 3-torus plus extra dimension W, purely discrete.",
+          "Exbits unify electric, weak, color charges; global bits track spin, momentum.",
+          "Gravity emerges as extended electromagnetism (super-photon 'graviton').",
+          "Self-interference from trace-based memory in the lattice.",
+          "Highly deterministic, nonlocal CA supporting a superdeterministic worldview."
+        ]
+      },
+      {
+        "id": "thooft_cellular_automaton_qm_2016",
+        "title": "The Cellular Automaton Interpretation of Quantum Mechanics",
+        "authors": [
+          {
+            "name": "Gerard ’t Hooft"
+          }
+        ],
+        "year": 2016,
+        "publisher": "Fundamental Theories of Physics (Springer)",
+        "abstract": "Proposes that quantum mechanics can be interpreted in terms of an underlying deterministic cellular automaton (CA). The wavefunction and Hilbert space formalism emerge as an epistemic tool, while the CA evolves in an ontological state basis. Demonstrates how quantum superposition and entanglement can align with deterministic hidden variables under certain constraints.",
+        "online_links": [
+          {
+            "url": "https://doi.org/10.1007/978-3-319-41285-6",
+            "note": "Publisher reference"
+          }
+        ],
+        "key_claims": [
+          "Replaces standard quantum states with classical CA states ('ontological states').",
+          "Permutation-based evolution recast as unitary operator in Hilbert space.",
+          "Born rule can emerge from global constraints on local CA transitions.",
+          "Challenges no-go theorems by embedding a deeper hidden-variable structure."
+        ],
+        "cmccDomainModel": {
+          "overview": "This is a conceptual CMCC representation of ’t Hooft’s deterministic CA approach to quantum mechanics. Each 'ontological state' in the CA evolves via a permutation operator. Observed quantum states arise as linear combinations of these ontological states, but only as an epistemic layer. The system also suggests that Born’s rule can be derived from constraints on the global measure over CA configurations, and that standard quantum phenomena like entanglement and superposition reflect local updates in the hidden variable CA.",
+          "entities": [
+            {
+              "entityName": "OntologicalState",
+              "description": "A fundamental CA configuration representing a classical hidden-variable arrangement. In ’t Hooft's interpretation, these are real 'bits' of the system, evolving deterministically.",
+              "fields": [
+                {
+                  "fieldName": "state_id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true,
+                  "description": "Unique ID for each ontological state."
+                },
+                {
+                  "fieldName": "configuration_bits",
+                  "type": "scalar",
+                  "datatype": "json",
+                  "description": "A map or list of bits describing the CA local variables. Potentially includes sub-lattice references."
+                },
+                {
+                  "fieldName": "energy_level",
+                  "type": "scalar",
+                  "datatype": "float",
+                  "description": "Optional notion of classical energy if relevant."
+                },
+                {
+                  "fieldName": "occupied_subsystem",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "description": "If we break the CA into subsystems, identifies which portion (optional)."
+                }
+              ],
+              "lookups": [
+                {
+                  "name": "AllowedTransitions",
+                  "description": "Reference to next permissible states from this ontological state.",
+                  "target_entity": "OntologicalState",
+                  "type": "one_to_many",
+                  "join_condition": "Permutation-based adjacency in state space"
+                }
+              ],
+              "aggregations": [
+                {
+                  "name": "num_transition_paths",
+                  "type": "rollup",
+                  "formula": "COUNT(AllowedTransitions)"
+                }
+              ],
+              "lambdas": [
+                {
+                  "name": "local_update_rule",
+                  "parameters": [],
+                  "formula": "Applies the local CA evolution (bits -> new bits)."
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "single_successor_constraint",
+                  "formula": "Permutation => exactly one next state, exactly one predecessor.",
+                  "error_message": "Each OntologicalState must have exactly one image and one pre-image in a perfect permutation."
+                }
+              ]
+            },
+            {
+              "entityName": "PermutationOperator",
+              "description": "Represents the global CA step function as a permutation over ontological states. Provides the route to interpret the evolution as a unitary operator in Hilbert space.",
+              "fields": [
+                {
+                  "fieldName": "perm_id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true
+                },
+                {
+                  "fieldName": "domain_size",
+                  "type": "scalar",
+                  "datatype": "int",
+                  "description": "Number of ontological states this operator permutes."
+                },
+                {
+                  "fieldName": "permutation_map",
+                  "type": "scalar",
+                  "datatype": "json",
+                  "description": "Maps each OntologicalState.state_id to its unique successor."
+                },
+                {
+                  "fieldName": "hilbert_equivalent_unitary",
+                  "type": "scalar",
+                  "datatype": "json",
+                  "description": "An optional matrix representation if we diagonalize or embed in a Hilbert space."
+                }
+              ],
+              "lookups": [
+                {
+                  "name": "OntologicalStatesInDomain",
+                  "description": "All states that this operator acts on. Should be the entire set if universal.",
+                  "target_entity": "OntologicalState",
+                  "type": "many_to_many",
+                  "join_condition": "Permutation domain covers the entire state space."
+                }
+              ],
+              "aggregations": [
+                {
+                  "name": "check_bijectivity",
+                  "type": "rollup",
+                  "formula": "Validate that 'permutation_map' is a 1-1 onto function across domain_size states."
+                }
+              ],
+              "lambdas": [
+                {
+                  "name": "apply_permutation",
+                  "parameters": ["state_id"],
+                  "formula": "permutation_map[state_id]"
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "is_bijective",
+                  "formula": "IF check_bijectivity != domain_size THEN error",
+                  "error_message": "PermutationOperator must be bijective over the domain."
+                }
+              ]
+            },
+            {
+              "entityName": "HilbertSpaceMapping",
+              "description": "Epistemic layer: each OntologicalState is assigned a basis vector in Hilbert space. The wavefunction is a superposition of these basis states, but 't Hooft sees it as emergent.",
+              "fields": [
+                {
+                  "fieldName": "mapping_id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true
+                },
+                {
+                  "fieldName": "basis_label",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "description": "A name for the basis vector set (e.g. |S_i>)"
+                },
+                {
+                  "fieldName": "phase_factor",
+                  "type": "scalar",
+                  "datatype": "float",
+                  "description": "Optional global or local phase factor for each basis vector."
+                },
+                {
+                  "fieldName": "ontological_state_id",
+                  "type": "lookup",
+                  "target_entity": "OntologicalState",
+                  "description": "Points to a classical state that forms one basis vector in the Hilbert space."
+                }
+              ],
+              "lookups": [],
+              "aggregations": [
+                {
+                  "name": "count_mapped_states",
+                  "type": "rollup",
+                  "formula": "COUNT(ontological_state_id)"
+                }
+              ],
+              "lambdas": [
+                {
+                  "name": "to_hilbert_vector",
+                  "parameters": ["ontological_state_id"],
+                  "formula": "Create unit vector with 1 at index(ontological_state_id), 0 else"
+                }
+              ],
+              "constraints": []
+            },
+            {
+              "entityName": "QuantumTemplate",
+              "description": "Represents a 'wavefunction' or 'quantum state' as an epistemic superposition of ontological states. This is 't Hooft’s reading that wavefunctions do not represent reality directly, but a knowledge state.",
+              "fields": [
+                {
+                  "fieldName": "template_id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true
+                },
+                {
+                  "fieldName": "amplitudes",
+                  "type": "scalar",
+                  "datatype": "json",
+                  "description": "Complex coefficients for each basis vector from HilbertSpaceMapping"
+                },
+                {
+                  "fieldName": "normalization",
+                  "type": "scalar",
+                  "datatype": "float",
+                  "description": "Sum of |amplitudes|^2, used to interpret Born rule"
+                }
+              ],
+              "lookups": [
+                {
+                  "name": "basis",
+                  "description": "List of HilbertSpaceMapping references used in this superposition.",
+                  "target_entity": "HilbertSpaceMapping",
+                  "type": "many_to_many",
+                  "join_condition": "amplitudes keys match the basis_label or ontological_state_id"
+                }
+              ],
+              "aggregations": [
+                {
+                  "name": "calc_probability_distribution",
+                  "type": "rollup",
+                  "formula": "For each state in amplitudes, p_i = |amplitudes[i]|^2"
+                }
+              ],
+              "lambdas": [
+                {
+                  "name": "collapse_projection",
+                  "parameters": ["basis_state"],
+                  "formula": "Projects amplitudes onto basis_state, yields new normalized distribution"
+                },
+                {
+                  "name": "unitary_evolution",
+                  "parameters": ["PermutationOperator_id"],
+                  "formula": "Rewrite each amplitude index -> permutation, or use an associated unitary matrix"
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "normalization_check",
+                  "formula": "IF ABS(normalization - 1) > 1e-9 THEN error",
+                  "error_message": "Wavefunction must be normalized in standard quantum mechanics terms."
+                }
+              ]
+            }
+          ],
+          "lookups": [
+            {
+              "lookupName": "TransitionMap",
+              "description": "Links OntologicalState to its unique next state under a given PermutationOperator.",
+              "lookupDefinition": {
+                "fromEntity": "OntologicalState",
+                "toEntity": "OntologicalState",
+                "relationship": "M:1",
+                "condition": "OntologicalState A -> OntologicalState B if permutation_map[A] = B"
+              }
+            }
+          ],
+          "aggregations": [
+            {
+              "aggregationName": "GlobalPermutationConsistency",
+              "description": "Checks that each OntologicalState is assigned exactly one successor and one predecessor to ensure perfect permutation behavior.",
+              "groupBy": [],
+              "aggregateFunction": "CheckAllStatesHaveOneSuccessorOnePredecessor"
+            }
+          ],
+          "calculatedFields": [
+            {
+              "fieldName": "UnitaryOperatorCorrespondence",
+              "formula": "PermutationOperator => diagonalize => get NxN matrix => adjacency in Hilbert space",
+              "appliesToEntity": "PermutationOperator"
+            },
+            {
+              "fieldName": "EmergentBornRule",
+              "formula": "Summation of measure over CA states => probability amplitude squared under constraints",
+              "appliesToEntity": "QuantumTemplate"
+            }
+          ]
+        },
+        "extendedInferences": {
+          "firstOrderInferences": [
+            "Ontological states evolve deterministically, so each has a unique next state (Permutation).",
+            "Quantum superposition is reinterpreted as an epistemic overlay on these classical states."
+          ],
+          "secondOrderInferences": [
+            "Born rule emerges from counting global measure of states that lead to a particular outcome (coarse graining).",
+            "Entanglement reflects correlated local CA configurations mapped to multiple-particle amplitude structures."
+          ],
+          "thirdOrderInferences": [
+            "Contextuality or no-go theorems can be bypassed by hidden constraints ensuring no local observers detect a violation.",
+            "Relativistic considerations require that the CA updates remain consistent under Lorentz transformations if implemented carefully."
+          ],
+          "beyondThirdOrder": [
+            "Combining general relativity with a discrete CA model, enabling a deeper hidden variable approach that extends to curved spacetimes.",
+            "Large-scale computational experiments might reveal new constraints on the CA architecture, bridging quantum phenomena with emergent classicality."
+          ]
+        },
+        "notesOnImplementation": [
+          "Simulating all states in a large CA might be computationally explosive, but local patterns can be derived systematically.",
+          "The HilbertSpaceMapping can be partial if certain sectors of the CA are never accessed or remain unobservable.",
+          "PermutationOperator is typically updated in discrete time steps; continuous-time quantum mechanics is mirrored by a time-slicing approach."
+        ]
+      },
+      {
+        "id": "zuse_rechnender_raum_1967",
+        "title": "Rechnender Raum (Calculating Space)",
+        "authors": [
+          {
+            "name": "Konrad Zuse"
+          }
+        ],
+        "year": 1967,
+        "abstract": "An early and foundational work hypothesizing that space-time and all physical processes can be understood as computations on a discrete 'cellular' substrate. Zuse speculates that the universe behaves like a universal digital computer, processing information locally in a grid-like structure.",
+        "online_links": [],
+        "key_claims": [
+          "Physical reality as a giant cellular automaton or computational system.",
+          "Space-time as discretized data manipulated by local rules.",
+          "Precursor to digital physics movements (Fredkin, Wolfram, etc.)."
+        ],
+
+        "cmccDomainModel": {
+          "overview": "Zuse posits a discrete lattice—Rechnender Raum—where every cell holds bits describing local physical quantities. Time progresses in discrete steps, with global updates performed by some universal rule. This model can unify all physics if it is universal enough, effectively treating the entire universe as a computing machine. Below is a CMCC representation capturing these ideas, including the discrete lattice, local rule updates, and potential emergent global phenomena.",
+          "entities": [
+            {
+              "entityName": "ZuseCell",
+              "description": "A single cell in Zuse’s discrete space-time. Stores the local 'bits' that define matter/fields at that point in space-time.",
+              "fields": [
+                {
+                  "fieldName": "cell_id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true,
+                  "description": "Coordinates or index in the Zuse lattice, e.g. 'x,y,z,t'"
+                },
+                {
+                  "fieldName": "local_bits",
+                  "type": "scalar",
+                  "datatype": "json",
+                  "description": "The bitstring or set of discrete variables at this cell. E.g. matter density, field states, etc."
+                },
+                {
+                  "fieldName": "time_step",
+                  "type": "scalar",
+                  "datatype": "int",
+                  "description": "Discrete time index used by the global or local update"
+                },
+                {
+                  "fieldName": "frozen_flag",
+                  "type": "scalar",
+                  "datatype": "boolean",
+                  "description": "Optional: If for some reason the cell does not update (like boundary or special condition)."
+                }
+              ],
+              "lookups": [
+                {
+                  "name": "ZuseNeighbors",
+                  "description": "Links this cell to spatial neighbors in x,y,z (and possibly t). The exact dimension depends on the model version.",
+                  "target_entity": "ZuseCell",
+                  "type": "many_to_many",
+                  "join_condition": "Typically adjacency if sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2) = 1, modded if wrapping occurs."
+                }
+              ],
+              "aggregations": [
+                {
+                  "name": "num_neighbor_cells",
+                  "type": "rollup",
+                  "formula": "COUNT(ZuseNeighbors)"
+                }
+              ],
+              "lambdas": [
+                {
+                  "name": "local_update",
+                  "parameters": [],
+                  "formula": "Applies Zuse’s local rule to (local_bits, neighbor.local_bits) => new local_bits"
+                }
+              ],
+              "constraints": []
+            },
+            {
+              "entityName": "ZuseRule",
+              "description": "Encodes the local update rule for each cell. Zuse envisioned that all physics arises from these local transitions.",
+              "fields": [
+                {
+                  "fieldName": "rule_id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true
+                },
+                {
+                  "fieldName": "rule_description",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "description": "High-level textual explanation of how local_bits -> next local_bits"
+                },
+                {
+                  "fieldName": "transition_table",
+                  "type": "scalar",
+                  "datatype": "json",
+                  "description": "Maps a (cell’s bits + neighbors’ bits) to new bits. Possibly a large table or param-based formula."
+                },
+                {
+                  "fieldName": "reversibility_flag",
+                  "type": "scalar",
+                  "datatype": "boolean",
+                  "description": "Indicate whether the rule is invertible (optional)."
+                }
+              ],
+              "lookups": [],
+              "aggregations": [],
+              "lambdas": [
+                {
+                  "name": "apply_rule",
+                  "parameters": ["currentBits", "neighborsBits"],
+                  "formula": "Use transition_table to produce new local_bits"
+                }
+              ],
+              "constraints": []
+            },
+            {
+              "entityName": "ZuseUniverse",
+              "description": "Represents the entire computing space. Maintains references to all cells, the dimension size, and the universal rule(s). Allows for global or partial updates each time-step.",
+              "fields": [
+                {
+                  "fieldName": "universe_id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true
+                },
+                {
+                  "fieldName": "dimension_info",
+                  "type": "scalar",
+                  "datatype": "json",
+                  "description": "Defines Nx×Ny×Nz, boundary conditions, etc."
+                },
+                {
+                  "fieldName": "zuse_rule_id",
+                  "type": "lookup",
+                  "target_entity": "ZuseRule",
+                  "description": "Pointer to the rule that all cells will apply"
+                },
+                {
+                  "fieldName": "current_time",
+                  "type": "scalar",
+                  "datatype": "int",
+                  "description": "Indicates the global time step index"
+                },
+                {
+                  "fieldName": "wrap_boundaries",
+                  "type": "scalar",
+                  "datatype": "boolean",
+                  "description": "If true, implements torus wrap for edges"
+                }
+              ],
+              "lookups": [
+                {
+                  "name": "CellsInUniverse",
+                  "description": "List of cells in the entire Zuse computing space",
+                  "target_entity": "ZuseCell",
+                  "type": "one_to_many",
+                  "join_condition": "ZuseCell belongs to universe_id"
+                }
+              ],
+              "aggregations": [
+                {
+                  "name": "total_information_content",
+                  "type": "rollup",
+                  "formula": "Σ over all CellsInUniverse of LENGTH(local_bits) or BITCOUNT(local_bits)"
+                },
+                {
+                  "name": "active_cells_count",
+                  "type": "rollup",
+                  "formula": "COUNT(CellsInUniverse WHERE frozen_flag=false)"
+                }
+              ],
+              "lambdas": [
+                {
+                  "name": "global_update",
+                  "parameters": [],
+                  "formula": "For each ZuseCell => local_update( cell.local_bits, neighbor.local_bits )"
+                },
+                {
+                  "name": "increment_time",
+                  "parameters": [],
+                  "formula": "current_time = current_time + 1"
+                }
+              ],
+              "constraints": [
+                {
+                  "name": "all_cells_same_rule",
+                  "formula": "ZuseCell must reference this Universe’s zuse_rule_id for consistency",
+                  "error_message": "All cells in the universe must share the same local update rule"
+                }
+              ]
+            }
+          ],
+          "lookups": [
+            {
+              "lookupName": "NextStateMapping",
+              "description": "Optional global adjacency among entire states if we interpret the Universe as a single big configuration. Possibly used for comparing Poincaré cycles, etc.",
+              "lookupDefinition": {
+                "fromEntity": "ZuseUniverse",
+                "toEntity": "ZuseUniverse",
+                "relationship": "M:N",
+                "condition": "One Universe state => next Universe state after global_update"
+              }
+            }
+          ],
+          "aggregations": [
+            {
+              "aggregationName": "EntropyOverUniverse",
+              "description": "Compute a Shannon-like measure of overall complexity in the Universe at a given time.",
+              "groupBy": [],
+              "aggregateFunction": "HashBitPattern(all CellsInUniverse.local_bits)"
+            }
+          ],
+          "calculatedFields": [
+            {
+              "fieldName": "LocalRuleAsFunction",
+              "formula": "Use ZuseRule.transition_table on each ZuseCell in Universe",
+              "appliesToEntity": "ZuseRule"
+            },
+            {
+              "fieldName": "GlobalDeterminismCheck",
+              "formula": "Ensure each Universe state leads to a unique next Universe state => no branching",
+              "appliesToEntity": "ZuseUniverse"
+            }
+          ]
+        },
+
+        "extendedInferences": {
+          "firstOrderInferences": [
+            "Cells store discrete data (bits). Each step, local_bits are updated from neighbor info => no continuum needed.",
+            "Wrap boundary => Universe can be topologically a torus or any boundary conditions Zuse picks."
+          ],
+          "secondOrderInferences": [
+            "Complex phenomena emerge from local rules. Macroscopic 'laws' might be compressed descriptions of these updates.",
+            "Potential for Turing-completeness or universal computation if local rule is powerful enough."
+          ],
+          "thirdOrderInferences": [
+            "If we embed an entire Universe state in a large configuration space, cycles or steady states can appear => Poincaré recurrences.",
+            "Reversible or invertible local updates could unify forward/backward time, bridging to Fredkin/Troffoli reversible logic ideas."
+          ],
+          "beyondThirdOrder": [
+            "Bringing in expansions for quantum-like phenomena or continuum approximations might require new 'Zuse sub-lattice expansions'.",
+            "Could unify 'General Relativity in a discrete lattice' if local updates incorporate curvature or adjacency changes over time."
+          ]
+        },
+
+        "notesOnImplementation": [
+          "Practical direct simulation might be huge for real-world scale. Zuse assumed only local data => parallelizable on real hardware.",
+          "One can refine transition_table to replicate known physical laws (e.g. partial differential equations approximated by local CA).",
+          "Zuse’s approach preceded advanced computational capacity, so many details remain conceptual or high-level."
+        ]
+      },
+      {
+        "id": "fredkin_digital_philosophy_2003",
+        "title": "An Introduction to Digital Philosophy",
+        "authors": [
+          {
+            "name": "Edward Fredkin"
+          }
+        ],
+        "year": 2003,
+        "abstract": "Fredkin describes his 'digital philosophy', positing that the universe operates on discrete computational principles. He explores reversible computing, the possibility of cellular automata as fundamental physics, and the notion of bits as the primitives of reality. This work heavily influenced computational interpretations of physics.",
+        "online_links": [],
+        "key_claims": [
+          "All reality is digital at bottom: bits and local transitions.",
+          "Exploration of reversible gates and 'conservative logic.'",
+          "Bridged conceptual gap between discrete micro-rules and emergent continuum phenomena."
+        ]
+      },
+      {
+        "id": "wolfram_ankos_2002",
+        "title": "A New Kind of Science",
+        "authors": [
+          {
+            "name": "Stephen Wolfram"
+          }
+        ],
+        "year": 2002,
+        "abstract": "Wolfram’s comprehensive treatise on simple programs—especially cellular automata—and their capacity to yield high complexity and universal computation. Argues that many laws of physics may stem from fundamental CA-like rules and that the principle of computational equivalence places natural and computational phenomena on the same footing.",
+        "online_links": [
+          {
+            "url": "https://www.wolframscience.com/nks/",
+            "note": "Online resources"
+          }
+        ],
+        "key_claims": [
+          "Rule 110’s universality as a central example.",
+          "Multiway systems bridging branching evolutions to physics and mathematics.",
+          "Principle of Computational Equivalence: simple rules can match the complexity of nature."
+        ]
+      },
+      {
+        "id": "feynman_simulating_physics_1982",
+        "title": "Simulating Physics with Computers",
+        "authors": [
+          {
+            "name": "Richard P. Feynman"
+          }
+        ],
+        "year": 1982,
+        "abstract": "Feynman contemplates whether classical digital computers can efficiently simulate quantum systems. Presents arguments that led to the field of quantum computing, noting that if nature is fundamentally discrete, certain computations (like factoring or simulating quantum states) might be more naturally performed by a quantum mechanical computer.",
+        "online_links": [],
+        "key_claims": [
+          "Potential mismatch between classical discrete machines and quantum phenomena.",
+          "Seeds the idea of universal quantum simulators as a new computational paradigm.",
+          "Formed basis of subsequent quantum computation theories (Deutsch, et al.)."
+        ]
+      },
+      {
+        "id": "deutsch_universal_qc_1985",
+        "title": "Quantum Theory, the Church–Turing Principle and the Universal Quantum Computer",
+        "authors": [
+          {
+            "name": "David Deutsch"
+          }
+        ],
+        "year": 1985,
+        "abstract": "Deutsch argues that any physically realizable system can be perfectly simulated by a universal quantum computer, extending the Church–Turing principle into quantum territory. Introduces the concept of universal quantum gates, setting the stage for practical quantum computing developments.",
+        "online_links": [],
+        "key_claims": [
+          "All computable laws of physics can be modeled on a universal quantum computer.",
+          "Extends classical Church–Turing principle to quantum domain.",
+          "Formulation of quantum gates as building blocks of universal computation."
+        ]
+      },
+      {
+        "id": "feynman_lectures_vol3_1965",
+        "title": "The Feynman Lectures on Physics, Volume 3: Quantum Mechanics (Chapter 1)",
+        "authors": [
+          {
+            "name": "Richard P. Feynman"
+          },
+          {
+            "name": "Robert B. Leighton"
+          },
+          {
+            "name": "Matthew Sands"
+          }
+        ],
+        "year": 1965,
+        "abstract": "Chapter 1 of Volume 3 discusses the double-slit experiment, the fundamental nature of wave-particle duality, and the superposition principle. Feynman famously calls the double-slit 'the heart of quantum mechanics' and a phenomenon impossible to mimic classically. This prime introduction to self-interference underpins many toy models in discrete physics.",
+        "online_links": [],
+        "key_claims": [
+          "Double-slit experiment reveals key quantum aspects—superposition, interference.",
+          "Wavefunction amplitude approach, with probability from amplitude squared.",
+          "No classical analog can fully replicate the observed interference patterns."
+        ]
+      },
+      {
+        "id": "thooft_deterministic_1988",
+        "title": "Deterministic and Quantum Mechanical Systems",
+        "authors": [
+          {
+            "name": "Gerard ’t Hooft"
+          }
+        ],
+        "year": 1988,
+        "abstract": "An earlier work of ’t Hooft suggesting that quantum phenomena might be derived from deterministic systems with incomplete information. Probes hidden-variable theories, information loss, and emergent quantum states from underlying classical processes.",
+        "online_links": [],
+        "key_claims": [
+          "Information-loss or constraints can yield quantum-like behavior from deterministic laws.",
+          "Revisits hidden-variables in a manner not blocked by standard no-go arguments.",
+          "Blueprint for later elaboration of the Cellular Automaton Interpretation."
+        ]
+      },
+      {
+        "id": "cook_rule110_2004",
+        "title": "Universality in Elementary Cellular Automaton Rule 110",
+        "authors": [
+          {
+            "name": "Matthew Cook"
+          }
+        ],
+        "year": 2004,
+        "abstract": "Cook shows that the 1D elementary CA known as Rule 110 is Turing-complete—i.e., it can emulate any computable process given the right initial conditions. This proof was a significant moment for discrete physics and simplified CA studies, since it demonstrated how minimal local rules can support universal computation.",
+        "online_links": [],
+        "key_claims": [
+          "Rule 110 can simulate a cyclic tag system, achieving Turing-completeness.",
+          "Confirms Wolfram’s speculation that simple CA can host universal computing.",
+          "Implication: discrete local rules can encode arbitrarily complex computations."
+        ]
+      },
+      {
+        "id": "fredkin_toffoli_conservative_logic_1978",
+        "title": "Conservative Logic",
+        "authors": [
+          {
+            "name": "Edward Fredkin"
+          },
+          {
+            "name": "Tommaso Toffoli"
+          }
+        ],
+        "year": 1978,
+        "abstract": "Introduces a physically plausible, reversible computing framework in which 'information mass' is never destroyed. Their 'conservative logic' underpins reversible CA models, bridging digital logic and physical conservation laws. Influential in the development of reversible computing and forward-only (time-symmetric) CA systems.",
+        "online_links": [],
+        "key_claims": [
+          "Logical operations can be done reversibly, preserving information bits.",
+          "Connects digital logic to physical conservation principles, e.g., no net bit annihilation.",
+          "Formed part of the foundation for reversible computing and quantum gates."
+        ]
       }
     ]
   }

@@ -1,0 +1,457 @@
+{
+    "sourcePaper": {
+      "title": "It from bit — a concrete attempt",
+      "author": "Alexandre Furtado Neto*",
+      "date": "November 7, 2024",
+      "orcid": "0000-0001-9435-6566",
+      "affiliation": "UNESP Alumnus",
+      "abstractText": "This work presents the construction of a toy universe grounded in classical logic, elementary natural arithmetic, and a touch of topology. The universe’s space is modeled as a finite, closed, discrete 3-torus with an additional non-spatial dimension of a carefully selected size, effectively creating a layered structure. Two recurring patterns are observed across these layers: one based on the Euclidean distance from a central point, and the other following a half-sinusoidal natural value relative to the same point. These patterns are dynamic, relocating after interactions, allowing for the expansion of spherical wavefronts or information bubbles.\n\nTime in this universe is discrete. Each point within this space contains a fixed-size string of two-state elements, termed exbits (existence bits), each possessing an ontological character. Standard Model particles and relativistic spacetime are hypothesized to emerge from interactions between these layers, where wavefronts are activated as the evolution variables align with both Euclidean and sinusoidal patterns. Electric charge is represented by a single exbit, weak charge by two exbits, and color charge by three exbits.\n\nThe universe’s linear motion (inertia) is governed by one vector, while another vector drives rotational dynamics. Charges conjugate during interactions in intricate ways involving congruence, strong cohesion, attraction/repulsion (Coulomb), and rotation induction (magnetism). Gravity is interpreted as an extension of the static electromagnetic force, resulting in a superdeterministic model reliant on a few input parameters. Energy, conceptualized as the superposition of bubbles, can propagate across the universe, similar to photons, through a fundamental ontological collapse mechanism. This intrinsic non-local energy transfer aligns with quantum physical outcomes without requiring space-like signaling.\n\nAnother intriguing phenomenon explored in this model is self-interference, which arises naturally from the cellular automaton framework. As particles propagate through the discrete lattice, they leave behind a trace of their momentum, effectively imprinting a \"memory\" onto the lattice. This mechanism allows for interactions with subsequent waves, leading to patterns that resemble quantum self-interference. By incorporating this memory effect, the model can reproduce phenomena akin to the double-slit experiment, where particles interfere with their own past paths, reinforcing the emergent behavior of wave-particle duality without invoking any external or non-local mechanisms.\n\nThis constructive approach establishes a universal cellular automaton framework. The research includes computing the Poincaré cycle for a smaller implementation, highlighting the cyclic behavior of entropy. This work is not intended as an interpretation of Quantum Mechanics but rather an attempt to describe nature at a more fundamental level.",
+      "onlineReference": "https://zenodo.org/records/14865253"
+    },
+    "projectName": "Toy Universe CA (Cellular Automaton)",
+    "description": "A domain-specific instantiation of the CMCC meta-model for a finite 3D-torus cellular automaton universe based on 'It from bit—a concrete attempt.' This JSON includes a more complete schema, references, aggregations, and calculated fields for modeling discrete wavefront expansions, charges, collisions, and emergent phenomena.",
+    "repositoryFolder": "physics/toy_universe_CA",
+    "metaModelReference": {
+      "m3Layer": "Core CMCC definitions (Entities, Fields, Lookups, Aggregations, Calculated Fields, ACID)",
+      "m2Layer": "Generic Physics/CA Metamodel",
+      "m1Layer": "Specific Toy Universe CA Instantiation",
+      "m0Layer": "Row data for each cell plus event logs at discrete time steps"
+    },
+    "plan": {
+      "purpose": "Represent a finite 3D-lattice with an extra w-dimension, each cell storing exbits (charges, spin, momentum, etc.), and define collisions, parallel transport, and bubble expansions.",
+      "keyPoints": [
+        "Use a primary entity 'Cells' that stores exbits and coordinates (x,y,z,w).",
+        "Capture wavefront interactions and bubble membership to represent collisions and annihilations.",
+        "Capture net charges and color neutrality using aggregations, and handle time-step updates via calculated fields.",
+        "Maintain discrete steps (wavefront_tick, housekeeping_tick) as consistent ACID transactions, analogous to wavefunction collapses."
+      ],
+      "schemaStrategy": "One main table for Cells, a supplemental BubbleEvents entity for merges/annihilations, and optional InteractionRecords for advanced force modeling. All exbit-based logic is handled by calculated fields referencing neighbor lookups and aggregator results.",
+      "timeAndTransactions": [
+        "Each wavefront increment or housekeeping step is an atomic database transaction, ensuring we never see half-updated states.",
+        "All collisions and re-emissions occur within that transaction, creating a consistent snapshot for the new time step."
+      ],
+      "summary": "This plan encodes the discrete-lattice toy universe in a classic CMCC structure, facilitating expansions, collisions, and emergent particle interactions as a fully declarative rulebook."
+    },
+    "rawModel": {
+      "entities": [
+        {
+          "entityName": "Cells",
+          "description": "Each row corresponds to one cell in the 4D lattice (x,y,z,w) and stores exbits for charges, spin, momentum, plus wavefront/collision flags. UNION of all fields from both versions.",
+          "fields": [
+            {
+              "fieldName": "cell_id",
+              "type": "UUID",
+              "isPrimaryKey": true,
+              "description": "Unique identifier for a specific cell record"
+            },
+            {
+              "fieldName": "x",
+              "type": "integer",
+              "description": "X coordinate in the 3D torus, range 0..L-1"
+            },
+            {
+              "fieldName": "y",
+              "type": "integer",
+              "description": "Y coordinate in the 3D torus, range 0..L-1"
+            },
+            {
+              "fieldName": "z",
+              "type": "integer",
+              "description": "Z coordinate in the 3D torus, range 0..L-1"
+            },
+            {
+              "fieldName": "w",
+              "type": "integer",
+              "description": "Layer dimension index, range 0..W-1"
+            },
+            {
+              "fieldName": "charge_q",
+              "type": "boolean",
+              "description": "Electric charge bit, true for +, false for -"
+            },
+            {
+              "fieldName": "weak_w0",
+              "type": "boolean",
+              "description": "First weak bit"
+            },
+            {
+              "fieldName": "weak_w1",
+              "type": "boolean",
+              "description": "Second weak bit"
+            },
+            {
+              "fieldName": "color_c0",
+              "type": "boolean",
+              "description": "First color bit"
+            },
+            {
+              "fieldName": "color_c1",
+              "type": "boolean",
+              "description": "Second color bit"
+            },
+            {
+              "fieldName": "color_c2",
+              "type": "boolean",
+              "description": "Third color bit"
+            },
+            {
+              "fieldName": "momentum_x",
+              "type": "integer",
+              "description": "Momentum vector x-component"
+            },
+            {
+              "fieldName": "momentum_y",
+              "type": "integer",
+              "description": "Momentum vector y-component"
+            },
+            {
+              "fieldName": "momentum_z",
+              "type": "integer",
+              "description": "Momentum vector z-component"
+            },
+            {
+              "fieldName": "spin_x",
+              "type": "integer",
+              "description": "Spin vector x-component"
+            },
+            {
+              "fieldName": "spin_y",
+              "type": "integer",
+              "description": "Spin vector y-component"
+            },
+            {
+              "fieldName": "spin_z",
+              "type": "integer",
+              "description": "Spin vector z-component"
+            },
+            {
+              "fieldName": "wavefront_tick",
+              "type": "integer",
+              "description": "Discrete light-step time variable m"
+            },
+            {
+              "fieldName": "housekeeping_tick",
+              "type": "integer",
+              "description": "Atemporal housekeeping counter n"
+            },
+            {
+              "fieldName": "relocation_offset_x",
+              "type": "integer",
+              "description": "Relocation offset x-component used for re-issue after collisions"
+            },
+            {
+              "fieldName": "relocation_offset_y",
+              "type": "integer",
+              "description": "Relocation offset y-component"
+            },
+            {
+              "fieldName": "relocation_offset_z",
+              "type": "integer",
+              "description": "Relocation offset z-component"
+            },
+            {
+              "fieldName": "affinity",
+              "type": "integer",
+              "description": "Indicates bubble/particle ID"
+            },
+            {
+              "fieldName": "active_wavefront",
+              "type": "boolean",
+              "description": "True if this cell is currently part of an expanding wavefront"
+            },
+            {
+              "fieldName": "collision_flag",
+              "type": "boolean",
+              "description": "True if collision detected at this cell/time"
+            },
+            {
+              "fieldName": "messenger_flag",
+              "type": "boolean",
+              "description": "True if this cell acts as a 'messenger' in Coulomb/magnetic sense"
+            },
+            {
+              "fieldName": "empodion_flag",
+              "type": "boolean",
+              "description": "True if self-interference phenomenon is triggered here"
+            },
+            {
+              "fieldName": "frequency",
+              "type": "integer",
+              "description": "Sine wave frequency multiple f"
+            },
+            {
+              "fieldName": "sine_phase",
+              "type": "integer",
+              "description": "Independent angle parameter for half-sinusoidal patterns"
+            },
+            {
+              "fieldName": "pole_bit",
+              "type": "boolean",
+              "description": "Marks a privileged linear direction in the lattice (p)."
+            },
+            {
+              "fieldName": "meta_pole_bit",
+              "type": "boolean",
+              "description": "Spiral path bit for rotation/polarization (orthogonal to p)."
+            },
+            {
+              "fieldName": "orphan_flag",
+              "type": "boolean",
+              "description": "True if wavefront remains after reissue, with lost affinity."
+            },
+            {
+              "fieldName": "sine_mask_bit",
+              "type": "boolean",
+              "description": "Bit for half-cycle sine amplitude presence (like s in text)."
+            }
+          ]
+        },
+        {
+          "entityName": "BubbleEvents",
+          "description": "Logs major bubble or particle interactions, such as annihilation, fusion, charge conjugation, or re-issue events.",
+          "fields": [
+            {
+              "fieldName": "event_id",
+              "type": "UUID",
+              "isPrimaryKey": true,
+              "description": "Unique identifier for the event"
+            },
+            {
+              "fieldName": "affinity_id",
+              "type": "integer",
+              "description": "Identifies which bubble is changing"
+            },
+            {
+              "fieldName": "event_type",
+              "type": "string",
+              "description": "Type of event: 'annihilation', 'fusion', 'parallel_transport', 'conjugation', etc."
+            },
+            {
+              "fieldName": "trigger_cell_id",
+              "type": "UUID",
+              "description": "Cell that triggered the event"
+            },
+            {
+              "fieldName": "timestamp_m",
+              "type": "integer",
+              "description": "Light-step time when event happened"
+            },
+            {
+              "fieldName": "notes",
+              "type": "string",
+              "description": "Free-text notes for more context"
+            }
+          ]
+        },
+        {
+          "entityName": "InteractionRecords",
+          "description": "Optional table for logging pairwise or multi-cell interactions, capturing ephemeral calculations like Coulomb or magnetic kicks.",
+          "fields": [
+            {
+              "fieldName": "interaction_id",
+              "type": "UUID",
+              "isPrimaryKey": true,
+              "description": "Unique identifier"
+            },
+            {
+              "fieldName": "cell_id_1",
+              "type": "UUID",
+              "description": "First participant cell"
+            },
+            {
+              "fieldName": "cell_id_2",
+              "type": "UUID",
+              "description": "Second participant cell"
+            },
+            {
+              "fieldName": "force_type",
+              "type": "string",
+              "description": "e.g. 'Coulomb', 'Magnetic', 'Weak', 'Empodion'"
+            },
+            {
+              "fieldName": "applied_momentum_x",
+              "type": "integer",
+              "description": "Delta momentum x"
+            },
+            {
+              "fieldName": "applied_momentum_y",
+              "type": "integer",
+              "description": "Delta momentum y"
+            },
+            {
+              "fieldName": "applied_momentum_z",
+              "type": "integer",
+              "description": "Delta momentum z"
+            },
+            {
+              "fieldName": "time_step",
+              "type": "integer",
+              "description": "Light-step time"
+            }
+          ]
+        }
+      ],
+      "lookups": [
+        {
+          "lookupName": "CellNeighbors",
+          "description": "Links each cell to its immediate neighbors in x,y,z with torus wrapping, plus optional neighbor in w dimension.",
+          "lookupDefinition": {
+            "fromEntity": "Cells",
+            "toEntity": "Cells",
+            "relationship": "M:N",
+            "condition": "Neighbor if (|x1 - x2| + |y1 - y2| + |z1 - z2| == 1) mod L for torus wrap, optional (w +/- 1) if needed."
+          }
+        },
+        {
+          "lookupName": "BubbleAffinityLookup",
+          "description": "Groups cells that share a common affinity ID (same bubble/particle).",
+          "lookupDefinition": {
+            "fromEntity": "Cells",
+            "toEntity": "Cells",
+            "relationship": "M:N",
+            "condition": "Cells.affinity = otherCells.affinity"
+          }
+        },
+        {
+          "lookupName": "CollidedPairs",
+          "description": "Joins cells that have collision_flag = true for the same wavefront_tick.",
+          "lookupDefinition": {
+            "fromEntity": "Cells",
+            "toEntity": "Cells",
+            "relationship": "M:N",
+            "condition": "cell1.wavefront_tick = cell2.wavefront_tick AND cell1.collision_flag = true AND cell2.collision_flag = true"
+          }
+        }
+      ],
+      "aggregations": [
+        {
+          "aggregationName": "NetChargeByBubble",
+          "description": "Computes net electric charge by summing q bits for each bubble ID.",
+          "groupBy": ["affinity"],
+          "aggregateFunction": "SUM(charge_q)"
+        },
+        {
+          "aggregationName": "NetColorSignature",
+          "description": "Aggregates color bits c0,c1,c2 to detect neutral or balanced color states per bubble.",
+          "groupBy": ["affinity"],
+          "aggregateFunction": "COUNT_OF(color_c0, color_c1, color_c2)"
+        },
+        {
+          "aggregationName": "TotalParticlesPerLayer",
+          "description": "Counts how many distinct bubble IDs appear in a given w layer.",
+          "groupBy": ["w"],
+          "aggregateFunction": "COUNT(DISTINCT affinity)"
+        },
+        {
+          "aggregationName": "GlobalEntropyEstimate",
+          "description": "Approximate measure of entropy across the entire lattice by hashing exbit patterns.",
+          "groupBy": [],
+          "aggregateFunction": "CUSTOM_HASH_SUM"
+        }
+      ],
+      "calculatedFields": [
+        {
+          "fieldName": "distanceFromCenter",
+          "appliesToEntity": "Cells",
+          "formula": "SQRT((x - L/2)^2 + (y - L/2)^2 + (z - L/2)^2)",
+          "dependencies": [
+            "x",
+            "y",
+            "z"
+          ],
+          "notes": "Used to check wavefront expansion constraints (distance = wavefront_tick)."
+        },
+        {
+          "fieldName": "isCollision",
+          "appliesToEntity": "Cells",
+          "formula": "IF (EXISTS neighborCell WHERE neighborCell.affinity != Cells.affinity AND neighborCell.wavefront_tick = Cells.wavefront_tick AND neighborCell.active_wavefront = true) THEN true ELSE false",
+          "dependencies": [
+            "CellNeighbors",
+            "active_wavefront",
+            "wavefront_tick",
+            "affinity"
+          ]
+        },
+        {
+          "fieldName": "activeWavefront",
+          "appliesToEntity": "Cells",
+          "formula": "IF distanceFromCenter = wavefront_tick THEN true ELSE false",
+          "dependencies": [
+            "distanceFromCenter",
+            "wavefront_tick"
+          ]
+        },
+        {
+          "fieldName": "parallelTransportOffset",
+          "appliesToEntity": "Cells",
+          "formula": "IF collision_flag THEN (neighbor.x - x, neighbor.y - y, neighbor.z - z) ELSE (0,0,0)",
+          "dependencies": [
+            "collision_flag",
+            "CellNeighbors"
+          ]
+        },
+        {
+          "fieldName": "coulombKick",
+          "appliesToEntity": "Cells",
+          "formula": "IF (charge_q == neighbor.charge_q) THEN +deltaMomentum ELSE -deltaMomentum",
+          "dependencies": [
+            "charge_q",
+            "CellNeighbors"
+          ],
+          "notes": "Implements attraction/repulsion for like/unlike charges."
+        },
+        {
+          "fieldName": "magneticKick",
+          "appliesToEntity": "Cells",
+          "formula": "IF (charge_q == neighbor.charge_q) THEN CROSS(spin, neighbor.spin) ELSE (0,0,0)",
+          "dependencies": [
+            "charge_q",
+            "spin_x",
+            "spin_y",
+            "spin_z"
+          ],
+          "notes": "Small lateral kick orthonormal to spin vectors if charges have same sign."
+        },
+        {
+          "fieldName": "empodionDetected",
+          "appliesToEntity": "Cells",
+          "formula": "IF (momentum_x, momentum_y, momentum_z) MATCH prior cell memory AND wavefront_tick > prior_tick THEN true ELSE false",
+          "dependencies": [
+            "momentum_x",
+            "momentum_y",
+            "momentum_z",
+            "wavefront_tick"
+          ],
+          "notes": "Detects self-interference if momentum matches a past wave; sets empodion_flag."
+        }
+      ]
+    },
+    "inferences": {
+      "firstOrderInferences": [
+        "Collision detection (isCollision). Each cell with isCollision = true triggers wavefront reissue or annihilation event.",
+        "Wavefront activation (activeWavefront): distanceFromCenter = wavefront_tick implies an expanding spherical shell."
+      ],
+      "secondOrderInferences": [
+        "Charge or color neutrality referencing NetChargeByBubble, NetColorSignature. If net color is balanced, we have a 'hadron-like' bubble.",
+        "Empodion detection if empodionDetected = true, possibly changing bubble membership or wave re-issue logic."
+      ],
+      "thirdOrderInferences": [
+        "Parallel transport updates momentum upon collisions (parallelTransportOffset).",
+        "Coulomb repulsion/attraction merges with Magnetic lateral deflection (coulombKick, magneticKick). Summaries go into InteractionRecords."
+      ],
+      "beyondThirdOrder": [
+        "GlobalEntropyEstimate monitors cyclical recurrences (Poincaré cycles).",
+        "Complex multi-bubble merges, advanced color reconfigurations, super-photon or neutrino fragments. Logged in BubbleEvents."
+      ]
+    },
+    "originalModelElementsReferenced": [
+      "Finite, closed, discrete 3-torus + extra dimension (w).",
+      "Exbits: q, w0, w1 (weak), c0, c1, c2 (color), spin, momentum, wavefront/collision flags.",
+      "Discrete m (wavefront_tick) and n (housekeeping_tick) time variables.",
+      "Bubble expansions, collisions, annihilations per cases (a),(b),(c).",
+      "Parallel transport for inertia with reissue offsets from contact point.",
+      "Electromagnetic-like interactions (Coulomb & magnetic).",
+      "Empodion (self-interference) memory concept to replicate double-slit-like patterns."
+    ]
+  }
+  
