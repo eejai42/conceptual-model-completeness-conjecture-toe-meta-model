@@ -19,14 +19,17 @@ Test Array Operation (should output a cupy array): [ 0  2  4  6  8 10 12 14 16 1
 
 There are a few different experiments that approach this from different angles.  To begin with, there is just a python "hand written" implementation.
 
+### Hand-Code Experiments
+
+These are hand code that follow a CMCC implementation strategy (i.e. functional and self describing) but they were written "by-hand" which means that any time the parameters of the experiment change, that hand-code will need to be udpated by-hand.
+
+**NOTE:** This does *not* mean Human hands, it just means manually - human, ai, human+ai - it just has to be someone, and then that work has to be checked, by someone else, all of this has to be coordinated and orchested over time.  It's like an enterprise level game of telephone.
+
 `PAPER_Json-no-schrodinger-functional-not-cmcc.ipynb`
 
 This does not directly "follow" the CMCC ToE Meta-Model as the main code does.  
 
-
-This repo will explore the double slit experiment 
-
-### Enhanced Quantum Walk Data Schema
+### CMCC Model of the Quantum Walk
 
 #### 1. Grid Definition
 
