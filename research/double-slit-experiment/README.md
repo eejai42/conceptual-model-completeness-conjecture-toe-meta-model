@@ -1,6 +1,35 @@
+# Conceptual Model Completeness Conjecture (CMCC) Quantum Walk Experiment
+
+This project explore the double slit experiment from first principals.  It does not reference the Schrodinger equations direction, and does not have an impereative (procedural) function that propagates the wave.  Instead, entire experiment is a self describing data structure that contains all of the parameters for the entire experiment, tip to tail.
+
+## DevOps
+
+The repository expects the runtime environment to be Google Notebook (Colab) - this avoids build/runtime problems, as one of our main goals is to make this work easily reproducible/updateable.
+
+When copying code from this repo into a new Colab document, you will need to set the `Runtime Type` to be a **GPU** rather than a **CPU** architecture.  You can choose `Change Runtime type`
+
+When cupy is operational, you should be able to run the: `PAPER_Json-gpu-test.py` and see output something like this:
+
+```CuPy version: 13.3.0
+CUDA runtime version: 12060
+Test Array Operation (should output a cupy array): [ 0  2  4  6  8 10 12 14 16 18]
+```
+
+## Experiments
+
+There are a few different experiments that approach this from different angles.  To begin with, there is just a python "hand written" implementation.
+
+`PAPER_Json-no-schrodinger-functional-not-cmcc.ipynb`
+
+This does not directly "follow" the CMCC ToE Meta-Model as the main code does.  
+
+
+This repo will explore the double slit experiment 
+
 ### Enhanced Quantum Walk Data Schema
 
 #### 1. Grid Definition
+
 - **GridID** *(Primary, Text)*: Unique grid identifier.
 - **nx, ny** *(Integer)*: Grid resolution in x and y directions.
 - **Lx, Ly** *(Float, 2 decimals, meters)*: Physical domain sizes.
