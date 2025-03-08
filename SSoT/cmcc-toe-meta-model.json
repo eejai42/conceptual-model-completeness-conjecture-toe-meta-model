@@ -232,7 +232,6 @@
               }
             ]
           },
-
           {
             "name": "Element",
             "description": "An atomic or composite member of a Set. Elements are the basic units from which numbers and other mathematical objects are built.",
@@ -265,7 +264,6 @@
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "ArithmeticOperator",
             "description": "Represents a standard arithmetic operator (e.g., +, −, ×, ÷, ^) along with optional domain/codomain details.",
@@ -307,7 +305,6 @@
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "Function",
             "description": "A mapping from a domain Set to a codomain Set. Functions capture the essence of arithmetic operations and other transformations, supporting properties such as injectivity, surjectivity, and bijectivity.",
@@ -373,7 +370,6 @@
             ],
             "constraints": []
           },
-
           {
             "name": "AlgebraicStructure",
             "description": "An algebraic/mathematical structure defined by a base set, operations, and relations. Examples include groups, rings, and fields, which form the backbone of arithmetic and algebra.",
@@ -434,7 +430,6 @@
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "Proposition",
             "description": "A formal mathematical statement with a proof or derivation. Propositions enable automated verification of logical reasoning within the model.",
@@ -490,7 +485,6 @@
             ],
             "constraints": []
           },
-
           {
             "name": "Equation",
             "description": "A symbolic expression representing an equality or functional relationship (e.g. polynomial, differential, wave equation). Useful for referencing in advanced math or cross-domain usage.",
@@ -530,7 +524,6 @@
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "Category",
             "description": "A high-level abstraction grouping mathematical objects and morphisms. Categories provide a unified framework to discuss mathematical structures and their relationships.",
@@ -637,7 +630,6 @@
     "CMCC_Complete_ToEMM_Physics": {
       "name": "All-In-One CMCC Physics Model",
       "description": "A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.",
-
       "schema": {
         "entities": [
           {
@@ -650,23 +642,38 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              { "name": "symbol", "type": "scalar", "datatype": "string" },
-              { "name": "value", "type": "scalar", "datatype": "float" },
-              { "name": "units", "type": "scalar", "datatype": "string" },
+              {
+                "name": "symbol",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "value",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "units",
+                "type": "scalar",
+                "datatype": "string"
+              },
               {
                 "name": "uncertainty",
                 "type": "scalar",
                 "datatype": "float",
                 "note": "Optional error"
               },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [],
             "aggregations": [],
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "ReferenceFrame",
             "description": "Coordinate system definition, e.g. 3D classical or 4D Minkowski.",
@@ -677,8 +684,16 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              { "name": "name", "type": "scalar", "datatype": "string" },
-              { "name": "dimensions", "type": "scalar", "datatype": "int" },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "dimensions",
+                "type": "scalar",
+                "datatype": "int"
+              },
               {
                 "name": "spatial_coordinates_model",
                 "type": "scalar",
@@ -689,14 +704,17 @@
                 "type": "scalar",
                 "datatype": "string"
               },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [],
             "aggregations": [],
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "Potential",
             "description": "For classical or quantum usage, e.g. harmonic oscillator or gravitational well.",
@@ -731,7 +749,11 @@
                 "target_entity": "ReferenceFrame",
                 "foreign_key": true
               },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [],
             "aggregations": [
@@ -745,7 +767,6 @@
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "Hamiltonian",
             "description": "Stores T + V for quantum or classical contexts. E.g. p^2/2m + potential.",
@@ -756,7 +777,11 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              { "name": "description", "type": "scalar", "datatype": "string" },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string"
+              },
               {
                 "name": "kinetic_term",
                 "type": "scalar",
@@ -788,7 +813,6 @@
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "Wavefunction",
             "description": "Single or multi-particle wavefunction, storing discrete amplitude data or references.",
@@ -809,8 +833,16 @@
                 "type": "scalar",
                 "datatype": "string"
               },
-              { "name": "dimensionality", "type": "scalar", "datatype": "int" },
-              { "name": "num_particles", "type": "scalar", "datatype": "int" },
+              {
+                "name": "dimensionality",
+                "type": "scalar",
+                "datatype": "int"
+              },
+              {
+                "name": "num_particles",
+                "type": "scalar",
+                "datatype": "int"
+              },
               {
                 "name": "spin_states",
                 "type": "scalar",
@@ -902,7 +934,6 @@
               }
             ]
           },
-
           {
             "name": "Particle",
             "description": "Classical or quantum entity. Use bridging table for multi-particle wavefunctions.",
@@ -913,7 +944,11 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              { "name": "label", "type": "scalar", "datatype": "string" },
+              {
+                "name": "label",
+                "type": "scalar",
+                "datatype": "string"
+              },
               {
                 "name": "mass",
                 "type": "scalar",
@@ -926,7 +961,11 @@
                 "datatype": "float",
                 "note": "Likewise for charge"
               },
-              { "name": "spin", "type": "scalar", "datatype": "float" },
+              {
+                "name": "spin",
+                "type": "scalar",
+                "datatype": "float"
+              },
               {
                 "name": "single_particle_wf_id",
                 "type": "lookup",
@@ -962,7 +1001,11 @@
                 "type": "scalar",
                 "datatype": "float"
               },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [],
             "aggregations": [
@@ -1012,7 +1055,6 @@
               }
             ]
           },
-
           {
             "name": "ParticleWavefunctionMapping",
             "description": "For multi-particle wavefunctions, bridging table references each Particle to the same Wavefunction record.",
@@ -1047,7 +1089,6 @@
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "DensityMatrix",
             "description": "Stores ρ for a (sub)system, possibly partial trace of multi-particle wavefunction.",
@@ -1114,7 +1155,6 @@
               }
             ]
           },
-
           {
             "name": "Force",
             "description": "Classical force on a particle. Aggregations can unify with quantum if we wish.",
@@ -1125,7 +1165,11 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              { "name": "force_type", "type": "scalar", "datatype": "string" },
+              {
+                "name": "force_type",
+                "type": "scalar",
+                "datatype": "string"
+              },
               {
                 "name": "particle_id",
                 "type": "lookup",
@@ -1137,7 +1181,11 @@
                 "type": "scalar",
                 "datatype": "vector3"
               },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [],
             "aggregations": [
@@ -1156,7 +1204,6 @@
             ],
             "constraints": []
           },
-
           {
             "name": "GaugeField",
             "description": "Stores e.g. (E,B) or (Aμ) for a U(1), SU(3), etc. Physical observables must be gauge-invariant.",
@@ -1191,7 +1238,11 @@
                 "target_entity": "ReferenceFrame",
                 "foreign_key": true
               },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [],
             "aggregations": [
@@ -1221,7 +1272,6 @@
               }
             ]
           },
-
           {
             "name": "MeasurementEvent",
             "description": "Records an observation, can produce multiple wavefunction branches in a fully declarative manner.",
@@ -1277,7 +1327,11 @@
                 "target_entity": "Wavefunction",
                 "foreign_key": false
               },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [],
             "aggregations": [
@@ -1306,7 +1360,6 @@
             ],
             "constraints": []
           },
-
           {
             "name": "ClassicalSystem",
             "description": "Groups multiple particles. Summarizes total mass, momentum, energy, etc.",
@@ -1317,8 +1370,16 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              { "name": "system_name", "type": "scalar", "datatype": "string" },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "system_name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [
               {
@@ -1359,7 +1420,6 @@
             "lambdas": [],
             "constraints": []
           },
-
           {
             "name": "SpacetimeMetric",
             "description": "Stores a 3+1 or 4D metric. Einstein eq aggregator referencing total stress-energy, etc.",
@@ -1381,7 +1441,11 @@
                 "target_entity": "ReferenceFrame",
                 "foreign_key": true
               },
-              { "name": "notes", "type": "scalar", "datatype": "string" }
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
             ],
             "lookups": [],
             "aggregations": [
@@ -1420,7 +1484,6 @@
               }
             ]
           },
-
           {
             "name": "BlackHoleSystem",
             "description": "Entity for horizon radius, Hawking temp, etc., referencing total mass.",
@@ -1431,8 +1494,16 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              { "name": "bh_label", "type": "scalar", "datatype": "string" },
-              { "name": "approx_mass", "type": "scalar", "datatype": "float" }
+              {
+                "name": "bh_label",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "approx_mass",
+                "type": "scalar",
+                "datatype": "float"
+              }
             ],
             "lookups": [],
             "aggregations": [
@@ -1463,7 +1534,6 @@
           }
         ]
       },
-
       "data": {
         "PhysicalConstants": [
           {
@@ -1507,7 +1577,6 @@
             "notes": "Boltzmann's constant"
           }
         ],
-
         "ReferenceFrame": [
           {
             "id": "lab_frame",
@@ -1534,7 +1603,6 @@
             "notes": "Cylindrical coordinates (r, phi, z)"
           }
         ],
-
         "Potential": [
           {
             "id": "harmonic_potential_1d",
@@ -1572,7 +1640,6 @@
             "notes": "Used for diatomic molecular vibrations"
           }
         ],
-
         "Hamiltonian": [
           {
             "id": "harmonic_oscillator_H",
@@ -1605,7 +1672,6 @@
             "domain_type": "quantum"
           }
         ],
-
         "Wavefunction": [
           {
             "id": "psi_electron_1d",
@@ -1679,7 +1745,6 @@
             "notes": "Example for integer spin wavefunction => symmetric by spin-statistics constraint"
           }
         ],
-
         "Particle": [
           {
             "id": "electron_1",
@@ -1775,7 +1840,6 @@
             "notes": "Smaller orbiting body"
           }
         ],
-
         "ParticleWavefunctionMapping": [
           {
             "id": "map_eA_psiTwo",
@@ -1790,7 +1854,6 @@
             "role_label": "Electron B"
           }
         ],
-
         "DensityMatrix": [
           {
             "id": "rho_2e_full",
@@ -1808,12 +1871,8 @@
             "id": "rho_eA_partial",
             "system_description": "Partial trace over electron B",
             "matrix_data": {
-              "0": {
-                "0": { "re": 0.8, "im": 0.0 }
-              },
-              "1": {
-                "1": { "re": 0.2, "im": 0.0 }
-              }
+              "0": { "0": { "re": 0.8, "im": 0.0 } },
+              "1": { "1": { "re": 0.2, "im": 0.0 } }
             },
             "reference_wavefunction_id": "psi_two_electrons",
             "notes": "Same idea; aggregator fields give trace=1 etc."
@@ -1831,7 +1890,6 @@
             "notes": "Purely classical mixture of two states"
           }
         ],
-
         "Force": [
           {
             "id": "grav_force_cannon",
@@ -1841,7 +1899,6 @@
             "notes": "Approx mg downward"
           }
         ],
-
         "GaugeField": [
           {
             "id": "em_field_lab",
@@ -1894,7 +1951,6 @@
             "notes": "A toy non-Abelian gauge field example"
           }
         ],
-
         "MeasurementEvent": [
           {
             "id": "meas_1",
@@ -1923,22 +1979,14 @@
             "time_of_measurement": "2025-02-09T12:30:00Z",
             "wavefunction_id": "psi_spin1_boson",
             "particle_id": null,
-            "measurement_operator": {
-              "type": "Spin_z",
-              "matrix_size": 3
-            },
+            "measurement_operator": { "type": "Spin_z", "matrix_size": 3 },
             "possible_outcomes": ["m_s = -1", "m_s = 0", "m_s = +1"],
-            "outcome_distribution": {
-              "-1": 0.2,
-              "0": 0.6,
-              "+1": 0.2
-            },
+            "outcome_distribution": { "-1": 0.2, "0": 0.6, "+1": 0.2 },
             "outcome": null,
             "new_wavefunction_id": null,
             "notes": "Demonstrates multi-level spin measurement"
           }
         ],
-
         "ClassicalSystem": [
           {
             "id": "cannon_system",
@@ -1951,7 +1999,6 @@
             "notes": "Earth-sun type minimal example"
           }
         ],
-
         "SpacetimeMetric": [
           {
             "id": "flat_minkowski_lab",
@@ -1965,7 +2012,6 @@
             "notes": "Standard flat metric"
           }
         ],
-
         "BlackHoleSystem": [
           {
             "id": "bh_example_1",
@@ -1980,7 +2026,348 @@
             "notes": "Check aggregator outputs for radius, temperature, etc."
           }
         ]
-      }
+      },
+      "NewEntities": [
+        {
+          "name": "DarkMatterInference",
+          "description": "Entity capturing second-order inferences regarding dark matter from aggregated system data.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the dark matter inference record."
+            },
+            {
+              "name": "region_reference",
+              "type": "lookup",
+              "target_entity": "ClassicalSystem",
+              "description": "Reference to the system or region where the inference is made."
+            },
+            {
+              "name": "total_system_mass",
+              "type": "aggregation",
+              "formula": "SUM(members.mass)",
+              "description": "Total gravitational mass inferred for the region."
+            },
+            {
+              "name": "observed_mass",
+              "type": "aggregation",
+              "formula": "SUM(Particle.mass WHERE Particle.is_observed = true) + ICL_contribution",
+              "description": "Mass derived from observed (luminous) matter including intra-cluster light contribution."
+            },
+            {
+              "name": "missing_mass",
+              "type": "lambda",
+              "parameters": [],
+              "formula": "total_system_mass - observed_mass",
+              "description": "Difference between total and observed mass, representing missing mass."
+            },
+            {
+              "name": "residual_mass_fraction",
+              "type": "lambda",
+              "parameters": [],
+              "formula": "(total_system_mass - observed_mass) / total_system_mass",
+              "description": "Fraction of total mass attributed to dark matter."
+            },
+            {
+              "name": "DM_particle_mass_estimate",
+              "type": "lambda",
+              "parameters": [],
+              "formula": "BaseEstimate(rotation_curve_correction, local_interaction_modifier) * luminosity_profile_factor",
+              "description": "Estimated mass for individual dark matter particles adjusted by local rotational corrections and luminosity profile."
+            },
+            {
+              "name": "interaction_cross_section",
+              "type": "lambda",
+              "parameters": [],
+              "formula": "InferInteractionCrossSection(potential_deviations, known_baryonic_interactions)",
+              "description": "Estimated non-gravitational interaction strength of dark matter."
+            },
+            {
+              "name": "confidence_level",
+              "type": "aggregation",
+              "formula": "AggregateConfidence(associated_references)",
+              "description": "Aggregated confidence score based on supporting observational references."
+            },
+            {
+              "name": "associated_references",
+              "type": "lookup",
+              "target_entity": "Papers",
+              "description": "Links to papers and datasets that support the inference."
+            },
+            {
+              "name": "timestamp",
+              "type": "scalar",
+              "datatype": "datetime",
+              "description": "Timestamp of when the inference was made."
+            }
+          ]
+        },
+        {
+          "name": "ObservationalDataset",
+          "description": "Entity representing raw observational data from surveys, capturing parameters such as photometry, spectroscopy, and derived uncertainties.",
+          "fields": [
+            {
+              "name": "dataset_id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the observational dataset."
+            },
+            {
+              "name": "source_name",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Name of the survey or telescope (e.g., SDSS, DES, Planck, Euclid)."
+            },
+            {
+              "name": "data_parameters",
+              "type": "scalar",
+              "datatype": "json",
+              "description": "Key observational parameters (e.g., surface brightness profiles, rotation curves)."
+            },
+            {
+              "name": "measurement_uncertainty",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Uncertainty estimates for the measurements."
+            },
+            {
+              "name": "data_quality_flag",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Quality indicator for the dataset."
+            },
+            {
+              "name": "collection_date",
+              "type": "scalar",
+              "datatype": "datetime",
+              "description": "Date when the data was collected."
+            },
+            {
+              "name": "associated_references",
+              "type": "lookup",
+              "target_entity": "Papers",
+              "description": "References supporting the dataset."
+            }
+          ]
+        },
+        {
+          "name": "TheoreticalExperiment",
+          "description": "Entity for logging simulation runs and theoretical experiments, capturing input parameters and resulting inferences.",
+          "fields": [
+            {
+              "name": "experiment_id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the simulation experiment."
+            },
+            {
+              "name": "description",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Brief description of the experiment."
+            },
+            {
+              "name": "parameter_set",
+              "type": "scalar",
+              "datatype": "json",
+              "description": "The input parameters used in the simulation (e.g., luminosity_profile_factor, rotation_curve_correction)."
+            },
+            {
+              "name": "simulation_results",
+              "type": "scalar",
+              "datatype": "json",
+              "description": "Results from the simulation run (e.g., updated DM_particle_mass_estimate, residual_mass_fraction)."
+            },
+            {
+              "name": "timestamp",
+              "type": "scalar",
+              "datatype": "datetime",
+              "description": "Timestamp of the experiment run."
+            },
+            {
+              "name": "associated_references",
+              "type": "lookup",
+              "target_entity": "Papers",
+              "description": "Links to supporting theoretical or observational references."
+            }
+          ]
+        },
+        {
+          "name": "HaloSubstructure",
+          "description": "Entity capturing local density fluctuations and subhalo mass distributions within dark matter halos.",
+          "fields": [
+            {
+              "name": "subhalo_id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the subhalo."
+            },
+            {
+              "name": "subhalo_mass_distribution",
+              "type": "scalar",
+              "datatype": "json",
+              "description": "Distribution of mass within the subhalo."
+            },
+            {
+              "name": "concentration_parameter",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Parameter indicating halo concentration."
+            },
+            {
+              "name": "local_density_variation",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Variation in local dark matter density."
+            },
+            {
+              "name": "subhalo_mass_function",
+              "type": "lambda",
+              "parameters": [],
+              "formula": "ComputePowerLawDistribution(parameters)",
+              "description": "Lambda function to compute the mass function following a power-law with cutoff."
+            },
+            {
+              "name": "linked_to",
+              "type": "lookup",
+              "target_entity": "DarkMatterInference",
+              "description": "Links this substructure to the relevant dark matter inference record."
+            }
+          ]
+        },
+        {
+          "name": "BaryonicFeedback",
+          "description": "Entity capturing the effects of baryonic processes (e.g., star formation, AGN feedback) on mass distribution.",
+          "fields": [
+            {
+              "name": "feedback_id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the feedback event."
+            },
+            {
+              "name": "feedback_intensity",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Measure of feedback strength."
+            },
+            {
+              "name": "energy_injection_rate",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Rate at which energy is injected into the surrounding medium."
+            },
+            {
+              "name": "mass_loss_fraction",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Fraction of mass lost due to feedback processes."
+            },
+            {
+              "name": "feedback_adjustment_factor",
+              "type": "lambda",
+              "parameters": [],
+              "formula": "ComputeFeedbackAdjustment(feedback_intensity, mass_loss_fraction)",
+              "description": "Factor used to adjust observed mass estimates based on feedback."
+            },
+            {
+              "name": "linked_region",
+              "type": "lookup",
+              "target_entity": "ClassicalSystem",
+              "description": "Reference to the system or region affected by baryonic feedback."
+            }
+          ]
+        },
+        {
+          "name": "CosmicEvolution",
+          "description": "Entity representing the evolution of dark matter properties over cosmic time.",
+          "fields": [
+            {
+              "name": "evolution_id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the cosmic evolution record."
+            },
+            {
+              "name": "redshift",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Redshift value indicating cosmic epoch."
+            },
+            {
+              "name": "cosmic_time",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Cosmic time (in Gyr or another appropriate unit)."
+            },
+            {
+              "name": "evolution_modifier",
+              "type": "lambda",
+              "parameters": [],
+              "formula": "ComputeEvolutionModifier(redshift, cosmic_time)",
+              "description": "Modifier that adjusts dark matter inferences based on cosmic evolution."
+            },
+            {
+              "name": "associated_datasets",
+              "type": "lookup",
+              "target_entity": "ObservationalDataset",
+              "description": "Links to datasets that provide evolutionary observational data."
+            }
+          ]
+        },
+        {
+          "name": "EnvironmentalInfluence",
+          "description": "Entity capturing local environmental effects such as density, tidal interactions, and merger history.",
+          "fields": [
+            {
+              "name": "environment_id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the environmental influence record."
+            },
+            {
+              "name": "local_density",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Local density measure in the region."
+            },
+            {
+              "name": "tidal_effects",
+              "type": "scalar",
+              "datatype": "float",
+              "description": "Numeric index representing tidal forces."
+            },
+            {
+              "name": "merger_history",
+              "type": "scalar",
+              "datatype": "json",
+              "description": "Historical record of recent mergers or interactions."
+            },
+            {
+              "name": "influence_modifier",
+              "type": "lambda",
+              "parameters": [],
+              "formula": "ComputeInfluenceModifier(local_density, tidal_effects, merger_history)",
+              "description": "Modifier that adjusts dark matter inferences based on environmental factors."
+            },
+            {
+              "name": "linked_region",
+              "type": "lookup",
+              "target_entity": "ClassicalSystem",
+              "description": "Reference to the system or halo impacted by environmental factors."
+            }
+          ]
+        }
+      ]
     },
     "CMCC_Complete_ToEMM_Chemistry": {
       "name": "All-In-One CMCC Chemistry Model",
