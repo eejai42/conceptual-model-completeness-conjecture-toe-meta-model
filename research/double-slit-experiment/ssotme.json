@@ -1,0 +1,13 @@
+{
+  "ShowHidden": false,
+  "ShowAllFiles": false,
+  "Name": "double-slit-experiment",
+  "ProjectSettings": [
+    {
+      "ProjectSettingId": "6a97fc45-ad22-4953-bfac-03dfd4d350a7",
+      "Name": "project-name",
+      "Value": "double-slit-experiment"
+    }
+  ],
+  "ProjectTranspilers": []
+}
