@@ -15,6 +15,7 @@ def main():
     e1 = Edge(start_x=p1["x"], start_y=p1["y"], end_x=p2["x"], end_y=p2["y"])
     e2 = Edge(start_x=p2["x"], start_y=p2["y"], end_x=p3["x"], end_y=p3["y"])
     e3 = Edge(start_x=p3["x"], start_y=p3["y"], end_x=p1["x"], end_y=p1["y"])
+    e4 = Edge(start_x=p3["x"], start_y=p3["y"], end_x=p1["x"], end_y=p3["y"])
 
     # Store edges in a list
     edges = [e1, e2, e3]

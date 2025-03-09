@@ -21,7 +21,7 @@
         {
           "name": "length",
           "type": "calculated",
-          "formula": "SQRT( ADD( SUBTRACT(end_x, start_x)^2, SUBTRACT(end_y, start_y)^2 ) )"
+          "formula": "SQRT(ADD(POWER(SUBTRACT(end_x, start_x),2),POWER(SUBTRACT(end_y, start_y),2)))"
         }
       ]
     },

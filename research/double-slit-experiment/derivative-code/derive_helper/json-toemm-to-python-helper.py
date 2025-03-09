@@ -153,6 +153,7 @@ FUNCTION_MAP = {
     "SUBTRACT": (2, 2, "({0} - {1})"),
     "MULTIPLY": (2, 2, "np.matmul({0}, {1})"),   # for matrix multiply (if appropriate)
     "DIVIDE":   (2, 2, "({0} / {1})"),
+    "POWER":   (2, 2, "({0} ** {1})"),
     "FLOOR":    (1, 1, "math.floor({0})"),
     "ABS":      (1, 1, "np.abs({0})"),
     # For checking unitarity, might do EQUAL => np.allclose

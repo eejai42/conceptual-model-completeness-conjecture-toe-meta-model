@@ -20,9 +20,9 @@ class Edge:
     @property
     def length(self):
         """
-        Original formula: SQRT( ADD( SUBTRACT(end_x, start_x)^2, SUBTRACT(end_y, start_y)^2 ) )
+        Original formula: SQRT(ADD(POWER(SUBTRACT(end_x, start_x),2),POWER(SUBTRACT(end_y, start_y),2)))
         """
-        return math.sqrt((self.SUBTRACT(end_x, start_x)^2 + self.SUBTRACT(end_y, start_y)^2))
+        return math.sqrt((((self.end_x - self.start_x) ** 2) + ((self.end_y - self.start_y) ** 2)))
 
 class Polygon:
     def __init__(self, **kwargs):
