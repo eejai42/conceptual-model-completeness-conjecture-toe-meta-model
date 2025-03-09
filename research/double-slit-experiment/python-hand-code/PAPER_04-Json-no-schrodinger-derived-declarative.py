@@ -45,62 +45,6 @@ class CoinOperator:
 
 @dataclass(frozen=True)
 class Timestep:
-    t: int
-    grid: Grid
-    coin_operator: CoinOperator
-    previous: Optional['Timestep'] = None
-
-    @property
-    def y_indices(self):
-        return np.arange(self.grid.ny).reshape(-1, 1, 1)
-
-    @property
-    def amplitude(self):
-        if self.previous is None:
-            sigma_y = 5.0
-            src_y = 40
-            return np.exp(-0.5 * ((self.y - src_y) / sigma_y)**2)
-        else:
-            return self.psi
-
-    @property
-    def psi(self):
-        if self.previous is None:
-            return np.tile(self.amplitude, (1, self.grid.nx, 8))
-        else:
-            return self.barrier_mask * self.shifted
-
-    @property
-    def psi_coin(self):
-        return np.matmul(self.previous.psi, self.previous.coin_operator.matrix.T)
-
-    @property
-    def shifted(self):
-        offsets = [(-1,0),(1,0),(0,-1),(0,1),(-1,-1),(-1,1),(1,-1),(1,1)]
-        return np.stack([
-            np.roll(self.psi_coin[:, :, d], shift=offsets[d], axis=(0, 1))
-            for d in range(8)
-        ], axis=-1)
-
-    @property
-    def barrier_mask(self):
-        mask = np.ones((self.grid.ny, self.grid.nx, 8))
-        br = self.grid.barrier_row
-        mask_row = np.zeros(self.grid.nx)
-        for start, end in self.grid.slit_regions:
-            mask_row[start:end] = 1
-        mask[br, :, :] = mask_row[:, None]
-        return mask
-
-    @property
-    def psi(self):
-        if self.previous is None:
-            return np.tile(self.amplitude, (1, self.grid.nx, 8))
-        else:
-            return self.shifted * self.barrier
-
-@dataclass(frozen=True)
-class Timestep:
     grid: Grid
     coin_operator: CoinOperator
     previous: Optional['Timestep']
