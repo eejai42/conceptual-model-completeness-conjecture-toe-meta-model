@@ -1,27 +1,68 @@
 [
     {
+      "name": "Vertex",
+      "fields": [
+        {
+          "name": "x",
+          "type": "scalar",
+          "description": "X-coordinate of this vertex"
+        },
+        {
+          "name": "y",
+          "type": "scalar",
+          "description": "Y-coordinate of this vertex"
+        }
+      ]
+    },
+    {
       "name": "Edge",
       "fields": [
         {
+          "name": "start_vertex",
+          "type": "scalar",
+          "description": "Reference or ID of the start vertex"
+        },
+        {
+          "name": "end_vertex",
+          "type": "scalar",
+          "description": "Reference or ID of the end vertex"
+        },
+        {
           "name": "start_x",
-          "type": "scalar"
+          "type": "scalar",
+          "description": "Convenience: X-coordinate of the start vertex"
         },
         {
           "name": "start_y",
-          "type": "scalar"
+          "type": "scalar",
+          "description": "Convenience: Y-coordinate of the start vertex"
         },
         {
           "name": "end_x",
-          "type": "scalar"
+          "type": "scalar",
+          "description": "Convenience: X-coordinate of the end vertex"
         },
         {
           "name": "end_y",
-          "type": "scalar"
+          "type": "scalar",
+          "description": "Convenience: Y-coordinate of the end vertex"
         },
         {
           "name": "length",
           "type": "calculated",
-          "formula": "SQRT(ADD(POWER(SUBTRACT(end_x, start_x),2),POWER(SUBTRACT(end_y, start_y),2)))"
+          "description": "Euclidean distance between (start_x, start_y) and (end_x, end_y)",
+          "formula": "SQRT( ADD( POWER( SUBTRACT(end_x, start_x), 2 ), POWER( SUBTRACT(end_y, start_y), 2 ) ) )"
+        },
+        {
+          "name": "belongs_to_polygon",
+          "type": "scalar",
+          "description": "Reference or ID of the polygon this edge belongs to"
+        },
+        {
+          "name": "hypotenuse",
+          "type": "calculated",
+          "description": "Whether this edge's length equals the polygon's max_edge_length",
+          "formula": "EQUAL( length, belongs_to_polygon.max_edge_length )"
         }
       ]
     },
@@ -29,18 +70,44 @@
       "name": "Polygon",
       "fields": [
         {
+          "name": "vertices",
+          "type": "scalar",
+          "description": "List of references/IDs for the vertex objects"
+        },
+        {
           "name": "edges",
-          "type": "scalar"
+          "type": "scalar",
+          "description": "List of references/IDs for the edge objects that form this polygon"
         },
         {
           "name": "edge_count",
           "type": "calculated",
+          "description": "Number of edges in this polygon",
           "formula": "LEN(edges)"
         },
         {
           "name": "perimeter",
           "type": "calculated",
+          "description": "Sum of all edge lengths in this polygon",
           "formula": "SUM(edges)"
+        },
+        {
+          "name": "max_edge_length",
+          "type": "calculated",
+          "description": "The longest edge among edges[]",
+          "formula": "MAX(edges)"
+        },
+        {
+          "name": "area",
+          "type": "calculated",
+          "description": "Area of the polygon (placeholder: e.g. shoelace formula if we have vertices coords)",
+          "formula": "SHOELACE(vertices)"
+        },
+        {
+          "name": "shape_type",
+          "type": "calculated",
+          "description": "Identifies polygon as 'Triangle'/'Quadrilateral'/otherwise, based on edge_count",
+          "formula": "IF( EQUAL(edge_count, 3), 'Triangle', IF( EQUAL(edge_count, 4), 'Quadrilateral', 'Polygon') )"
         }
       ]
     }
