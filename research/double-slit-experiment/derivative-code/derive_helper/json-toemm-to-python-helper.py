@@ -13,18 +13,20 @@ and attempts to generate Python class stubs with valid expressions for
 calculated fields, referencing typical quantum-walk building blocks.
 
 NEW FEATURE:
-- It also injects the reusable function definitions (SHIFT, APPLY_BARRIER, etc.)
+- It also injects the reusable function definitions (SHIFT, APPLY_BARRIER, EVOLVE, etc.)
   directly into the generated output, so we have a single self-contained .py file.
+- The EVOLVE function can contain that single time-loop over steps, but is
+  included the same way SHIFT or BARRIER are included: as a "building block."
 
 Usage:
-  python json_toemm_to_python_helper.py -i my-experiment.json -o my-exp-helper.py
+  python json-toemm-to-python-helper.py -i my-experiment.json -o my-exp-helper.py
 """
 
 # ------------------------------------------------------------------------
 # 0) Some sample "building block" functions we might embed in the output
 # ------------------------------------------------------------------------
 # We'll keep them as strings. Our code will inject them at the top of the final file
-# if we see references to SHIFT, APPLY_BARRIER, etc. in your JSON formulas.
+# if we see references to SHIFT, APPLY_BARRIER, EVOLVE, etc. in your JSON formulas.
 
 BUILDING_BLOCKS = {
     "SHIFT": textwrap.dedent("""\
@@ -92,6 +94,46 @@ BUILDING_BLOCKS = {
                     arr[:, x, d] = gauss_y
             return arr
     """),
+    "EVOLVE": textwrap.dedent("""\
+        def EVOLVE(psi_init, steps_to_barrier, steps_after_barrier, collapse_barrier,
+                   coin_matrix, offsets,
+                   barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend):
+            \"\"\"
+            Example function to do a quantum-walk evolution with a single time loop.
+            coin -> shift -> barrier, repeated 'steps_to_barrier' times,
+            optional measurement,
+            then repeated 'steps_after_barrier' times.
+            \"\"\"
+            import numpy as np
+
+            psi = psi_init
+            for _ in range(steps_to_barrier):
+                # coin step
+                ny, nx, spin_dim = psi.shape
+                psi_flat = psi.reshape(ny*nx, spin_dim)
+                out_flat = psi_flat @ coin_matrix.T
+                psi_coin = out_flat.reshape((ny,nx,spin_dim))
+
+                # shift step
+                psi_shift = SHIFT(psi_coin, offsets)
+
+                # barrier step
+                psi = APPLY_BARRIER(psi_shift, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend)
+
+            if collapse_barrier:
+                psi = COLLAPSE_BARRIER(psi, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend)
+
+            for _ in range(steps_after_barrier):
+                ny, nx, spin_dim = psi.shape
+                psi_flat = psi.reshape(ny*nx, spin_dim)
+                out_flat = psi_flat @ coin_matrix.T
+                psi_coin = out_flat.reshape((ny,nx,spin_dim))
+
+                psi_shift = SHIFT(psi_coin, offsets)
+                psi = APPLY_BARRIER(psi_shift, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend)
+
+            return psi
+    """),
     # If you want others (e.g. MATMUL, etc.), define them here
 }
 
@@ -132,50 +174,41 @@ FUNCTION_MAP = {
     "APPLY_BARRIER": (6, 6, "APPLY_BARRIER({0}, {1}, {2}, {3}, {4}, {5})"),
     "COLLAPSE_BARRIER": (6, 6, "COLLAPSE_BARRIER({0}, {1}, {2}, {3}, {4}, {5})"),
 
+    # EVOLVE(...) => "EVOLVE(psi_init, steps_to_barrier, steps_after_barrier, collapse_barrier, coin_matrix, offsets, barrier_row, ...)"
+    # We'll assume exactly 10 args for demonstration, or you can refine:
+    "EVOLVE": (10, 10, "EVOLVE({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9})"),
+
     # SUM( X, axis=-1 ) => "np.sum(X, axis=-1)" or similar
     "SUM": (1, 2, "np.sum({0}{extra})"),
 }
 
-# Regex to see if there's an axis specification like: SUM(foo, axis=-1)
-AXIS_SPEC_REGEX = re.compile(r"^axis\s*=\s*(.*)$", re.IGNORECASE)
-
-# We'll also detect if we have something like "ABS(row_amp)^2" by searching for ^2
-POWER2_REGEX = re.compile(r"^(.*)\^2$")
+AXIS_SPEC_REGEX = re.compile(r"^axis\\s*=\\s*(.*)$", re.IGNORECASE)
+POWER2_REGEX = re.compile(r"^(.*)\\^2$")
 FUNC_CALL_REGEX = re.compile(r"^([A-Z_]+)\((.*)\)$", re.IGNORECASE)
 
 def parse_formula(expr, used_blocks_set):
     """
-    Recursive parser to convert an expression like
-        'DIVIDE(Lx,nx)' => '(self.Lx / self.nx)'
-    or
-        'MATMUL(psi_in,TRANSPOSE(coin_matrix))'
-    into
-        'np.matmul(self.psi_in, self.coin_matrix.T)'
-
-    We'll track which building-block calls are used (SHIFT, APPLY_BARRIER, etc.)
-    by adding them to used_blocks_set.
+    Recursive parser to convert expressions into Python code.
+    Also tracks which building block names appear.
     """
-
     expr = expr.strip()
 
-    # Special check for something like "xxx^2"
+    # check for ^2
     pow_match = POWER2_REGEX.match(expr)
     if pow_match:
         sub_expr = pow_match.group(1).strip()
         parsed_sub = parse_formula(sub_expr, used_blocks_set)
         return f"({parsed_sub}**2)"
 
-    # If it doesn't look like "FUNC(...)", it might be a numeric or variable
+    # see if it's "FUNC(...)" or just literal/variable
     match = FUNC_CALL_REGEX.match(expr)
     if not match:
+        # numeric literal?
         if re.match(r"^[0-9.+-]+$", expr):
-            # numeric literal
             return expr
-        else:
-            # treat as a variable => prefix with self.
-            return f"self.{expr}"
+        # variable => prefix with self.
+        return f"self.{expr}"
 
-    # We do have a function call
     func_name = match.group(1).upper()
     args_str = match.group(2).strip()
 
@@ -194,7 +227,6 @@ def parse_formula(expr, used_blocks_set):
             depth -= 1
             current.append(char)
         elif char == "," and depth == 0:
-            # top-level comma => split
             arg_str = "".join(current).strip()
             if arg_str:
                 args.append(arg_str)
@@ -208,19 +240,17 @@ def parse_formula(expr, used_blocks_set):
 
     parsed_args = [parse_formula(a, used_blocks_set) for a in args]
 
-    # see if we have a known function
     info = FUNCTION_MAP.get(func_name)
     if not info:
         return f"# ERROR: Unknown function {func_name}"
 
-    (min_args, max_args, template) = info
+    min_args, max_args, template = info
     if max_args is None:
         max_args = 99999
-
     if not (min_args <= len(parsed_args) <= max_args):
         return f"# ERROR: {func_name} expects {min_args}..{max_args} args, got {len(parsed_args)}"
 
-    # handle special case: SUM(..., axis=-1)
+    # handle SUM(..., axis=-1)
     if func_name == "SUM" and len(parsed_args) == 2:
         axis_str = args[1].strip()
         axis_match = AXIS_SPEC_REGEX.match(axis_str)
@@ -230,30 +260,18 @@ def parse_formula(expr, used_blocks_set):
         else:
             return "# ERROR: SUM(...) second arg not recognized"
 
-    # normal function
+    # normal function fill
     try:
         return template.format(*parsed_args, extra="")
     except IndexError:
         return f"# ERROR: mismatch placeholders in {func_name}"
 
-
 def transform_formula(formula_str, used_blocks_set):
-    """
-    Attempt to parse the formula string into a Python expression.
-    We also track which building-block function calls appear in formula_str
-    by updating used_blocks_set.
-    """
     if not formula_str:
         return "None"
     return parse_formula(formula_str, used_blocks_set)
 
-
 def generate_class_code(entity, used_blocks_set):
-    """
-    Given one entity from the JSON, generate Python class code.
-
-    For "calculated" fields, produce a read-only @property that returns the parsed formula.
-    """
     class_name = entity["name"]
     fields = entity.get("fields", [])
 
@@ -261,23 +279,21 @@ def generate_class_code(entity, used_blocks_set):
     code_lines.append(f"class {class_name}:")
     code_lines.append("    def __init__(self, **kwargs):")
 
-    has_non_calculated = False
+    has_non_calc = False
     for f in fields:
-        f_name = f["name"]
-        f_type = f.get("type")
-        if f_type != "calculated":
-            has_non_calculated = True
-            code_lines.append(f"        self.{f_name} = kwargs.get('{f_name}')")
+        if f.get("type") != "calculated":
+            code_lines.append(f"        self.{f['name']} = kwargs.get('{f['name']}')")
+            has_non_calc = True
 
-    if not has_non_calculated:
+    if not has_non_calc:
         code_lines.append("        pass")
 
-    # Now properties for calculated
+    # produce read-only @property for any "calculated" fields
     for f in fields:
         if f.get("type") == "calculated":
+            formula = f.get("formula","")
+            pyexpr = transform_formula(formula, used_blocks_set)
             prop_name = f["name"]
-            formula = f.get("formula", "")
-            python_expr = transform_formula(formula, used_blocks_set)
 
             code_lines.append("")
             code_lines.append("    @property")
@@ -285,74 +301,89 @@ def generate_class_code(entity, used_blocks_set):
             code_lines.append(f"        \"\"\"")
             code_lines.append(f"        Original formula: {formula}")
             code_lines.append(f"        \"\"\"")
-            if python_expr.startswith("# ERROR"):
+            if pyexpr.startswith("# ERROR"):
                 code_lines.append(f"        # Parser error for formula: {formula}")
                 code_lines.append("        return None")
             else:
-                code_lines.append(f"        return {python_expr}")
+                code_lines.append(f"        return {pyexpr}")
 
     return "\n".join(code_lines)
 
-
+###############################
+# The main code generation
+###############################
 def main():
     parser = argparse.ArgumentParser(
         description="Generate Python classes from a JSON experiment rulebook. "
-                    "Inject building-block function defs (SHIFT, BARRIER, etc.) into the output."
+                    "Inject building-block function defs (SHIFT, BARRIER, EVOLVE, etc.) into the output."
     )
-    parser.add_argument("-i", "--input", required=True, help="Path to input JSON file.")
-    parser.add_argument("-o", "--output", required=True, help="Path to output .py file.")
+    parser.add_argument("-i","--input",required=True,help="Path to input JSON file.")
+    parser.add_argument("-o","--output",required=True,help="Path to output .py file.")
+    parser.add_argument("--include-sample-main",action="store_true",
+        help="If set, also inject a sample_main() function demonstration.")
     args = parser.parse_args()
 
-    with open(args.input, "r", encoding="utf-8") as f:
+    with open(args.input,"r",encoding="utf-8") as f:
         entities = json.load(f)
 
-    # We'll gather references to SHIFT, APPLY_BARRIER, etc.
     used_blocks = set()
-
-    # Generate code for each entity
-    classes_code = []
+    class_codes = []
     for e in entities:
-        class_code = generate_class_code(e, used_blocks)
-        classes_code.append(class_code)
+        code = generate_class_code(e, used_blocks)
+        class_codes.append(code)
 
-    # The lines that define the building blocks we used
-    # We'll see which building blocks appear in used_blocks, then embed them
+    # figure out which building block function definitions to embed
     required_defs = []
     for block_name in sorted(used_blocks):
-        # only embed if we have a known block definition for it
         if block_name in BUILDING_BLOCKS:
             required_defs.append(BUILDING_BLOCKS[block_name])
-
-    # If we want to be thorough, we might see references to e.g. "MATMUL" => we do a minimal def
-    # but for now, let's assume SHIFT, BARRIER, GAUSSIAN_IN_Y, etc. are the main references.
 
     output_lines = []
     output_lines.append('"""')
     output_lines.append("Auto-generated Python code from your quantum-walk rulebook.")
-    output_lines.append("It includes both the building-block definitions (SHIFT, BARRIER, etc.)")
+    output_lines.append("It includes building-block definitions (SHIFT, BARRIER, EVOLVE, etc.)")
     output_lines.append("and the classes with calculated fields referencing them.")
     output_lines.append('"""')
     output_lines.append("import math")
     output_lines.append("import numpy as np")
     output_lines.append("")
+
     output_lines.append("# ----- Building Block Lambdas (auto-injected) -----")
     output_lines.append("")
-
-    # Insert required building blocks
     for block_def in required_defs:
         output_lines.append(block_def.strip())
-        output_lines.append("")  # blank line
+        output_lines.append("")
 
-    output_lines.append("")
     output_lines.append("# ----- Generated classes below -----")
     output_lines.append("")
+    for cc in class_codes:
+        output_lines.append(cc)
+        output_lines.append("")
 
-    for ccode in classes_code:
-        output_lines.append(ccode)
+    if args.include_sample_main:
+        # We'll embed a minimal sample_main
+        sample_main_str = textwrap.dedent("""\
+        def sample_main():
+            \"\"\"
+            Minimal demonstration of how to use the auto-generated classes and building blocks.
+            Adjust parameters as desired (201x201, step counts, etc.).
+            \"\"\"
+            # Typically you'd do something like:
+            # 1) Instantiate your Grid
+            # 2) Instantiate your initial wavefunction
+            # 3) Possibly define a coin matrix
+            # 4) If you have an entity with formula = EVOLVE(...), then create that entity
+            #    and read its final_wavefunction, etc.
+            print("sample_main() not fully implemented. Please fill in your usage.")
+        
+        if __name__ == "__main__":
+            sample_main()
+        """)
+        output_lines.append(sample_main_str)
         output_lines.append("")
 
     final_code = "\n".join(output_lines)
-    with open(args.output, "w", encoding="utf-8") as out_f:
+    with open(args.output,"w",encoding="utf-8") as out_f:
         out_f.write(final_code)
 
     print(f"Generated Python code written to {args.output}")
@@ -360,5 +391,5 @@ def main():
         print("Detected usage of building blocks:", ", ".join(sorted(used_blocks)))
 
 
-if __name__ == "__main__":
+if __name__=="__main__":
     main()
