@@ -83,6 +83,7 @@ def main():
     psi_init = wfi.psi_init  # an ndarray (201,201,8)
     # If your QWalkRunner references "WavefunctionInitial.psi_init" internally, no direct assignment is needed.
     # Otherwise, you might do runner.psi_init = psi_init.
+    runner.psi_init = psi_init
 
     # Access the final wavefunction property (which calls EVOLVE behind the scenes)
     final_psi = runner.final_wavefunction  # calls EVOLVE(...) if that's how your JSON is set up
