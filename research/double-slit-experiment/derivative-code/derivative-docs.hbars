@@ -1,0 +1,17 @@
+# README
+
+{{#each this}}
+## {{name}}
+
+{{#each fields}}
+- **{{name}}** - {{description}}
+  - **Type:** {{type}}  
+  {{#if tensor_shape}}
+  - **Tensor Shape:** {{tensor_shape}}
+  {{/if}}
+  {{#if formula}}
+  - **Formula:** `{{formula}}`
+  {{/if}}
+
+{{/each}}
+{{/each}}
