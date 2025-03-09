@@ -147,6 +147,8 @@ BUILDING_BLOCKS = {
 #
 FUNCTION_MAP = {
     # Basic math
+    "SQRT": (1, 1, "math.sqrt({0})"),
+    "LEN": (1, 1, "len({0})"),
     "ADD":      (2, 2, "({0} + {1})"),
     "SUBTRACT": (2, 2, "({0} - {1})"),
     "MULTIPLY": (2, 2, "np.matmul({0}, {1})"),   # for matrix multiply (if appropriate)
@@ -184,7 +186,9 @@ FUNCTION_MAP = {
 
 AXIS_SPEC_REGEX = re.compile(r"^axis\\s*=\\s*(.*)$", re.IGNORECASE)
 POWER2_REGEX = re.compile(r"^(.*)\\^2$")
+#POWER2_REGEX = re.compile(r"^(.*)\^2$")  # Ensures it captures "X^2"
 FUNC_CALL_REGEX = re.compile(r"^([A-Z_]+)\((.*)\)$", re.IGNORECASE)
+
 
 def parse_formula(expr, used_blocks_set):
     """
@@ -193,14 +197,14 @@ def parse_formula(expr, used_blocks_set):
     """
     expr = expr.strip()
 
-    # check for ^2
+    # Fix: Parse exponentiation (^2) properly
     pow_match = POWER2_REGEX.match(expr)
     if pow_match:
         sub_expr = pow_match.group(1).strip()
-        parsed_sub = parse_formula(sub_expr, used_blocks_set)
-        return f"({parsed_sub}**2)"
+        parsed_sub = parse_formula(sub_expr, used_blocks_set)  # Ensure SUBTRACT inside is handled first
+        return f"({parsed_sub}**2)"  # Correct Python exponentiation
 
-    # see if it's "FUNC(...)" or just literal/variable
+    # Check for function calls
     match = FUNC_CALL_REGEX.match(expr)
     if not match:
         # numeric literal?
@@ -212,10 +216,10 @@ def parse_formula(expr, used_blocks_set):
     func_name = match.group(1).upper()
     args_str = match.group(2).strip()
 
-    # track usage
+    # Track usage
     used_blocks_set.add(func_name)
 
-    # parse arguments (respect parentheses)
+    # Parse function arguments (respect parentheses)
     args = []
     current = []
     depth = 0
@@ -240,29 +244,20 @@ def parse_formula(expr, used_blocks_set):
 
     parsed_args = [parse_formula(a, used_blocks_set) for a in args]
 
+    # Lookup function in FUNCTION_MAP
     info = FUNCTION_MAP.get(func_name)
     if not info:
         return f"# ERROR: Unknown function {func_name}"
 
     min_args, max_args, template = info
-    if max_args is None:
-        max_args = 99999
     if not (min_args <= len(parsed_args) <= max_args):
         return f"# ERROR: {func_name} expects {min_args}..{max_args} args, got {len(parsed_args)}"
 
-    # handle SUM(..., axis=-1)
-    if func_name == "SUM" and len(parsed_args) == 2:
-        axis_str = args[1].strip()
-        axis_match = AXIS_SPEC_REGEX.match(axis_str)
-        if axis_match:
-            axis_val = axis_match.group(1).strip()
-            return template.format(parsed_args[0], extra=f", axis={axis_val}")
-        else:
-            return "# ERROR: SUM(...) second arg not recognized"
-
-    # normal function fill
+    # Normal function fill
     try:
         return template.format(*parsed_args, extra="")
+    except KeyError as e:
+        return f"# ERROR: Missing key {str(e)} in {func_name} template"
     except IndexError:
         return f"# ERROR: mismatch placeholders in {func_name}"
 

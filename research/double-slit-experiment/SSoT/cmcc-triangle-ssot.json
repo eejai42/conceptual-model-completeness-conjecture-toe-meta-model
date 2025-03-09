@@ -1,0 +1,48 @@
+[
+    {
+      "name": "Edge",
+      "fields": [
+        {
+          "name": "start_x",
+          "type": "scalar"
+        },
+        {
+          "name": "start_y",
+          "type": "scalar"
+        },
+        {
+          "name": "end_x",
+          "type": "scalar"
+        },
+        {
+          "name": "end_y",
+          "type": "scalar"
+        },
+        {
+          "name": "length",
+          "type": "calculated",
+          "formula": "SQRT( ADD( SUBTRACT(end_x, start_x)^2, SUBTRACT(end_y, start_y)^2 ) )"
+        }
+      ]
+    },
+    {
+      "name": "Polygon",
+      "fields": [
+        {
+          "name": "edges",
+          "type": "scalar"
+        },
+        {
+          "name": "edge_count",
+          "type": "calculated",
+          "formula": "LEN(edges)"
+        },
+        {
+          "name": "perimeter",
+          "type": "calculated",
+          "formula": "SUM(edges)"
+        }
+      ]
+    }
+  ]
+  
