@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # Import the classes/functions from the auto-generated helper
 # (Replace "my_exp_helper" with the actual module name you generated)
-from cmcc_helpers import (
+from double_slit_helpers import (
     Grid, 
     WavefunctionInitial,
     QWalkRunner,       # assuming your JSON defines QWalkRunner

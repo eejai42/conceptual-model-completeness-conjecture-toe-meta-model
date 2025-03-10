@@ -1,4 +1,4 @@
-from cmcc_triangle_helpers import Vertex, Edge, Polygon
+from triangle_helpers import Vertex, Edge, Polygon
 
 def main():
     """
