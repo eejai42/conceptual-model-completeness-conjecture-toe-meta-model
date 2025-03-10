@@ -54,17 +54,16 @@ class Polygon:
     @property
     def perimeter(self):
         """
-        Original formula: SUM(edges)
+        Original formula: OVER(edges, length)
         """
-        return np.sum(self.edges)
+        return sum(self.edges)
 
     @property
     def max_edge_length(self):
         """
-        Original formula: MAX(edges)
+        Original formula: MAX_OVER(edges, length)
         """
-        # Parser error for formula: MAX(edges)
-        return None
+        return max(getattr(item, 'self.length') for item in self.self.edges)
 
     @property
     def area(self):
@@ -77,7 +76,6 @@ class Polygon:
     @property
     def shape_type(self):
         """
-        Original formula: IF( EQUAL(edge_count, 3), 'Triangle', IF( EQUAL(edge_count, 4), 'Quadrilateral', 'Polygon') )
+        Original formula: IF( EQUAL(edge_count, 3), 'Triangle', IF( EQUAL(edge_count, 4), 'Quadrilateral', 'Polygon'))
         """
-        # Parser error for formula: IF( EQUAL(edge_count, 3), 'Triangle', IF( EQUAL(edge_count, 4), 'Quadrilateral', 'Polygon') )
-        return None
+        return ('Triangle' if np.allclose(self.edge_count, 3) else ('Quadrilateral' if np.allclose(self.edge_count, 4) else 'Polygon'))

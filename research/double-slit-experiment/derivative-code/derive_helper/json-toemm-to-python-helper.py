@@ -156,9 +156,12 @@ FUNCTION_MAP = {
     "POWER":   (2, 2, "({0} ** {1})"),
     "FLOOR":    (1, 1, "math.floor({0})"),
     "ABS":      (1, 1, "np.abs({0})"),
+    "SUM_OVER": (2, 2, "sum(getattr(item, '{1}') for item in self.{0})"),
+    "MAX_OVER": (2, 2, "max(getattr(item, '{1}') for item in self.{0})"),
     # For checking unitarity, might do EQUAL => np.allclose
     "EQUAL":    (2, 2, "np.allclose({0}, {1})"),
-
+    "IF": (3, 3, "({1} if {0} else {2})"),
+    
     # More specialized quantum/physics calls:
     "IDENTITY": (1, 1, "np.eye({0}, dtype=np.complex128)"),  # IDENTITY(8) => np.eye(8)
     "TRANSPOSE": (1, 1, "{0}.T"),
