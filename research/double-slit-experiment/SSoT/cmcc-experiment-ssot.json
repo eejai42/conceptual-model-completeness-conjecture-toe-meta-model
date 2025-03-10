@@ -90,7 +90,12 @@
       {"name":"steps_to_barrier","type":"number","description":"Number of steps taken before potentially measuring at the barrier."},
       {"name":"steps_after_barrier","type":"number","description":"Number of steps taken after the barrier event."},
       {"name":"collapse_barrier","type":"boolean","description":"If true, measure/collapse at the barrier; otherwise let the wave pass."},
-      {"name":"final_wavefunction","type":"calculated","formula":"EVOLVE(WavefunctionInitial.psi_init, steps_to_barrier, steps_after_barrier, collapse_barrier)","description":"Resulting wavefunction after the prescribed sequence of steps and optional barrier collapse."},
+      {
+        "name": "final_wavefunction",
+        "type": "calculated",
+        "formula": "EVOLVE(WavefunctionInitial.psi_init, steps_to_barrier, steps_after_barrier, collapse_barrier)",
+        "description": "Resulting wavefunction after the prescribed sequence of steps and optional barrier collapse."
+      },
       {"name":"step_order","type":"array","items":"string","description":"Sequence in which steps are applied each iteration (e.g. [\"CoinStep\", \"ShiftStep\", \"BarrierStep\"])."}
     ]},
     {"name":"RandomnessControl",

@@ -1,138 +1,13 @@
-#!/usr/bin/env python3
 """
-A single Python script that matches your JSON rulebook, but uses a 4-argument
-EVOLVE(...) function. This ensures final_wavefunction won't return None.
-
-Make sure your QWalkRunner JSON formula is:
-"formula": "EVOLVE(WavefunctionInitial.psi_init, steps_to_barrier, steps_after_barrier, collapse_barrier)"
+Auto-generated Python code from your quantum-walk rulebook.
+References SHIFT, APPLY_BARRIER, EVOLVE, etc. from an external python file.
 """
-
 import math
 import numpy as np
 
-###############################
-# 1) BUILDING-BLOCK FUNCTIONS #
-###############################
+from quantum_walk_blocks import APPLY_BARRIER, COLLAPSE_BARRIER, EVOLVE, GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION, SHIFT
 
-def SHIFT(psi_in, offsets):
-    """
-    SHIFT each spin component by the specified (dy,dx).
-    Offsets is a list of length=8, e.g. for an 8D walk.
-    """
-    ny, nx, spin_dim = psi_in.shape
-    psi_out = np.zeros_like(psi_in)
-    for d, (dy, dx) in enumerate(offsets):
-        rolled = np.roll(psi_in[:, :, d], shift=dy, axis=0)
-        rolled = np.roll(rolled, shift=dx, axis=1)
-        psi_out[:, :, d] = rolled
-    return psi_out
-
-def APPLY_BARRIER(psi_in, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend):
-    """
-    Zero out wavefunction in 'barrier_row' except for the columns in slit ranges.
-    """
-    psi_out = psi_in.copy()
-    psi_out[barrier_row, :, :] = 0
-    psi_out[barrier_row, slit1_xstart:slit1_xend, :] = psi_in[barrier_row, slit1_xstart:slit1_xend, :]
-    psi_out[barrier_row, slit2_xstart:slit2_xend, :] = psi_in[barrier_row, slit2_xstart:slit2_xend, :]
-    return psi_out
-
-def COLLAPSE_BARRIER(psi_in, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend):
-    """
-    Example measurement-based barrier: amplitude outside slits is lost.
-    For demonstration, we place collapsed amplitude in direction=0.
-    """
-    psi_out = np.zeros_like(psi_in)
-    row_intens = np.sum(np.abs(psi_in[barrier_row, :, :])**2, axis=-1)
-    keep = np.zeros_like(row_intens)
-    keep[slit1_xstart:slit1_xend] = row_intens[slit1_xstart:slit1_xend]
-    keep[slit2_xstart:slit2_xend] = row_intens[slit2_xstart:slit2_xend]
-    amps = np.sqrt(keep)
-    psi_out[barrier_row, :, 0] = amps
-    return psi_out
-
-def GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION(src_y, sigma_y, ny, nx, spin_dim):
-    """
-    Returns shape=(ny,nx,spin_dim), Gaussian in y, uniform in x & spin.
-    """
-    arr = np.zeros((ny, nx, spin_dim), dtype=np.complex128)
-    ycoords = np.arange(ny)
-    gauss_y = np.exp(-0.5 * ((ycoords - src_y)/sigma_y)**2)
-    norm = np.sqrt(np.sum(np.abs(gauss_y)**2))
-    gauss_y /= norm
-
-    for d in range(spin_dim):
-        for x in range(nx):
-            arr[:, x, d] = gauss_y
-    return arr
-
-###############################
-# THE 4-ARG EVOLVE FUNCTION
-###############################
-def EVOLVE(psi_init, steps_to_barrier, steps_after_barrier, collapse_barrier):
-    """
-    4-argument time evolution that references some global or fixed coin/op/offsets/barrier logic.
-    We'll just define them here for demonstration. 
-    If you want them from QWalkRunner fields, do so inside this function or pass them in.
-
-    Steps:
-      1) 8D coin + SHIFT + barrier for steps_to_barrier
-      2) optional collapse
-      3) 8D coin + SHIFT + barrier for steps_after_barrier
-    """
-    # Hard-code an 8D DFT coin
-    coin_matrix = np.fft.fft(np.eye(8)) / np.sqrt(8)
-    # Hard-code offsets
-    offsets = [
-        (-1,  0), 
-        (-1, +1), 
-        ( 0, +1), 
-        (+1, +1),
-        (+1,  0), 
-        (+1, -1), 
-        ( 0, -1), 
-        (-1, -1),
-    ]
-    # Hard-code a barrier row, slits, etc. 
-    # For demonstration, let's place them at row=100, with 2 slits each 5 wide
-    # (You can replace these with global references or keep them consistent with your Grid)
-    barrier_row = 100
-    slit1_xstart = 90
-    slit1_xend   = 95
-    slit2_xstart = 105
-    slit2_xend   = 110
-
-    psi = psi_init
-    for _ in range(steps_to_barrier):
-        # coin step
-        ny, nx, spin_dim = psi.shape
-        psi_flat = psi.reshape(ny*nx, spin_dim)
-        out_flat = psi_flat @ coin_matrix.T
-        psi_coin = out_flat.reshape((ny,nx,spin_dim))
-
-        # shift step
-        psi_shift = SHIFT(psi_coin, offsets)
-
-        # barrier step
-        psi = APPLY_BARRIER(psi_shift, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend)
-
-    if collapse_barrier:
-        psi = COLLAPSE_BARRIER(psi, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend)
-
-    for _ in range(steps_after_barrier):
-        ny, nx, spin_dim = psi.shape
-        psi_flat = psi.reshape(ny*nx, spin_dim)
-        out_flat = psi_flat @ coin_matrix.T
-        psi_coin = out_flat.reshape((ny,nx,spin_dim))
-
-        psi_shift = SHIFT(psi_coin, offsets)
-        psi = APPLY_BARRIER(psi_shift, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend)
-
-    return psi
-
-###############################
-# 2) AUTO-GENERATED CLASSES
-###############################
+# ----- Generated classes below -----
 
 class Grid:
     def __init__(self, **kwargs):
@@ -148,47 +23,65 @@ class Grid:
 
     @property
     def dx(self):
-        # formula: DIVIDE(Lx,nx)
+        """
+        Original formula: DIVIDE(Lx,nx)
+        """
         return (self.Lx / self.nx)
 
     @property
     def dy(self):
-        # formula: DIVIDE(Ly,ny)
+        """
+        Original formula: DIVIDE(Ly,ny)
+        """
         return (self.Ly / self.ny)
 
     @property
     def barrier_row(self):
-        # formula: FLOOR(DIVIDE(ADD(barrier_y_phys,DIVIDE(Ly,2)),dy))
+        """
+        Original formula: FLOOR(DIVIDE(ADD(barrier_y_phys,DIVIDE(Ly,2)),dy))
+        """
         return math.floor(((self.barrier_y_phys + (self.Ly / 2)) / self.dy))
 
     @property
     def detector_row(self):
-        # formula: FLOOR(DIVIDE(ADD(detector_y_phys,DIVIDE(Ly,2)),dy))
+        """
+        Original formula: FLOOR(DIVIDE(ADD(detector_y_phys,DIVIDE(Ly,2)),dy))
+        """
         return math.floor(((self.detector_y_phys + (self.Ly / 2)) / self.dy))
 
     @property
     def center_x(self):
-        # formula: FLOOR(DIVIDE(nx,2))
+        """
+        Original formula: FLOOR(DIVIDE(nx,2))
+        """
         return math.floor((self.nx / 2))
 
     @property
     def slit1_xstart(self):
-        # formula: SUBTRACT(center_x,FLOOR(DIVIDE(slit_spacing,2)))
+        """
+        Original formula: SUBTRACT(center_x,FLOOR(DIVIDE(slit_spacing,2)))
+        """
         return (self.center_x - math.floor((self.slit_spacing / 2)))
 
     @property
     def slit1_xend(self):
-        # formula: ADD(slit1_xstart,slit_width)
+        """
+        Original formula: ADD(slit1_xstart,slit_width)
+        """
         return (self.slit1_xstart + self.slit_width)
 
     @property
     def slit2_xstart(self):
-        # formula: ADD(center_x,FLOOR(DIVIDE(slit_spacing,2)))
+        """
+        Original formula: ADD(center_x,FLOOR(DIVIDE(slit_spacing,2)))
+        """
         return (self.center_x + math.floor((self.slit_spacing / 2)))
 
     @property
     def slit2_xend(self):
-        # formula: ADD(slit2_xstart,slit_width)
+        """
+        Original formula: ADD(slit2_xstart,slit_width)
+        """
         return (self.slit2_xstart + self.slit_width)
 
 class CoinOperator:
@@ -200,8 +93,10 @@ class CoinOperator:
 
     @property
     def UnitarityCheck(self):
-        # formula: EQUAL(MULTIPLY(Matrix,CONJUGATE_TRANSPOSE(Matrix)),IDENTITY(8))
-        return np.allclose(np.matmul(self.Matrix, self.Matrix.conj().T), np.eye(8))
+        """
+        Original formula: EQUAL(MULTIPLY(Matrix,CONJUGATE_TRANSPOSE(Matrix)),IDENTITY(8))
+        """
+        return np.allclose(np.matmul(self.Matrix, self.Matrix.conj().T), np.eye(8, dtype=np.complex128))
 
 class WavefunctionInitial:
     def __init__(self, **kwargs):
@@ -209,13 +104,12 @@ class WavefunctionInitial:
         self.sigma_y = kwargs.get('sigma_y')
         self.kx = kwargs.get('kx')
         self.ky = kwargs.get('ky')
-        self.Grid = None  # set externally if needed
 
     @property
     def psi_init(self):
-        # formula: GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION(src_y, sigma_y, Grid.ny, Grid.nx, 8)
-        if not self.Grid:
-            raise ValueError("WavefunctionInitial: must set self.Grid before calling psi_init.")
+        """
+        Original formula: GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION(src_y, sigma_y, Grid.ny, Grid.nx, 8)
+        """
         return GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION(self.src_y, self.sigma_y, self.Grid.ny, self.Grid.nx, 8)
 
 class CoinStep:
@@ -225,8 +119,11 @@ class CoinStep:
 
     @property
     def psi_out(self):
-        # formula: MATMUL(psi_in, TRANSPOSE(coin_matrix))
-        return np.matmul(self.psi_in, self.coin_matrix.T)
+        """
+        Original formula: MATMUL(psi_in, TRANSPOSE(coin_matrix))
+        """
+        # Parser error for formula: MATMUL(psi_in, TRANSPOSE(coin_matrix))
+        return None
 
 class ShiftStep:
     def __init__(self, **kwargs):
@@ -235,7 +132,9 @@ class ShiftStep:
 
     @property
     def psi_out(self):
-        # formula: SHIFT(psi_in, offsets)
+        """
+        Original formula: SHIFT(psi_in, offsets)
+        """
         return SHIFT(self.psi_in, self.offsets)
 
 class BarrierStep:
@@ -249,10 +148,10 @@ class BarrierStep:
 
     @property
     def psi_out(self):
-        # formula: APPLY_BARRIER(...)
-        return APPLY_BARRIER(self.psi_in, self.barrier_row,
-                             self.slit1_xstart, self.slit1_xend,
-                             self.slit2_xstart, self.slit2_xend)
+        """
+        Original formula: APPLY_BARRIER(psi_in, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend)
+        """
+        return APPLY_BARRIER(self.psi_in, self.barrier_row, self.slit1_xstart, self.slit1_xend, self.slit2_xstart, self.slit2_xend)
 
 class CollapseBarrierStep:
     def __init__(self, **kwargs):
@@ -266,13 +165,10 @@ class CollapseBarrierStep:
 
     @property
     def psi_out(self):
-        # formula: COLLAPSE_BARRIER(...)
-        return COLLAPSE_BARRIER(self.psi_in,
-                                self.barrier_row,
-                                self.slit1_xstart,
-                                self.slit1_xend,
-                                self.slit2_xstart,
-                                self.slit2_xend)
+        """
+        Original formula: COLLAPSE_BARRIER(psi_in, barrier_row, slit1_xstart, slit1_xend, slit2_xstart, slit2_xend)
+        """
+        return COLLAPSE_BARRIER(self.psi_in, self.barrier_row, self.slit1_xstart, self.slit1_xend, self.slit2_xstart, self.slit2_xend)
 
 class WavefunctionNorm:
     def __init__(self, **kwargs):
@@ -280,8 +176,10 @@ class WavefunctionNorm:
 
     @property
     def total_norm(self):
-        # formula: SUM(ABS(psi_in)^2)
-        return np.sum(np.abs(self.psi_in)**2)
+        """
+        Original formula: SUM(ABS(psi_in)^2)
+        """
+        return np.sum(math.fabs(self.psi_in)^2)
 
 class DetectorAmplitude:
     def __init__(self, **kwargs):
@@ -290,9 +188,11 @@ class DetectorAmplitude:
 
     @property
     def row_amp(self):
-        # formula: SLICE(psi_in, axis=0, index=detector_row)
-        # we do a direct slice
-        return self.psi_in[self.detector_row, :, :]
+        """
+        Original formula: SLICE(psi_in, axis=0, index=detector_row)
+        """
+        # Parser error for formula: SLICE(psi_in, axis=0, index=detector_row)
+        return None
 
 class DetectorIntensity:
     def __init__(self, **kwargs):
@@ -300,37 +200,30 @@ class DetectorIntensity:
 
     @property
     def intensity_1d(self):
-        # formula: SUM(ABS(row_amp)^2, axis=-1)
-        return np.sum(np.abs(self.row_amp)**2, axis=-1)
+        """
+        Original formula: SUM(ABS(row_amp)^2, axis=-1)
+        """
+        return np.sum(math.fabs(self.row_amp)^2)
 
 class QWalkRunner:
     def __init__(self, **kwargs):
         self.steps_to_barrier = kwargs.get('steps_to_barrier')
         self.steps_after_barrier = kwargs.get('steps_after_barrier')
         self.collapse_barrier = kwargs.get('collapse_barrier')
-        self.step_order = kwargs.get('step_order')  # not used here, but stored
+        self.step_order = kwargs.get('step_order')
 
     @property
     def final_wavefunction(self):
         """
         Original formula: EVOLVE(WavefunctionInitial.psi_init, steps_to_barrier, steps_after_barrier, collapse_barrier)
         """
-        # Actually call our 4-arg EVOLVE function
-        # We do need a reference to "WavefunctionInitial.psi_init". For demonstration, we'll
-        # assume it is some global or stored reference. Typically you'd wire this up or pass it in.
-        # For now, let's just raise an error if we haven't set it:
+        return EVOLVE(self.psi_init, self.steps_to_barrier, self.steps_after_barrier, self.collapse_barrier)
 
-        if not hasattr(self, 'psi_init'):
-            # In many setups, you'd store a reference:
-            #   self.psi_init = wfi.psi_init
-            # from your main code or define a way to link them automatically
-            raise ValueError("QWalkRunner: please set runner.psi_init = wavefunction_array.")
-        
-        return EVOLVE(self.psi_init,
-                      self.steps_to_barrier,
-                      self.steps_after_barrier,
-                      self.collapse_barrier)
+class RandomnessControl:
+    def __init__(self, **kwargs):
+        self.global_seed = kwargs.get('global_seed')
 
-####################################
-# END OF FILE
-####################################
+class DetectorRegion:
+    def __init__(self, **kwargs):
+        self.y_start = kwargs.get('y_start')
+        self.y_end = kwargs.get('y_end')
