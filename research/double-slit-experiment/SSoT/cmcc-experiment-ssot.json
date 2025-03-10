@@ -72,7 +72,7 @@
     {"name":"WavefunctionNorm",
     "fields":[
       {"name":"psi_in","type":"tensor","tensor_shape":"(ny,nx,8)","description":"Wavefunction whose norm we want to compute."},
-      {"name":"total_norm","type":"calculated","formula":"SUM(ABS(psi_in)^2)","description":"Computes the total probability norm: sum(|psi|^2)."}
+      {"name":"total_norm","type":"calculated","formula":"SUM(POWER(ABS(psi_in),2))","description":"Computes the total probability norm: sum(|psi|^2)."}
     ]},
     {"name":"DetectorAmplitude",
     "fields":[
@@ -83,7 +83,7 @@
     {"name":"DetectorIntensity",
     "fields":[
       {"name":"row_amp","type":"tensor","tensor_shape":"(nx,8)","description":"Detector row amplitude over x, with 8 spin directions."},
-      {"name":"intensity_1d","type":"calculated","formula":"SUM(ABS(row_amp)^2, axis=-1)","description":"Sums |amplitude|^2 over spin directions, yielding intensity profile vs. x."}
+      {"name":"intensity_1d","type":"calculated","formula":"SUM(POWER(ABS(row_amp), 2), axis=-1)","description":"Sums |amplitude|^2 over spin directions, yielding intensity profile vs. x."}
     ]},
     {"name":"QWalkRunner",
     "fields":[

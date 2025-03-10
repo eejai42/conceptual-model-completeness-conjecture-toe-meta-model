@@ -177,9 +177,9 @@ class WavefunctionNorm:
     @property
     def total_norm(self):
         """
-        Original formula: SUM(ABS(psi_in)^2)
+        Original formula: SUM(POWER(ABS(psi_in),2))
         """
-        return np.sum(math.fabs(self.psi_in)^2)
+        return np.sum((np.abs(self.psi_in) ** 2))
 
 class DetectorAmplitude:
     def __init__(self, **kwargs):
@@ -201,9 +201,9 @@ class DetectorIntensity:
     @property
     def intensity_1d(self):
         """
-        Original formula: SUM(ABS(row_amp)^2, axis=-1)
+        Original formula: SUM(POWER(ABS(row_amp), 2), axis=-1)
         """
-        return np.sum(math.fabs(self.row_amp)^2)
+        return np.sum((np.abs(self.row_amp) ** 2))
 
 class QWalkRunner:
     def __init__(self, **kwargs):
@@ -217,7 +217,7 @@ class QWalkRunner:
         """
         Original formula: EVOLVE(WavefunctionInitial.psi_init, steps_to_barrier, steps_after_barrier, collapse_barrier)
         """
-        return EVOLVE(self.psi_init, self.steps_to_barrier, self.steps_after_barrier, self.collapse_barrier)
+        return EVOLVE(self.WavefunctionInitial.psi_init, self.steps_to_barrier, self.steps_after_barrier, self.collapse_barrier)
 
 class RandomnessControl:
     def __init__(self, **kwargs):
