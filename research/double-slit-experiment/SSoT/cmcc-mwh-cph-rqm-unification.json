@@ -1,0 +1,271 @@
+{
+    "entities": [
+      {
+        "name": "QuantumState",
+        "description": "Stores wavefunction or amplitude distribution for a quantum system. Common to all interpretations.",
+        "fields": [
+          {
+            "name": "state_id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "amplitude_data",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Complex amplitude array or param-based wavefunction representation."
+          },
+          {
+            "name": "normalization",
+            "type": "calculated", 
+            "formula": "SUM( ABS(amplitude_data)^2 )"
+          },
+          {
+            "name": "interpretation_id",
+            "type": "lookup",
+            "target_entity": "InterpretationPolicy",
+            "description": "Indicates how measurement events on this state are handled (Copenhagen, Many-Worlds, RQM)."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "branches",
+            "description": "If Many-Worlds or partial branching is used, references multiple branch records for this wavefunction.",
+            "target_entity": "BranchRecord",
+            "type": "one_to_many",
+            "join_condition": "BranchRecord.wavefunction_id = this.state_id"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "branch_count",
+            "type": "rollup",
+            "formula": "COUNT(branches)"
+          },
+          {
+            "name": "global_collapse_metric",
+            "type": "rollup",
+            "formula": "ComputeGlobalCollapseMetric(branch_count, branches)"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "normalize_wavefunction",
+            "parameters": [],
+            "formula": "amplitude_data / SQRT(normalization)"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "normalization_check",
+            "formula": "ABS( normalization - 1 ) <= epsilon",
+            "error_message": "Wavefunction must be normalized (or near 1)."
+          }
+        ]
+      },
+      {
+        "name": "InterpretationPolicy",
+        "description": "Configures which quantum interpretation applies to a given wavefunction or system.",
+        "fields": [
+          {
+            "name": "interpretation_id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "interpretation_name",
+            "type": "scalar",
+            "datatype": "enum",
+            "description": "One of: ['Copenhagen','ManyWorlds','RQM']"
+          },
+          {
+            "name": "collapse_behavior",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "e.g. 'single_outcome' (Copenhagen), 'branch' (ManyWorlds), 'observer_relative' (RQM)."
+          },
+          {
+            "name": "observer_specificity",
+            "type": "scalar",
+            "datatype": "boolean",
+            "description": "true if RQM requires observer frames to define partial states"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "MeasurementEvent",
+        "description": "Records an observation that might cause wavefunction collapse, branching, or observer-relative updates.",
+        "fields": [
+          {
+            "name": "meas_id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "wavefunction_id",
+            "type": "lookup",
+            "target_entity": "QuantumState",
+            "description": "Which wavefunction is being 'measured' or observed?"
+          },
+          {
+            "name": "observable_operator",
+            "type": "scalar",
+            "datatype": "json"
+          },
+          {
+            "name": "possible_outcomes",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List or map of outcome labels and their amplitude slices."
+          },
+          {
+            "name": "time_stamp",
+            "type": "scalar",
+            "datatype": "datetime"
+          },
+          {
+            "name": "observer_id",
+            "type": "lookup",
+            "target_entity": "ObserverFrame",
+            "description": "For RQM, which observer sees this event?"
+          },
+          {
+            "name": "selected_outcome",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Copenhagen-like single outcome OR blank if Many-Worlds branches all outcomes."
+          },
+          {
+            "name": "branch_ids_generated",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "For Many-Worlds, a list of new branch IDs post-measurement"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "outcome_probabilities",
+            "type": "rollup",
+            "formula": "ComputeOutcomeDistribution(wavefunction_id.amplitude_data, observable_operator)"
+          },
+          {
+            "name": "temporal_consistency_check",
+            "type": "rollup",
+            "formula": "CheckMeasurementConsistency(wavefunction_id, meas_id)"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "execute_measurement",
+            "parameters": [],
+            "formula": "InterpretationBasedMeasurement(wavefunction_id, observer_id, this.possible_outcomes, this.outcome_probabilities)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "ObserverFrame",
+        "description": "RQM vantage point. Each observer can have partial knowledge or partial wavefunction states.",
+        "fields": [
+          {
+            "name": "observer_id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "observer_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "observed_state_records",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Potential partial wavefunction or outcome records known to this observer."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "shared_state_agreement",
+            "type": "rollup",
+            "formula": "ComputeObserverConvergence(this.observer_id)"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "BranchRecord",
+        "description": "Many-Worlds or partial RQM branching metadata—each branch is a distinct wavefunction 'slice' after measurement.",
+        "fields": [
+          {
+            "name": "branch_id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "wavefunction_id",
+            "type": "lookup",
+            "target_entity": "QuantumState"
+          },
+          {
+            "name": "origin_meas_id",
+            "type": "lookup",
+            "target_entity": "MeasurementEvent",
+            "description": "Which measurement event spawned this branch?"
+          },
+          {
+            "name": "branch_amplitude_data",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "The wavefunction slice or projected amplitude for this branch."
+          },
+          {
+            "name": "prob_weight",
+            "type": "calculated",
+            "formula": "SUM( ABS(branch_amplitude_data)^2 )",
+            "description": "Probability weight for this branch in a many-worlds context."
+          },
+          {
+            "name": "parent_branch_id",
+            "type": "lookup",
+            "target_entity": "BranchRecord",
+            "description": "Points to the branch from which this emerged"
+          },
+          {
+            "name": "branch_depth",
+            "type": "calculated",
+            "formula": "ComputeBranchDepth(parent_branch_id)",
+            "description": "Number of steps from the original wavefunction root"
+          },
+          {
+            "name": "coherence_factor",
+            "type": "calculated",
+            "formula": "ComputeInterference(branch_amplitude_data, wavefunction_id)",
+            "description": "Overlap measure with other branches of the same wavefunction"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": [],
+        "constraints": []
+      }
+    ]
+  }
+  
