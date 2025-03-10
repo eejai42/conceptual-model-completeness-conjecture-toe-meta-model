@@ -2,30 +2,70 @@
     {
       "name": "Vertex",
       "fields": [
-        { "name": "x", "type": "scalar", "description": "X-coordinate" },
-        { "name": "y", "type": "scalar", "description": "Y-coordinate" }
+        {
+          "name": "x",
+          "type": "scalar",
+          "description": "X-coordinate of the vertex"
+        },
+        {
+          "name": "y",
+          "type": "scalar",
+          "description": "Y-coordinate of the vertex"
+        }
       ]
     },
     {
       "name": "Edge",
       "fields": [
-        { "name": "start_vertex", "type": "scalar", "description": "ID of start vertex" },
-        { "name": "end_vertex", "type": "scalar", "description": "ID of end vertex" },
-        { "name": "start_x", "type": "scalar" },
-        { "name": "start_y", "type": "scalar" },
-        { "name": "end_x", "type": "scalar" },
-        { "name": "end_y", "type": "scalar" },
+        {
+          "name": "start_vertex",
+          "type": "scalar",
+          "description": "Reference or ID of the start Vertex"
+        },
+        {
+          "name": "end_vertex",
+          "type": "scalar",
+          "description": "Reference or ID of the end Vertex"
+        },
+        {
+          "name": "start_x",
+          "type": "calculated",
+          "description": "The X-coordinate of start_vertex",
+          "formula": "start_vertex.x"
+        },
+        {
+          "name": "start_y",
+          "type": "calculated",
+          "description": "The Y-coordinate of start_vertex",
+          "formula": "start_vertex.y"
+        },
+        {
+          "name": "end_x",
+          "type": "calculated",
+          "description": "The X-coordinate of end_vertex",
+          "formula": "end_vertex.x"
+        },
+        {
+          "name": "end_y",
+          "type": "calculated",
+          "description": "The Y-coordinate of end_vertex",
+          "formula": "end_vertex.y"
+        },
         {
           "name": "length",
           "type": "calculated",
-          "description": "Euclidean distance",
+          "description": "Euclidean distance between (start_x,start_y) and (end_x,end_y)",
           "formula": "SQRT( ADD( POWER( SUBTRACT(end_x, start_x), 2 ), POWER( SUBTRACT(end_y, start_y), 2 ) ) )"
         },
-        { "name": "belongs_to_polygon", "type": "scalar" },
+        {
+          "name": "belongs_to_polygon",
+          "type": "scalar",
+          "description": "Reference or ID of the polygon this edge belongs to"
+        },
         {
           "name": "hypotenuse",
           "type": "calculated",
-          "description": "Check if this edge length is the polygon's max_edge_length",
+          "description": "Check if this edge's length = polygon's max_edge_length",
           "formula": "EQUAL( length, belongs_to_polygon.max_edge_length )"
         }
       ]
@@ -36,35 +76,35 @@
         {
           "name": "vertices",
           "type": "scalar",
-          "description": "List of Vertex objects or IDs"
+          "description": "List of Vertex IDs for the polygon's corners"
         },
         {
           "name": "edges",
           "type": "scalar",
-          "description": "List of Edge objects or IDs"
+          "description": "List of Edge objects or IDs that form the polygon sides"
         },
         {
           "name": "edge_count",
           "type": "calculated",
-          "description": "Number of edges",
+          "description": "Number of edges in the polygon",
           "formula": "LEN(edges)"
         },
         {
           "name": "perimeter",
           "type": "calculated",
-          "description": "Sum of edge.length for each edge in edges",
+          "description": "Sum of each Edge's length in edges",
           "formula": "SUM_OVER(edges, length)"
         },
         {
           "name": "max_edge_length",
           "type": "calculated",
-          "description": "Maximum of edges[].length",
+          "description": "Largest length among all edges in edges",
           "formula": "MAX_OVER(edges, length)"
-        },       
+        },
         {
           "name": "shape_type",
           "type": "calculated",
-          "description": "Identify as 'Triangle','Quadrilateral', or 'Polygon'",
+          "description": "Identify 'Triangle','Quadrilateral', or else 'Polygon'",
           "formula": "IF( EQUAL(edge_count, 3), 'Triangle', IF( EQUAL(edge_count, 4), 'Quadrilateral', 'Polygon'))"
         }
       ]

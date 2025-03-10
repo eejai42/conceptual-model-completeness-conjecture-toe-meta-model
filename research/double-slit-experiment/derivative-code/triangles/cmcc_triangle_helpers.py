@@ -19,11 +19,35 @@ class Edge:
     def __init__(self, **kwargs):
         self.start_vertex = kwargs.get('start_vertex')
         self.end_vertex = kwargs.get('end_vertex')
-        self.start_x = kwargs.get('start_x')
-        self.start_y = kwargs.get('start_y')
-        self.end_x = kwargs.get('end_x')
-        self.end_y = kwargs.get('end_y')
         self.belongs_to_polygon = kwargs.get('belongs_to_polygon')
+
+    @property
+    def start_x(self):
+        """
+        Original formula: start_vertex.x
+        """
+        return self.start_vertex.x
+
+    @property
+    def start_y(self):
+        """
+        Original formula: start_vertex.y
+        """
+        return self.start_vertex.y
+
+    @property
+    def end_x(self):
+        """
+        Original formula: end_vertex.x
+        """
+        return self.end_vertex.x
+
+    @property
+    def end_y(self):
+        """
+        Original formula: end_vertex.y
+        """
+        return self.end_vertex.y
 
     @property
     def length(self):
@@ -56,7 +80,7 @@ class Polygon:
         """
         Original formula: SUM_OVER(edges, length)
         """
-        return sum(item for item in self.edges)
+        return sum(getattr(item, 'length') for item in self.edges)
 
     @property
     def max_edge_length(self):
