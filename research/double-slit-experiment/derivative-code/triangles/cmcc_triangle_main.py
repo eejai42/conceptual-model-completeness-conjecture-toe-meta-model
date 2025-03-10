@@ -18,7 +18,7 @@ def main():
     e4 = Edge(start_x=p3["x"], start_y=p3["y"], end_x=p1["x"], end_y=p3["y"])
 
     # Store edges in a list
-    edges = [e1, e2, e3, e4]
+    edges = [e1, e2, e3]
 
     # Create a polygon
     polygon = Polygon(edges=[e.length for e in edges])

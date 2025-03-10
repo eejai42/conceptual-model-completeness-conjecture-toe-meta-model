@@ -192,38 +192,58 @@ AXIS_SPEC_REGEX = re.compile(r"^axis\\s*=\\s*(.*)$", re.IGNORECASE)
 POWER2_REGEX = re.compile(r"^(.*)\\^2$")
 #POWER2_REGEX = re.compile(r"^(.*)\^2$")  # Ensures it captures "X^2"
 FUNC_CALL_REGEX = re.compile(r"^([A-Z_]+)\((.*)\)$", re.IGNORECASE)
+STRING_LITERAL_RE = re.compile(r"^(['\"])(.*)\1$")  # Captures 'something' or "something"
 
+def parse_token(token: str) -> str:
+    token = token.strip()
+    
+    # Check if it is a string literal: 'Triangle' or "Triangle"
+    match = STRING_LITERAL_RE.match(token)
+    if match:
+        # Return it as a Python string
+        # e.g. token="'Triangle'" -> "'Triangle'"
+        return token
+
+    # Check if numeric
+    if re.match(r"^[0-9.+-]+$", token):
+        return token  # Keep numeric literal as-is
+
+    # Otherwise, assume it's a variable name => prefix with self.
+    return f"self.{token}"
 
 def parse_formula(expr, used_blocks_set):
     """
     Recursive parser to convert expressions into Python code.
     Also tracks which building block names appear.
+    Handles:
+      - ^2 exponentiation
+      - function calls (FUNC(...))
+      - aggregator calls (SUM_OVER, MAX_OVER)
+      - string literals vs variables
     """
     expr = expr.strip()
 
-    # Fix: Parse exponentiation (^2) properly
+    # 1) Handle exponentiation X^2 -> (X**2)
     pow_match = POWER2_REGEX.match(expr)
     if pow_match:
         sub_expr = pow_match.group(1).strip()
-        parsed_sub = parse_formula(sub_expr, used_blocks_set)  # Ensure SUBTRACT inside is handled first
-        return f"({parsed_sub}**2)"  # Correct Python exponentiation
+        parsed_sub = parse_formula(sub_expr, used_blocks_set)
+        return f"({parsed_sub}**2)"
 
-    # Check for function calls
+    # 2) Is it a function call, e.g. FUNC(...)?
     match = FUNC_CALL_REGEX.match(expr)
     if not match:
-        # numeric literal?
-        if re.match(r"^[0-9.+-]+$", expr):
-            return expr
-        # variable => prefix with self.
-        return f"self.{expr}"
+        # Not a recognized function pattern => treat as a single token
+        return parse_token(expr)
 
+    # 3) Parse function name, arguments
     func_name = match.group(1).upper()
     args_str = match.group(2).strip()
 
-    # Track usage
+    # Mark usage of this function
     used_blocks_set.add(func_name)
 
-    # Parse function arguments (respect parentheses)
+    # Split arguments carefully, respecting parentheses
     args = []
     current = []
     depth = 0
@@ -241,14 +261,53 @@ def parse_formula(expr, used_blocks_set):
             current = []
         else:
             current.append(char)
+
     if current:
         arg_str = "".join(current).strip()
         if arg_str:
             args.append(arg_str)
 
-    parsed_args = [parse_formula(a, used_blocks_set) for a in args]
+    # Recursively parse each argument
+    # BUT: For aggregator calls (SUM_OVER, MAX_OVER), we want raw tokens for argument 0 & 1
+    # so the template can do "self.{0}" or "item.{1}" properly.
+    # For everything else, we parse them normally.
+    parsed_args = []
+    aggregator_funcs = {"SUM_OVER", "MAX_OVER"}  # you can expand if needed
 
-    # Lookup function in FUNCTION_MAP
+    if func_name in aggregator_funcs:
+        # The aggregator pattern is typically SUM_OVER(collection, field)
+        # We'll parse each argument *once*, but don't prefix with "self." inside parse_formula
+        # because the function template uses self.{0}, item.{1} etc.
+        # So let's do minimal parse: if it's a string literal or numeric, keep as token, else raw variable name
+        for arg in args:
+            # aggregator's "collection" or "field" might be string-literal or a variable name (like 'edges', 'length')
+            # We'll do a simpler parse that doesn't add "self."
+            # This means we'll pass it unmodified if it's not a quoted string or numeric
+            # But we still handle exponent if it had ^2 inside, so let's do a quick check:
+            # If aggregator arg has internal function calls -> we might want to parse them fully.
+            # For simplicity, assume aggregator calls won't nest further function calls. 
+            # If needed, you can parse them recursively. For now:
+            if FUNC_CALL_REGEX.match(arg) or POWER2_REGEX.match(arg):
+                # If aggregator's arg is itself an expression, parse recursively
+                parsed_args.append(parse_formula(arg, used_blocks_set))
+            else:
+                # else treat as a single token but skip "self." prefix
+                # if it's quoted => keep it as string
+                # if numeric => keep numeric
+                # else variable => just raw
+                lit = STRING_LITERAL_RE.match(arg)
+                if lit:
+                    parsed_args.append(arg)  # keep quotes
+                elif re.match(r"^[0-9.+-]+$", arg):
+                    parsed_args.append(arg)
+                else:
+                    # raw variable name
+                    parsed_args.append(arg)
+    else:
+        # Normal function => parse each argument fully
+        parsed_args = [parse_formula(a, used_blocks_set) for a in args]
+
+    # 4) Lookup function in FUNCTION_MAP
     info = FUNCTION_MAP.get(func_name)
     if not info:
         return f"# ERROR: Unknown function {func_name}"
@@ -257,7 +316,7 @@ def parse_formula(expr, used_blocks_set):
     if not (min_args <= len(parsed_args) <= max_args):
         return f"# ERROR: {func_name} expects {min_args}..{max_args} args, got {len(parsed_args)}"
 
-    # Normal function fill
+    # 5) Format the final expression
     try:
         return template.format(*parsed_args, extra="")
     except KeyError as e:

@@ -54,24 +54,16 @@ class Polygon:
     @property
     def perimeter(self):
         """
-        Original formula: OVER(edges, length)
+        Original formula: SUM_OVER(edges, length)
         """
-        return sum(self.edges)
+        return sum(item for item in self.edges)
 
     @property
     def max_edge_length(self):
         """
         Original formula: MAX_OVER(edges, length)
         """
-        return max(getattr(item, 'self.length') for item in self.self.edges)
-
-    @property
-    def area(self):
-        """
-        Original formula: SHOELACE(vertices)
-        """
-        # Parser error for formula: SHOELACE(vertices)
-        return None
+        return max(getattr(item, 'length') for item in self.edges)
 
     @property
     def shape_type(self):

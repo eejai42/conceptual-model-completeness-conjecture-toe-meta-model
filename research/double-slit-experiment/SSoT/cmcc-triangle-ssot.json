@@ -60,13 +60,7 @@
           "type": "calculated",
           "description": "Maximum of edges[].length",
           "formula": "MAX_OVER(edges, length)"
-        },
-        {
-          "name": "area",
-          "type": "calculated",
-          "description": "Polygon area (e.g. shoelace formula on vertices)",
-          "formula": "SHOELACE(vertices)"
-        },
+        },       
         {
           "name": "shape_type",
           "type": "calculated",
