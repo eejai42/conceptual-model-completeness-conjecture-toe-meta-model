@@ -145,6 +145,51 @@
           "type": "rollup",
           "formula": "ComputeLeggettGargCorrelations(this.state_id, MeasurementEvent.*)",
           "description": "Checks if time-ordered measurements on this wavefunction violate the Leggett-Garg bound."
+        },
+        {
+          "name": "chsh_local_check",
+          "type": "rollup",
+          "formula": "ComputeCHSHCorrelators(this.meas_id, wavefunction_id)"
+        },
+        {
+          "name": "quantum_fisher_info",
+          "type": "rollup",
+          "formula": "ComputeQuantumFisherInformation(amplitude_data, hamiltonian_ref)"
+        },
+        {
+          "name": "kochen_specker_contextuality_check",
+          "type": "rollup",
+          "formula": "ComputeContextualityViolations(this.state_id, MeasurementEvent.*)"
+        },
+        {
+          "name": "ghz_mermin_violation_indicator",
+          "type": "rollup",
+          "formula": "ComputeGHZOrMerminInequalityViolations(this.state_id, MeasurementEvent.*)",
+          "description": "Checks for multi-qubit GHZ or Mermin inequality violations using relevant measurement events referencing this wavefunction. Returns a numeric measure of violation or a boolean indicating whether a violation threshold is crossed."
+        },
+        {
+          "name": "hardys_paradox_indicator",
+          "type": "rollup",
+          "formula": "ComputeHardyParadoxProbability(this.state_id, MeasurementEvent.*)",
+          "description": "Evaluates Hardy's paradox conditions in measurement outcomes for this wavefunction. If certain probabilities appear contradictory under local realism, the aggregator flags or quantifies the paradox."
+        },
+        {
+          "name": "interpretation_usage_summary",
+          "type": "rollup",
+          "formula": "CollectInterpretationEvidence(this.state_id, MeasurementEvent.*)",
+          "description": "Scans all MeasurementEvents referencing this wavefunction. Summarizes how many used single-outcome (Copenhagen), branching (Many-Worlds), or observer-relative updates (RQM), highlighting if an inconsistent or hybrid interpretation is in play."
+        },
+        {
+          "name": "multi_partition_entanglement_map",
+          "type": "rollup",
+          "formula": "EvaluateAllBipartitionsForEntanglement(this.state_id)",
+          "description": "For a multi-qubit or multi-part system, systematically checks all bipartitions (and optionally tripartitions) to compute entanglement entropies. Useful for classifying the wavefunction as GHZ-like, W-state–like, or product-like across different partitions."
+        },
+        {
+          "name": "global_pointer_basis_inference",
+          "type": "rollup",
+          "formula": "InferPointerBasisStability(this.state_id, pointer_basis_candidates, ObserverFrame.*)",
+          "description": "Combines the wavefunction's pointer_basis_candidates with any available observer data (e.g. Darwinism indices) to decide if a stable, classical-like pointer basis has globally emerged (i.e., robust against decoherence and visible to multiple observers)."
         }
       ],
       "lambdas": [
@@ -509,6 +554,11 @@
           "type": "rollup",
           "formula": "ComputeDarwinismOverTime(participants)",
           "description": "Examines how stable the classical-like pointer emerges across multiple observation times."
+        },
+        {
+          "name": "multi_observer_merge",
+          "type": "rollup",
+          "formula": "PerformRQMObserverMerge(this.record_id, participants)"
         }
       ],
       "lambdas": [
@@ -642,6 +692,12 @@
           "type": "rollup",
           "formula": "ComputeBranchMergeProbability(this.branch_id, observer_scope, coherence_factor)",
           "description": "Numerical measure of how likely these partial branches can unify from an observer’s vantage."
+        },
+        {
+          "name": "branch_reunion_check",
+          "type": "rollup",
+          "formula": "EvaluateBranchReunionFeasibility(this.branch_id, sibling_branches)",
+          "description": "Analyzes whether sibling branches (e.g. from the same measurement event) can genuinely recombine based on their coherence_factor, relative_phase, and decoherence state. Flags merges that are effectively forbidden once branches are orthogonal."
         }
       ],
       "lambdas": [
@@ -649,6 +705,11 @@
           "name": "merge_partial_branches",
           "parameters": ["other_branch_id"],
           "formula": "RQMPartialBranchMerge(this.branch_id, other_branch_id, observer_relational_cut)"
+        },
+        {
+          "name": "merge_branches_for_observer",
+          "parameters": ["target_branch_id", "observer_id"],
+          "formula": "RQMPartialBranchMergeLogic(this.state_id, target_branch_id, observer_id)"
         }
       ],
       "constraints": []
@@ -724,6 +785,12 @@
           "type": "formula",
           "formula": "ComputeMatrixTrace(matrix_data)",
           "description": "Computes the trace of the density matrix, which should be 1 for proper normalization."
+        },
+        {
+          "name": "tomographic_reconstruction",
+          "type": "rollup",
+          "formula": "ReconstructDensityMatrixFromMeasurements(this.record_id, MeasurementEvent.*)",
+          "description": "Performs quantum state tomography by aggregating measurement outcomes across various bases. Produces an estimated density matrix to compare with this record's matrix_data for consistency checks or validation of experimental data."
         }
       ],
       "lambdas": [
@@ -946,6 +1013,18 @@
           "type": "rollup",
           "formula": "CheckNestedWignerScenario(observer_A, observer_B, shared_events)",
           "description": "Detects a multi-level scenario where B sees A in superposition after A measured the system."
+        },
+        {
+          "name": "detect_cyclic_measurement_loop",
+          "type": "rollup",
+          "formula": "IdentifyMeasurementCyclesBetweenObservers(observer_A, observer_B, shared_events)",
+          "description": "Checks if observer A measures observer B, while observer B also measures observer A (possibly at a different time), forming a cycle. Useful in RQM or extended Wigner's friend scenarios where cyclical measurement references can produce paradoxes."
+        },
+        {
+          "name": "extended_nested_wigner_analysis",
+          "type": "rollup",
+          "formula": "ComputeMultiLevelWignerFriendScenario(observer_A, observer_B, shared_events)",
+          "description": "Performs a deeper search for multi-level nested Wigner’s friend arrangements, analyzing partial collapses or superpositions from each vantage. Flags complex scenarios where an 'outer' observer sees a superposition even though an 'inner' observer recorded a collapse."
         }
       ],
       "lambdas": [
@@ -1016,6 +1095,12 @@
           "type": "formula",
           "formula": "CheckGateSequence(gates, target_wavefunction)",
           "description": "Validates gate definitions and ensures they are consistent with the dimension of the target wavefunction or subsystem."
+        },
+        {
+          "name": "executeCircuitAndMeasure",
+          "type": "rollup",
+          "formula": "ApplyCircuitThenMeasure(this.circuit_id, target_wavefunction, measurement_config)",
+          "description": "Convenience aggregator to (1) apply all gates in this circuit to the target wavefunction and (2) automatically execute measurement events as specified by measurement_config. Can generate new MeasurementEvents or outcome logs in one step."
         }
       ],
       "lambdas": [
