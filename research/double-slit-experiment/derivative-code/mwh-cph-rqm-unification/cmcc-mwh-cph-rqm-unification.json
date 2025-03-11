@@ -144,6 +144,27 @@
           "target_entity": "ParticleRecord",
           "join_condition": "Possibly ScenarioParticleLink if we want the same pattern as wavefunctions.",
           "description": "If scenario includes classical or hybrid ParticleRecords."
+        },
+        {
+          "name": "scenario_dark_matter_inferences",
+          "type": "one_to_many",
+          "target_entity": "DarkMatterInferenceRecord",
+          "join_condition": "DarkMatterInferenceRecord.scenario_id = this.scenario_id",
+          "description": "Points to DM inference records relevant to this scenario, assuming each DarkMatterInferenceRecord references scenario_id."
+        },
+        {
+          "name": "scenario_halo_structures",
+          "type": "one_to_many",
+          "target_entity": "HaloSubstructureRecord",
+          "join_condition": "HaloSubstructureRecord.scenario_id = this.scenario_id",
+          "description": "Points to halo substructure records. You would add a 'scenario_id' field in HaloSubstructureRecord to enable this link."
+        },
+        {
+          "name": "scenario_cosmic_evolutions",
+          "type": "one_to_many",
+          "target_entity": "CosmicEvolutionRecord",
+          "join_condition": "CosmicEvolutionRecord.scenario_id = this.scenario_id",
+          "description": "Links cosmic-evolution snapshots (by redshift/time) to this scenario. You would add 'scenario_id' in CosmicEvolutionRecord."
         }
       ],
       "aggregations": [
@@ -302,6 +323,30 @@
           "type": "rollup",
           "formula": "COUNT(linked_classical_systems)",
           "description": "Counts how many ClassicalSystemRecords are in this scenario."
+        },
+        {
+          "name": "branch_to_classical_boundary_analysis",
+          "type": "rollup",
+          "formula": "AnalyzeBranchToClassicalBoundary(multi_wavefunction_coherence_map, global_classical_limit_analysis)",
+          "description": "Synthesizes wavefunction coherence data with scenario-level classical limit analysis to locate partial quantum/classical boundaries in this scenario."
+        },
+        {
+          "name": "cosmological_observer_paradox_scan",
+          "type": "rollup",
+          "formula": "ScanObserverParadoxesInCosmicContext(linked_relationships, scenario_dark_matter_inferences, scenario_halo_structures, scenario_cosmic_evolutions)",
+          "description": "Correlates RQM or Wigner’s friend paradox indicators among observers with large-scale cosmic structures (dark matter, halo substructures, cosmic evolution)."
+        },
+        {
+          "name": "interpretation_mismatch_summary",
+          "type": "rollup",
+          "formula": "SummarizeInterpretationMismatches(scenario_interpretation_mismatch_events)",
+          "description": "Aggregates mismatch events (branch vs collapse, etc.) into a user-friendly summary. Groups them by wavefunction or measurement type."
+        },
+        {
+          "name": "pointer_states_cosmic_evolution",
+          "type": "rollup",
+          "formula": "CorrelatePointerDarwinismWithCosmicEvolution(linked_observers, scenario_cosmic_evolutions)",
+          "description": "Tracks whether pointer states remain stable across cosmic time by comparing quantum_darwinism_index from observers with redshift/cosmic_time from linked cosmic evolution records."
         }
       ],
       "lambdas": [
@@ -2362,13 +2407,26 @@
           "datatype": "string"
         }
       ],
-      "lookups": [],
+      "lookups": [
+        {
+          "name": "scenario_id",
+          "type": "lookup",
+          "target_entity": "GlobalScenarioRecord",
+          "description": "Which global scenario this black hole system is part of. Enables cross-referencing scenario-level aggregators like max_branch_depth_across_scenario."
+        }
+      ],
       "aggregations": [
         {
           "name": "schwarzschild_radius",
           "type": "rollup",
           "formula": "(2 * G * approx_mass)/(c^2)",
           "description": "If we link G, c from PhysicalConstantsRecord, we can unify constants"
+        },
+        {
+          "name": "branch_depth_blackhole_thermo_inference",
+          "type": "rollup",
+          "formula": "AnalyzeBranchDepthAndBHProperties(scenario_id.max_branch_depth_across_scenario, this.schwarzschild_radius, hawking_temperature)",
+          "description": "Correlates the scenario's maximum wavefunction branch depth with black-hole horizon properties, highlighting possible quantum info paradox or re-interference near the horizon."
         }
       ],
       "lambdas": [
