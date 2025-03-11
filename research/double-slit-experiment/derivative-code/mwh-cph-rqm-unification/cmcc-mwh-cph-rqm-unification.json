@@ -1,707 +1,802 @@
 {
-    "entities": [
-      {
-        "name": "QuantumState",
-        "description": "Stores wavefunction or amplitude distribution for a quantum system. Common to all interpretations.",
-        "fields": [
-          {
-            "name": "state_id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true
-          },
-          {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string"
-          },
-          {
-            "name": "amplitude_data",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Complex amplitude array or param-based wavefunction representation."
-          },
-          {
-            "name": "normalization",
-            "type": "calculated",
-            "formula": "SUM( ABS(amplitude_data)^2 )"
-          },
-          {
-            "name": "interpretation_id",
-            "type": "lookup",
-            "target_entity": "InterpretationPolicy",
-            "description": "Indicates how measurement events on this state are handled (Copenhagen, Many-Worlds, RQM)."
-          },
-          {
-            "name": "coherence_time",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "Approx time (in some units) until decoherence occurs."
-          },
-          {
-            "name": "dynamic_phase",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "Optional global phase in radians used for time-evolution or interference checks."
-          },
-          {
-            "name": "entanglement_measure",
-            "type": "rollup",
-            "formula": "ComputeEntanglementEntropy(amplitude_data, subsystem_spec)",
-            "description": "Calculates an entanglement entropy or related measure by partial tracing out a specified subsystem."
-          },
-          {
-            "name": "decoherence_map",
-            "type": "rollup",
-            "formula": "AssessDecoherenceAcrossBranches(this.state_id)",
-            "description": "Evaluates how orthogonal or non-interfering different branches of this wavefunction have become."
-          },
-          {
-            "name": "subsystem_spec",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Defines the subsystem partition (e.g., qubit indices) for entanglement calculations."
-          }          
-        ],
-        "lookups": [
-          {
-            "name": "branches",
-            "description": "If Many-Worlds or partial branching is used, references multiple branch records for this wavefunction.",
-            "target_entity": "BranchRecord",
-            "type": "one_to_many",
-            "join_condition": "BranchRecord.wavefunction_id = this.state_id"
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "branch_count",
-            "type": "rollup",
-            "formula": "COUNT(branches)"
-          },
-          {
-            "name": "global_collapse_metric",
-            "type": "rollup",
-            "formula": "ComputeGlobalCollapseMetric(branch_count, branches)"
-          },
-          {
-            "name": "time_evolution",
-            "type": "rollup",
-            "formula": "ApplyTimeEvolution(amplitude_data, dynamic_phase)"
-          },
-          {
-            "name": "causal_branch_graph",
-            "type": "rollup",
-            "formula": "ConstructBranchCausalityGraph(branches)"
-          },
-          {
-            "name": "macro_distinct_branches",
-            "type": "rollup",
-            "formula": "IdentifyMacroscopicBranches(decoherence_map, branches, some_threshold)"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "normalize_wavefunction",
-            "parameters": [],
-            "formula": "amplitude_data / SQRT(normalization)"
-          },
-          {
-            "name": "merge_with_another_state",
-            "parameters": ["target_state_id", "entangling_params"],
-            "formula": "CreateNewEntangledState(this.state_id, target_state_id, entangling_params)"
-          }
-        ],
-        "constraints": [
-          {
-            "name": "normalization_check",
-            "formula": "ABS( normalization - 1 ) <= epsilon",
-            "error_message": "Wavefunction must be normalized (or near 1)."
-          }
-        ]
-      },
-      {
-        "name": "InterpretationPolicy",
-        "description": "Configures which quantum interpretation applies to a given wavefunction or system.",
-        "fields": [
-          {
-            "name": "interpretation_id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true
-          },
-          {
-            "name": "interpretation_name",
-            "type": "scalar",
-            "datatype": "enum",
-            "description": "One of: ['Copenhagen','ManyWorlds','RQM']"
-          },
-          {
-            "name": "collapse_behavior",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "e.g. 'single_outcome' (Copenhagen), 'branch' (ManyWorlds), 'observer_relative' (RQM)."
-          },
-          {
-            "name": "observer_specificity",
-            "type": "scalar",
-            "datatype": "boolean",
-            "description": "true if RQM requires observer frames to define partial states"
-          },
-          {
-            "name": "metadata",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Arbitrary extra settings, e.g. {branch_weight: 'equal', collapse_threshold: 0.95}"
-          }
-        ],
-        "lookups": [
-          {
-            "name": "applied_wavefunctions",
-            "description": "Reverse lookup to QuantumState with interpretation_id = this ID.",
-            "target_entity": "QuantumState",
-            "type": "one_to_many",
-            "join_condition": "QuantumState.interpretation_id = this.interpretation_id"
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "wavefunction_count",
-            "type": "rollup",
-            "formula": "COUNT(applied_wavefunctions)"
-          }
-        ],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "MeasurementEvent",
-        "description": "Records an observation that might cause wavefunction collapse, branching, or observer-relative updates.",
-        "fields": [
-          {
-            "name": "meas_id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true
-          },
-          {
-            "name": "wavefunction_id",
-            "type": "lookup",
-            "target_entity": "QuantumState",
-            "description": "Which wavefunction is being 'measured' or observed?"
-          },
-          {
-            "name": "measurement_type",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Indicates the kind of measurement: e.g. 'position', 'spin', 'partial_POVM', etc."
-          },
-          {
-            "name": "observable_operator",
-            "type": "scalar",
-            "datatype": "json"
-          },
-          {
-            "name": "possible_outcomes",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "List or map of outcome labels and their amplitude slices."
-          },
-          {
-            "name": "time_stamp",
-            "type": "scalar",
-            "datatype": "datetime"
-          },
-          {
-            "name": "observer_id",
-            "type": "lookup",
-            "target_entity": "ObserverFrame",
-            "description": "For RQM, which observer sees this event?"
-          },
-          {
-            "name": "selected_outcome",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Copenhagen-like single outcome OR blank if Many-Worlds branches all outcomes."
-          },
-          {
-            "name": "branch_ids_generated",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "For Many-Worlds, a list of new branch IDs post-measurement"
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "outcome_probabilities",
-            "type": "rollup",
-            "formula": "ComputeOutcomeDistribution(wavefunction_id.amplitude_data, observable_operator)"
-          },
-          {
-            "name": "temporal_consistency_check",
-            "type": "rollup",
-            "formula": "CheckMeasurementConsistency(wavefunction_id, meas_id)"
-          },
-          {
-            "name": "history_consistency",
-            "type": "rollup",
-            "formula": "ComputeHistoryConsistency(this.meas_id, wavefunction_id)"
-          },
-          {
-            "name": "causality_check",
-            "type": "rollup",
-            "formula": "CheckTemporalOrdering(time_stamp, wavefunction_id)"
-          },
-          {
-            "name": "classical_fact_agreement",
-            "type": "rollup",
-            "formula": "ComputeClassicalFactAgreement(meas_id)"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "execute_measurement",
-            "parameters": [],
-            "formula": "InterpretationBasedMeasurement(wavefunction_id, observer_id, this.possible_outcomes, this.outcome_probabilities)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "ObserverFrame",
-        "description": "RQM vantage point. Each observer can have partial knowledge or partial wavefunction states.",
-        "fields": [
-          {
-            "name": "observer_id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true
-          },
-          {
-            "name": "observer_name",
-            "type": "scalar",
-            "datatype": "string"
-          },
-          {
-            "name": "observed_state_records",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Potential partial wavefunction or outcome records known to this observer."
-          },
-          {
-            "name": "reference_frame_transform",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Any shift/boost or coordinate transform used by this observer."
-          },
-          {
-            "name": "quantum_darwinism_index",
-            "type": "rollup",
-            "formula": "ComputeDarwinismIndex(this.observer_id)",
-            "description": "Measures how many ObserverFrames share consistent outcome records, indicating emergent classicality."
-          },
-          {
-            "name": "contextual_state_data",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "The wavefunction (or partial wavefunction) as assigned by this observer after applying its own Bayesian or RQM-like update rules."
-          }    
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "shared_state_agreement",
-            "type": "rollup",
-            "formula": "ComputeObserverConvergence(this.observer_id)"
-          },
-          {
-            "name": "intersubjective_consistency_check",
-            "type": "rollup",
-            "formula": "CompareWithOtherObservers(this.observer_id)"
-          },
-          {
-            "name": "observer_consensus",
-            "type": "rollup",
-            "formula": "ComputeObserverConsensus(this.observer_id)"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "update_observed_context",
-            "parameters": ["measurement_id"],
-            "formula": "BayesianObserverUpdate(this.observer_id, measurement_id, contextual_state_data)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "BranchRecord",
-        "description": "Many-Worlds or partial RQM branching metadata—each branch is a distinct wavefunction 'slice' after measurement.",
-        "fields": [
-          {
-            "name": "branch_id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true
-          },
-          {
-            "name": "wavefunction_id",
-            "type": "lookup",
-            "target_entity": "QuantumState"
-          },
-          {
-            "name": "origin_meas_id",
-            "type": "lookup",
-            "target_entity": "MeasurementEvent",
-            "description": "Which measurement event spawned this branch?"
-          },
-          {
-            "name": "branch_amplitude_data",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "The wavefunction slice or projected amplitude for this branch."
-          },
-          {
-            "name": "prob_weight",
-            "type": "calculated",
-            "formula": "SUM( ABS(branch_amplitude_data)^2 )",
-            "description": "Probability weight for this branch in a many-worlds context."
-          },
-          {
-            "name": "parent_branch_id",
-            "type": "lookup",
-            "target_entity": "BranchRecord",
-            "description": "Points to the branch from which this emerged"
-          },
-          {
-            "name": "branch_depth",
-            "type": "calculated",
-            "formula": "ComputeBranchDepth(parent_branch_id)",
-            "description": "Number of steps from the original wavefunction root"
-          },
-          {
-            "name": "coherence_factor",
-            "type": "calculated",
-            "formula": "ComputeInterference(branch_amplitude_data, wavefunction_id)",
-            "description": "Overlap measure with other branches of the same wavefunction"
-          },
-          {
-            "name": "relative_phase",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "Phase angle relative to other sibling branches, used for potential recombination"
-          },
-          {
-            "name": "branch_history",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Stores a chronological list of significant events or merges for this branch."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "recombination_potential",
-            "type": "rollup",
-            "formula": "ComputeRecombinationPotential(coherence_factor, branch_amplitude_data)"
-          },
-          {
-            "name": "recombination_feasibility",
-            "type": "rollup",
-            "formula": "CheckRecombinationFeasibility(coherence_factor, relative_phase, wavefunction_id)"
-          }
-        ],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "Observable",
-        "fields": [
-          {
-            "name": "operator_id",
-            "type": "string",
-            "description": "Unique identifier for this observable/operator."
-          },
-          {
-            "name": "matrix_representation",
-            "type": "array",
-            "description": "Matrix (or array) holding the operator’s numerical data."
-          },
-          {
-            "name": "eigenvalues",
-            "type": "array",
-            "description": "List of eigenvalues for quick reference in measurement events."
-          },
-          {
-            "name": "eigenvectors",
-            "type": "array",
-            "description": "Eigenvectors or basis states associated with each eigenvalue."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": []
-      },
-      {
-        "name": "DensityMatrixRecord",
-        "fields": [
-          {
-            "name": "record_id",
-            "type": "string",
-            "description": "Unique identifier for the density matrix record."
-          },
-          {
-            "name": "matrix_data",
-            "type": "array",
-            "description": "2D array representing the density matrix (complex values)."
-          },
-          {
-            "name": "subsystem_ids",
-            "type": "array",
-            "description": "IDs of the subsystem(s) described by this density matrix."
-          },
-          {
-            "name": "purity",
-            "type": "number",
-            "description": "Optional cached purity measure (Tr(ρ²))."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "computePurity",
-            "type": "formula",
-            "formula": "Purity(matrix_data)"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "applyKrausOperators",
-            "description": "Applies a set of Kraus operators to the density matrix for an open-system evolution.",
-            "params": ["kraus_set"]
-          }
-        ]
-      },
-      {
-        "name": "Subsystem",
-        "fields": [
-          {
-            "name": "subsystem_id",
-            "type": "string",
-            "description": "Unique ID for the subsystem."
-          },
-          {
-            "name": "description",
-            "type": "string",
-            "description": "Human-readable description of what this subsystem represents (e.g. qubit, photon mode, etc.)."
-          },
-          {
-            "name": "dimensions",
-            "type": "number",
-            "description": "Hilbert space dimension for this subsystem."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": []
-      },
-      {
-        "name": "DecoherenceChannel",
-        "fields": [
-          {
-            "name": "channel_id",
-            "type": "string",
-            "description": "Unique identifier for this decoherence or noise model."
-          },
-          {
-            "name": "kraus_operators",
-            "type": "array",
-            "description": "Collection of Kraus operators (matrices) describing the channel."
-          },
-          {
-            "name": "applied_subsystems",
-            "type": "array",
-            "description": "IDs of subsystems to which this channel is applied."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "simulateDecoherence",
-            "type": "formula",
-            "formula": "ApplyKrausSet(density_matrix, kraus_operators)"
-          }
-        ],
-        "lambdas": []
-      },
-      {
-        "name": "QuantumEvolution",
-        "fields": [
-          {
-            "name": "evolution_id",
-            "type": "string",
-            "description": "Unique identifier for this evolution spec."
-          },
-          {
-            "name": "hamiltonian_ref",
-            "type": "string",
-            "description": "Reference to an operator_id in the Observable entity that acts as the Hamiltonian."
-          },
-          {
-            "name": "time_step",
-            "type": "number",
-            "description": "Time increment for stepwise evolution."
-          },
-          {
-            "name": "evolution_method",
-            "type": "string",
-            "description": "Method used (e.g. 'Trotter', 'Exact', 'RK4', etc.)."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "applyTimeEvolution",
-            "type": "formula",
-            "formula": "U(t) = exp(-i * H * t); wavefunction' = U(t)*wavefunction"
-          }
-        ],
-        "lambdas": []
-      },
-      {
-        "name": "QuantumEvent",
-        "fields": [
-          {
-            "name": "event_id",
-            "type": "string",
-            "description": "Unique identifier for the quantum event."
-          },
-          {
-            "name": "type",
-            "type": "string",
-            "description": "General type of event (e.g. 'measurement', 'unitary', 'entangling_interaction')."
-          },
-          {
-            "name": "operator_ref",
-            "type": "string",
-            "description": "Optional reference to an Observable (for measurement) or other operator."
-          },
-          {
-            "name": "applied_to",
-            "type": "array",
-            "description": "List of subsystem_ids or wavefunction_ids that this event acts upon."
-          },
-          {
-            "name": "timestamp",
-            "type": "string",
-            "description": "Record of when the event happened, if relevant."
-          },
-          {
-            "name": "metadata",
-            "type": "object",
-            "description": "Free-form map for additional information about this event."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": []
-      },
-      {
-        "name": "ObserverRelationship",
-        "fields": [
-          {
-            "name": "relationship_id",
-            "type": "string",
-            "description": "Unique ID for this relationship record."
-          },
-          {
-            "name": "observer_A",
-            "type": "string",
-            "description": "Reference to ObserverFrame or an observer entity."
-          },
-          {
-            "name": "observer_B",
-            "type": "string",
-            "description": "Reference to another ObserverFrame or observer entity."
-          },
-          {
-            "name": "shared_events",
-            "type": "array",
-            "description": "IDs of MeasurementEvents (or QuantumEvents) both observers have potentially compared."
-          },
-          {
-            "name": "consistency_state",
-            "type": "string",
-            "description": "Status: e.g. 'agreed', 'unresolved', 'contradictory', etc."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": []
-      },
-      {
-        "name": "ConsistencyCheck",
-        "fields": [
-          {
-            "name": "check_id",
-            "type": "string",
-            "description": "Unique identifier for this consistency check."
-          },
-          {
-            "name": "description",
-            "type": "string",
-            "description": "Describes the nature or purpose of this check."
-          },
-          {
-            "name": "severity",
-            "type": "string",
-            "description": "Priority/impact level: e.g. 'warning', 'error'."
-          },
-          {
-            "name": "results",
-            "type": "array",
-            "description": "Potentially a list of results or validations discovered."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": []
-      },
-      {
-        "name": "QuantumCircuit",
-        "fields": [
-          {
-            "name": "circuit_id",
-            "type": "string",
-            "description": "Unique identifier for this quantum circuit."
-          },
-          {
-            "name": "gates",
-            "type": "array",
-            "description": "List of gate specifications (e.g. {gate_type, targets, control})."
-          },
-          {
-            "name": "target_wavefunction",
-            "type": "string",
-            "description": "Reference to the wavefunction or subsystem(s) on which this circuit operates."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "generateCircuitMatrix",
-            "type": "formula",
-            "formula": "ComposeAllGatesIntoMatrix(gates)"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "executeCircuit",
-            "description": "Applies each gate in sequence to the specified wavefunction or subsystem state.",
-            "params": []
-          }
-        ]
-      }
-    ]
-  }
-  
+  "entities": [
+    {
+      "name": "QuantumState",
+      "description": "Stores wavefunction or amplitude distribution for a quantum system. Common to all interpretations. Additionally for RQM, this may represent a global or partial wavefunction as used by different observers.",
+      "fields": [
+        {
+          "name": "state_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "description",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "amplitude_data",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Complex amplitude array or param-based wavefunction representation."
+        },
+        {
+          "name": "normalization",
+          "type": "calculated",
+          "formula": "SUM( ABS(amplitude_data)^2 )"
+        },
+        {
+          "name": "interpretation_id",
+          "type": "lookup",
+          "target_entity": "InterpretationPolicy",
+          "description": "Indicates how measurement events on this state are handled (Copenhagen, Many-Worlds, RQM)."
+        },
+        {
+          "name": "coherence_time",
+          "type": "scalar",
+          "datatype": "float",
+          "description": "Approx time (in some units) until decoherence occurs."
+        },
+        {
+          "name": "dynamic_phase",
+          "type": "scalar",
+          "datatype": "float",
+          "description": "Optional global phase in radians used for time-evolution or interference checks."
+        },
+        {
+          "name": "entanglement_measure",
+          "type": "rollup",
+          "formula": "ComputeEntanglementEntropy(amplitude_data, subsystem_spec)",
+          "description": "Calculates an entanglement entropy or related measure by partial tracing out a specified subsystem."
+        },
+        {
+          "name": "decoherence_map",
+          "type": "rollup",
+          "formula": "AssessDecoherenceAcrossBranches(this.state_id)",
+          "description": "Evaluates how orthogonal or non-interfering different branches of this wavefunction have become."
+        },
+        {
+          "name": "subsystem_spec",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Defines the subsystem partition (e.g., qubit indices) for entanglement calculations."
+        }
+      ],
+      "lookups": [
+        {
+          "name": "branches",
+          "description": "If Many-Worlds or partial branching is used, references multiple branch records for this wavefunction.",
+          "target_entity": "BranchRecord",
+          "type": "one_to_many",
+          "join_condition": "BranchRecord.wavefunction_id = this.state_id"
+        }
+      ],
+      "aggregations": [
+        {
+          "name": "branch_count",
+          "type": "rollup",
+          "formula": "COUNT(branches)"
+        },
+        {
+          "name": "global_collapse_metric",
+          "type": "rollup",
+          "formula": "ComputeGlobalCollapseMetric(branch_count, branches)"
+        },
+        {
+          "name": "time_evolution",
+          "type": "rollup",
+          "formula": "ApplyTimeEvolution(amplitude_data, dynamic_phase)"
+        },
+        {
+          "name": "causal_branch_graph",
+          "type": "rollup",
+          "formula": "ConstructBranchCausalityGraph(branches)"
+        },
+        {
+          "name": "macro_distinct_branches",
+          "type": "rollup",
+          "formula": "IdentifyMacroscopicBranches(decoherence_map, branches, some_threshold)"
+        },
+        {
+          "name": "observer_relative_wavefunction",
+          "type": "rollup",
+          "formula": "ComputeObserverRelativeWavefunction(amplitude_data, parameters.observer_id)",
+          "description": "Generates a partial or observer-specific wavefunction in RQM contexts, referencing the main amplitude data."
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "normalize_wavefunction",
+          "parameters": [],
+          "formula": "amplitude_data / SQRT(normalization)"
+        },
+        {
+          "name": "merge_with_another_state",
+          "parameters": ["target_state_id", "entangling_params"],
+          "formula": "CreateNewEntangledState(this.state_id, target_state_id, entangling_params)"
+        }
+      ],
+      "constraints": [
+        {
+          "name": "normalization_check",
+          "formula": "ABS( normalization - 1 ) <= epsilon",
+          "error_message": "Wavefunction must be normalized (or near 1)."
+        }
+      ]
+    },
+    {
+      "name": "InterpretationPolicy",
+      "description": "Configures which quantum interpretation applies to a given wavefunction or system.",
+      "fields": [
+        {
+          "name": "interpretation_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "interpretation_name",
+          "type": "scalar",
+          "datatype": "enum",
+          "description": "One of: ['Copenhagen','ManyWorlds','RQM']"
+        },
+        {
+          "name": "collapse_behavior",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "e.g. 'single_outcome' (Copenhagen), 'branch' (ManyWorlds), 'observer_relative' (RQM)."
+        },
+        {
+          "name": "observer_specificity",
+          "type": "scalar",
+          "datatype": "boolean",
+          "description": "true if RQM requires observer frames to define partial states"
+        },
+        {
+          "name": "metadata",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Arbitrary extra settings, e.g. {branch_weight: 'equal', collapse_threshold: 0.95}"
+        },
+        {
+          "name": "allow_partial_branching",
+          "type": "scalar",
+          "datatype": "boolean",
+          "description": "Set to true if partial branching is utilized for RQM or specialized scenarios."
+        }
+      ],
+      "lookups": [
+        {
+          "name": "applied_wavefunctions",
+          "description": "Reverse lookup to QuantumState with interpretation_id = this ID.",
+          "target_entity": "QuantumState",
+          "type": "one_to_many",
+          "join_condition": "QuantumState.interpretation_id = this.interpretation_id"
+        }
+      ],
+      "aggregations": [
+        {
+          "name": "wavefunction_count",
+          "type": "rollup",
+          "formula": "COUNT(applied_wavefunctions)"
+        },
+        {
+          "name": "interpretation_consistency_check",
+          "type": "rollup",
+          "formula": "EnsurePolicyAlignment(interpretation_name, collapse_behavior, observer_specificity, allow_partial_branching)",
+          "description": "Checks that the chosen interpretation_name aligns with the specified collapse_behavior and observer settings (e.g. RQM requires observer_specificity=true)."
+        }
+      ],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "MeasurementEvent",
+      "description": "Records an observation that might cause wavefunction collapse, branching, or observer-relative updates.",
+      "fields": [
+        {
+          "name": "meas_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "wavefunction_id",
+          "type": "lookup",
+          "target_entity": "QuantumState",
+          "description": "Which wavefunction is being 'measured' or observed?"
+        },
+        {
+          "name": "measurement_type",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Indicates the kind of measurement: e.g. 'position', 'spin', 'partial_POVM', etc."
+        },
+        {
+          "name": "observable_operator",
+          "type": "scalar",
+          "datatype": "json"
+        },
+        {
+          "name": "possible_outcomes",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "List or map of outcome labels and their amplitude slices."
+        },
+        {
+          "name": "time_stamp",
+          "type": "scalar",
+          "datatype": "datetime"
+        },
+        {
+          "name": "observer_id",
+          "type": "lookup",
+          "target_entity": "ObserverFrame",
+          "description": "For RQM, which observer sees this event?"
+        },
+        {
+          "name": "selected_outcome",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Copenhagen-like single outcome OR blank if Many-Worlds branches all outcomes."
+        },
+        {
+          "name": "branch_ids_generated",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "For Many-Worlds, a list of new branch IDs post-measurement"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "outcome_probabilities",
+          "type": "rollup",
+          "formula": "ComputeOutcomeDistribution(wavefunction_id.amplitude_data, observable_operator)"
+        },
+        {
+          "name": "temporal_consistency_check",
+          "type": "rollup",
+          "formula": "CheckMeasurementConsistency(wavefunction_id, meas_id)"
+        },
+        {
+          "name": "history_consistency",
+          "type": "rollup",
+          "formula": "ComputeHistoryConsistency(this.meas_id, wavefunction_id)"
+        },
+        {
+          "name": "causality_check",
+          "type": "rollup",
+          "formula": "CheckTemporalOrdering(time_stamp, wavefunction_id)"
+        },
+        {
+          "name": "classical_fact_agreement",
+          "type": "rollup",
+          "formula": "ComputeClassicalFactAgreement(meas_id)"
+        },
+        {
+          "name": "observer_relative_outcomes",
+          "type": "rollup",
+          "formula": "ComputeObserverRelativeOutcomes(wavefunction_id, observer_id, possible_outcomes)",
+          "description": "For RQM or partial branching scenarios, derives outcome distribution from the perspective of a given observer."
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "execute_measurement",
+          "parameters": [],
+          "formula": "InterpretationBasedMeasurement(wavefunction_id, observer_id, this.possible_outcomes, this.outcome_probabilities)"
+        }
+      ],
+      "constraints": []
+    },
+    {
+      "name": "ObserverFrame",
+      "description": "RQM vantage point. Each observer can have partial knowledge or partial wavefunction states.",
+      "fields": [
+        {
+          "name": "observer_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "observer_name",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "observed_state_records",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Potential partial wavefunction or outcome records known to this observer."
+        },
+        {
+          "name": "reference_frame_transform",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Any shift/boost or coordinate transform used by this observer."
+        },
+        {
+          "name": "quantum_darwinism_index",
+          "type": "rollup",
+          "formula": "ComputeDarwinismIndex(this.observer_id)",
+          "description": "Measures how many ObserverFrames share consistent outcome records, indicating emergent classicality."
+        },
+        {
+          "name": "contextual_state_data",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "The wavefunction (or partial wavefunction) as assigned by this observer after applying its own Bayesian or RQM-like update rules."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "shared_state_agreement",
+          "type": "rollup",
+          "formula": "ComputeObserverConvergence(this.observer_id)"
+        },
+        {
+          "name": "intersubjective_consistency_check",
+          "type": "rollup",
+          "formula": "CompareWithOtherObservers(this.observer_id)"
+        },
+        {
+          "name": "observer_consensus",
+          "type": "rollup",
+          "formula": "ComputeObserverConsensus(this.observer_id)"
+        },
+        {
+          "name": "observer_relative_state",
+          "type": "rollup",
+          "formula": "ComputeObserverRelativeState(this.observer_id, contextual_state_data)",
+          "description": "Generates the local quantum state from this observer's vantage, consistent with RQM approaches."
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "update_observed_context",
+          "parameters": ["measurement_id"],
+          "formula": "BayesianObserverUpdate(this.observer_id, measurement_id, contextual_state_data)"
+        }
+      ],
+      "constraints": []
+    },
+    {
+      "name": "BranchRecord",
+      "description": "Many-Worlds or partial RQM branching metadata—each branch is a distinct wavefunction 'slice' after measurement.",
+      "fields": [
+        {
+          "name": "branch_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "wavefunction_id",
+          "type": "lookup",
+          "target_entity": "QuantumState"
+        },
+        {
+          "name": "origin_meas_id",
+          "type": "lookup",
+          "target_entity": "MeasurementEvent",
+          "description": "Which measurement event spawned this branch?"
+        },
+        {
+          "name": "branch_amplitude_data",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "The wavefunction slice or projected amplitude for this branch."
+        },
+        {
+          "name": "prob_weight",
+          "type": "calculated",
+          "formula": "SUM( ABS(branch_amplitude_data)^2 )",
+          "description": "Probability weight for this branch in a many-worlds context."
+        },
+        {
+          "name": "parent_branch_id",
+          "type": "lookup",
+          "target_entity": "BranchRecord",
+          "description": "Points to the branch from which this emerged"
+        },
+        {
+          "name": "branch_depth",
+          "type": "calculated",
+          "formula": "ComputeBranchDepth(parent_branch_id)",
+          "description": "Number of steps from the original wavefunction root"
+        },
+        {
+          "name": "coherence_factor",
+          "type": "calculated",
+          "formula": "ComputeInterference(branch_amplitude_data, wavefunction_id)",
+          "description": "Overlap measure with other branches of the same wavefunction"
+        },
+        {
+          "name": "relative_phase",
+          "type": "scalar",
+          "datatype": "float",
+          "description": "Phase angle relative to other sibling branches, used for potential recombination"
+        },
+        {
+          "name": "branch_history",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Stores a chronological list of significant events or merges for this branch."
+        },
+        {
+          "name": "observer_scope",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Optional list of observer_ids for which this branch is relevant in partial branching (RQM) contexts."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "recombination_potential",
+          "type": "rollup",
+          "formula": "ComputeRecombinationPotential(coherence_factor, branch_amplitude_data)"
+        },
+        {
+          "name": "recombination_feasibility",
+          "type": "rollup",
+          "formula": "CheckRecombinationFeasibility(coherence_factor, relative_phase, wavefunction_id)"
+        },
+        {
+          "name": "rqm_merge_potential",
+          "type": "rollup",
+          "formula": "ComputeRQMBranchMergePotential(observer_scope, parent_branch_id)",
+          "description": "Evaluates if branches can be effectively merged when the same observer updates their knowledge in RQM contexts."
+        }
+      ],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "Observable",
+      "fields": [
+        {
+          "name": "operator_id",
+          "type": "string",
+          "description": "Unique identifier for this observable/operator."
+        },
+        {
+          "name": "matrix_representation",
+          "type": "array",
+          "description": "Matrix (or array) holding the operator’s numerical data."
+        },
+        {
+          "name": "eigenvalues",
+          "type": "array",
+          "description": "List of eigenvalues for quick reference in measurement events."
+        },
+        {
+          "name": "eigenvectors",
+          "type": "array",
+          "description": "Eigenvectors or basis states associated with each eigenvalue."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "checkHermiticity",
+          "type": "rollup",
+          "formula": "VerifyHermitian(matrix_representation)",
+          "description": "Ensures the operator is Hermitian, which is required for a valid observable."
+        }
+      ],
+      "lambdas": []
+    },
+    {
+      "name": "DensityMatrixRecord",
+      "fields": [
+        {
+          "name": "record_id",
+          "type": "string",
+          "description": "Unique identifier for the density matrix record."
+        },
+        {
+          "name": "matrix_data",
+          "type": "array",
+          "description": "2D array representing the density matrix (complex values)."
+        },
+        {
+          "name": "subsystem_ids",
+          "type": "array",
+          "description": "IDs of the subsystem(s) described by this density matrix."
+        },
+        {
+          "name": "purity",
+          "type": "number",
+          "description": "Optional cached purity measure (Tr(ρ²))."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "computePurity",
+          "type": "formula",
+          "formula": "Purity(matrix_data)"
+        },
+        {
+          "name": "traceValue",
+          "type": "formula",
+          "formula": "ComputeMatrixTrace(matrix_data)",
+          "description": "Computes the trace of the density matrix, which should be 1 for proper normalization."
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "applyKrausOperators",
+          "description": "Applies a set of Kraus operators to the density matrix for an open-system evolution.",
+          "params": [
+            "kraus_set"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "trace_must_be_one",
+          "formula": "ABS(ComputeMatrixTrace(matrix_data) - 1) <= epsilon",
+          "error_message": "Density matrix must have trace ~ 1."
+        }
+      ]
+    },
+    {
+      "name": "Subsystem",
+      "fields": [
+        {
+          "name": "subsystem_id",
+          "type": "string",
+          "description": "Unique ID for the subsystem."
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "description": "Human-readable description of what this subsystem represents (e.g. qubit, photon mode, etc.)."
+        },
+        {
+          "name": "dimensions",
+          "type": "number",
+          "description": "Hilbert space dimension for this subsystem."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": []
+    },
+    {
+      "name": "DecoherenceChannel",
+      "fields": [
+        {
+          "name": "channel_id",
+          "type": "string",
+          "description": "Unique identifier for this decoherence or noise model."
+        },
+        {
+          "name": "kraus_operators",
+          "type": "array",
+          "description": "Collection of Kraus operators (matrices) describing the channel."
+        },
+        {
+          "name": "applied_subsystems",
+          "type": "array",
+          "description": "IDs of subsystems to which this channel is applied."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "simulateDecoherence",
+          "type": "formula",
+          "formula": "ApplyKrausSet(density_matrix, kraus_operators)"
+        },
+        {
+          "name": "validateKrausOperators",
+          "type": "formula",
+          "formula": "CheckKrausCompleteness(kraus_operators)",
+          "description": "Ensures the sum of K^†K = I across all Kraus operators, for a valid channel."
+        }
+      ],
+      "lambdas": []
+    },
+    {
+      "name": "QuantumEvolution",
+      "fields": [
+        {
+          "name": "evolution_id",
+          "type": "string",
+          "description": "Unique identifier for this evolution spec."
+        },
+        {
+          "name": "hamiltonian_ref",
+          "type": "string",
+          "description": "Reference to an operator_id in the Observable entity that acts as the Hamiltonian."
+        },
+        {
+          "name": "time_step",
+          "type": "number",
+          "description": "Time increment for stepwise evolution."
+        },
+        {
+          "name": "evolution_method",
+          "type": "string",
+          "description": "Method used (e.g. 'Trotter', 'Exact', 'RK4', etc.)."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "applyTimeEvolution",
+          "type": "formula",
+          "formula": "U(t) = exp(-i * H * t); wavefunction' = U(t)*wavefunction"
+        },
+        {
+          "name": "hamiltonian_validity",
+          "type": "formula",
+          "formula": "VerifyHermitian(hamiltonian_ref)",
+          "description": "Checks that the referenced Hamiltonian is Hermitian, which is required for unitary time evolution."
+        }
+      ],
+      "lambdas": []
+    },
+    {
+      "name": "QuantumEvent",
+      "fields": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "description": "Unique identifier for the quantum event."
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "description": "General type of event (e.g. 'measurement', 'unitary', 'entangling_interaction')."
+        },
+        {
+          "name": "operator_ref",
+          "type": "string",
+          "description": "Optional reference to an Observable (for measurement) or other operator."
+        },
+        {
+          "name": "applied_to",
+          "type": "array",
+          "description": "List of subsystem_ids or wavefunction_ids that this event acts upon."
+        },
+        {
+          "name": "timestamp",
+          "type": "string",
+          "description": "Record of when the event happened, if relevant."
+        },
+        {
+          "name": "metadata",
+          "type": "object",
+          "description": "Free-form map for additional information about this event."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "verifyEventApplicability",
+          "type": "formula",
+          "formula": "CheckEventConsistency(type, operator_ref, applied_to)",
+          "description": "Ensures a measurement event references a valid measurement operator, or a unitary event references a valid gate, etc."
+        }
+      ],
+      "lambdas": []
+    },
+    {
+      "name": "ObserverRelationship",
+      "fields": [
+        {
+          "name": "relationship_id",
+          "type": "string",
+          "description": "Unique ID for this relationship record."
+        },
+        {
+          "name": "observer_A",
+          "type": "string",
+          "description": "Reference to ObserverFrame or an observer entity."
+        },
+        {
+          "name": "observer_B",
+          "type": "string",
+          "description": "Reference to another ObserverFrame or observer entity."
+        },
+        {
+          "name": "shared_events",
+          "type": "array",
+          "description": "IDs of MeasurementEvents (or QuantumEvents) both observers have potentially compared."
+        },
+        {
+          "name": "consistency_state",
+          "type": "string",
+          "description": "Status: e.g. 'agreed', 'unresolved', 'contradictory', etc."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "observer_agreement_score",
+          "type": "rollup",
+          "formula": "ComputeObserverAgreement(observer_A, observer_B, shared_events)",
+          "description": "Calculates a numeric or qualitative measure of how consistently the two observers interpret shared measurement events."
+        }
+      ],
+      "lambdas": []
+    },
+    {
+      "name": "ConsistencyCheck",
+      "fields": [
+        {
+          "name": "check_id",
+          "type": "string",
+          "description": "Unique identifier for this consistency check."
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "description": "Describes the nature or purpose of this check."
+        },
+        {
+          "name": "severity",
+          "type": "string",
+          "description": "Priority/impact level: e.g. 'warning', 'error'."
+        },
+        {
+          "name": "results",
+          "type": "array",
+          "description": "Potentially a list of results or validations discovered."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": []
+    },
+    {
+      "name": "QuantumCircuit",
+      "fields": [
+        {
+          "name": "circuit_id",
+          "type": "string",
+          "description": "Unique identifier for this quantum circuit."
+        },
+        {
+          "name": "gates",
+          "type": "array",
+          "description": "List of gate specifications (e.g. {gate_type, targets, control})."
+        },
+        {
+          "name": "target_wavefunction",
+          "type": "string",
+          "description": "Reference to the wavefunction or subsystem(s) on which this circuit operates."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "generateCircuitMatrix",
+          "type": "formula",
+          "formula": "ComposeAllGatesIntoMatrix(gates)"
+        },
+        {
+          "name": "validateCircuit",
+          "type": "formula",
+          "formula": "CheckGateSequence(gates, target_wavefunction)",
+          "description": "Validates gate definitions and ensures they are consistent with the dimension of the target wavefunction or subsystem."
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "executeCircuit",
+          "description": "Applies each gate in sequence to the specified wavefunction or subsystem state.",
+          "params": []
+        }
+      ]
+    }
+  ]
+}
