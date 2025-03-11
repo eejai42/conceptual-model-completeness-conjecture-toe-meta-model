@@ -43,7 +43,25 @@
             "type": "scalar",
             "datatype": "float",
             "description": "Optional global phase in radians used for time-evolution or interference checks."
-          }
+          },
+          {
+            "name": "entanglement_measure",
+            "type": "rollup",
+            "formula": "ComputeEntanglementEntropy(amplitude_data, subsystem_spec)",
+            "description": "Calculates an entanglement entropy or related measure by partial tracing out a specified subsystem."
+          },
+          {
+            "name": "decoherence_map",
+            "type": "rollup",
+            "formula": "AssessDecoherenceAcrossBranches(this.state_id)",
+            "description": "Evaluates how orthogonal or non-interfering different branches of this wavefunction have become."
+          },
+          {
+            "name": "subsystem_spec",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Defines the subsystem partition (e.g., qubit indices) for entanglement calculations."
+          }          
         ],
         "lookups": [
           {
@@ -245,7 +263,13 @@
             "type": "scalar",
             "datatype": "json",
             "description": "Any shift/boost or coordinate transform used by this observer."
-          }
+          },
+          {
+            "name": "quantum_darwinism_index",
+            "type": "rollup",
+            "formula": "ComputeDarwinismIndex(this.observer_id)",
+            "description": "Measures how many ObserverFrames share consistent outcome records, indicating emergent classicality."
+          }          
         ],
         "lookups": [],
         "aggregations": [
