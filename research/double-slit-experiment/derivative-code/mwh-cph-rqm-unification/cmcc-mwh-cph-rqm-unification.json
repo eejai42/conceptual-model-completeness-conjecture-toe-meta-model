@@ -144,6 +144,18 @@
           "type": "rollup",
           "formula": "CountAllHardyParadoxFlags(linked_wavefunctions)",
           "description": "Counts how many wavefunctions exhibit a non-zero hardys_paradox_indicator. Indicates the presence of Hardy's paradox in the scenario."
+        },
+        {
+          "name": "max_branch_depth_across_scenario",
+          "type": "rollup",
+          "formula": "FindMaxBranchDepth(linked_wavefunctions)",
+          "description": "Scans all wavefunctions linked to this scenario and returns the maximum branch depth encountered."
+        },
+        {
+          "name": "scenario_average_entanglement",
+          "type": "rollup",
+          "formula": "AVERAGE(linked_wavefunctions.entanglement_measure)",
+          "description": "Averages the entanglement measure across all wavefunctions in this scenario."
         }
       ],
       "lambdas": [
@@ -405,6 +417,12 @@
           "type": "rollup",
           "formula": "ComputeFreedmanClauserCorrelations(this.state_id, MeasurementEvent.*)",
           "description": "A Freedman–Clauser (or Clauser–Horne) inequality test aggregator. Similar to CHSH but uses Freedman–Clauser measurement configurations to detect nonlocal correlations."
+        },
+        {
+          "name": "max_branch_depth",
+          "type": "rollup",
+          "formula": "MAX(branches.branch_depth)",
+          "description": "Finds the maximum branch depth among all branches linked to this wavefunction."
         }
       ],
       "lambdas": [
@@ -691,6 +709,12 @@
           "type": "rollup",
           "formula": "CheckNoSignallingConstraintsAcrossSubsystems(this.meas_id, wavefunction_id, possible_outcomes, spacetime_coords)",
           "description": "Ensures local measurement outcomes do not signal FTL if there are other space-like separated events in this scenario."
+        },
+        {
+          "name": "observed_outcome_probability",
+          "type": "rollup",
+          "formula": "IF(selected_outcome != '', outcome_probabilities[selected_outcome], null)",
+          "description": "Retrieves the Born-rule probability for the measurement's collapsed outcome."
         }
       ],
       "lambdas": [
@@ -859,6 +883,12 @@
           "type": "rollup",
           "formula": "TrackDecoherenceEvents(this.observer_id)",
           "description": "Generates a timeline or log of decoherence events affecting measurements made by (or on) this observer."
+        },
+        {
+          "name": "distinct_others_count",
+          "type": "rollup",
+          "formula": "COUNT_DISTINCT(KEYS(view_of_other_observers))",
+          "description": "Counts the number of distinct observer IDs that this observer is tracking."
         }
       ],
       "lambdas": [
@@ -1000,6 +1030,12 @@
           "type": "rollup",
           "formula": "EvaluateBranchReunionFeasibility(this.branch_id, sibling_branches)",
           "description": "Analyzes whether sibling branches (e.g. from the same measurement event) can genuinely recombine based on their coherence_factor, relative_phase, and decoherence state. Flags merges that are effectively forbidden once branches are orthogonal."
+        },
+        {
+          "name": "child_branches_count",
+          "type": "rollup",
+          "formula": "COUNT(BranchRecord WHERE parent_branch_id = this.branch_id)",
+          "description": "Counts how many immediate child branches were spawned by this branch."
         }
       ],
       "lambdas": [
@@ -1415,6 +1451,12 @@
           "type": "rollup",
           "formula": "ComputeSharedContextualOverlap(observer_A.epistemic_context, observer_B.epistemic_context)",
           "description": "Measures overlap in Bayesian priors or knowledge states between the two observers."
+        },
+        {
+          "name": "asymmetric_view_check",
+          "type": "rollup",
+          "formula": "CheckAsymmetricObservation(observer_A, observer_B, relational_view_consistency)",
+          "description": "Flags if A sees B in superposition while B sees themselves as collapsed."
         }
       ],
       "lambdas": [
@@ -1564,6 +1606,12 @@
           "type": "rollup",
           "formula": "BuildIntersubjectiveClassicalRecord(this.record_id, participants)",
           "description": "Derives an 'effective classical record' from multiple observers' final outcomes if they sufficiently converge. Useful in quantum Darwinism or RQM to see whether an agreed-upon 'classical fact' has emerged from quantum events."
+        },
+        {
+          "name": "fully_classical_ledger_flag",
+          "type": "rollup",
+          "formula": "IF(participant_discrepancies == 0 AND multi_observer_classical_darwinism == 'Classical pointer states emergent', 'Yes', 'No')",
+          "description": "Indicates if all participants converge on a classical-like pointer outcome with no discrepancies."
         }
       ],
       "lambdas": [
