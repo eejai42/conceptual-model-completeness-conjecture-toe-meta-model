@@ -23,7 +23,7 @@
           },
           {
             "name": "normalization",
-            "type": "calculated", 
+            "type": "calculated",
             "formula": "SUM( ABS(amplitude_data)^2 )"
           },
           {
@@ -31,6 +31,18 @@
             "type": "lookup",
             "target_entity": "InterpretationPolicy",
             "description": "Indicates how measurement events on this state are handled (Copenhagen, Many-Worlds, RQM)."
+          },
+          {
+            "name": "coherence_time",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Approx time (in some units) until decoherence occurs."
+          },
+          {
+            "name": "dynamic_phase",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Optional global phase in radians used for time-evolution or interference checks."
           }
         ],
         "lookups": [
@@ -52,6 +64,11 @@
             "name": "global_collapse_metric",
             "type": "rollup",
             "formula": "ComputeGlobalCollapseMetric(branch_count, branches)"
+          },
+          {
+            "name": "time_evolution",
+            "type": "rollup",
+            "formula": "ApplyTimeEvolution(amplitude_data, dynamic_phase)"
           }
         ],
         "lambdas": [
@@ -96,10 +113,30 @@
             "type": "scalar",
             "datatype": "boolean",
             "description": "true if RQM requires observer frames to define partial states"
+          },
+          {
+            "name": "metadata",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Arbitrary extra settings, e.g. {branch_weight: 'equal', collapse_threshold: 0.95}"
           }
         ],
-        "lookups": [],
-        "aggregations": [],
+        "lookups": [
+          {
+            "name": "applied_wavefunctions",
+            "description": "Reverse lookup to QuantumState with interpretation_id = this ID.",
+            "target_entity": "QuantumState",
+            "type": "one_to_many",
+            "join_condition": "QuantumState.interpretation_id = this.interpretation_id"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "wavefunction_count",
+            "type": "rollup",
+            "formula": "COUNT(applied_wavefunctions)"
+          }
+        ],
         "lambdas": [],
         "constraints": []
       },
@@ -118,6 +155,12 @@
             "type": "lookup",
             "target_entity": "QuantumState",
             "description": "Which wavefunction is being 'measured' or observed?"
+          },
+          {
+            "name": "measurement_type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Indicates the kind of measurement: e.g. 'position', 'spin', 'partial_POVM', etc."
           },
           {
             "name": "observable_operator",
@@ -196,6 +239,12 @@
             "type": "scalar",
             "datatype": "json",
             "description": "Potential partial wavefunction or outcome records known to this observer."
+          },
+          {
+            "name": "reference_frame_transform",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Any shift/boost or coordinate transform used by this observer."
           }
         ],
         "lookups": [],
@@ -204,6 +253,11 @@
             "name": "shared_state_agreement",
             "type": "rollup",
             "formula": "ComputeObserverConvergence(this.observer_id)"
+          },
+          {
+            "name": "intersubjective_consistency_check",
+            "type": "rollup",
+            "formula": "CompareWithOtherObservers(this.observer_id)"
           }
         ],
         "lambdas": [],
@@ -259,6 +313,18 @@
             "type": "calculated",
             "formula": "ComputeInterference(branch_amplitude_data, wavefunction_id)",
             "description": "Overlap measure with other branches of the same wavefunction"
+          },
+          {
+            "name": "relative_phase",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Phase angle relative to other sibling branches, used for potential recombination"
+          },
+          {
+            "name": "branch_history",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Stores a chronological list of significant events or merges for this branch."
           }
         ],
         "lookups": [],
@@ -266,6 +332,7 @@
         "lambdas": [],
         "constraints": []
       }
+      
     ]
   }
   
