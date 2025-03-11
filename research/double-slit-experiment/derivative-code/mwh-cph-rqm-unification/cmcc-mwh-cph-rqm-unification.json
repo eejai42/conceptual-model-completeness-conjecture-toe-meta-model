@@ -87,6 +87,16 @@
             "name": "time_evolution",
             "type": "rollup",
             "formula": "ApplyTimeEvolution(amplitude_data, dynamic_phase)"
+          },
+          {
+            "name": "causal_branch_graph",
+            "type": "rollup",
+            "formula": "ConstructBranchCausalityGraph(branches)"
+          },
+          {
+            "name": "macro_distinct_branches",
+            "type": "rollup",
+            "formula": "IdentifyMacroscopicBranches(decoherence_map, branches, some_threshold)"
           }
         ],
         "lambdas": [
@@ -94,6 +104,11 @@
             "name": "normalize_wavefunction",
             "parameters": [],
             "formula": "amplitude_data / SQRT(normalization)"
+          },
+          {
+            "name": "merge_with_another_state",
+            "parameters": ["target_state_id", "entangling_params"],
+            "formula": "CreateNewEntangledState(this.state_id, target_state_id, entangling_params)"
           }
         ],
         "constraints": [
@@ -226,6 +241,21 @@
             "name": "temporal_consistency_check",
             "type": "rollup",
             "formula": "CheckMeasurementConsistency(wavefunction_id, meas_id)"
+          },
+          {
+            "name": "history_consistency",
+            "type": "rollup",
+            "formula": "ComputeHistoryConsistency(this.meas_id, wavefunction_id)"
+          },
+          {
+            "name": "causality_check",
+            "type": "rollup",
+            "formula": "CheckTemporalOrdering(time_stamp, wavefunction_id)"
+          },
+          {
+            "name": "classical_fact_agreement",
+            "type": "rollup",
+            "formula": "ComputeClassicalFactAgreement(meas_id)"
           }
         ],
         "lambdas": [
@@ -269,7 +299,13 @@
             "type": "rollup",
             "formula": "ComputeDarwinismIndex(this.observer_id)",
             "description": "Measures how many ObserverFrames share consistent outcome records, indicating emergent classicality."
-          }          
+          },
+          {
+            "name": "contextual_state_data",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "The wavefunction (or partial wavefunction) as assigned by this observer after applying its own Bayesian or RQM-like update rules."
+          }    
         ],
         "lookups": [],
         "aggregations": [
@@ -282,9 +318,20 @@
             "name": "intersubjective_consistency_check",
             "type": "rollup",
             "formula": "CompareWithOtherObservers(this.observer_id)"
+          },
+          {
+            "name": "observer_consensus",
+            "type": "rollup",
+            "formula": "ComputeObserverConsensus(this.observer_id)"
           }
         ],
-        "lambdas": [],
+        "lambdas": [
+          {
+            "name": "update_observed_context",
+            "parameters": ["measurement_id"],
+            "formula": "BayesianObserverUpdate(this.observer_id, measurement_id, contextual_state_data)"
+          }
+        ],
         "constraints": []
       },
       {
@@ -352,11 +399,309 @@
           }
         ],
         "lookups": [],
-        "aggregations": [],
+        "aggregations": [
+          {
+            "name": "recombination_potential",
+            "type": "rollup",
+            "formula": "ComputeRecombinationPotential(coherence_factor, branch_amplitude_data)"
+          },
+          {
+            "name": "recombination_feasibility",
+            "type": "rollup",
+            "formula": "CheckRecombinationFeasibility(coherence_factor, relative_phase, wavefunction_id)"
+          }
+        ],
         "lambdas": [],
         "constraints": []
+      },
+      {
+        "name": "Observable",
+        "fields": [
+          {
+            "name": "operator_id",
+            "type": "string",
+            "description": "Unique identifier for this observable/operator."
+          },
+          {
+            "name": "matrix_representation",
+            "type": "array",
+            "description": "Matrix (or array) holding the operator’s numerical data."
+          },
+          {
+            "name": "eigenvalues",
+            "type": "array",
+            "description": "List of eigenvalues for quick reference in measurement events."
+          },
+          {
+            "name": "eigenvectors",
+            "type": "array",
+            "description": "Eigenvectors or basis states associated with each eigenvalue."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": []
+      },
+      {
+        "name": "DensityMatrixRecord",
+        "fields": [
+          {
+            "name": "record_id",
+            "type": "string",
+            "description": "Unique identifier for the density matrix record."
+          },
+          {
+            "name": "matrix_data",
+            "type": "array",
+            "description": "2D array representing the density matrix (complex values)."
+          },
+          {
+            "name": "subsystem_ids",
+            "type": "array",
+            "description": "IDs of the subsystem(s) described by this density matrix."
+          },
+          {
+            "name": "purity",
+            "type": "number",
+            "description": "Optional cached purity measure (Tr(ρ²))."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "computePurity",
+            "type": "formula",
+            "formula": "Purity(matrix_data)"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "applyKrausOperators",
+            "description": "Applies a set of Kraus operators to the density matrix for an open-system evolution.",
+            "params": ["kraus_set"]
+          }
+        ]
+      },
+      {
+        "name": "Subsystem",
+        "fields": [
+          {
+            "name": "subsystem_id",
+            "type": "string",
+            "description": "Unique ID for the subsystem."
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "description": "Human-readable description of what this subsystem represents (e.g. qubit, photon mode, etc.)."
+          },
+          {
+            "name": "dimensions",
+            "type": "number",
+            "description": "Hilbert space dimension for this subsystem."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": []
+      },
+      {
+        "name": "DecoherenceChannel",
+        "fields": [
+          {
+            "name": "channel_id",
+            "type": "string",
+            "description": "Unique identifier for this decoherence or noise model."
+          },
+          {
+            "name": "kraus_operators",
+            "type": "array",
+            "description": "Collection of Kraus operators (matrices) describing the channel."
+          },
+          {
+            "name": "applied_subsystems",
+            "type": "array",
+            "description": "IDs of subsystems to which this channel is applied."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "simulateDecoherence",
+            "type": "formula",
+            "formula": "ApplyKrausSet(density_matrix, kraus_operators)"
+          }
+        ],
+        "lambdas": []
+      },
+      {
+        "name": "QuantumEvolution",
+        "fields": [
+          {
+            "name": "evolution_id",
+            "type": "string",
+            "description": "Unique identifier for this evolution spec."
+          },
+          {
+            "name": "hamiltonian_ref",
+            "type": "string",
+            "description": "Reference to an operator_id in the Observable entity that acts as the Hamiltonian."
+          },
+          {
+            "name": "time_step",
+            "type": "number",
+            "description": "Time increment for stepwise evolution."
+          },
+          {
+            "name": "evolution_method",
+            "type": "string",
+            "description": "Method used (e.g. 'Trotter', 'Exact', 'RK4', etc.)."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "applyTimeEvolution",
+            "type": "formula",
+            "formula": "U(t) = exp(-i * H * t); wavefunction' = U(t)*wavefunction"
+          }
+        ],
+        "lambdas": []
+      },
+      {
+        "name": "QuantumEvent",
+        "fields": [
+          {
+            "name": "event_id",
+            "type": "string",
+            "description": "Unique identifier for the quantum event."
+          },
+          {
+            "name": "type",
+            "type": "string",
+            "description": "General type of event (e.g. 'measurement', 'unitary', 'entangling_interaction')."
+          },
+          {
+            "name": "operator_ref",
+            "type": "string",
+            "description": "Optional reference to an Observable (for measurement) or other operator."
+          },
+          {
+            "name": "applied_to",
+            "type": "array",
+            "description": "List of subsystem_ids or wavefunction_ids that this event acts upon."
+          },
+          {
+            "name": "timestamp",
+            "type": "string",
+            "description": "Record of when the event happened, if relevant."
+          },
+          {
+            "name": "metadata",
+            "type": "object",
+            "description": "Free-form map for additional information about this event."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": []
+      },
+      {
+        "name": "ObserverRelationship",
+        "fields": [
+          {
+            "name": "relationship_id",
+            "type": "string",
+            "description": "Unique ID for this relationship record."
+          },
+          {
+            "name": "observer_A",
+            "type": "string",
+            "description": "Reference to ObserverFrame or an observer entity."
+          },
+          {
+            "name": "observer_B",
+            "type": "string",
+            "description": "Reference to another ObserverFrame or observer entity."
+          },
+          {
+            "name": "shared_events",
+            "type": "array",
+            "description": "IDs of MeasurementEvents (or QuantumEvents) both observers have potentially compared."
+          },
+          {
+            "name": "consistency_state",
+            "type": "string",
+            "description": "Status: e.g. 'agreed', 'unresolved', 'contradictory', etc."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": []
+      },
+      {
+        "name": "ConsistencyCheck",
+        "fields": [
+          {
+            "name": "check_id",
+            "type": "string",
+            "description": "Unique identifier for this consistency check."
+          },
+          {
+            "name": "description",
+            "type": "string",
+            "description": "Describes the nature or purpose of this check."
+          },
+          {
+            "name": "severity",
+            "type": "string",
+            "description": "Priority/impact level: e.g. 'warning', 'error'."
+          },
+          {
+            "name": "results",
+            "type": "array",
+            "description": "Potentially a list of results or validations discovered."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": []
+      },
+      {
+        "name": "QuantumCircuit",
+        "fields": [
+          {
+            "name": "circuit_id",
+            "type": "string",
+            "description": "Unique identifier for this quantum circuit."
+          },
+          {
+            "name": "gates",
+            "type": "array",
+            "description": "List of gate specifications (e.g. {gate_type, targets, control})."
+          },
+          {
+            "name": "target_wavefunction",
+            "type": "string",
+            "description": "Reference to the wavefunction or subsystem(s) on which this circuit operates."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "generateCircuitMatrix",
+            "type": "formula",
+            "formula": "ComposeAllGatesIntoMatrix(gates)"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "executeCircuit",
+            "description": "Applies each gate in sequence to the specified wavefunction or subsystem state.",
+            "params": []
+          }
+        ]
       }
-      
     ]
   }
   
