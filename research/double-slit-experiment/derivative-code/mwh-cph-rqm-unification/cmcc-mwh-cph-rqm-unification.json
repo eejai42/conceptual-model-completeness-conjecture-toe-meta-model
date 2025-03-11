@@ -423,6 +423,30 @@
           "type": "scalar",
           "datatype": "json",
           "description": "Defines the subsystem partitioning (e.g., qubit indices) used in entanglement calculations or partial-trace operations."
+        },
+        {
+          "fieldName": "dimensionality",
+          "type": "scalar",
+          "datatype": "int",
+          "description": "Optional integer dimension if wavefunction is for 1D, 2D, 3D, etc."
+        },
+        {
+          "fieldName": "num_particles",
+          "type": "scalar",
+          "datatype": "int",
+          "description": "How many particles share this wavefunction (classically used in v1.3)."
+        },
+        {
+          "fieldName": "spin_states",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Captures spin total or per-particle spin config (e.g. {spin_total:1.0, config:'singlet'})"
+        },
+        {
+          "fieldName": "wavefunction_symmetry",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "e.g. 'symmetric' or 'antisymmetric' if you want to track bosons vs. fermions explicitly."
         }
       ],
       "lookups": [
@@ -432,6 +456,18 @@
           "target_entity": "BranchRecord",
           "join_condition": "BranchRecord.wavefunction_id = this.state_id",
           "description": "References zero or more BranchRecords (Many-Worlds or partial branching). Each branch captures a post-measurement 'slice' of this wavefunction."
+        },
+        {
+          "fieldName": "amplitude_algebraic_structure_id",
+          "type": "lookup",
+          "target_entity": "AlgebraicStructure",
+          "description": "Where v1.3 stored the notion that wavefunction amplitudes belong to a complex vector space."
+        },
+        {
+          "fieldName": "reference_frame_id",
+          "type": "lookup",
+          "target_entity": "ReferenceFrameRecord",
+          "description": "If you want to store which reference frame the wavefunction is expressed in."
         }
       ],
       "aggregations": [
@@ -2192,6 +2228,37 @@
         }
       ],
       "constraints": []
+    },
+    {
+      "name": "ParticleWavefunctionMapping",
+      "action": "create_entity",
+      "description": "Reintroduces the bridging table from v1.3 to attach multiple Particles to a single QuantumState.",
+      "fields": [
+        {
+          "fieldName": "id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "fieldName": "particle_id",
+          "type": "lookup",
+          "target_entity": "ParticleRecord",
+          "description": "Points to the Particle that is part of this wavefunction."
+        },
+        {
+          "fieldName": "wavefunction_id",
+          "type": "lookup",
+          "target_entity": "QuantumState",
+          "description": "Points to the QuantumState that multiple particles can share."
+        },
+        {
+          "fieldName": "role_label",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Optional label (e.g. 'electron #1' or 'spin-up proton') from v1.3"
+        }
+      ]
     },
     {
       "name": "ForceRecord",
