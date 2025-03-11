@@ -156,6 +156,30 @@
           "type": "rollup",
           "formula": "AVERAGE(linked_wavefunctions.entanglement_measure)",
           "description": "Averages the entanglement measure across all wavefunctions in this scenario."
+        },
+        {
+          "name": "scenario_measurement_count",
+          "type": "rollup",
+          "formula": "COUNT(linked_measurements)",
+          "description": "Counts how many MeasurementEvents are linked to this scenario."
+        },
+        {
+          "name": "interpretation_distribution",
+          "type": "rollup",
+          "formula": "ComputeInterpretationDistribution(linked_wavefunctions)",
+          "description": "Returns a JSON object tallying how many wavefunctions use each interpretation policy (e.g., { 'Copenhagen': 2, 'ManyWorlds': 3, 'RQM': 1 })."
+        },
+        {
+          "name": "scenario_active_observers_count",
+          "type": "rollup",
+          "formula": "COUNT(linked_observers)",
+          "description": "Counts how many ObserverFrames are active in this scenario."
+        },
+        {
+          "name": "scenario_interpretation_mismatch_events",
+          "type": "rollup",
+          "formula": "ListInterpretationMismatches(linked_wavefunctions, linked_measurements)",
+          "description": "Returns a list of measurement events that conflict with their wavefunction’s assigned interpretation (e.g., a ManyWorlds wavefunction storing single outcomes)."
         }
       ],
       "lambdas": [
@@ -1300,6 +1324,12 @@
           "type": "rollup",
           "formula": "TrackPointerStabilityOverEvolution(target_state_id, hamiltonian_ref, time_step)",
           "description": "Monitors how stable pointer-basis states remain under time evolution. Applies time-stepping (via Trotter, exact exponentiation, etc.) and checks if identified pointer states remain robust or begin interfering again."
+        },
+        {
+          "name": "unitarity_deviation",
+          "type": "rollup",
+          "formula": "ComputeUnitarityDeviation(hamiltonian_ref, time_step, evolution_method)",
+          "description": "Estimates how non-unitary the resulting time evolution operator might be (e.g., from numerical Trotter error). Returns 0 if fully unitary."
         }
       ],
       "lambdas": []
@@ -1532,6 +1562,24 @@
           "type": "rollup",
           "formula": "ApplyCircuitThenMeasure(this.circuit_id, target_wavefunction, measurement_config)",
           "description": "Convenience aggregator that (1) applies all gates in this circuit to the target wavefunction and (2) automatically executes measurement events as specified by measurement_config, generating new MeasurementEvents or outcome logs in one step."
+        },
+        {
+          "name": "gate_count",
+          "type": "rollup",
+          "formula": "LENGTH(gates)",
+          "description": "Simple aggregator that returns the total number of gates in this circuit."
+        },
+        {
+          "name": "circuit_depth",
+          "type": "rollup",
+          "formula": "ComputeCircuitDepth(gates)",
+          "description": "A user-defined aggregator that calculates how many gate layers exist, i.e. the circuit depth."
+        },
+        {
+          "name": "controlled_gate_count",
+          "type": "rollup",
+          "formula": "COUNT(gates WHERE gates.control IS NOT NULL)",
+          "description": "Counts how many gates in the circuit specify a 'control' field (CNOT, Toffoli, etc.)."
         }
       ],
       "lambdas": [
