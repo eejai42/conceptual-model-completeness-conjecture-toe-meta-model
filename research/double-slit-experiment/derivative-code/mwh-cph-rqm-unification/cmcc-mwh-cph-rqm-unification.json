@@ -38,6 +38,18 @@
           "type": "scalar",
           "datatype": "json",
           "description": "List of observer_relationship IDs, if relevant."
+        },
+        {
+          "name": "global_no_signalling_check",
+          "type": "rollup",
+          "formula": "CheckGlobalNoSignalling(relevant_measurements, relevant_wavefunctions)",
+          "description": "Aggregates multiple measurement events across wavefunctions to detect any violation of no‐signalling at a scenario‐wide level."
+        },
+        {
+          "name": "global_classical_limit_analysis",
+          "type": "rollup",
+          "formula": "AssessClassicalLimitAcrossWavefunctions(relevant_wavefunctions)",
+          "description": "Analyzes if most or all wavefunctions in this scenario exhibit negligible interference, indicating a broad classical limit."
         }
       ],
       "lookups": [
@@ -285,6 +297,24 @@
           "type": "rollup",
           "formula": "CheckConsistencyOfHistoriesAcrossBranches(this.state_id)",
           "description": "Analyzes the measurement events and BranchRecord data for this wavefunction to verify that separate histories remain sufficiently decohered (consistent histories). Flags potential interference among nominally distinct branches."
+        },
+        {
+          "name": "classical_limit_indicator",
+          "type": "rollup",
+          "formula": "CheckClassicalLimit(pointer_basis_candidates, amplitude_data)",
+          "description": "Examines if interference terms are negligible (e.g., checking pointer_basis_candidates or near-diagonal density) to label the state as effectively 'classical-like'."
+        },
+        {
+          "name": "time_until_decoherence_dynamic",
+          "type": "rollup",
+          "formula": "ComputeDynamicDecoherenceTime(amplitude_data, decoherence_map, environment_params)",
+          "description": "Estimates how quickly the off-diagonal terms vanish given known or inferred environment parameters. May refine or override the static 'coherence_time' field."
+        },
+        {
+          "name": "resource_theory_magic_measure",
+          "type": "rollup",
+          "formula": "ComputeMagicStabilizerDistance(amplitude_data)",
+          "description": "Measures how far this state is from the nearest stabilizer state, relevant to quantum computation resource theories."
         }
       ],
       "lambdas": [
@@ -516,6 +546,12 @@
           "type": "rollup",
           "formula": "CheckPolicyOutcomeConsistency(wavefunction_id.interpretation_id, selected_outcome, branch_ids_generated)",
           "description": "Verifies that the actual measurement result or branching is consistent with the wavefunction’s assigned interpretation policy."
+        },
+        {
+          "name": "no_signalling_constraint_check",
+          "type": "rollup",
+          "formula": "CheckNoSignallingConstraintsAcrossSubsystems(this.meas_id, wavefunction_id, possible_outcomes)",
+          "description": "Ensures local measurement outcomes are consistent with no‐signalling constraints if there's supposed to be space‐like separation from other events."
         }
       ],
       "lambdas": [
@@ -1196,6 +1232,12 @@
           "type": "rollup",
           "formula": "ComputeFrameDifference(observer_A, observer_B)",
           "description": "Compares reference_frame_transform data from the two observers to quantify any relative shift/boost or basis difference that might affect how each observer interprets measurement events and wavefunctions."
+        },
+        {
+          "name": "relational_wigner_analysis",
+          "type": "rollup",
+          "formula": "ComputeRelationalWignerFriendAnalysis(observer_A, observer_B, shared_events)",
+          "description": "General check for whether observer A's record of B is superposed while B's self-record is collapsed, highlighting Wigner's friend–type paradox conditions at the relational level."
         }
       ],
       "lambdas": [
@@ -1333,6 +1375,12 @@
           "type": "rollup",
           "formula": "AnalyzeNestedWignerFriendsAmongParticipants(this.record_id, participants)",
           "description": "Checks for multi-level nested or cyclical observer-measurements across all participants, detecting possible multi-tier Wigner’s friend paradoxes or RQM inconsistencies."
+        },
+        {
+          "name": "categorize_multi_observer_agreement",
+          "type": "rollup",
+          "formula": "ClassifyObserverConsensus(final_state_agreement, participant_discrepancies)",
+          "description": "Distinguishes complete agreement (classical consensus), partial disagreement resolvable by communication, or irreconcilable RQM paradox among participants."
         }
       ],
       "lambdas": [
