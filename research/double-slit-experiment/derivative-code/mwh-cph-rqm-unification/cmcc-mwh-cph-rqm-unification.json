@@ -1,4 +1,82 @@
 {
+  "title": "The CMCC Complete Theory-of-Everything Meta Model",
+  "description": "This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework",
+  "version": "v2.0",
+  "meta": {
+    "title": "The Conceptual Model Completeness Conjecture (CMCC)",
+    "subtitle": "A Universal Declarative Computational Framework",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": ["SSoT.me", "EffortlessAPI.com"]
+      }
+    ],
+    "date": "January 2025",
+    "abstract": "The Conceptual Model Completeness Conjecture (CMCC) posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework.",
+    "executive_summary": {
+      "key_points": [
+        "CMCC proposes that five primitives (S, D, L, A, F) suffice to model all computable domain rules.",
+        "It achieves Turing-completeness by mapping to Lambda Calculus and Rule 110.",
+        "Aligns structurally with Wolfram’s multiway systems (the Ruliad).",
+        "Demonstrates broad applicability in Physics, Chemistry, Biology, Math, etc.",
+        "A purely declarative approach: 'what' is separate from 'how' (the runtime)."
+      ],
+      "implications": [
+        "Potential unification of domain modeling under a single declarative rulebook.",
+        "Scalable approach to cross-domain data management and knowledge representation.",
+        "Opens possibilities for AI, simulation, and multiway branching analyses."
+      ],
+      "narrative": {
+        "sections": [
+          {
+            "title": "Executive Summary",
+            "content": [
+              "In many domains, describing “what” we want—a mathematical theorem, a business rule, a policy—involves flattening concepts into the syntax of English or code. While convenient for initial discussion, this syntax-locked approach forces us to repeatedly translate ideas between human language and machine processes. As complexity grows, these translations invite drift, ambiguity, and inefficiency."
+            ]
+          },
+          {
+            "title": "Starting with an English Theorem",
+            "content": [
+              "Consider a simple example: the rules that define a “triangle.” In English, we might say:",
+              "A triangle is a closed shape with exactly three edges; its internal angles sum to 180°.",
+              "This is serviceable for teaching geometry, but it’s not inherently machine-actionable. If someone doesn’t speak English—or if we want to automate checks for “triangleness”—we must rewrite these rules in each environment (programming languages, software specifications, test scripts, etc.). The overhead compounds quickly."
+            ]
+          },
+          {
+            "title": "Describing Triangleness in Airtable",
+            "content": [
+              "In contrast, we can directly capture the rules of geometry in a structural model within a tool like Airtable (or any ACID-compliant environment with fields, lookups, rollups, and formulas). Instead of restating the concept in English each time, we:",
+              "• Create tables for Edges and Shapes.",
+              "• Use Lookups to link three edges to a shape.",
+              "• Add Aggregations to sum angles or count edges.",
+              "• Define Formulas to verify that exactly three edges exist, and that the total internal angle equals 180°.",
+              "In this configuration, the entire notion of “triangleness” exists as data and relationships, not locked into a single linguistic syntax. Anyone—regardless of spoken language—can inspect or extend the model to handle right triangles, acute triangles, or more advanced geometric constructions. The system remains accessible, self-describing, and effortlessly scalable."
+            ]
+          },
+          {
+            "title": "From Triangleness to CMCC",
+            "content": [
+              "This leads to the Complete Model of Conceptual Completeness (CMCC) theorem: it posits that any conceptual rule (including the rules for “triangleness”) can be encoded using five core primitives—(S, D, L, A, F)—in an ACID-compliant datastore. In essence:",
+              "• Schema for defining categories of things,",
+              "• Data rows populating those categories,",
+              "• Lookups that link records into relationships,",
+              "• Aggregations that summarize or roll up data, and",
+              "• Formulas for declarative calculations or constraints.",
+              "The rulebook (the “what” of a concept) is stored unambiguously in these five primitives, separate from the “how” of any given runtime engine. Because it is a universal structural approach—not tied to a single programming language or specialized DSL—CMCC becomes a syntax-free mirror of the underlying concept. It applies equally to geometry, biology, legal rules, quantum theories, or inventory systems. In short, if a rule can be stated in any imperative language (or in English), it can be modeled structurally under CMCC without loss of fidelity."
+            ]
+          },
+          {
+            "title": "Why This Matters",
+            "content": [
+              "By decoupling the “what” from specific syntax, teams eliminate the repeated translation tasks that plague large projects. Modeling “triangleness” is trivial in Airtable; modeling advanced governance or physics follows the same structural pattern. CMCC solidifies the principle that once we master a small example (like a triangle), we unlock the ability to describe any computable concept. This puts an end to the question, “But will it work for my domain?”: the moment we acknowledge that geometry itself can be captured in a purely structural format, all similarly computable rules become fair game.",
+              "In sum, we move from a short English description of a concept, to a self-describing Airtable model, culminating in the CMCC theorem that guarantees we can handle any conceptual domain the same way. This progression ensures that readers—technical or otherwise—understand why syntax-free, declarative modeling is both feasible and transformative. Once you see it work with triangles, you can’t unsee its potential everywhere else."
+            ]
+          }
+        ]
+      }
+    }
+  },
   "entities": [
     {
       "name": "GlobalScenarioRecord",
@@ -52,6 +130,20 @@
           "target_entity": "ScenarioRelationshipLink",
           "join_condition": "ScenarioRelationshipLink.scenario_id = this.scenario_id",
           "description": "Points to the linking entity that associates this scenario with ObserverRelationships."
+        },
+        {
+          "name": "linked_classical_systems",
+          "type": "one_to_many",
+          "target_entity": "ClassicalSystemRecord",
+          "join_condition": "Some bridging record or scenario_id if desired",
+          "description": "Points to classical systems relevant for the scenario (optional extension)."
+        },
+        {
+          "name": "linked_particles",
+          "type": "one_to_many",
+          "target_entity": "ParticleRecord",
+          "join_condition": "Possibly ScenarioParticleLink if we want the same pattern as wavefunctions.",
+          "description": "If scenario includes classical or hybrid ParticleRecords."
         }
       ],
       "aggregations": [
@@ -192,6 +284,24 @@
           "type": "rollup",
           "formula": "EvaluatePersistentBranchOverlap(linked_wavefunctions)",
           "description": "Quantifies how many wavefunction branches remain partially overlapping (coherent) instead of fully decohering to orthogonality, providing a measure of re-interference potential across the entire scenario."
+        },
+        {
+          "name": "heisenberg_cut_inference",
+          "type": "rollup",
+          "formula": "InferHeisenbergCut(decoherence_map, ObserverFrame.quantum_darwinism_index, ObserverFrame.reference_frame_transform)",
+          "description": "Computes the effective quantum–classical boundary by integrating decoherence metrics with observer Darwinism indices and reference frame data to suggest a plausible Heisenberg cut."
+        },
+        {
+          "name": "scenario_total_classical_mass",
+          "type": "rollup",
+          "formula": "SUM(linked_classical_systems.total_system_mass)",
+          "description": "Aggregate sum of classical mass from all linked systems."
+        },
+        {
+          "name": "scenario_classical_system_count",
+          "type": "rollup",
+          "formula": "COUNT(linked_classical_systems)",
+          "description": "Counts how many ClassicalSystemRecords are in this scenario."
         }
       ],
       "lambdas": [
@@ -465,6 +575,12 @@
           "type": "rollup",
           "formula": "ComputeNonAdiabaticity(this.state_id, time_evolution, amplitude_data)",
           "description": "Estimates how quickly the wavefunction departs from any instantaneous eigenstate during time evolution (e.g., under a time-dependent Hamiltonian). Helps assess the validity of adiabatic approximations."
+        },
+        {
+          "name": "branching_regime_classifier",
+          "type": "rollup",
+          "formula": "IF(AVERAGE(branches.observer_scope_overlap) > threshold, 'Partial Branching', 'Full Branching')",
+          "description": "Classifies the system’s branching as either partial (RQM-style) or full (Many-Worlds) based on the average overlap of observer scopes across branches."
         }
       ],
       "lambdas": [
@@ -937,6 +1053,12 @@
           "type": "rollup",
           "formula": "ComputeSuperobserverIndex(this.observer_id, view_of_other_observers)",
           "description": "Scores how comprehensively this observer can reconstruct other observers’ states or outcomes. A high score implies a ‘Wigner-like’ vantage capable of seeing multiple observer frames simultaneously."
+        },
+        {
+          "name": "classical_reference_frame_id",
+          "type": "lookup",
+          "target_entity": "ReferenceFrameRecord",
+          "description": "Optional link for if this observer is associated with a classical coordinate system."
         }
       ],
       "lambdas": [
@@ -1318,7 +1440,14 @@
           "description": "Specifies the wavefunction (QuantumState) to which this evolution is applied for time-dependent analyses and aggregator computations."
         }
       ],
-      "lookups": [],
+      "lookups": [
+        {
+          "name": "hamiltonian_record_id",
+          "type": "lookup",
+          "target_entity": "HamiltonianRecord",
+          "description": "Which Hamiltonian definition we are using for this evolution (classical or quantum)."
+        }
+      ],
       "aggregations": [
         {
           "name": "applyTimeEvolution",
@@ -1354,6 +1483,18 @@
           "type": "rollup",
           "formula": "ComputeUnitarityDeviation(hamiltonian_ref, time_step, evolution_method)",
           "description": "Estimates how non-unitary the resulting time evolution operator might be (e.g., from numerical Trotter error). Returns 0 if fully unitary."
+        },
+        {
+          "name": "quantum_speed_classical_emergence_ratio",
+          "type": "rollup",
+          "formula": "ComputeSpeedClassicalEmergenceRatio(quantum_speed_limit, QuantumState.classical_limit_indicator)",
+          "description": "Evaluates the ratio between the intrinsic quantum speed limit and the timescale for classical emergence, highlighting rapid decoherence when the ratio is low."
+        },
+        {
+          "name": "classical_limit_check",
+          "type": "rollup",
+          "formula": "AssessIfKineticTerm >> PotentialTerm or decoherence times => classical limit?",
+          "description": "Toy aggregator to see if quantum evolution effectively looks classical."
         }
       ],
       "lambdas": []
@@ -1511,6 +1652,12 @@
           "type": "rollup",
           "formula": "CheckAsymmetricObservation(observer_A, observer_B, relational_view_consistency)",
           "description": "Flags if A sees B in superposition while B sees themselves as collapsed."
+        },
+        {
+          "name": "multi_level_wigner_nesting_indicator",
+          "type": "rollup",
+          "formula": "AnalyzeNestedWignerFriendScenarios(shared_events, nested_wigners_friend_indicator)",
+          "description": "Detects and quantifies multi-level Wigner’s friend nesting by analyzing observer relationship records for cycles and nested measurement dependencies."
         }
       ],
       "lambdas": [
@@ -1752,6 +1899,792 @@
         { "name": "raw_bitstring", "type": "scalar", "datatype": "string" },
         { "name": "count", "type": "scalar", "datatype": "int" }
       ]
-    }    
+    },
+    {
+      "name": "PhysicalConstantsRecord",
+      "description": "Stores fundamental constants (Planck, c, G, Boltzmann, etc.) possibly with uncertainties.",
+      "fields": [
+        {
+          "name": "record_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true,
+          "description": "Unique identifier for this constants record."
+        },
+        {
+          "name": "symbol",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Short symbolic name for this constant (e.g. 'c', 'h', 'k_B')."
+        },
+        {
+          "name": "value",
+          "type": "scalar",
+          "datatype": "float",
+          "description": "Numeric value in chosen base SI units."
+        },
+        {
+          "name": "units",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "String describing the unit system (e.g. 'm/s', 'J·s')."
+        },
+        {
+          "name": "uncertainty",
+          "type": "scalar",
+          "datatype": "float",
+          "description": "Optional standard error or fractional uncertainty."
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Additional remarks or references."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "ReferenceFrameRecord",
+      "description": "Stores or indexes classical coordinate systems, transformations, or Minkowski references. (v1.3 style merged into v2 naming).",
+      "fields": [
+        {
+          "name": "reference_frame_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "frame_name",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Human-friendly label (e.g. 'Lab Frame', 'Minkowski_4D')."
+        },
+        {
+          "name": "dimensions",
+          "type": "scalar",
+          "datatype": "int",
+          "description": "Number of spatial (or spacetime) dimensions used by this frame."
+        },
+        {
+          "name": "coordinate_model",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "E.g. 'Cartesian', 'Spherical', 'Minkowski' etc."
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Any extra text or references."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "PotentialRecord",
+      "description": "For classical or quantum usage, storing a potential function (harmonic oscillator, inverse-square, etc.).",
+      "fields": [
+        {
+          "name": "potential_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "potential_name",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "E.g. '1D Harmonic Oscillator', 'Coulomb', 'Morse'."
+        },
+        {
+          "name": "functional_form",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Symbolic or param-based expression (like 'V(r)= -G*M*m/r')."
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Any extra text or references."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "value_at_position",
+          "type": "rollup",
+          "parameters": ["coords"],
+          "formula": "Evaluate(functional_form, coords)",
+          "description": "Computes potential numeric value at some coordinate(s)."
+        }
+      ],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "HamiltonianRecord",
+      "description": "Combines kinetic + potential terms in classical or quantum contexts. (Merged from v1.3 'Hamiltonian' style).",
+      "fields": [
+        {
+          "name": "hamiltonian_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "description",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Short text about which system this Hamiltonian describes."
+        },
+        {
+          "name": "domain_type",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "'classical' or 'quantum' or 'mixed'."
+        },
+        {
+          "name": "kinetic_term",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Symbolic or param-based representation of T(p)."
+        },
+        {
+          "name": "potential_id",
+          "type": "lookup",
+          "target_entity": "PotentialRecord",
+          "description": "Reference to PotentialRecord for the V(x)."
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "ParticleRecord",
+      "description": "Represents a (possibly classical) particle: mass, charge, spin, classical position, velocity, or references to quantum states.",
+      "fields": [
+        {
+          "name": "particle_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "label",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "mass",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "charge",
+          "type": "scalar",
+          "datatype": "float",
+          "description": "E.g. electric charge in Coulombs (could be 0 for neutrals)."
+        },
+        {
+          "name": "spin",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "classical_position",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Vector or array for (x,y,z)."
+        },
+        {
+          "name": "classical_velocity",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Vector or array for (vx, vy, vz)."
+        },
+        {
+          "name": "reference_frame_id",
+          "type": "lookup",
+          "target_entity": "ReferenceFrameRecord",
+          "description": "Which reference frame these coords are measured in."
+        },
+        {
+          "name": "attached_quantum_state_id",
+          "type": "lookup",
+          "target_entity": "QuantumState",
+          "description": "If also described by a quantum state (single-particle wavefunction)."
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "velocity_magnitude",
+          "type": "rollup",
+          "formula": "SQRT( classv.x^2 + classv.y^2 + classv.z^2 )"
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "update_position",
+          "parameters": ["delta_t"],
+          "formula": "classical_position + classical_velocity*delta_t",
+          "description": "A naive classical step if we want to evolve position over short time."
+        }
+      ],
+      "constraints": []
+    },
+    {
+      "name": "ForceRecord",
+      "description": "Classical force concept, e.g. gravitational or electromagnetic. Typically bridging approach for classical realms.",
+      "fields": [
+        {
+          "name": "force_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "force_type",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "Like 'gravitational', 'electrostatic', 'magnetic', etc."
+        },
+        {
+          "name": "particle_id",
+          "type": "lookup",
+          "target_entity": "ParticleRecord"
+        },
+        {
+          "name": "force_vector",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "E.g. [Fx, Fy, Fz]."
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [
+        {
+          "name": "compute_newtonian_force",
+          "parameters": ["other_particle_ids"],
+          "formula": "E.g. G*m1*m2 / r^2 direction, storing in force_vector.",
+          "description": "Toy aggregator for summing gravitational or Coulomb forces from multiple particles."
+        }
+      ],
+      "constraints": []
+    },
+    {
+      "name": "GaugeFieldRecord",
+      "description": "Stores e.g. (E,B) or (Aμ) for a classical or quantum gauge field. (Merging v1.3 style with v2 naming.)",
+      "fields": [
+        {
+          "name": "gauge_field_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "gauge_type",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "e.g. 'U(1)', 'SU(2)', 'SU(3)'."
+        },
+        {
+          "name": "field_components",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "like E, B, or Aμ for each location."
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "field_strength_tensor",
+          "type": "rollup",
+          "formula": "ConstructFmuNu(field_components)"
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "perform_gauge_transformation",
+          "parameters": ["gauge_function"],
+          "formula": "Aμ -> Aμ + ∂μ(gauge_function)"
+        }
+      ],
+      "constraints": []
+    },
+    {
+      "name": "ClassicalSystemRecord",
+      "description": "Groups multiple classical or partially classical particles. Summaries for total mass, momentum, etc.",
+      "fields": [
+        {
+          "name": "system_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "system_name",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [
+        {
+          "name": "members",
+          "description": "Particles in this system",
+          "type": "one_to_many",
+          "target_entity": "ParticleRecord",
+          "join_condition": "ParticleRecord.classical_system_id = this.system_id"
+        }
+      ],
+      "aggregations": [
+        {
+          "name": "sum_of_particle_energies",
+          "type": "rollup",
+          "formula": "SUM( if we define kinetic + potential )"
+        },
+        {
+          "name": "total_system_mass",
+          "type": "rollup",
+          "formula": "SUM(members.mass)"
+        },
+        {
+          "name": "total_system_momentum",
+          "type": "rollup",
+          "formula": "VECTOR_SUM(members.mass * members.velocity)"
+        }
+      ],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "SpacetimeMetricRecord",
+      "description": "Stores a 3+1 or 4D metric. Potentially referencing Einstein eq aggregator referencing stress-energy, etc.",
+      "fields": [
+        {
+          "name": "metric_record_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "metric_tensor",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Matrix or array representing gμν."
+        },
+        {
+          "name": "reference_frame_id",
+          "type": "lookup",
+          "target_entity": "ReferenceFrameRecord"
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "ricci_scalar",
+          "type": "rollup",
+          "formula": "ComputeRicciScalar(metric_tensor)"
+        },
+        {
+          "name": "ricci_tensor",
+          "type": "rollup",
+          "formula": "ComputeRicciTensor(metric_tensor)"
+        },
+        {
+          "name": "einstein_tensor",
+          "type": "rollup",
+          "formula": "ComputeEinsteinTensor(ricci_tensor, ricci_scalar)"
+        }
+      ],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "BlackHoleSystemRecord",
+      "description": "Entity for horizon radius, Hawking temperature, referencing mass, etc. (from v1.3 style).",
+      "fields": [
+        {
+          "name": "bh_system_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "bh_label",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "approx_mass",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "schwarzschild_radius",
+          "type": "rollup",
+          "formula": "(2 * G * approx_mass)/(c^2)",
+          "description": "If we link G, c from PhysicalConstantsRecord, we can unify constants"
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "hawking_temperature",
+          "parameters": [],
+          "formula": "reduce_planck / (mass * etc.)",
+          "description": "Using approximate formula T ~ hbar * c^3 / (8π G M kB)."
+        }
+      ],
+      "constraints": []
+    },
+    {
+      "name": "DarkMatterInferenceRecord",
+      "description": "2.0 style name for the old 'DarkMatterInference' entity from v1.3. Summaries of missing mass, potential DM cross-sections, etc.",
+      "fields": [
+        {
+          "name": "record_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "region_reference",
+          "type": "lookup",
+          "target_entity": "ClassicalSystemRecord",
+          "description": "Which region or system is being analyzed for DM."
+        },
+        {
+          "name": "total_system_mass",
+          "type": "rollup",
+          "formula": "SUM(members.mass) or aggregator referencing the system’s particle mass sum",
+          "description": "In v2 we can store it as a direct aggregator or a copy from the classical system."
+        },
+        {
+          "name": "observed_mass",
+          "type": "scalar",
+          "datatype": "float",
+          "description": "Mass derived from luminous matter + known baryons."
+        },
+        {
+          "name": "missing_mass",
+          "type": "lambda",
+          "parameters": [],
+          "formula": "total_system_mass - observed_mass"
+        },
+        {
+          "name": "residual_mass_fraction",
+          "type": "lambda",
+          "parameters": [],
+          "formula": "(total_system_mass - observed_mass) / total_system_mass"
+        },
+        {
+          "name": "confidence_level",
+          "type": "scalar",
+          "datatype": "float",
+          "description": "Aggregated confidence (some domain-specific measure)."
+        },
+        {
+          "name": "timestamp",
+          "type": "scalar",
+          "datatype": "datetime"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "ObservationalDatasetRecord",
+      "description": "Raw observational data from surveys, capturing photometry, rotation curves, etc.",
+      "fields": [
+        {
+          "name": "dataset_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "source_name",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "data_parameters",
+          "type": "scalar",
+          "datatype": "json"
+        },
+        {
+          "name": "measurement_uncertainty",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "data_quality_flag",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "collection_date",
+          "type": "scalar",
+          "datatype": "datetime"
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "TheoreticalExperimentRecord",
+      "description": "Logs simulation runs and theoretical experiments, capturing input parameters and resulting inferences.",
+      "fields": [
+        {
+          "name": "experiment_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "description",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "parameter_set",
+          "type": "scalar",
+          "datatype": "json"
+        },
+        {
+          "name": "simulation_results",
+          "type": "scalar",
+          "datatype": "json"
+        },
+        {
+          "name": "timestamp",
+          "type": "scalar",
+          "datatype": "datetime"
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "HaloSubstructureRecord",
+      "description": "Captures local density fluctuations and subhalo mass distributions within DM halos.",
+      "fields": [
+        {
+          "name": "subhalo_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "subhalo_mass_distribution",
+          "type": "scalar",
+          "datatype": "json"
+        },
+        {
+          "name": "concentration_parameter",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "local_density_variation",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "linked_region",
+          "type": "lookup",
+          "target_entity": "DarkMatterInferenceRecord"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "BaryonicFeedbackRecord",
+      "description": "Captures the effects of baryonic processes (star formation, AGN feedback) on mass distribution.",
+      "fields": [
+        {
+          "name": "feedback_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "feedback_intensity",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "energy_injection_rate",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "mass_loss_fraction",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "linked_region",
+          "type": "lookup",
+          "target_entity": "ClassicalSystemRecord"
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "CosmicEvolutionRecord",
+      "description": "Tracks evolution of cosmic parameters over redshift/time (ext from v1.3).",
+      "fields": [
+        {
+          "name": "evolution_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "redshift",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "cosmic_time",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "evolution_modifier",
+          "type": "lambda",
+          "parameters": [],
+          "formula": "ComputeEvolutionModifier(redshift, cosmic_time)"
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": [],
+      "constraints": []
+    },
+    {
+      "name": "EnvironmentalInfluenceRecord",
+      "description": "Captures local environmental effects such as tidal interactions or merger history in cosmic contexts.",
+      "fields": [
+        {
+          "name": "environment_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "local_density",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "tidal_effects",
+          "type": "scalar",
+          "datatype": "float"
+        },
+        {
+          "name": "merger_history",
+          "type": "scalar",
+          "datatype": "json"
+        },
+        {
+          "name": "linked_region",
+          "type": "lookup",
+          "target_entity": "ClassicalSystemRecord"
+        },
+        {
+          "name": "notes",
+          "type": "scalar",
+          "datatype": "string"
+        }
+      ],
+      "lookups": [],
+      "aggregations": [
+        {
+          "name": "influence_modifier",
+          "type": "rollup",
+          "formula": "ComputeInfluenceModifier(local_density, tidal_effects, merger_history)"
+        }
+      ],
+      "lambdas": [],
+      "constraints": []
+    }
   ]
 }
