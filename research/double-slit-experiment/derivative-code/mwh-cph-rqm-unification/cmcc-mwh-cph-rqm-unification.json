@@ -180,6 +180,18 @@
           "type": "rollup",
           "formula": "ListInterpretationMismatches(linked_wavefunctions, linked_measurements)",
           "description": "Returns a list of measurement events that conflict with their wavefunction’s assigned interpretation (e.g., a ManyWorlds wavefunction storing single outcomes)."
+        },
+        {
+          "name": "interpretation_mismatch_density",
+          "type": "rollup",
+          "formula": "ComputeInterpretationMismatchDensity(linked_wavefunctions, linked_measurements)",
+          "description": "Aggregates the ratio (or percentage) of measurement events that contradict their wavefunction’s assigned interpretation over the total measurement count. Provides a scenario-level metric of how often interpretation policies are violated."
+        },
+        {
+          "name": "persistent_branch_overlap_ratio",
+          "type": "rollup",
+          "formula": "EvaluatePersistentBranchOverlap(linked_wavefunctions)",
+          "description": "Quantifies how many wavefunction branches remain partially overlapping (coherent) instead of fully decohering to orthogonality, providing a measure of re-interference potential across the entire scenario."
         }
       ],
       "lambdas": [
@@ -447,6 +459,12 @@
           "type": "rollup",
           "formula": "MAX(branches.branch_depth)",
           "description": "Finds the maximum branch depth among all branches linked to this wavefunction."
+        },
+        {
+          "name": "non_adiabaticity_measure",
+          "type": "rollup",
+          "formula": "ComputeNonAdiabaticity(this.state_id, time_evolution, amplitude_data)",
+          "description": "Estimates how quickly the wavefunction departs from any instantaneous eigenstate during time evolution (e.g., under a time-dependent Hamiltonian). Helps assess the validity of adiabatic approximations."
         }
       ],
       "lambdas": [
@@ -913,6 +931,12 @@
           "type": "rollup",
           "formula": "COUNT_DISTINCT(KEYS(view_of_other_observers))",
           "description": "Counts the number of distinct observer IDs that this observer is tracking."
+        },
+        {
+          "name": "superobserver_view_index",
+          "type": "rollup",
+          "formula": "ComputeSuperobserverIndex(this.observer_id, view_of_other_observers)",
+          "description": "Scores how comprehensively this observer can reconstruct other observers’ states or outcomes. A high score implies a ‘Wigner-like’ vantage capable of seeing multiple observer frames simultaneously."
         }
       ],
       "lambdas": [
@@ -1660,6 +1684,12 @@
           "type": "rollup",
           "formula": "IF(participant_discrepancies == 0 AND multi_observer_classical_darwinism == 'Classical pointer states emergent', 'Yes', 'No')",
           "description": "Indicates if all participants converge on a classical-like pointer outcome with no discrepancies."
+        },
+        {
+          "name": "robust_classical_fact_index",
+          "type": "rollup",
+          "formula": "ComputeRobustClassicalFactIndex(participants, final_state_agreement, participant_discrepancies)",
+          "description": "Scores how stable the final agreed-upon outcome is under small changes (e.g., ignoring certain uncertain measurements). A higher index means participants’ classical fact is robustly shared."
         }
       ],
       "lambdas": [
@@ -1670,6 +1700,58 @@
         }
       ],
       "constraints": []
-    }
+    },
+    {
+      "name": "ScenarioWavefunctionLink",
+      "fields": [
+        { "name": "id",          "type": "scalar", "datatype": "string", "primary_key": true },
+        { "name": "scenario_id", "type": "lookup", "target_entity": "GlobalScenarioRecord" },
+        { "name": "state_id",    "type": "lookup", "target_entity": "QuantumState" }
+      ],
+      "lookups": [],
+      "aggregations": [],
+      "lambdas": []
+    },
+    {
+      "name": "ParameterSweepRecord",
+      "fields": [
+        {
+          "name": "sweep_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "parameters",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "List or map of parameter names and their ranges."
+        },
+        {
+          "name": "target_evolution_id",
+          "type": "lookup",
+          "target_entity": "QuantumEvolution",
+          "description": "The QuantumEvolution record we’re sweeping over."
+        }
+      ],
+      "aggregations": [
+        {
+          "name": "run_sweep_and_store_results",
+          "type": "rollup",
+          "formula": "ExecuteParameterSweep(target_evolution_id, parameters)",
+          "description": "Executes the time evolution for each parameter set, storing aggregator results or partial wavefunctions."
+        }
+      ],
+      "lambdas": []
+    } ,
+    {
+      "name": "MeasurementResult",
+      "fields": [
+        { "name": "result_id", "type": "scalar", "datatype": "string", "primary_key": true },
+        { "name": "measurement_id", "type": "lookup", "target_entity": "MeasurementEvent" },
+        { "name": "raw_bitstring", "type": "scalar", "datatype": "string" },
+        { "name": "count", "type": "scalar", "datatype": "int" }
+      ]
+    }    
   ]
 }
