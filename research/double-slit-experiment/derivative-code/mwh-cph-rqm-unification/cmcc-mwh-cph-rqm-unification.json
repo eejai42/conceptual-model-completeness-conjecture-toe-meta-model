@@ -90,6 +90,42 @@
           "name": "top_level_paradox_score",
           "type": "rollup",
           "formula": "AnalyzeOverallWignersFriendAndHardysParadox(relevant_wavefunctions, relevant_observers, relevant_relationships, relevant_measurements)"
+        },
+        {
+          "name": "heisenberg_cut_placement",
+          "type": "rollup",
+          "formula": "InferHeisenbergCutPlacement(relevant_wavefunctions, relevant_observers)",
+          "description": "Analyzes each observer's pointer-basis stability, decoherence measures, and quantum Darwinism indices to locate a possible 'Heisenberg cut' (effective classical–quantum boundary) in this scenario."
+        },
+        {
+          "name": "global_causality_violations",
+          "type": "rollup",
+          "formula": "DetectGlobalCausalLoops(relevant_measurements, relevant_relationships)",
+          "description": "Scans all measurement events and observer relationships to detect cyclical or paradoxical measurement loops that break standard causal ordering (e.g. A measures B while B also measures A)."
+        },
+        {
+          "name": "multi_observer_rqm_reconstruction",
+          "type": "rollup",
+          "formula": "AttemptGlobalStateReconstruction(relevant_observers, relevant_wavefunctions)",
+          "description": "Attempts to unify the partial wavefunction data from multiple RQM observers into a single global state. Flags if no consistent global wavefunction can accommodate all vantage points."
+        },
+        {
+          "name": "scenario_interpretation_conflict_check",
+          "type": "rollup",
+          "formula": "EvaluateScenarioInterpretationConflicts(relevant_measurements, relevant_wavefunctions)",
+          "description": "Summarizes any conflicts/mismatches between assigned interpretation policies and actual measurement behaviors (single-outcome vs branching). Gathers data from each MeasurementEvent’s policy_vs_outcome_consistency aggregator."
+        },
+        {
+          "name": "scenario_wigner_friend_paradox_count",
+          "type": "rollup",
+          "formula": "CountAllWignerFriendParadoxes(relevant_relationships)",
+          "description": "Counts how many observer relationships exhibit a Wigner’s friend paradox or nested Wigner scenario in this scenario."
+        },
+        {
+          "name": "scenario_hardys_paradox_occurrences",
+          "type": "rollup",
+          "formula": "CountAllHardyParadoxFlags(relevant_wavefunctions)",
+          "description": "Tally of wavefunctions in the scenario that have a non-zero hardys_paradox_indicator, indicating Hardy’s paradox or contradiction under local realism."
         }
       ],
       "lambdas": [
@@ -315,6 +351,24 @@
           "type": "rollup",
           "formula": "ComputeMagicStabilizerDistance(amplitude_data)",
           "description": "Measures how far this state is from the nearest stabilizer state, relevant to quantum computation resource theories."
+        },
+        {
+          "name": "branch_frequency_vs_amplitude_check",
+          "type": "rollup",
+          "formula": "CompareBranchWeightFrequencies(this.state_id, repeated_measurements)",
+          "description": "For a Many-Worlds wavefunction, compares branch probability weights (|amplitude|²) with empirical frequencies over repeated measurements. Warns if measured frequencies deviate significantly from the Born-rule amplitude squares."
+        },
+        {
+          "name": "macro_cat_indicator",
+          "type": "rollup",
+          "formula": "DetectMacroscopicSuperposition(this.state_id, amplitude_data, decoherence_map)",
+          "description": "Checks if the wavefunction includes well-separated, macroscopically distinct components (a 'Schrödinger cat' state). Uses thresholds on amplitude overlap, pointer-basis separation, and decoherence times."
+        },
+        {
+          "name": "freedman_clauser_inequality_check",
+          "type": "rollup",
+          "formula": "ComputeFreedmanClauserCorrelations(this.state_id, MeasurementEvent.*)",
+          "description": "Variant of Bell-like tests (Freedman–Clauser or Clauser–Horne) to detect nonlocal correlations. Similar in structure to CHSH checks, but references Freedman–Clauser measurement configurations."
         }
       ],
       "lambdas": [
@@ -1099,6 +1153,12 @@
           "type": "rollup",
           "formula": "ComputeOTOCScrambling(hamiltonian_ref, target_state_id)",
           "description": "Computes an Out-of-Time-Ordered Correlator (OTOC) to measure the degree of information scrambling or chaotic dynamics under the specified Hamiltonian."
+        },
+        {
+          "name": "pointer_basis_stability_timeline",
+          "type": "rollup",
+          "formula": "TrackPointerStabilityOverEvolution(target_state_id, hamiltonian_ref, time_step)",
+          "description": "Monitors how stable pointer-basis states remain under time evolution. Applies time-stepping (via Trotter, exact exponentiation, etc.) and checks if identified pointer states remain robust or begin interfering again."
         }
       ],
       "lambdas": []
@@ -1238,6 +1298,12 @@
           "type": "rollup",
           "formula": "ComputeRelationalWignerFriendAnalysis(observer_A, observer_B, shared_events)",
           "description": "General check for whether observer A's record of B is superposed while B's self-record is collapsed, highlighting Wigner's friend–type paradox conditions at the relational level."
+        },
+        {
+          "name": "reference_frame_transform_consistency",
+          "type": "rollup",
+          "formula": "CheckReferenceFrameAlignment(observer_A, observer_B, ObserverFrame.*)",
+          "description": "Examines the coordinate/boost transformations each observer applies (in ObserverFrame.reference_frame_transform) to confirm they compose consistently and do not produce contradictory accounts of measurement outcomes."
         }
       ],
       "lambdas": [
@@ -1381,6 +1447,12 @@
           "type": "rollup",
           "formula": "ClassifyObserverConsensus(final_state_agreement, participant_discrepancies)",
           "description": "Distinguishes complete agreement (classical consensus), partial disagreement resolvable by communication, or irreconcilable RQM paradox among participants."
+        },
+        {
+          "name": "classical_ledger_construction",
+          "type": "rollup",
+          "formula": "BuildIntersubjectiveClassicalRecord(this.record_id, participants)",
+          "description": "Derives an 'effective classical record' from multiple observers' final outcomes if they sufficiently converge. Useful in quantum Darwinism or RQM to see whether an agreed-upon 'classical fact' has emerged from quantum events."
         }
       ],
       "lambdas": [
