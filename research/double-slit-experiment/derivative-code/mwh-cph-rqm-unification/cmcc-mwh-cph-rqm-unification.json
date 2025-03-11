@@ -1,6 +1,95 @@
 {
   "entities": [
     {
+      "name": "GlobalScenarioRecord",
+      "description": "Captures a top-level scenario or 'experiment' context that aggregates multiple wavefunctions, observers, and measurements, allowing aggregator-of-aggregators checks.",
+      "fields": [
+        {
+          "name": "scenario_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "scenario_description",
+          "type": "scalar",
+          "datatype": "string"
+        },
+        {
+          "name": "relevant_wavefunctions",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "List of wavefunction_ids that belong to this scenario."
+        },
+        {
+          "name": "relevant_observers",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "List of observer_ids that belong to this scenario."
+        },
+        {
+          "name": "relevant_measurements",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "List of measurement_ids that belong to this scenario."
+        },
+        {
+          "name": "relevant_relationships",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "List of observer_relationship IDs, if relevant."
+        }
+      ],
+      "lookups": [
+        {
+          "name": "wavefunction_details",
+          "type": "one_to_many",
+          "target_entity": "QuantumState",
+          "join_condition": "QuantumState.state_id IN this.relevant_wavefunctions"
+        }
+      ],
+      "aggregations": [
+        {
+          "name": "interpretation_consistency_across_wavefunctions",
+          "type": "rollup",
+          "formula": "CheckGlobalInterpretationConsistency(relevant_wavefunctions, relevant_measurements)"
+        },
+        {
+          "name": "global_observer_agreement_score",
+          "type": "rollup",
+          "formula": "AggregateObserverAgreements(relevant_observers, relevant_relationships)"
+        },
+        {
+          "name": "global_darwinism_index",
+          "type": "rollup",
+          "formula": "ComputeAggregateDarwinismIndex(relevant_observers)"
+        },
+        {
+          "name": "multi_wavefunction_coherence_map",
+          "type": "rollup",
+          "formula": "CombineAllDecoherenceMaps(relevant_wavefunctions)"
+        },
+        {
+          "name": "multi_system_bell_violations",
+          "type": "rollup",
+          "formula": "ScanAllBellInequalityChecks(relevant_wavefunctions, relevant_measurements)"
+        },
+        {
+          "name": "top_level_paradox_score",
+          "type": "rollup",
+          "formula": "AnalyzeOverallWignersFriendAndHardysParadox(relevant_wavefunctions, relevant_observers, relevant_relationships, relevant_measurements)"
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "run_global_analysis",
+          "parameters": [],
+          "formula": "PerformAllGlobalScenarioChecks(this.scenario_id)"
+        }
+      ],
+      "constraints": []
+    },    
+    {
       "name": "QuantumState",
       "description": "Stores wavefunction or amplitude distribution for a quantum system. Common to all interpretations. Additionally for RQM, this may represent a global or partial wavefunction as used by different observers.",
       "fields": [
@@ -190,6 +279,12 @@
           "type": "rollup",
           "formula": "InferPointerBasisStability(this.state_id, pointer_basis_candidates, ObserverFrame.*)",
           "description": "Combines the wavefunction's pointer_basis_candidates with any available observer data (e.g. Darwinism indices) to decide if a stable, classical-like pointer basis has globally emerged (i.e., robust against decoherence and visible to multiple observers)."
+        },
+        {
+          "name": "history_decoherence_check",
+          "type": "rollup",
+          "formula": "CheckConsistencyOfHistoriesAcrossBranches(this.state_id)",
+          "description": "Analyzes the measurement events and BranchRecord data for this wavefunction to verify that separate histories remain sufficiently decohered (consistent histories). Flags potential interference among nominally distinct branches."
         }
       ],
       "lambdas": [
@@ -299,7 +394,6 @@
           "parameters": ["ruleset_id"],
           "formula": "ApplyRQMRuleset(this.interpretation_id, ruleset_id, allow_partial_branching)"
         }
-        
       ],
       "constraints": []
     },
@@ -370,7 +464,7 @@
           "type": "scalar",
           "datatype": "json",
           "description": "Any additional RQM-specific metadata capturing how the measuring observer updates their view of the measured observer."
-        } 
+        }
       ],
       "lookups": [],
       "aggregations": [
@@ -559,6 +653,18 @@
           "name": "multi_observer_merge",
           "type": "rollup",
           "formula": "PerformRQMObserverMerge(this.record_id, participants)"
+        },
+        {
+          "name": "self_vs_external_consistency",
+          "type": "rollup",
+          "formula": "ComputeSelfExternalConsistency(this.observer_id, self_observed_history, view_of_other_observers)",
+          "description": "Compares the observer’s self-history with external logs (how others observe them), highlighting potential RQM mismatches."
+        },
+        {
+          "name": "darwinist_redundancy_curve",
+          "type": "rollup",
+          "formula": "ComputeRedundancyFunction(this.observer_id)",
+          "description": "Computes the environment-fragment redundancy function R(δ) used in quantum Darwinism analysis. Indicates how many distinct fragments of the environment redundantly encode the system's pointer states, as perceived by this observer."
         }
       ],
       "lambdas": [
@@ -655,7 +761,6 @@
           "datatype": "json",
           "description": "Defines which subset of observers or subsystems are part of this partial branch in an RQM scenario, i.e., local branching but not global."
         }
-        
       ],
       "lookups": [],
       "aggregations": [
@@ -791,6 +896,30 @@
           "type": "rollup",
           "formula": "ReconstructDensityMatrixFromMeasurements(this.record_id, MeasurementEvent.*)",
           "description": "Performs quantum state tomography by aggregating measurement outcomes across various bases. Produces an estimated density matrix to compare with this record's matrix_data for consistency checks or validation of experimental data."
+        },
+        {
+          "name": "quantum_discord",
+          "type": "rollup",
+          "formula": "ComputeQuantumDiscord(matrix_data)",
+          "description": "Computes the quantum discord for this density matrix, highlighting nonclassical correlations beyond entanglement. Typically requires a bipartite partition of the subsystem."
+        },
+        {
+          "name": "multipartite_negativity",
+          "type": "rollup",
+          "formula": "ComputeMultipartiteNegativity(matrix_data)",
+          "description": "Estimates the degree of entanglement across multiple partitions by generalizing the negativity measure."
+        },
+        {
+          "name": "mutual_information",
+          "type": "rollup",
+          "formula": "ComputeTotalMutualInformation(matrix_data)",
+          "description": "Calculates the total mutual information among the subsystems described in this density matrix."
+        },
+        {
+          "name": "classical_correlation",
+          "type": "rollup",
+          "formula": "ComputeClassicalCorrelation(matrix_data)",
+          "description": "Separates the classical portion of correlations, often used with quantum discord to distinguish classical vs. quantum correlations in a bipartite setting."
         }
       ],
       "lambdas": [
@@ -864,6 +993,18 @@
           "type": "formula",
           "formula": "CheckKrausCompleteness(kraus_operators)",
           "description": "Ensures the sum of K^†K = I across all Kraus operators, for a valid channel."
+        },
+        {
+          "name": "channel_capacity",
+          "type": "rollup",
+          "formula": "ComputeQuantumChannelCapacity(kraus_operators)",
+          "description": "Computes the quantum channel capacity for the given set of Kraus operators. Indicates the maximum rate (in qubits per channel use) at which quantum information can be reliably transmitted."
+        },
+        {
+          "name": "holevo_bound",
+          "type": "rollup",
+          "formula": "EstimateHolevoBound(kraus_operators, typical_input_ensemble)",
+          "description": "Estimates the classical capacity (Holevo limit) given a typical ensemble of input states. Provides an upper bound on how many classical bits can be transmitted per channel use."
         }
       ],
       "lambdas": []
@@ -890,6 +1031,12 @@
           "name": "evolution_method",
           "type": "string",
           "description": "Method used (e.g. 'Trotter', 'Exact', 'RK4', etc.)."
+        },
+        {
+          "name": "target_state_id",
+          "type": "lookup",
+          "target_entity": "QuantumState",
+          "description": "Specifies the wavefunction (QuantumState) to which this evolution is applied for time-dependent analyses and aggregator computations."
         }
       ],
       "lookups": [],
@@ -904,6 +1051,18 @@
           "type": "formula",
           "formula": "VerifyHermitian(hamiltonian_ref)",
           "description": "Checks that the referenced Hamiltonian is Hermitian, which is required for unitary time evolution."
+        },
+        {
+          "name": "quantum_speed_limit",
+          "type": "rollup",
+          "formula": "ComputeQuantumSpeedLimit(target_state_id, hamiltonian_ref)",
+          "description": "Evaluates known quantum speed limits (e.g. Mandelstam–Tamm or Margolus–Levitin) by checking how quickly the wavefunction can evolve away from its initial state under the specified Hamiltonian."
+        },
+        {
+          "name": "otoc_scrambling_metric",
+          "type": "rollup",
+          "formula": "ComputeOTOCScrambling(hamiltonian_ref, target_state_id)",
+          "description": "Computes an Out-of-Time-Ordered Correlator (OTOC) to measure the degree of information scrambling or chaotic dynamics under the specified Hamiltonian."
         }
       ],
       "lambdas": []
@@ -1024,7 +1183,19 @@
           "name": "extended_nested_wigner_analysis",
           "type": "rollup",
           "formula": "ComputeMultiLevelWignerFriendScenario(observer_A, observer_B, shared_events)",
-          "description": "Performs a deeper search for multi-level nested Wigner’s friend arrangements, analyzing partial collapses or superpositions from each vantage. Flags complex scenarios where an 'outer' observer sees a superposition even though an 'inner' observer recorded a collapse."
+          "description": "Performs a deeper search for multi-level nested Wigner’s friend arrangements, analyzing partial collapses or superpositions from each vantage."
+        },
+        {
+          "name": "multi_level_paradox_analysis",
+          "type": "rollup",
+          "formula": "AnalyzeMultiLevelWignerScenarios(observer_A, observer_B, shared_events)",
+          "description": "Examines whether observer A or B is also being observed by other frames, forming multi-tier Wigner’s friend loops. Flags scenarios in which an 'outer' observer sees superpositions even though an 'inner' observer recorded a definite outcome."
+        },
+        {
+          "name": "frame_discrepancy",
+          "type": "rollup",
+          "formula": "ComputeFrameDifference(observer_A, observer_B)",
+          "description": "Compares reference_frame_transform data from the two observers to quantify any relative shift/boost or basis difference that might affect how each observer interprets measurement events and wavefunctions."
         }
       ],
       "lambdas": [
@@ -1033,7 +1204,6 @@
           "parameters": [],
           "formula": "AttemptRQMInconsistencyResolution(observer_A, observer_B, shared_events, relational_view_consistency)"
         }
-        
       ]
     },
     {
@@ -1157,6 +1327,12 @@
           "type": "rollup",
           "formula": "IF( SUM(ObserverFrame.quantum_darwinism_index FOR each participant) > some_threshold, 'Classical pointer states emergent', 'Significant quantum coherence remains' )",
           "description": "Checks if all participants collectively share enough overlapping measurement info to treat the outcome as a classical pointer."
+        },
+        {
+          "name": "multi_level_paradox_analysis",
+          "type": "rollup",
+          "formula": "AnalyzeNestedWignerFriendsAmongParticipants(this.record_id, participants)",
+          "description": "Checks for multi-level nested or cyclical observer-measurements across all participants, detecting possible multi-tier Wigner’s friend paradoxes or RQM inconsistencies."
         }
       ],
       "lambdas": [
@@ -1167,6 +1343,6 @@
         }
       ],
       "constraints": []
-    }    
+    }
   ]
 }
