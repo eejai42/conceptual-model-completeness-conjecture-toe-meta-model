@@ -3086,63 +3086,6 @@
             "constraints": []
           },
           {
-            "name": "DarkMatterInferenceRecord",
-            "description": "2.0 style name for the old 'DarkMatterInference' entity from v1.3. Summaries of missing mass, potential DM cross-sections, etc.",
-            "fields": [
-              {
-                "name": "record_id",
-                "type": "scalar",
-                "datatype": "string",
-                "primary_key": true
-              },
-              {
-                "name": "region_reference",
-                "type": "lookup",
-                "target_entity": "ClassicalSystemRecord",
-                "description": "Which region or system is being analyzed for DM."
-              },
-              {
-                "name": "total_system_mass",
-                "type": "rollup",
-                "formula": "SUM(members.mass) or aggregator referencing the system’s particle mass sum",
-                "description": "In v2 we can store it as a direct aggregator or a copy from the classical system."
-              },
-              {
-                "name": "observed_mass",
-                "type": "scalar",
-                "datatype": "float",
-                "description": "Mass derived from luminous matter + known baryons."
-              },
-              {
-                "name": "missing_mass",
-                "type": "lambda",
-                "parameters": [],
-                "formula": "total_system_mass - observed_mass"
-              },
-              {
-                "name": "residual_mass_fraction",
-                "type": "lambda",
-                "parameters": [],
-                "formula": "(total_system_mass - observed_mass) / total_system_mass"
-              },
-              {
-                "name": "confidence_level",
-                "type": "scalar",
-                "datatype": "float",
-                "description": "Aggregated confidence (some domain-specific measure)."
-              },
-              {
-                "name": "timestamp",
-                "type": "scalar",
-                "datatype": "datetime"
-              }
-            ],
-            "lookups": [],
-            "aggregations": [],
-            "lambdas": [],
-            "constraints": []
-          },
-          {
             "name": "ObservationalDatasetRecord",
             "description": "Raw observational data from surveys, capturing photometry, rotation curves, etc.",
             "fields": [
@@ -3400,6 +3343,345 @@
             ],
             "lambdas": [],
             "constraints": []
+          },
+          {
+            "name": "DarkMatterInferenceRecord",
+            "description": "Entity capturing second-order inferences regarding dark matter from aggregated system data.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the dark matter inference record."
+              },
+              {
+                "name": "region_reference",
+                "type": "lookup",
+                "target_entity": "ClassicalSystem",
+                "description": "Reference to the system or region where the inference is made."
+              },
+              {
+                "name": "total_system_mass",
+                "type": "aggregation",
+                "formula": "SUM(members.mass)",
+                "description": "Total gravitational mass inferred for the region."
+              },
+              {
+                "name": "observed_mass",
+                "type": "aggregation",
+                "formula": "SUM(Particle.mass WHERE Particle.is_observed = true) + ICL_contribution",
+                "description": "Mass derived from observed (luminous) matter including intra-cluster light contribution."
+              },
+              {
+                "name": "missing_mass",
+                "type": "lambda",
+                "parameters": [],
+                "formula": "total_system_mass - observed_mass",
+                "description": "Difference between total and observed mass, representing missing mass."
+              },
+              {
+                "name": "residual_mass_fraction",
+                "type": "lambda",
+                "parameters": [],
+                "formula": "(total_system_mass - observed_mass) / total_system_mass",
+                "description": "Fraction of total mass attributed to dark matter."
+              },
+              {
+                "name": "DM_particle_mass_estimate",
+                "type": "lambda",
+                "parameters": [],
+                "formula": "BaseEstimate(rotation_curve_correction, local_interaction_modifier) * luminosity_profile_factor",
+                "description": "Estimated mass for individual dark matter particles adjusted by local rotational corrections and luminosity profile."
+              },
+              {
+                "name": "interaction_cross_section",
+                "type": "lambda",
+                "parameters": [],
+                "formula": "InferInteractionCrossSection(potential_deviations, known_baryonic_interactions)",
+                "description": "Estimated non-gravitational interaction strength of dark matter."
+              },
+              {
+                "name": "confidence_level",
+                "type": "aggregation",
+                "formula": "AggregateConfidence(associated_references)",
+                "description": "Aggregated confidence score based on supporting observational references."
+              },
+              {
+                "name": "associated_references",
+                "type": "lookup",
+                "target_entity": "Papers",
+                "description": "Links to papers and datasets that support the inference."
+              },
+              {
+                "name": "timestamp",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Timestamp of when the inference was made."
+              }
+            ]
+          },
+          {
+            "name": "ObservationalDataset",
+            "description": "Entity representing raw observational data from surveys, capturing parameters such as photometry, spectroscopy, and derived uncertainties.",
+            "fields": [
+              {
+                "name": "dataset_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the observational dataset."
+              },
+              {
+                "name": "source_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the survey or telescope (e.g., SDSS, DES, Planck, Euclid)."
+              },
+              {
+                "name": "data_parameters",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Key observational parameters (e.g., surface brightness profiles, rotation curves)."
+              },
+              {
+                "name": "measurement_uncertainty",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Uncertainty estimates for the measurements."
+              },
+              {
+                "name": "data_quality_flag",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Quality indicator for the dataset."
+              },
+              {
+                "name": "collection_date",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Date when the data was collected."
+              },
+              {
+                "name": "associated_references",
+                "type": "lookup",
+                "target_entity": "Papers",
+                "description": "References supporting the dataset."
+              }
+            ]
+          },
+          {
+            "name": "TheoreticalExperiment",
+            "description": "Entity for logging simulation runs and theoretical experiments, capturing input parameters and resulting inferences.",
+            "fields": [
+              {
+                "name": "experiment_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the simulation experiment."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Brief description of the experiment."
+              },
+              {
+                "name": "parameter_set",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "The input parameters used in the simulation (e.g., luminosity_profile_factor, rotation_curve_correction)."
+              },
+              {
+                "name": "simulation_results",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Results from the simulation run (e.g., updated DM_particle_mass_estimate, residual_mass_fraction)."
+              },
+              {
+                "name": "timestamp",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Timestamp of the experiment run."
+              },
+              {
+                "name": "associated_references",
+                "type": "lookup",
+                "target_entity": "Papers",
+                "description": "Links to supporting theoretical or observational references."
+              }
+            ]
+          },
+          {
+            "name": "HaloSubstructure",
+            "description": "Entity capturing local density fluctuations and subhalo mass distributions within dark matter halos.",
+            "fields": [
+              {
+                "name": "subhalo_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the subhalo."
+              },
+              {
+                "name": "subhalo_mass_distribution",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Distribution of mass within the subhalo."
+              },
+              {
+                "name": "concentration_parameter",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Parameter indicating halo concentration."
+              },
+              {
+                "name": "local_density_variation",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Variation in local dark matter density."
+              },
+              {
+                "name": "subhalo_mass_function",
+                "type": "lambda",
+                "parameters": [],
+                "formula": "ComputePowerLawDistribution(parameters)",
+                "description": "Lambda function to compute the mass function following a power-law with cutoff."
+              },
+              {
+                "name": "linked_to",
+                "type": "lookup",
+                "target_entity": "DarkMatterInference",
+                "description": "Links this substructure to the relevant dark matter inference record."
+              }
+            ]
+          },
+          {
+            "name": "BaryonicFeedback",
+            "description": "Entity capturing the effects of baryonic processes (e.g., star formation, AGN feedback) on mass distribution.",
+            "fields": [
+              {
+                "name": "feedback_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the feedback event."
+              },
+              {
+                "name": "feedback_intensity",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Measure of feedback strength."
+              },
+              {
+                "name": "energy_injection_rate",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Rate at which energy is injected into the surrounding medium."
+              },
+              {
+                "name": "mass_loss_fraction",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Fraction of mass lost due to feedback processes."
+              },
+              {
+                "name": "feedback_adjustment_factor",
+                "type": "lambda",
+                "parameters": [],
+                "formula": "ComputeFeedbackAdjustment(feedback_intensity, mass_loss_fraction)",
+                "description": "Factor used to adjust observed mass estimates based on feedback."
+              },
+              {
+                "name": "linked_region",
+                "type": "lookup",
+                "target_entity": "ClassicalSystem",
+                "description": "Reference to the system or region affected by baryonic feedback."
+              }
+            ]
+          },
+          {
+            "name": "CosmicEvolution",
+            "description": "Entity representing the evolution of dark matter properties over cosmic time.",
+            "fields": [
+              {
+                "name": "evolution_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the cosmic evolution record."
+              },
+              {
+                "name": "redshift",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Redshift value indicating cosmic epoch."
+              },
+              {
+                "name": "cosmic_time",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Cosmic time (in Gyr or another appropriate unit)."
+              },
+              {
+                "name": "evolution_modifier",
+                "type": "lambda",
+                "parameters": [],
+                "formula": "ComputeEvolutionModifier(redshift, cosmic_time)",
+                "description": "Modifier that adjusts dark matter inferences based on cosmic evolution."
+              },
+              {
+                "name": "associated_datasets",
+                "type": "lookup",
+                "target_entity": "ObservationalDataset",
+                "description": "Links to datasets that provide evolutionary observational data."
+              }
+            ]
+          },
+          {
+            "name": "EnvironmentalInfluence",
+            "description": "Entity capturing local environmental effects such as density, tidal interactions, and merger history.",
+            "fields": [
+              {
+                "name": "environment_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the environmental influence record."
+              },
+              {
+                "name": "local_density",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Local density measure in the region."
+              },
+              {
+                "name": "tidal_effects",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Numeric index representing tidal forces."
+              },
+              {
+                "name": "merger_history",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Historical record of recent mergers or interactions."
+              },
+              {
+                "name": "influence_modifier",
+                "type": "lambda",
+                "parameters": [],
+                "formula": "ComputeInfluenceModifier(local_density, tidal_effects, merger_history)",
+                "description": "Modifier that adjusts dark matter inferences based on environmental factors."
+              },
+              {
+                "name": "linked_region",
+                "type": "lookup",
+                "target_entity": "ClassicalSystem",
+                "description": "Reference to the system or halo impacted by environmental factors."
+              }
+            ]
           }
         ]
       },
@@ -3895,348 +4177,7 @@
             "notes": "Check aggregator outputs for radius, temperature, etc."
           }
         ]
-      },
-      "NewEntities": [
-        {
-          "name": "DarkMatterInference",
-          "description": "Entity capturing second-order inferences regarding dark matter from aggregated system data.",
-          "fields": [
-            {
-              "name": "id",
-              "type": "scalar",
-              "datatype": "string",
-              "primary_key": true,
-              "description": "Unique identifier for the dark matter inference record."
-            },
-            {
-              "name": "region_reference",
-              "type": "lookup",
-              "target_entity": "ClassicalSystem",
-              "description": "Reference to the system or region where the inference is made."
-            },
-            {
-              "name": "total_system_mass",
-              "type": "aggregation",
-              "formula": "SUM(members.mass)",
-              "description": "Total gravitational mass inferred for the region."
-            },
-            {
-              "name": "observed_mass",
-              "type": "aggregation",
-              "formula": "SUM(Particle.mass WHERE Particle.is_observed = true) + ICL_contribution",
-              "description": "Mass derived from observed (luminous) matter including intra-cluster light contribution."
-            },
-            {
-              "name": "missing_mass",
-              "type": "lambda",
-              "parameters": [],
-              "formula": "total_system_mass - observed_mass",
-              "description": "Difference between total and observed mass, representing missing mass."
-            },
-            {
-              "name": "residual_mass_fraction",
-              "type": "lambda",
-              "parameters": [],
-              "formula": "(total_system_mass - observed_mass) / total_system_mass",
-              "description": "Fraction of total mass attributed to dark matter."
-            },
-            {
-              "name": "DM_particle_mass_estimate",
-              "type": "lambda",
-              "parameters": [],
-              "formula": "BaseEstimate(rotation_curve_correction, local_interaction_modifier) * luminosity_profile_factor",
-              "description": "Estimated mass for individual dark matter particles adjusted by local rotational corrections and luminosity profile."
-            },
-            {
-              "name": "interaction_cross_section",
-              "type": "lambda",
-              "parameters": [],
-              "formula": "InferInteractionCrossSection(potential_deviations, known_baryonic_interactions)",
-              "description": "Estimated non-gravitational interaction strength of dark matter."
-            },
-            {
-              "name": "confidence_level",
-              "type": "aggregation",
-              "formula": "AggregateConfidence(associated_references)",
-              "description": "Aggregated confidence score based on supporting observational references."
-            },
-            {
-              "name": "associated_references",
-              "type": "lookup",
-              "target_entity": "Papers",
-              "description": "Links to papers and datasets that support the inference."
-            },
-            {
-              "name": "timestamp",
-              "type": "scalar",
-              "datatype": "datetime",
-              "description": "Timestamp of when the inference was made."
-            }
-          ]
-        },
-        {
-          "name": "ObservationalDataset",
-          "description": "Entity representing raw observational data from surveys, capturing parameters such as photometry, spectroscopy, and derived uncertainties.",
-          "fields": [
-            {
-              "name": "dataset_id",
-              "type": "scalar",
-              "datatype": "string",
-              "primary_key": true,
-              "description": "Unique identifier for the observational dataset."
-            },
-            {
-              "name": "source_name",
-              "type": "scalar",
-              "datatype": "string",
-              "description": "Name of the survey or telescope (e.g., SDSS, DES, Planck, Euclid)."
-            },
-            {
-              "name": "data_parameters",
-              "type": "scalar",
-              "datatype": "json",
-              "description": "Key observational parameters (e.g., surface brightness profiles, rotation curves)."
-            },
-            {
-              "name": "measurement_uncertainty",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Uncertainty estimates for the measurements."
-            },
-            {
-              "name": "data_quality_flag",
-              "type": "scalar",
-              "datatype": "string",
-              "description": "Quality indicator for the dataset."
-            },
-            {
-              "name": "collection_date",
-              "type": "scalar",
-              "datatype": "datetime",
-              "description": "Date when the data was collected."
-            },
-            {
-              "name": "associated_references",
-              "type": "lookup",
-              "target_entity": "Papers",
-              "description": "References supporting the dataset."
-            }
-          ]
-        },
-        {
-          "name": "TheoreticalExperiment",
-          "description": "Entity for logging simulation runs and theoretical experiments, capturing input parameters and resulting inferences.",
-          "fields": [
-            {
-              "name": "experiment_id",
-              "type": "scalar",
-              "datatype": "string",
-              "primary_key": true,
-              "description": "Unique identifier for the simulation experiment."
-            },
-            {
-              "name": "description",
-              "type": "scalar",
-              "datatype": "string",
-              "description": "Brief description of the experiment."
-            },
-            {
-              "name": "parameter_set",
-              "type": "scalar",
-              "datatype": "json",
-              "description": "The input parameters used in the simulation (e.g., luminosity_profile_factor, rotation_curve_correction)."
-            },
-            {
-              "name": "simulation_results",
-              "type": "scalar",
-              "datatype": "json",
-              "description": "Results from the simulation run (e.g., updated DM_particle_mass_estimate, residual_mass_fraction)."
-            },
-            {
-              "name": "timestamp",
-              "type": "scalar",
-              "datatype": "datetime",
-              "description": "Timestamp of the experiment run."
-            },
-            {
-              "name": "associated_references",
-              "type": "lookup",
-              "target_entity": "Papers",
-              "description": "Links to supporting theoretical or observational references."
-            }
-          ]
-        },
-        {
-          "name": "HaloSubstructure",
-          "description": "Entity capturing local density fluctuations and subhalo mass distributions within dark matter halos.",
-          "fields": [
-            {
-              "name": "subhalo_id",
-              "type": "scalar",
-              "datatype": "string",
-              "primary_key": true,
-              "description": "Unique identifier for the subhalo."
-            },
-            {
-              "name": "subhalo_mass_distribution",
-              "type": "scalar",
-              "datatype": "json",
-              "description": "Distribution of mass within the subhalo."
-            },
-            {
-              "name": "concentration_parameter",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Parameter indicating halo concentration."
-            },
-            {
-              "name": "local_density_variation",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Variation in local dark matter density."
-            },
-            {
-              "name": "subhalo_mass_function",
-              "type": "lambda",
-              "parameters": [],
-              "formula": "ComputePowerLawDistribution(parameters)",
-              "description": "Lambda function to compute the mass function following a power-law with cutoff."
-            },
-            {
-              "name": "linked_to",
-              "type": "lookup",
-              "target_entity": "DarkMatterInference",
-              "description": "Links this substructure to the relevant dark matter inference record."
-            }
-          ]
-        },
-        {
-          "name": "BaryonicFeedback",
-          "description": "Entity capturing the effects of baryonic processes (e.g., star formation, AGN feedback) on mass distribution.",
-          "fields": [
-            {
-              "name": "feedback_id",
-              "type": "scalar",
-              "datatype": "string",
-              "primary_key": true,
-              "description": "Unique identifier for the feedback event."
-            },
-            {
-              "name": "feedback_intensity",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Measure of feedback strength."
-            },
-            {
-              "name": "energy_injection_rate",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Rate at which energy is injected into the surrounding medium."
-            },
-            {
-              "name": "mass_loss_fraction",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Fraction of mass lost due to feedback processes."
-            },
-            {
-              "name": "feedback_adjustment_factor",
-              "type": "lambda",
-              "parameters": [],
-              "formula": "ComputeFeedbackAdjustment(feedback_intensity, mass_loss_fraction)",
-              "description": "Factor used to adjust observed mass estimates based on feedback."
-            },
-            {
-              "name": "linked_region",
-              "type": "lookup",
-              "target_entity": "ClassicalSystem",
-              "description": "Reference to the system or region affected by baryonic feedback."
-            }
-          ]
-        },
-        {
-          "name": "CosmicEvolution",
-          "description": "Entity representing the evolution of dark matter properties over cosmic time.",
-          "fields": [
-            {
-              "name": "evolution_id",
-              "type": "scalar",
-              "datatype": "string",
-              "primary_key": true,
-              "description": "Unique identifier for the cosmic evolution record."
-            },
-            {
-              "name": "redshift",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Redshift value indicating cosmic epoch."
-            },
-            {
-              "name": "cosmic_time",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Cosmic time (in Gyr or another appropriate unit)."
-            },
-            {
-              "name": "evolution_modifier",
-              "type": "lambda",
-              "parameters": [],
-              "formula": "ComputeEvolutionModifier(redshift, cosmic_time)",
-              "description": "Modifier that adjusts dark matter inferences based on cosmic evolution."
-            },
-            {
-              "name": "associated_datasets",
-              "type": "lookup",
-              "target_entity": "ObservationalDataset",
-              "description": "Links to datasets that provide evolutionary observational data."
-            }
-          ]
-        },
-        {
-          "name": "EnvironmentalInfluence",
-          "description": "Entity capturing local environmental effects such as density, tidal interactions, and merger history.",
-          "fields": [
-            {
-              "name": "environment_id",
-              "type": "scalar",
-              "datatype": "string",
-              "primary_key": true,
-              "description": "Unique identifier for the environmental influence record."
-            },
-            {
-              "name": "local_density",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Local density measure in the region."
-            },
-            {
-              "name": "tidal_effects",
-              "type": "scalar",
-              "datatype": "float",
-              "description": "Numeric index representing tidal forces."
-            },
-            {
-              "name": "merger_history",
-              "type": "scalar",
-              "datatype": "json",
-              "description": "Historical record of recent mergers or interactions."
-            },
-            {
-              "name": "influence_modifier",
-              "type": "lambda",
-              "parameters": [],
-              "formula": "ComputeInfluenceModifier(local_density, tidal_effects, merger_history)",
-              "description": "Modifier that adjusts dark matter inferences based on environmental factors."
-            },
-            {
-              "name": "linked_region",
-              "type": "lookup",
-              "target_entity": "ClassicalSystem",
-              "description": "Reference to the system or halo impacted by environmental factors."
-            }
-          ]
-        }
-      ]
+      }
     },
     "CMCC_Complete_ToEMM_Chemistry": {
       "name": "All-In-One CMCC Chemistry Model",
