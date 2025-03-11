@@ -103,6 +103,48 @@
           "type": "rollup",
           "formula": "ComputeObserverRelativeWavefunction(amplitude_data, parameters.observer_id)",
           "description": "Generates a partial or observer-specific wavefunction in RQM contexts, referencing the main amplitude data."
+        },
+        {
+          "name": "entanglement_classification",
+          "type": "rollup",
+          "formula": "IF(entanglement_measure < 1e-6, 'Product state', 'Entangled')",
+          "description": "A basic classification based on the entanglement measure. Adjust threshold or formula as needed."
+        },
+        {
+          "name": "branch_probability_sum",
+          "type": "rollup",
+          "formula": "SUM(BranchRecord.prob_weight WHERE wavefunction_id = this.state_id)",
+          "description": "Sums the probability weights across all branches for this wavefunction."
+        },
+        {
+          "name": "global_probability_mismatch_flag",
+          "type": "rollup",
+          "formula": "IF( ABS(branch_probability_sum - 1) > 0.001, 'WARNING: total branch probability != 1', 'OK' )",
+          "description": "Checks if the sum of branch probabilities deviates significantly from unity."
+        },
+        {
+          "name": "bell_inequality_check",
+          "type": "rollup",
+          "formula": "ComputeCHSHCorrelators(this.state_id, MeasurementEvent.*)",
+          "description": "Calculates CHSH correlations for measurements referencing this wavefunction."
+        },
+        {
+          "name": "pointer_basis_candidates",
+          "type": "rollup",
+          "formula": "IdentifyPointerStates(decoherence_map, amplitude_data)",
+          "description": "Identifies stable basis states that remain robust against decoherence."
+        },
+        {
+          "name": "wigner_distribution",
+          "type": "rollup",
+          "formula": "ComputeWignerFunction(amplitude_data)",
+          "description": "Generates a (quasi-)probability distribution in phase space."
+        },
+        {
+          "name": "leggett_garg_inequality",
+          "type": "rollup",
+          "formula": "ComputeLeggettGargCorrelations(this.state_id, MeasurementEvent.*)",
+          "description": "Checks if time-ordered measurements on this wavefunction violate the Leggett-Garg bound."
         }
       ],
       "lambdas": [
@@ -164,6 +206,12 @@
           "type": "scalar",
           "datatype": "boolean",
           "description": "Set to true if partial branching is utilized for RQM or specialized scenarios."
+        },
+        {
+          "name": "observer_hierarchy_model",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "For advanced RQM usage, describes how to handle nested observers (e.g., Wigner's friend). Could be 'flat', 'hierarchical', or 'unrestricted'."
         }
       ],
       "lookups": [
@@ -186,9 +234,28 @@
           "type": "rollup",
           "formula": "EnsurePolicyAlignment(interpretation_name, collapse_behavior, observer_specificity, allow_partial_branching)",
           "description": "Checks that the chosen interpretation_name aligns with the specified collapse_behavior and observer settings (e.g. RQM requires observer_specificity=true)."
+        },
+        {
+          "name": "rqm_policy_coherence",
+          "type": "rollup",
+          "formula": "CheckRQMPolicyCoherence(allow_partial_branching, observer_specificity, observer_hierarchy_model)",
+          "description": "Verifies that partial branching plus the chosen hierarchy model do not conflict. For instance, hierarchical RQM might forbid certain merges."
+        },
+        {
+          "name": "policy_alignment_inference",
+          "type": "rollup",
+          "formula": "IF(interpretation_consistency_check == 'ok' AND rqm_policy_coherence == 'ok', 'Interpretation policy aligned', 'Mismatch or error in policy config')",
+          "description": "Summarizes whether the chosen interpretation_name, collapse_behavior, and observer settings are consistent with each other."
         }
       ],
-      "lambdas": [],
+      "lambdas": [
+        {
+          "name": "assign_rqm_ruleset",
+          "parameters": ["ruleset_id"],
+          "formula": "ApplyRQMRuleset(this.interpretation_id, ruleset_id, allow_partial_branching)"
+        }
+        
+      ],
       "constraints": []
     },
     {
@@ -246,7 +313,19 @@
           "type": "scalar",
           "datatype": "json",
           "description": "For Many-Worlds, a list of new branch IDs post-measurement"
-        }
+        },
+        {
+          "name": "observed_observer_id",
+          "type": "lookup",
+          "target_entity": "ObserverFrame",
+          "description": "If this measurement is specifically an observer measuring another observer (RQM style), this links to the measured observer."
+        },
+        {
+          "name": "relational_records",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Any additional RQM-specific metadata capturing how the measuring observer updates their view of the measured observer."
+        } 
       ],
       "lookups": [],
       "aggregations": [
@@ -280,6 +359,24 @@
           "type": "rollup",
           "formula": "ComputeObserverRelativeOutcomes(wavefunction_id, observer_id, possible_outcomes)",
           "description": "For RQM or partial branching scenarios, derives outcome distribution from the perspective of a given observer."
+        },
+        {
+          "name": "relational_outcome_update",
+          "type": "rollup",
+          "formula": "ComputeRelationalMeasurementOutcome(wavefunction_id, observer_id, observed_observer_id)",
+          "description": "Similar to observer_relative_outcomes, but specifically for 'observer measuring observer' scenarios."
+        },
+        {
+          "name": "interpretation_inference",
+          "type": "rollup",
+          "formula": "IF(selected_outcome != '', 'Copenhagen', IF(branch_ids_generated != null AND LENGTH(branch_ids_generated) > 0, 'ManyWorlds', 'PossibleRQM'))",
+          "description": "Infers which interpretation was effectively used for this measurement: single-outcome indicates Copenhagen, multiple branches indicates Many-Worlds, empty suggests RQM or not yet resolved."
+        },
+        {
+          "name": "policy_vs_outcome_consistency",
+          "type": "rollup",
+          "formula": "CheckPolicyOutcomeConsistency(wavefunction_id.interpretation_id, selected_outcome, branch_ids_generated)",
+          "description": "Verifies that the actual measurement result or branching is consistent with the wavefunction’s assigned interpretation policy."
         }
       ],
       "lambdas": [
@@ -287,6 +384,11 @@
           "name": "execute_measurement",
           "parameters": [],
           "formula": "InterpretationBasedMeasurement(wavefunction_id, observer_id, this.possible_outcomes, this.outcome_probabilities)"
+        },
+        {
+          "name": "execute_relational_measurement",
+          "parameters": [],
+          "formula": "RelationalMeasurementProtocol(this.meas_id, this.observer_id, this.observed_observer_id, wavefunction_id)"
         }
       ],
       "constraints": []
@@ -329,6 +431,30 @@
           "type": "scalar",
           "datatype": "json",
           "description": "The wavefunction (or partial wavefunction) as assigned by this observer after applying its own Bayesian or RQM-like update rules."
+        },
+        {
+          "name": "view_of_other_observers",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Mapping from other_observer_id => local record of that observer's wavefunction/outcomes. In RQM, each observer can maintain a perspective on others."
+        },
+        {
+          "name": "self_observed_history",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Records how this observer perceives themselves across time, which may differ from external observer logs. RQM emphasizes each observer's self-consistent timeline."
+        },
+        {
+          "name": "epistemic_context",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Captures any extra Bayesian or 'knowledge state' aspects that define the observer's vantage (e.g., prior beliefs). Could inform partial wavefunction updates."
+        },
+        {
+          "name": "self_vs_external_consistency",
+          "type": "rollup",
+          "formula": "ComputeSelfExternalConsistency(this.observer_id, self_observed_history, view_of_other_observers)",
+          "description": "Compares the observer’s self-history with external logs (how others observe them), highlighting potential RQM mismatches."
         }
       ],
       "lookups": [],
@@ -353,6 +479,36 @@
           "type": "rollup",
           "formula": "ComputeObserverRelativeState(this.observer_id, contextual_state_data)",
           "description": "Generates the local quantum state from this observer's vantage, consistent with RQM approaches."
+        },
+        {
+          "name": "multi_observer_consensus",
+          "type": "rollup",
+          "formula": "ComputeMultiObserverConsensus(this.observer_id)",
+          "description": "Generalizes observer_consensus to >2 observers. Aggregates the partial states or measurement outcomes from multiple observers that this observer can 'see'."
+        },
+        {
+          "name": "self_consistency",
+          "type": "rollup",
+          "formula": "CheckSelfConsistency(self_observed_history, contextual_state_data)",
+          "description": "Verifies that the observer’s own timeline of events aligns with the partial wavefunction assigned to themselves (detecting RQM 'self-measurement' paradoxes)."
+        },
+        {
+          "name": "observer_consistency_inference",
+          "type": "rollup",
+          "formula": "IF(intersubjective_consistency_check == 'ok' AND self_consistency == 'ok', 'Fully consistent vantage', 'Mismatch or paradox in observer frame')",
+          "description": "Summarizes whether this observer’s vantage is consistent with itself and with other observers’ records."
+        },
+        {
+          "name": "classicality_inference",
+          "type": "rollup",
+          "formula": "IF(quantum_darwinism_index > 5, 'Classical-like pointer states emergent', 'Quantum coherence remains significant')",
+          "description": "A simple threshold-based inference to see if many observers converge on the same outcome, indicating emergent classical pointer states."
+        },
+        {
+          "name": "darwinism_timeline",
+          "type": "rollup",
+          "formula": "ComputeDarwinismOverTime(participants)",
+          "description": "Examines how stable the classical-like pointer emerges across multiple observation times."
         }
       ],
       "lambdas": [
@@ -360,6 +516,16 @@
           "name": "update_observed_context",
           "parameters": ["measurement_id"],
           "formula": "BayesianObserverUpdate(this.observer_id, measurement_id, contextual_state_data)"
+        },
+        {
+          "name": "update_relational_view",
+          "parameters": ["target_observer_id", "measurement_data"],
+          "formula": "RQMRelationalUpdate(this.observer_id, target_observer_id, measurement_data, view_of_other_observers)"
+        },
+        {
+          "name": "synchronize_self_view",
+          "parameters": ["new_self_data"],
+          "formula": "UpdateSelfObservedHistory(this.observer_id, new_self_data, self_observed_history)"
         }
       ],
       "constraints": []
@@ -432,7 +598,14 @@
           "type": "scalar",
           "datatype": "json",
           "description": "Optional list of observer_ids for which this branch is relevant in partial branching (RQM) contexts."
+        },
+        {
+          "name": "observer_relational_cut",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Defines which subset of observers or subsystems are part of this partial branch in an RQM scenario, i.e., local branching but not global."
         }
+        
       ],
       "lookups": [],
       "aggregations": [
@@ -451,9 +624,33 @@
           "type": "rollup",
           "formula": "ComputeRQMBranchMergePotential(observer_scope, parent_branch_id)",
           "description": "Evaluates if branches can be effectively merged when the same observer updates their knowledge in RQM contexts."
+        },
+        {
+          "name": "observer_scope_overlap",
+          "type": "rollup",
+          "formula": "CheckBranchObserverOverlap(this.branch_id, observer_scope, observer_relational_cut)",
+          "description": "Determines which observers are 'co-branching' here and which remain in superposition from each other’s viewpoint."
+        },
+        {
+          "name": "branch_interference_inference",
+          "type": "rollup",
+          "formula": "IF(coherence_factor > 1e-3, 'Potential for re-interference', 'Effectively orthogonal')",
+          "description": "Classifies whether this branch can still interfere with other branches (coherence_factor above threshold) or if it is effectively decohered."
+        },
+        {
+          "name": "branch_merge_probability",
+          "type": "rollup",
+          "formula": "ComputeBranchMergeProbability(this.branch_id, observer_scope, coherence_factor)",
+          "description": "Numerical measure of how likely these partial branches can unify from an observer’s vantage."
         }
       ],
-      "lambdas": [],
+      "lambdas": [
+        {
+          "name": "merge_partial_branches",
+          "parameters": ["other_branch_id"],
+          "formula": "RQMPartialBranchMerge(this.branch_id, other_branch_id, observer_relational_cut)"
+        }
+      ],
       "constraints": []
     },
     {
@@ -716,6 +913,12 @@
           "name": "consistency_state",
           "type": "string",
           "description": "Status: e.g. 'agreed', 'unresolved', 'contradictory', etc."
+        },
+        {
+          "name": "relational_view_consistency",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Stores a snapshot of how observer_A perceives observer_B versus how observer_B perceives themselves, for explicit RQM cross-checking."
         }
       ],
       "lookups": [],
@@ -725,9 +928,34 @@
           "type": "rollup",
           "formula": "ComputeObserverAgreement(observer_A, observer_B, shared_events)",
           "description": "Calculates a numeric or qualitative measure of how consistently the two observers interpret shared measurement events."
+        },
+        {
+          "name": "rqm_intersubjective_discrepancy",
+          "type": "rollup",
+          "formula": "ComputeRQMDiscrepancy(observer_A, observer_B, relational_view_consistency)",
+          "description": "Quantifies mismatch between how A sees B’s wavefunction and how B sees their own wavefunction."
+        },
+        {
+          "name": "wigners_friend_paradox_indicator",
+          "type": "rollup",
+          "formula": "DetectWignersFriendParadox(observer_A, observer_B, shared_events)",
+          "description": "Flags a mismatch if Observer A sees a collapsed outcome while Observer B sees a superposition for the same measurement event."
+        },
+        {
+          "name": "nested_wigners_friend_indicator",
+          "type": "rollup",
+          "formula": "CheckNestedWignerScenario(observer_A, observer_B, shared_events)",
+          "description": "Detects a multi-level scenario where B sees A in superposition after A measured the system."
         }
       ],
-      "lambdas": []
+      "lambdas": [
+        {
+          "name": "resolve_rqm_inconsistency",
+          "parameters": [],
+          "formula": "AttemptRQMInconsistencyResolution(observer_A, observer_B, shared_events, relational_view_consistency)"
+        }
+        
+      ]
     },
     {
       "name": "ConsistencyCheck",
@@ -797,6 +1025,63 @@
           "params": []
         }
       ]
-    }
+    },
+    {
+      "name": "IntersubjectiveRecord",
+      "description": "Stores how a group of observers come to (or fail to reach) mutual agreement in RQM contexts.",
+      "fields": [
+        {
+          "name": "record_id",
+          "type": "scalar",
+          "datatype": "string",
+          "primary_key": true
+        },
+        {
+          "name": "participants",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "List of observer_ids involved in the comparison or sharing process."
+        },
+        {
+          "name": "comparison_strategy",
+          "type": "scalar",
+          "datatype": "string",
+          "description": "E.g. 'direct_communication', 'classical_channel', or 'measurement_of_observer'."
+        },
+        {
+          "name": "final_state_agreement",
+          "type": "scalar",
+          "datatype": "json",
+          "description": "Aggregated final state or outcome that participants converge on (if any)."
+        }
+      ],
+      "aggregations": [
+        {
+          "name": "participant_discrepancies",
+          "type": "rollup",
+          "formula": "ComputeMultiObserverDiscrepancies(participants)"
+        },
+        {
+          "name": "multi_observer_inference",
+          "type": "rollup",
+          "formula": "IF(participant_discrepancies == 0, 'All participants in agreement', 'Discrepancies found among participants')",
+          "description": "Evaluates whether multiple observers (participants) end up with the same final outcome, or if they disagree."
+        },
+        {
+          "name": "multi_observer_classical_darwinism",
+          "type": "rollup",
+          "formula": "IF( SUM(ObserverFrame.quantum_darwinism_index FOR each participant) > some_threshold, 'Classical pointer states emergent', 'Significant quantum coherence remains' )",
+          "description": "Checks if all participants collectively share enough overlapping measurement info to treat the outcome as a classical pointer."
+        }
+      ],
+      "lambdas": [
+        {
+          "name": "execute_comparison_protocol",
+          "parameters": [],
+          "formula": "RunRQMIntersubjectiveComparison(this.record_id, participants)"
+        }
+      ],
+      "constraints": []
+    }    
   ]
 }
