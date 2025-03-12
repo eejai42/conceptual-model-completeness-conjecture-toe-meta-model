@@ -3793,6 +3793,203 @@
             "aggregations": [],
             "lambdas": [],
             "constraints": []
+          },
+          {
+            "name": "CosmologyCurvatureRecord",
+            "description": "Captures curvature parameters (Ω values) and derived geometry classification for the universe. These do not overlap with existing v2 fields.",
+            "fields": [
+              {
+                "name": "curvature_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for this curvature record."
+              },
+              {
+                "name": "omega_mass",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Ω_mass (matter density fraction) from observational data."
+              },
+              {
+                "name": "omega_relativistic",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Ω_relativistic for photons/neutrinos if measured."
+              },
+              {
+                "name": "omega_lambda",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Dark energy or cosmological-constant fraction, Ω_Λ."
+              },
+              {
+                "name": "omega_total",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Sum of mass, relativistic, and dark-energy densities. Observationally near 1.0."
+              },
+              {
+                "name": "omega_k",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Curvature density parameter, 1 - Ω_total. Positive => negative curvature, negative => positive curvature."
+              },
+              {
+                "name": "curvature_classification",
+                "type": "scalar",
+                "datatype": "enum",
+                "enum_values": ["positive","flat","negative","unknown"],
+                "description": "Derived label: 'flat' if |omega_total-1| < epsilon, else 'positive' or 'negative'."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "check_flatness",
+                "type": "rollup",
+                "formula": "IF(ABS(omega_total - 1) <= 0.01, 'NearlyFlat', 'Curved')",
+                "description": "Simple aggregator that flags if universe is nearly flat or curved based on threshold."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "update_curvature_classification",
+                "parameters": [],
+                "formula": "IF(ABS(omega_total - 1) < 1e-3, 'flat', IF(omega_total > 1, 'positive','negative'))",
+                "description": "Dynamically set curvature_classification according to sum of densities."
+              }
+            ]
+          },
+      
+          {
+            "name": "GlobalTopologyRecord",
+            "description": "Represents global shape/topology hypotheses: finite vs infinite, multiply/simply connected, etc.",
+            "fields": [
+              {
+                "name": "topology_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique record ID for global universe topology hypothesis."
+              },
+              {
+                "name": "finite_or_infinite",
+                "type": "scalar",
+                "datatype": "enum",
+                "enum_values": ["finite","infinite","unknown"],
+                "description": "Is space bounded or unbounded? Possibly 'unknown' if not concluded by data."
+              },
+              {
+                "name": "edge_or_boundary_flag",
+                "type": "scalar",
+                "datatype": "boolean",
+                "description": "If 'true', the model posits an 'edge' or boundary; if false or null, it's edge-free."
+              },
+              {
+                "name": "manifold_family",
+                "type": "scalar",
+                "datatype": "enum",
+                "enum_values": [
+                  "simply_connected",
+                  "multiply_connected",
+                  "3_sphere",
+                  "3_torus",
+                  "poincare_dodecahedral",
+                  "hyperbolic_variant",
+                  "unspecified"
+                ],
+                "description": "Labels the commonly cited manifold type. 'unspecified' if not pinned down."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Optional extra text or references (like WMAP constraints, etc.)."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "implied_volume",
+                "type": "rollup",
+                "formula": "IF(finite_or_infinite='finite', 'computable or closed', 'no well-defined finite volume')",
+                "description": "Simple aggregator that flags if volume is definable or not, based on finite/infinite enum."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "describe_edge_scenario",
+                "parameters": [],
+                "formula": "IF(edge_or_boundary_flag=true, 'Universe has boundary—difficult to interpret physically', 'No boundary (closed manifold or infinite)')"
+              }
+            ]
+          },
+      
+          {
+            "name": "CosmologyMeasurementRecord",
+            "description": "Logs observational data sets (e.g. WMAP, Planck, BOOMERanG) referencing their curvature or topology findings, or constraints on them.",
+            "fields": [
+              {
+                "name": "measurement_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for this measurement or dataset reference."
+              },
+              {
+                "name": "mission_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "e.g. 'WMAP', 'Planck', 'BOOMERanG', etc."
+              },
+              {
+                "name": "omega_values_reported",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "A JSON map {Omega_m:..., Omega_Lambda:..., Omega_total:...} from that mission's data release."
+              },
+              {
+                "name": "angular_scale_or_method",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Which method was used to measure curvature (e.g. CMB anisotropy, Baryon Acoustic Oscillations...)."
+              },
+              {
+                "name": "quoted_error_margin",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Reported margin of error for curvature or Omega. e.g. ±0.02"
+              },
+              {
+                "name": "date_of_release",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Timestamp or year of publication (like 2018 Planck release)."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "inferred_curvature_link",
+                "type": "lookup",
+                "target_entity": "CosmologyCurvatureRecord",
+                "description": "Optionally links this measurement’s derived curvature to a stored CosmologyCurvatureRecord row."
+              },
+              {
+                "name": "inferred_topology_link",
+                "type": "lookup",
+                "target_entity": "GlobalTopologyRecord",
+                "description": "If the measurement concluded or placed constraints on a certain topology, link it here."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "coarse_curvature_label",
+                "type": "rollup",
+                "formula": "IF(ABS(omega_values_reported.Omega_total - 1) < quoted_error_margin, 'FlatWithinError', 'PossiblyCurved')"
+              }
+            ],
+            "lambdas": []
           }
         ]
       }
