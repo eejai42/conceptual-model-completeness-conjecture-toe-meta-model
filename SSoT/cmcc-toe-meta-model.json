@@ -75,7 +75,7 @@
         ]
       }
     },
-    "CMCC_ToEMM_Domains": [
+    "CMCC_ToEMM_Domain_List": [
       {
         "id": "CMCC_Complete_ToEMM_Math",
         "fullname": "CMCC Complete Mathematics ToE Meta-Model",
@@ -136,60 +136,64 @@
   },
   "CMCC_ToEMM_Domains": {
     "CMCC_Complete_ToEMM_Math": {
-      "meta": {
-        "title": "CMCC Complete Mathematics TOE Meta Model",
-        "description": "A unified meta-model capturing the foundational elements of mathematics, including set theory, arithmetic operations, functions, algebraic structures, logical propositions, category theory, and supporting constructs like equations and operators. This model provides a declarative and operational substrate for representing and reasoning about mathematical concepts.",
-        "overview": "At its core, this model describes how arithmetic emerges from basic set–theoretic constructions and functional mappings. It lays out the ideas behind number systems, the nature of functions as mappings (including standard arithmetic operators), formalizes algebraic structures (like groups, rings, and fields) through declarative definitions, and captures higher abstractions in category theory. Logical propositions and newly added equation references complete the picture by enabling formal proof and high-level reasoning."
-      },
+      "name": "CMCC Complete Mathematics TOE Meta Model",
+      "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single ACID-compliant, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
+      "version": "v2.01",
       "schema": {
         "entities": [
           {
             "name": "Set",
-            "description": "A fundamental collection of mathematical objects. Sets define the universe in which arithmetic and number theory are formulated, with properties such as countability, cardinality, and discrete/continuous classification.",
+            "description": "A fundamental collection of mathematical objects. Includes properties like countability, cardinality, discrete/continuous classification, plus aggregator fields to compute subsets or check emptiness.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for this set."
               },
               {
                 "name": "name",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Optional symbolic name, e.g. 'ℕ', 'ℤ', 'A', etc."
               },
               {
                 "name": "description",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Free-text remarks about the nature of this set."
               },
               {
                 "name": "countable",
                 "type": "scalar",
-                "datatype": "boolean"
+                "datatype": "boolean",
+                "description": "Indicates if the set is countably infinite or finite vs. uncountable."
               },
               {
                 "name": "cardinality",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "E.g. 'finite', 'aleph_0', 'aleph_1', 'c', etc."
+                "description": "Human-friendly cardinality label, e.g. 'finite', 'aleph_0', 'c', etc."
               },
               {
                 "name": "discrete_or_continuous",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "Optional classification, e.g. 'discrete', 'continuous', or 'mixed'"
+                "description": "Classification, e.g. 'discrete', 'continuous', or 'mixed'."
               },
               {
                 "name": "parent_set_id",
                 "type": "lookup",
                 "target_entity": "Set",
-                "foreign_key": false
+                "foreign_key": false,
+                "description": "Reference to a 'superset' or 'universe set' containing this set. Null if no parent."
               },
               {
                 "name": "construction_rule",
                 "type": "scalar",
-                "datatype": "json"
+                "datatype": "json",
+                "description": "Optional JSON describing how this set is constructed, e.g. an inductive definition."
               }
             ],
             "lookups": [
@@ -197,234 +201,154 @@
                 "name": "elements",
                 "target_entity": "Element",
                 "type": "one_to_many",
-                "join_condition": "Element.containing_set_id = this.id"
+                "join_condition": "Element.containing_set_id = this.id",
+                "description": "All Element records that belong to this set."
               }
             ],
             "aggregations": [
               {
                 "name": "is_empty",
                 "type": "rollup",
-                "formula": "COUNT(elements) = 0"
+                "formula": "COUNT(elements) = 0",
+                "description": "True if this set has zero elements."
               },
               {
                 "name": "is_finite",
                 "type": "rollup",
-                "formula": "countable AND cardinality != 'aleph_0'"
+                "formula": "countable AND cardinality != 'aleph_0'",
+                "description": "Naive aggregator: if set is labeled countable but not infinite, treat as finite."
+              },
+              {
+                "name": "cardinality_estimate",
+                "type": "rollup",
+                "formula": "IF is_finite THEN COUNT(elements) ELSE '∞ (or as specified by cardinality)'",
+                "description": "Gives a naive numeric count if finite, else refers to cardinality field for infinite sets."
+              },
+              {
+                "name": "min_element",
+                "type": "rollup",
+                "description": "Finds the minimum element if a strict ordering is known. Null if not found or no order defined.",
+                "formula": "IF (some ordering is declared) THEN pick e in elements s.t. ∀x in elements, e <= x, else null"
               }
             ],
             "lambdas": [
               {
                 "name": "subset",
                 "parameters": ["predicate"],
-                "formula": "CreateSet(elements.filter(predicate))"
+                "description": "Returns a new set of the elements that satisfy the given predicate. E.g. 'x => x>0'.",
+                "formula": "CreateSet( elements.filter(e => evaluate(predicate,e)) )"
               },
               {
                 "name": "power_set",
                 "parameters": [],
+                "description": "Generates the power set (the set of all subsets). Implementation is conceptual, but declared here as a lambda.",
                 "formula": "GenerateAllSubsets(this)"
+              },
+              {
+                "name": "intersection",
+                "parameters": ["other_set_id"],
+                "description": "Computes the set of Elements that are present in both sets (this and other_set).",
+                "formula": "CreateSet( elements.filter(e => e IN LOOKUP(other_set_id).elements ) )"
               }
             ],
             "constraints": [
               {
                 "name": "valid_cardinality",
-                "formula": "cardinality IN ['finite', 'aleph_0', 'aleph_1', 'c']",
-                "error_message": "Invalid cardinality specification"
+                "formula": "cardinality IN ['finite','aleph_0','aleph_1','c','etc']",
+                "error_message": "Unrecognized cardinality specification"
               }
             ]
           },
+  
           {
             "name": "Element",
-            "description": "An atomic or composite member of a Set. Elements are the basic units from which numbers and other mathematical objects are built.",
+            "description": "An atomic or composite member of a Set. Can reference structured or raw data in 'value'.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for the element record."
               },
               {
                 "name": "containing_set_id",
                 "type": "lookup",
                 "target_entity": "Set",
-                "foreign_key": true
+                "foreign_key": true,
+                "description": "Points to which Set this element belongs."
               },
               {
                 "name": "value_type",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "E.g. 'int','float','symbol','structured' to track what the element represents."
               },
               {
                 "name": "value",
                 "type": "scalar",
-                "datatype": "json"
+                "datatype": "json",
+                "description": "Raw or structured representation of the element content. Possibly references a numeric or symbolic form."
               }
             ],
             "lookups": [],
-            "aggregations": [],
+            "aggregations": [
+              {
+                "name": "index_in_set",
+                "type": "rollup",
+                "formula": "RankWithin(containing_set_id.elements, this.id)",
+                "description": "An optional aggregator to position the element within the set’s ordering (if any). If no ordering, returns null."
+              }
+            ],
             "lambdas": [],
             "constraints": []
           },
+  
           {
             "name": "ArithmeticOperator",
-            "description": "Represents a standard arithmetic operator (e.g., +, −, ×, ÷, ^) along with optional domain/codomain details.",
+            "description": "Represents a standard arithmetic operator (+, -, *, /, ^) with optional domain/codomain. Could also store matrix or group ops.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for this operator record."
               },
               {
                 "name": "symbol",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "Examples: '+', '-', '*', '/', '^'"
+                "description": "E.g. '+','-','*','/','^'."
               },
               {
                 "name": "domain_set_id",
                 "type": "lookup",
                 "target_entity": "Set",
                 "foreign_key": false,
-                "note": "If relevant, the set in which the operator is defined"
+                "description": "Optional reference to the set in which this operator is defined."
               },
               {
                 "name": "codomain_set_id",
                 "type": "lookup",
                 "target_entity": "Set",
                 "foreign_key": false,
-                "note": "If relevant, the set to which results belong"
+                "description": "Optional reference to the set into which the operator maps results."
               },
               {
                 "name": "description",
                 "type": "scalar",
-                "datatype": "string"
-              }
-            ],
-            "lookups": [],
-            "aggregations": [],
-            "lambdas": [],
-            "constraints": []
-          },
-          {
-            "name": "Function",
-            "description": "A mapping from a domain Set to a codomain Set. Functions capture the essence of arithmetic operations and other transformations, supporting properties such as injectivity, surjectivity, and bijectivity.",
-            "fields": [
-              {
-                "name": "id",
-                "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
-              },
-              {
-                "name": "name",
-                "type": "scalar",
-                "datatype": "string"
-              },
-              {
-                "name": "domain_set_id",
-                "type": "lookup",
-                "target_entity": "Set",
-                "foreign_key": true
-              },
-              {
-                "name": "codomain_set_id",
-                "type": "lookup",
-                "target_entity": "Set",
-                "foreign_key": true
-              },
-              {
-                "name": "rule",
-                "type": "scalar",
-                "datatype": "json"
+                "description": "Free-text about usage or constraints, e.g. 'addition on real numbers'."
               }
             ],
             "lookups": [],
             "aggregations": [
               {
-                "name": "is_injective",
+                "name": "is_commutative",
                 "type": "rollup",
-                "formula": "CheckInjectivity(rule)"
-              },
-              {
-                "name": "is_surjective",
-                "type": "rollup",
-                "formula": "CheckSurjectivity(rule, codomain_set_id)"
-              },
-              {
-                "name": "is_bijective",
-                "type": "rollup",
-                "formula": "is_injective AND is_surjective"
-              }
-            ],
-            "lambdas": [
-              {
-                "name": "compose",
-                "parameters": ["other_function_id"],
-                "formula": "ComposeRules(this.rule, LOOKUP(other_function_id).rule)"
-              },
-              {
-                "name": "inverse",
-                "parameters": [],
-                "formula": "IF is_bijective THEN InvertRule(rule) ELSE null"
-              }
-            ],
-            "constraints": []
-          },
-          {
-            "name": "AlgebraicStructure",
-            "description": "An algebraic/mathematical structure defined by a base set, operations, and relations. Examples include groups, rings, and fields, which form the backbone of arithmetic and algebra.",
-            "fields": [
-              {
-                "name": "id",
-                "type": "scalar",
-                "datatype": "string",
-                "primary_key": true
-              },
-              {
-                "name": "name",
-                "type": "scalar",
-                "datatype": "string"
-              },
-              {
-                "name": "base_set_id",
-                "type": "lookup",
-                "target_entity": "Set",
-                "foreign_key": true
-              },
-              {
-                "name": "algebraic_structure_type",
-                "type": "scalar",
-                "datatype": "string",
-                "note": "e.g., 'group', 'ring', 'field', etc."
-              },
-              {
-                "name": "algebraic_operations",
-                "type": "scalar",
-                "datatype": "json",
-                "note": "Definitions or references to the operations used, e.g. { 'addition': '+', 'multiplication': '*' }"
-              },
-              {
-                "name": "relations",
-                "type": "scalar",
-                "datatype": "json"
-              }
-            ],
-            "lookups": [],
-            "aggregations": [
-              {
-                "name": "is_group",
-                "type": "rollup",
-                "formula": "CheckGroupAxioms(algebraic_operations)"
-              },
-              {
-                "name": "is_ring",
-                "type": "rollup",
-                "formula": "CheckRingAxioms(algebraic_operations)"
-              },
-              {
-                "name": "is_field",
-                "type": "rollup",
-                "formula": "CheckFieldAxioms(algebraic_operations)"
+                "description": "Indicates if the operator is commutative over its domain set. E.g. '+' on ℤ => true, '-' => false.",
+                "formula": "CheckPairwiseCommutativity(symbol, domain_set_id)"
               }
             ],
             "lambdas": [],
@@ -432,40 +356,230 @@
           },
           {
             "name": "Proposition",
-            "description": "A formal mathematical statement with a proof or derivation. Propositions enable automated verification of logical reasoning within the model.",
+            "aggregations": [
+              {
+                "name": "all_dependencies_proven",
+                "type": "rollup",
+                "description": "Looks at 'depends_on' array. Returns true if each referenced Proposition is_proven == true.",
+                "formula": "For each p in depends_on => p.is_proven => must be true. If all true => this aggregator= true."
+              }
+            ]
+          },
+          {
+            "name": "Function",
+            "description": "A mapping from a domain Set to a codomain Set. Fields to store rule definitions, aggregator checks for injectivity, surjectivity, etc.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for the function."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Human-friendly label for the function, e.g. 'f' or 'sin'."
+              },
+              {
+                "name": "domain_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true,
+                "description": "Which set is the domain of this function."
+              },
+              {
+                "name": "codomain_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true,
+                "description": "Which set is the codomain for outputs."
+              },
+              {
+                "name": "rule",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Representation of how function maps inputs to outputs, e.g. a formula or a table."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "is_injective",
+                "type": "rollup",
+                "formula": "CheckInjectivity(rule)",
+                "description": "Aggregator that determines if f(x1)=f(x2) => x1=x2 by scanning the rule or partial table."
+              },
+              {
+                "name": "is_surjective",
+                "type": "rollup",
+                "formula": "CheckSurjectivity(rule,codomain_set_id)",
+                "description": "Determines if the function’s range covers the entire codomain."
+              },
+              {
+                "name": "is_bijective",
+                "type": "rollup",
+                "formula": "is_injective AND is_surjective",
+                "description": "True if aggregator sees both injectivity and surjectivity."
+              },
+              {
+                "name": "periodicity_check",
+                "type": "rollup",
+                "formula": "DetectIfExistsPeriod(rule, domain_set_id)",
+                "description": "Indicates if there’s a smallest positive period p. E.g. for sin(x), p=2π. If none, returns null."
+              },
+              {
+                "name": "is_total",
+                "type": "rollup",
+                "description": "Checks if the function is defined for every element in its domain set. If any missing mapping => false.",
+                "formula": "Scan domain_set_id.elements => all have a mapped output in rule => true, else false"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "compose",
+                "parameters": ["other_function_id"],
+                "description": "Returns a new function that is composition of this function with other_function. 'this' is applied after other_function or vice versa.",
+                "formula": "ComposeRules(this.rule, LOOKUP(other_function_id).rule)"
+              },
+              {
+                "name": "inverse",
+                "parameters": [],
+                "description": "If the function is bijective, returns a new function that inverts the rule. Else null.",
+                "formula": "IF is_bijective THEN InvertRule(rule) ELSE null"
+              },
+              {
+                "name": "restrict_domain",
+                "parameters": ["subset_set_id"],
+                "description": "Returns a partial function restricted to a subset of the original domain.",
+                "formula": "CreateNewFunction( domain=subset_set_id, codomain=codomain_set_id, rule=rule restricted to that subset )"
+              }
+            ],
+            "constraints": []
+          },
+  
+          {
+            "name": "AlgebraicStructure",
+            "description": "An algebraic or mathematical structure built on a base set, plus operations and relations. E.g. group, ring, field. Aggregators check axioms.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for the algebraic structure record."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Label or short name, e.g. 'Ring of Integers'."
+              },
+              {
+                "name": "base_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true,
+                "description": "Which set underlies this structure."
+              },
+              {
+                "name": "algebraic_structure_type",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g. 'group','ring','field','module','vector_space'."
+              },
+              {
+                "name": "algebraic_operations",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Definition or references to operations used: { 'addition': '+', 'multiplication': '*' }. Possibly references ArithmeticOperator IDs."
+              },
+              {
+                "name": "relations",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Extra data about relation(s) used, e.g. equality, partial order, etc."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "is_group",
+                "type": "rollup",
+                "formula": "CheckGroupAxioms(algebraic_operations, base_set_id)",
+                "description": "Confirms associativity, identity, inverses under the 'addition' operation if structure_type is 'group'."
+              },
+              {
+                "name": "is_ring",
+                "type": "rollup",
+                "formula": "CheckRingAxioms(algebraic_operations, base_set_id)",
+                "description": "Confirms ring axioms if structure_type is 'ring' (two operations, distributivity, etc.)."
+              },
+              {
+                "name": "is_field",
+                "type": "rollup",
+                "formula": "CheckFieldAxioms(algebraic_operations, base_set_id)",
+                "description": "Checks commutative ring with unity + multiplicative inverses for all non-zero elements, etc."
+              },
+              {
+                "name": "is_integral_domain",
+                "type": "rollup",
+                "formula": "CheckIfNoZeroDivisors(base_set_id, algebraic_operations.multiplication)",
+                "description": "True if ring has no zero divisors, ignoring edge cases unless structure_type is 'ring'."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "has_unit_element",
+                "parameters": [],
+                "description": "Checks if there is a neutral element for multiplication, relevant for ring/field. Returns the element or null if none.",
+                "formula": "Scan base_set_id for e => ∀x, e*x = x*e = x. If found, return e else null"
+              }
+            ],
+            "constraints": []
+          },
+  
+          {
+            "name": "Proposition",
+            "description": "A formal statement (lemma, theorem, corollary). We can store its statement, proof steps, dependencies, aggregator to check if proven, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for referencing this proposition."
               },
               {
                 "name": "statement",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Text or symbolic form of the proposition."
               },
               {
                 "name": "result_type",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "E.g. 'lemma', 'proposition', 'theorem', 'corollary'"
+                "description": "E.g. 'lemma','proposition','theorem','corollary'."
               },
               {
                 "name": "proof_type",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "E.g. 'formal','constructive','contradiction','outline'."
               },
               {
                 "name": "derivation_steps",
                 "type": "scalar",
                 "datatype": "json",
-                "note": "Renamed from 'proof_steps' to be more generalizable"
+                "description": "Detailed or partially detailed proof steps or references."
               },
               {
                 "name": "depends_on",
                 "type": "scalar",
-                "datatype": "json"
+                "datatype": "json",
+                "description": "List of other Proposition IDs or theorems this result relies upon."
               }
             ],
             "lookups": [],
@@ -473,81 +587,131 @@
               {
                 "name": "is_proven",
                 "type": "rollup",
-                "formula": "ValidateProof(derivation_steps)"
+                "formula": "ValidateProof(derivation_steps)",
+                "description": "Yes/no aggregator verifying the proof steps are recognized as valid. Implementation is conceptual."
+              },
+              {
+                "name": "is_trivial_proof",
+                "type": "rollup",
+                "formula": "IF LENGTH(derivation_steps) <= 2 THEN true ELSE false",
+                "description": "Naive aggregator: if proof is extremely short, we label it 'trivial'."
               }
             ],
             "lambdas": [
               {
                 "name": "apply",
                 "parameters": ["context"],
+                "description": "Applies the proposition to a given context, e.g. rewriting or instantiation in a new domain.",
                 "formula": "ApplyProposition(this, context)"
+              },
+              {
+                "name": "apply_to_equation",
+                "parameters": ["equation_id"],
+                "description": "Tries to unify the proposition’s statement with a given equation, e.g. if statement references 'a^2+b^2=c^2' and eqn is pythag.",
+                "formula": "AttemptUnification(this.statement, LOOKUP(equation_id).equation_text)"
               }
             ],
             "constraints": []
           },
+  
           {
             "name": "Equation",
-            "description": "A symbolic expression representing an equality or functional relationship (e.g. polynomial, differential, wave equation). Useful for referencing in advanced math or cross-domain usage.",
+            "description": "A symbolic expression representing an equality or functional relationship (polynomial, differential eqn, wave eqn, etc.). Useful in advanced math or cross-domain usage.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for the equation record."
               },
               {
                 "name": "equation_text",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "Raw or human-readable form"
+                "description": "Raw or human-readable form, e.g. 'x^2 + y^2 = z^2'."
               },
               {
                 "name": "latex_repr",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "Optional LaTeX representation for display"
+                "description": "Optional LaTeX for nicer display."
               },
               {
                 "name": "description",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Remarks or usage context of the equation."
               },
               {
                 "name": "related_sets",
                 "type": "scalar",
                 "datatype": "json",
-                "note": "Any sets or variables the equation references"
+                "description": "IDs or references to sets or variables the equation references, e.g. { 'x in ℝ','y in ℝ' }"
+              },
+              {
+                "name": "is_polynomial",
+                "type": "rollup",
+                "description": "Examines equation_text to see if it’s a polynomial equation in standard variables, e.g. a1*x^n + ... = 0.",
+                "formula": "CheckIfPolynomial(equation_text)"
               }
+      
             ],
             "lookups": [],
-            "aggregations": [],
-            "lambdas": [],
+            "aggregations": [
+              {
+                "name": "is_linear_equation",
+                "type": "rollup",
+                "formula": "CheckIfLinear(equation_text)",
+                "description": "Examines if the equation is linear in its variables. E.g. 'ax + b=0'."
+              },
+              {
+                "name": "is_polynomial",
+                "type": "rollup",
+                "description": "Examines equation_text to see if it’s a polynomial equation in standard variables, e.g. a1*x^n + ... = 0.",
+                "formula": "CheckIfPolynomial(equation_text)"
+              }
+      
+            ],
+            "lambdas": [
+              {
+                "name": "solve_equation",
+                "parameters": ["var_list"],
+                "description": "Symbolically solves for the provided var(s) if feasible. Returns solutions or null if none found.",
+                "formula": "ApplySymbolicSolver(equation_text, var_list)"
+              }
+            ],
             "constraints": []
           },
+  
           {
             "name": "Category",
-            "description": "A high-level abstraction grouping mathematical objects and morphisms. Categories provide a unified framework to discuss mathematical structures and their relationships.",
+            "description": "Captures objects and morphisms in category theory. May store them as references to sets, functions, or other structures. Aggregators check composition closure, identity morphisms, etc.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for the category."
               },
               {
                 "name": "name",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Label for the category."
               },
               {
                 "name": "objects",
                 "type": "scalar",
-                "datatype": "json"
+                "datatype": "json",
+                "description": "Potentially a list of references to sets or algebraic structures that function as 'objects' in the category."
               },
               {
                 "name": "morphisms",
                 "type": "scalar",
-                "datatype": "json"
+                "datatype": "json",
+                "description": "List or map describing morphisms (arrows) between objects, referencing 'Function' IDs or new definitions."
               }
             ],
             "lookups": [],
@@ -555,73 +719,169 @@
               {
                 "name": "is_small",
                 "type": "rollup",
-                "formula": "IsSetSized(objects)"
+                "formula": "CheckIfObjectCollectionIsSetSized(objects)",
+                "description": "Naive aggregator to see if the category is 'small' (if the class of objects is a set)."
+              },
+              {
+                "name": "num_morphisms",
+                "type": "rollup",
+                "formula": "COUNT(morphisms) // or sum of their definitions if morphisms is array-like",
+                "description": "A count aggregator for how many morphisms (arrows) are declared in this Category."
+              },
+              {
+                "name": "has_zero_object",
+                "type": "rollup",
+                "description": "Detects if there’s an object that is both initial and terminal. For each object, check if it’s unique that all morphisms come from/to it in exactly one way. Returns true if found.",
+                "formula": "Search objects => find candidate that’s both initial_object & terminal_object => if found => true else false"
+              },
+              {
+                "name": "has_zero_object",
+                "type": "rollup",
+                "description": "Detects if there’s an object that is both initial and terminal. For each object, check if it’s unique that all morphisms come from/to it in exactly one way. Returns true if found.",
+                "formula": "Search objects => find candidate that’s both initial_object & terminal_object => if found => true else false"
               }
             ],
             "lambdas": [
               {
                 "name": "functor",
                 "parameters": ["target_category_id"],
+                "description": "Constructs a functor from this category to the target category if a mapping is defined or stored.",
                 "formula": "ConstructFunctor(this, LOOKUP(target_category_id))"
+              },
+              {
+                "name": "has_terminal_object",
+                "parameters": [],
+                "description": "Checks if there's an object T s.t. there's exactly one morphism from every other object to T. Implementation is aggregator-based.",
+                "formula": "Scan objects => find candidate T => check for unique arrow from each object => T"
               }
             ],
             "constraints": [
               {
                 "name": "composition_closed",
                 "formula": "CheckCompositionClosure(morphisms)",
-                "error_message": "Category must be closed under composition"
+                "error_message": "Category must be closed under morphism composition."
               }
             ]
           }
         ]
       },
+  
       "data": {
         "Set": [
           {
             "id": "naturals",
             "name": "ℕ",
-            "description": "The natural numbers, forming the basis of arithmetic through inductive construction.",
+            "description": "Natural numbers: 0,1,2,... Inductively defined.",
             "countable": true,
             "cardinality": "aleph_0",
             "discrete_or_continuous": "discrete",
+            "parent_set_id": null,
             "construction_rule": {
-              "type": "inductive",
               "base": 0,
-              "successor": "n -> n + 1"
+              "successor": "n -> n+1"
             }
           },
           {
             "id": "integers",
             "name": "ℤ",
-            "description": "The integers, extending the natural numbers to include negatives.",
+            "description": "All integers: negative, zero, positive. Countably infinite.",
             "countable": true,
             "cardinality": "aleph_0",
             "discrete_or_continuous": "discrete",
-            "parent_set_id": null
+            "parent_set_id": null,
+            "construction_rule": null
           },
           {
             "id": "reals",
             "name": "ℝ",
-            "description": "The real numbers, encompassing continuous quantities used in calculus and analysis.",
+            "description": "Real numbers, uncountable. Common in analysis.",
             "countable": false,
             "cardinality": "c",
             "discrete_or_continuous": "continuous",
-            "parent_set_id": null
+            "parent_set_id": null,
+            "construction_rule": null
+          }
+        ],
+        "Element": [
+          {
+            "id": "elem_natural_5",
+            "containing_set_id": "naturals",
+            "value_type": "int",
+            "value": 5
+          },
+          {
+            "id": "elem_integer_-3",
+            "containing_set_id": "integers",
+            "value_type": "int",
+            "value": -3
+          }
+        ],
+        "ArithmeticOperator": [
+          {
+            "id": "op_add_integers",
+            "symbol": "+",
+            "domain_set_id": "integers",
+            "codomain_set_id": "integers",
+            "description": "Addition on ℤ"
+          }
+        ],
+        "Function": [
+          {
+            "id": "f_identity",
+            "name": "Identity on ℤ",
+            "domain_set_id": "integers",
+            "codomain_set_id": "integers",
+            "rule": {
+              "type": "identity",
+              "expression": "f(x)=x"
+            }
           }
         ],
         "AlgebraicStructure": [
           {
             "id": "integer_ring",
             "name": "Ring of Integers",
-            "description": "An algebraic structure that formalizes addition and multiplication over the set of integers.",
             "base_set_id": "integers",
             "algebraic_structure_type": "ring",
             "algebraic_operations": {
-              "addition": "+",
+              "addition": "op_add_integers",
               "multiplication": "*"
             },
             "relations": {
               "equality": "="
+            }
+          }
+        ],
+        "Proposition": [
+          {
+            "id": "prop_pythagorean",
+            "statement": "For integer a,b,c, if a^2+b^2=c^2, then a,b,c is Pythag. triple",
+            "result_type": "theorem",
+            "proof_type": "outline",
+            "derivation_steps": ["Rewrite eqn, factor, do gcd argument, etc."],
+            "depends_on": []
+          }
+        ],
+        "Equation": [
+          {
+            "id": "eqn_pythag",
+            "equation_text": "a^2 + b^2 = c^2",
+            "latex_repr": "a^2 + b^2 = c^2",
+            "description": "Classic Pythagorean relation",
+            "related_sets": { "a,b,c": "integers" }
+          }
+        ],
+        "Category": [
+          {
+            "id": "cat_sets",
+            "name": "Category of Sets",
+            "objects": ["naturals","integers","reals"],
+            "morphisms": {
+              "f_identity_integers": {
+                "domain": "integers",
+                "codomain": "integers",
+                "functionRef": "f_identity"
+              }
             }
           }
         ]
@@ -5338,7 +5598,62 @@
               }
             ]
           },
-
+          {
+            "name": "Sequence",
+            "description": "Represents a function s: ℕ -> X for some set X, capturing the notion of a sequence. Provides aggregator checks for boundedness, Cauchy, etc.",
+            "fields": [
+              {
+                "name": "sequence_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for referencing the sequence."
+              },
+              {
+                "name": "domain_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true,
+                "description": "Should typically be 'naturals'. If not 'naturals', partial usage. Stored purely as a reference."
+              },
+              {
+                "name": "codomain_set_id",
+                "type": "lookup",
+                "target_entity": "Set",
+                "foreign_key": true,
+                "description": "Which set the sequence values lie in, e.g. 'reals'."
+              },
+              {
+                "name": "term_rule",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Param-based or symbolic expression describing s(n). Could store a table or formula like '1/n'."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "is_bounded",
+                "type": "rollup",
+                "description": "Checks if all terms s(n) lie within some finite bound in the codomain. Implementation conceptual.",
+                "formula": "∀n => |s(n)| < M for some M. If no M found => false."
+              },
+              {
+                "name": "is_cauchy",
+                "type": "rollup",
+                "description": "For metric codomain (like ℝ), checks if for every ε>0, there's an N s.t. m,n> N => distance(s(m), s(n))<ε. Returns true if so.",
+                "formula": "CheckCauchyCondition(term_rule, codomain_set_id)"
+              }
+            ],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "domain_should_be_naturals",
+                "formula": "domain_set_id == 'naturals'",
+                "error_message": "Sequence domain must be 'naturals' to be a standard sequence."
+              }
+            ]
+          },
           {
             "name": "CellProteinMapping",
             "description": "Bridging table for which proteins exist in which cell, plus concentration or copy number info.",
@@ -5823,76 +6138,234 @@
           }
         ]
       }
-    },
+    },  
     "CMCC_Complete_ToEMM_Economics": {
       "name": "All-In-One CMCC Economics Model (Extended)",
-      "description": "Covers basic economic entities: agents, markets, goods, transactions, supply-demand constraints, plus additional primitives like utility functions, budget constraints, macro indicators, and policy instruments. Each addition references or reuses definitions from the CMCC_Complete_ToEMM_Math model if needed.",
-      "depends_on": ["CMCC_Complete_ToEMM_Math"],
+      "description": "Covers basic and advanced economic entities—agents, markets, goods, transactions, supply-demand constraints, utility/budget, macro indicators, policies, plus a top-level scenario aggregator. Each entity is designed so it can be executed with no extra sidecar logic: all rules are captured using Schema (S), Data (D), Lookups (L), Aggregations (A), and Calculated Fields (F).",
+      "depends_on": [
+        "CMCC_Complete_ToEMM_Math" 
+      ],
       "schema": {
         "entities": [
           {
+            "name": "FinancialScenarioRecord",
+            "description": "A top-level container for an economic or financial scenario, linking agents, markets, macro data, and policy instruments at a given time horizon.",
+            "fields": [
+              {
+                "name": "scenario_id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for this scenario. If multiple parallel or hypothetical economies exist, each has its own scenario_id."
+              },
+              {
+                "name": "scenario_description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "A textual overview of the scenario’s scope, e.g. 'Post-COVID local economy' or 'Q1 2026 hypothetical policy test'."
+              },
+              {
+                "name": "scenario_metadata",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Optional metadata: environment conditions, HPC simulation parameters, historical references, etc."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "linked_agents",
+                "type": "one_to_many",
+                "target_entity": "EconomicAgent",
+                "join_condition": "EconomicAgent.scenario_id = this.scenario_id",
+                "description": "All EconomicAgents associated with this scenario. The agent table references scenario_id."
+              },
+              {
+                "name": "linked_markets",
+                "type": "one_to_many",
+                "target_entity": "Market",
+                "join_condition": "Market.scenario_id = this.scenario_id",
+                "description": "Markets that operate within this scenario."
+              },
+              {
+                "name": "linked_indicators",
+                "type": "one_to_many",
+                "target_entity": "MacroIndicator",
+                "join_condition": "MacroIndicator.scenario_id = this.scenario_id",
+                "description": "Macro Indicators (e.g. GDP, inflation) that belong to this scenario."
+              },
+              {
+                "name": "linked_policies",
+                "type": "one_to_many",
+                "target_entity": "PolicyInstrument",
+                "join_condition": "PolicyInstrument.scenario_id = this.scenario_id",
+                "description": "All policy instruments (taxes, interest rates) active in this scenario."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "scenario_total_liquid_assets",
+                "type": "rollup",
+                "formula": "SUM(linked_agents.liquid_assets)",
+                "description": "Sums all agents’ liquid_assets in this scenario, giving a total liquidity measure."
+              },
+              {
+                "name": "scenario_total_gdp",
+                "type": "rollup",
+                "formula": "LOOKUP(linked_indicators WHERE indicator_name='GDP').indicator_value",
+                "description": "Retrieves the scenario’s current GDP measure (if stored in MacroIndicator)."
+              },
+              {
+                "name": "total_market_supply_vs_demand",
+                "type": "rollup",
+                "formula": "Σ over all linked_markets => (total_supply - total_demand). Summed or listed individually.",
+                "description": "A scenario-level aggregator that checks if markets collectively have supply-demand imbalances."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "run_global_economic_update",
+                "parameters": [],
+                "description": "Convenient entry-point to run or simulate an entire time-step in this scenario: apply relevant policies to agents/markets, recalc macro indicators, etc.",
+                "formula": "For each linked_policies => apply_instrument(...). Then update linked_indicators via update_indicator."
+              }
+            ],
+            "constraints": []
+          },
+  
+          {
             "name": "EconomicAgent",
-            "description": "Individual or organization participating in an economy.",
+            "description": "Represents an individual or organization in the economy. Extended to store scenario links, net worth, and credit lines. All new logic is purely declarative.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique identifier for each agent (e.g. 'agent_alice')."
               },
-              { "name": "agent_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "agent_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Human-readable label for the agent (e.g. 'Alice Smith')."
+              },
               {
                 "name": "agent_type",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "e.g. 'consumer','producer','government','firm','bank', etc."
+                "description": "Classifier for the agent: 'consumer', 'producer', 'government', 'firm', 'bank', etc."
               },
               {
                 "name": "liquid_assets",
                 "type": "scalar",
                 "datatype": "float",
-                "note": "Cash or near-cash holdings"
+                "description": "Agent’s cash or near-cash holdings in base currency. Must be >= 0 by constraint."
               },
               {
                 "name": "notes",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Free-text remarks about the agent."
+              },
+              {
+                "name": "scenario_id",
+                "type": "lookup",
+                "target_entity": "FinancialScenarioRecord",
+                "foreign_key": false,
+                "description": "Which scenario this agent belongs to. If using direct linking, each agent can appear in exactly one scenario."
+              },
+              {
+                "name": "credit_line",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Maximum credit available to this agent from the banking system. Helps determine feasible borrowing."
+              },
+              {
+                "name": "outstanding_debt",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Total debt the agent currently owes, aggregated from external references or policies."
               }
             ],
-            "lookups": [],
-            "aggregations": [],
-            "lambdas": [],
+            "lookups": [
+              {
+                "name": "transactions",
+                "type": "one_to_many",
+                "target_entity": "Transaction",
+                "join_condition": "Transaction.agent_id = this.id",
+                "description": "All transactions (supply or demand) performed by this agent."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "net_worth_estimate",
+                "type": "rollup",
+                "formula": "liquid_assets - outstanding_debt",
+                "description": "A naive net worth ignoring intangible assets, real estate, or equity."
+              },
+              {
+                "name": "transaction_count",
+                "type": "rollup",
+                "formula": "COUNT(transactions)",
+                "description": "Count how many transaction records reference this agent."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "apply_interest",
+                "parameters": ["interest_rate"],
+                "description": "Increments agent’s outstanding debt if interest_rate>0. Tied to policy instruments or time steps.",
+                "formula": "IF outstanding_debt>0 => outstanding_debt += outstanding_debt * interest_rate"
+              }
+            ],
             "constraints": [
               {
                 "name": "non_negative_assets",
                 "formula": "liquid_assets >= 0",
-                "error_message": "Agent's assets cannot be negative"
+                "error_message": "Agent's liquid_assets cannot be negative"
+              },
+              {
+                "name": "credit_line_positive",
+                "formula": "credit_line >= 0",
+                "error_message": "Agent's credit_line must not be negative"
               }
             ]
           },
-
+  
           {
             "name": "GoodOrService",
-            "description": "A product or service being traded in the economy.",
+            "description": "A discrete product or service that can be traded in markets. This remains mostly unchanged, but with more descriptive metadata.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID (e.g. 'good_tomatoes')."
               },
-              { "name": "name", "type": "scalar", "datatype": "string" },
-              { "name": "category", "type": "scalar", "datatype": "string" },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Descriptive name, e.g. 'Tomatoes', 'Laptop', 'LegalConsulting'."
+              },
+              {
+                "name": "category",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Classification: 'food','electronics','services','labor', etc."
+              },
               {
                 "name": "unit_of_measure",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "e.g. 'kg','liters','hours','units'"
+                "description": "Physical or nominal measurement (kg, liters, hours, 'units')."
               },
               {
                 "name": "notes",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Arbitrary remarks."
               }
             ],
             "lookups": [],
@@ -5900,28 +6373,61 @@
             "lambdas": [],
             "constraints": []
           },
-
+  
           {
             "name": "Market",
-            "description": "A marketplace or exchange for a particular good/service. Summaries for supply, demand, etc.",
+            "description": "A marketplace or exchange for one or more goods, referencing scenario and aggregator fields for clearing, supply, demand.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for the market (e.g. 'farmer_market_1')."
               },
-              { "name": "market_name", "type": "scalar", "datatype": "string" },
+              {
+                "name": "market_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Human-readable name for the market."
+              },
               {
                 "name": "good_id",
                 "type": "lookup",
                 "target_entity": "GoodOrService",
-                "foreign_key": true
+                "foreign_key": true,
+                "description": "Which GoodOrService is primarily traded in this market. In multi-good contexts, we can store bridging tables."
               },
               {
                 "name": "notes",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Any additional comments about the market's conditions."
+              },
+              {
+                "name": "scenario_id",
+                "type": "lookup",
+                "target_entity": "FinancialScenarioRecord",
+                "foreign_key": false,
+                "description": "Which scenario this market belongs to."
+              },
+              {
+                "name": "opening_time",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Timestamp or daily hour range indicating when the market opens."
+              },
+              {
+                "name": "closing_time",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Timestamp or daily hour range indicating when the market closes."
+              },
+              {
+                "name": "clearing_price",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "The discovered equilibrium price from supply-demand matching. May be updated by 'clear_market' aggregator."
               }
             ],
             "lookups": [
@@ -5929,83 +6435,119 @@
                 "name": "transactions",
                 "target_entity": "Transaction",
                 "type": "one_to_many",
-                "join_condition": "Transaction.market_id = this.id"
+                "join_condition": "Transaction.market_id = this.id",
+                "description": "All transactions posted in this market."
               }
             ],
             "aggregations": [
               {
                 "name": "total_supply",
                 "type": "rollup",
-                "formula": "SUM(transactions.quantity) WHERE transactions.type='supply'"
+                "formula": "SUM(transactions.quantity) WHERE transactions.type='supply'",
+                "description": "Aggregates the total quantity of supply transactions in this market."
               },
               {
                 "name": "total_demand",
                 "type": "rollup",
-                "formula": "SUM(transactions.quantity) WHERE transactions.type='demand'"
+                "formula": "SUM(transactions.quantity) WHERE transactions.type='demand'",
+                "description": "Aggregates the total quantity of demand transactions in this market."
               },
               {
                 "name": "equilibrium_check",
                 "type": "rollup",
-                "formula": "total_supply - total_demand"
+                "formula": "total_supply - total_demand",
+                "description": "If >0 => surplus; if <0 => shortage; if =0 => balanced at current prices."
+              },
+              {
+                "name": "median_transaction_price",
+                "type": "rollup",
+                "formula": "MEDIAN(transactions.price_per_unit)",
+                "description": "The median posted transaction price in the market so far."
               }
             ],
             "lambdas": [
               {
                 "name": "clear_market",
                 "parameters": [],
-                "formula": "MatchSupplyDemand(transactions)"
+                "description": "Computes an internal clearing_price that tries to match total_supply and total_demand. Often iterative or formula-based.",
+                "formula": "Find p* s.t. supply(p*) ~ demand(p*). Then set clearing_price = p*."
+              },
+              {
+                "name": "update_market_hours",
+                "parameters": ["new_open_time", "new_close_time"],
+                "description": "Reassign opening_time and closing_time for next iteration or next day.",
+                "formula": "opening_time=new_open_time; closing_time=new_close_time"
               }
             ],
             "constraints": []
           },
-
+  
           {
             "name": "Transaction",
-            "description": "Represents a supply or demand action by an agent in a market.",
+            "description": "Represents a supply or demand action in a specific market by a given agent, with optional taxes or fees. Purely declarative aggregator fields handle net value.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique transaction ID, e.g. 'tx_1001'."
               },
               {
                 "name": "market_id",
                 "type": "lookup",
                 "target_entity": "Market",
-                "foreign_key": true
+                "foreign_key": true,
+                "description": "Which market this transaction is posted in."
               },
               {
                 "name": "agent_id",
                 "type": "lookup",
                 "target_entity": "EconomicAgent",
-                "foreign_key": true
+                "foreign_key": true,
+                "description": "Which agent initiated this transaction."
               },
               {
                 "name": "type",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "'supply' or 'demand'"
+                "description": "'supply' or 'demand', signifying whether the agent is selling or buying."
               },
               {
                 "name": "quantity",
                 "type": "scalar",
-                "datatype": "float"
+                "datatype": "float",
+                "description": "How many units of the good are demanded or supplied. Must be >0."
               },
               {
                 "name": "price_per_unit",
                 "type": "scalar",
-                "datatype": "float"
+                "datatype": "float",
+                "description": "The price offered or requested per unit. Must be >=0 by constraint."
               },
               {
                 "name": "transaction_timestamp",
                 "type": "scalar",
-                "datatype": "datetime"
+                "datatype": "datetime",
+                "description": "When the transaction occurred (or posted)."
               },
               {
                 "name": "notes",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Free-text remarks about the transaction, e.g. 'Bulk discount applied'."
+              },
+              {
+                "name": "tax_or_fee_amount",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Amount of tax or transaction fee levied. Must be >=0 by constraint."
+              },
+              {
+                "name": "instrument_applied",
+                "type": "lookup",
+                "target_entity": "PolicyInstrument",
+                "description": "If a policy (subsidy, VAT, etc.) affects this transaction, reference it here."
               }
             ],
             "lookups": [],
@@ -6013,21 +6555,29 @@
               {
                 "name": "total_value",
                 "type": "rollup",
-                "formula": "quantity * price_per_unit"
+                "formula": "quantity * price_per_unit",
+                "description": "Gross transaction value (before taxes or fees)."
+              },
+              {
+                "name": "net_value_after_tax",
+                "type": "rollup",
+                "formula": "total_value - tax_or_fee_amount",
+                "description": "Value after subtracting the tax or fee."
               }
             ],
             "lambdas": [
               {
                 "name": "execute_transaction",
                 "parameters": [],
-                "formula": "UpdateAgentAssets(agent_id, type, total_value)"
+                "description": "Purely declarative logic for updating the agent’s assets after the transaction. 'type' decides if agent gains or loses net_value_after_tax.",
+                "formula": "If type='supply' => agent.liquid_assets += net_value_after_tax; If type='demand' => agent.liquid_assets -= net_value_after_tax."
               }
             ],
             "constraints": [
               {
                 "name": "valid_type",
                 "formula": "type IN ['supply','demand']",
-                "error_message": "Transaction must be either supply or demand."
+                "error_message": "Transaction type must be 'supply' or 'demand'."
               },
               {
                 "name": "positive_quantity",
@@ -6038,37 +6588,50 @@
                 "name": "positive_price",
                 "formula": "price_per_unit >= 0",
                 "error_message": "Price per unit cannot be negative."
+              },
+              {
+                "name": "tax_fee_non_negative",
+                "formula": "tax_or_fee_amount >= 0",
+                "error_message": "Tax or fee cannot be negative."
               }
             ]
           },
-
+  
           {
             "name": "UtilityFunction",
-            "description": "Represents an agent’s preference ordering over bundles of goods. May reference the math model's 'Function', or store the param-based representation directly.",
+            "description": "Captures an agent’s preference structure over goods, potentially referencing time discounting. This is purely a design-time definition of 'what' a utility is, separate from the 'how' of actual optimization.",
             "fields": [
               {
                 "name": "id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID, e.g. 'util_alice'."
               },
               {
                 "name": "agent_id",
                 "type": "lookup",
                 "target_entity": "EconomicAgent",
                 "foreign_key": true,
-                "description": "Which agent this utility belongs to"
+                "description": "Points to the agent whose preferences we’re modeling."
               },
               {
                 "name": "function_repr",
                 "type": "scalar",
                 "datatype": "json",
-                "description": "JSON or param-based representation of U(x1, x2, ..., xn)"
+                "description": "A JSON-based or param-based representation, e.g. 'type=CobbDouglas, alpha=0.4, beta=0.6'."
               },
               {
                 "name": "description",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Plain-English explanation of the utility function formula or type."
+              },
+              {
+                "name": "time_preference_rate",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Discount factor for future consumption, e.g. 0.05 => 5% discount rate. If not relevant, can be 0."
               }
             ],
             "lookups": [],
@@ -6076,50 +6639,62 @@
             "lambdas": [
               {
                 "name": "evaluate_utility",
-                "parameters": ["bundle"],
-                "formula": "Compute U(bundle) from function_repr"
+                "parameters": ["bundle", "time_point"],
+                "description": "Computes U(bundle, time_point) from function_repr, factoring in time_preference_rate if needed.",
+                "formula": "For example, if type='CobbDouglas': U = x^alpha * y^beta * e^(-time_preference_rate * time_point)."
               },
               {
                 "name": "marginal_utility",
-                "parameters": ["bundle", "good_id"],
-                "formula": "Compute partial derivative wrt good_id in U(bundle)"
+                "parameters": ["bundle", "good_id", "time_point"],
+                "description": "Partial derivative wrt good_id in the declared utility function, at the specified time.",
+                "formula": "Compute dU/dx for the relevant good, referencing function_repr."
               }
             ],
             "constraints": []
           },
-
+  
           {
             "name": "BudgetConstraint",
-            "description": "Defines each agent’s or household’s budget limit. Typically references a set of goods and their prices, plus the agent’s total spending limit. May be used with UtilityFunction for optimization.",
+            "description": "Defines each agent’s or household’s budget limit, referencing possible multiple goods. Checking feasibility is purely declarative.",
             "fields": [
               {
                 "name": "constraint_id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for the budget constraint (e.g. 'budget_alice')."
               },
               {
                 "name": "agent_id",
                 "type": "lookup",
                 "target_entity": "EconomicAgent",
-                "foreign_key": true
+                "foreign_key": true,
+                "description": "Which agent the budget applies to."
               },
               {
                 "name": "income",
                 "type": "scalar",
                 "datatype": "float",
-                "description": "Disposable income or total money for spending"
+                "description": "Disposable income for spending. Must be >=0 by constraint."
               },
               {
                 "name": "constraint_equation",
                 "type": "scalar",
                 "datatype": "json",
-                "description": "A param-based or symbolic expression e.g. p1*x1 + p2*x2 <= income"
+                "description": "Symbolic or param-based eqn: e.g. p_x*x + p_y*y <= income."
+              },
+              {
+                "name": "scenario_id",
+                "type": "lookup",
+                "target_entity": "FinancialScenarioRecord",
+                "foreign_key": false,
+                "description": "Scenario context if needed to handle time-based or scenario-based incomes."
               },
               {
                 "name": "notes",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Free-text remarks, e.g. 'monthly budget' or 'weekly groceries'."
               }
             ],
             "lookups": [],
@@ -6128,48 +6703,59 @@
               {
                 "name": "check_feasibility",
                 "parameters": ["consumption_bundle"],
-                "formula": "Sum( price(good)*quantity(good) ) <= income"
+                "description": "Verifies p_i * x_i <= income under the constraint_equation. If any violation, returns false.",
+                "formula": "Sum( price(good) * quantity(good) ) <= income"
               }
             ],
             "constraints": [
               {
                 "name": "non_negative_income",
                 "formula": "income >= 0",
-                "error_message": "Budget income must be non-negative."
+                "error_message": "Budget income must not be negative."
               }
             ]
           },
-
+  
           {
             "name": "MacroIndicator",
-            "description": "Captures macroeconomic statistics (GDP, inflation, unemployment rate, etc.). Aggregates from the micro data if needed.",
+            "description": "Captures macro-level statistics (GDP, inflation, unemployment, money supply, etc.) aggregated from micro data. Time-based and scenario-based.",
             "fields": [
               {
                 "name": "indicator_id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for the macro indicator (e.g. 'macro_gdp')."
               },
               {
                 "name": "indicator_name",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "e.g. 'GDP', 'InflationRate', 'UnemploymentRate'"
+                "description": "Name of the indicator, e.g. 'GDP', 'InflationRate', 'UnemploymentRate'."
               },
               {
                 "name": "indicator_value",
                 "type": "scalar",
-                "datatype": "float"
+                "datatype": "float",
+                "description": "Numeric value for the indicator, e.g. 3.2 for inflation %."
               },
               {
                 "name": "timestamp",
                 "type": "scalar",
-                "datatype": "datetime"
+                "datatype": "datetime",
+                "description": "When this indicator reading is measured or updated."
+              },
+              {
+                "name": "scenario_id",
+                "type": "lookup",
+                "target_entity": "FinancialScenarioRecord",
+                "description": "Which scenario does this macro measurement belong to?"
               },
               {
                 "name": "notes",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Extra detail about data source or methodology."
               }
             ],
             "lookups": [],
@@ -6177,91 +6763,134 @@
               {
                 "name": "growth_rate",
                 "type": "rollup",
-                "formula": "ComputeGrowthOverPrevious(indicator_value, timestamp, indicator_name)"
+                "formula": "ComputeGrowthOverPrevious(indicator_value, timestamp, indicator_name)",
+                "description": "Compares this reading with the previous reading to yield a % growth or change."
+              },
+              {
+                "name": "rolling_average",
+                "type": "rollup",
+                "formula": "AVG( last N indicator_value ) based on indicator_name ordering by timestamp",
+                "description": "A smoothed aggregator over the last few data points for this indicator."
               }
             ],
             "lambdas": [
               {
                 "name": "update_indicator",
                 "parameters": ["micro_data_array"],
-                "formula": "Aggregate microeconomic transactions or labor data => new indicator_value"
+                "description": "Takes in micro-level data (Transaction logs, agent data) to recalc the new value of the macro indicator (like GDP).",
+                "formula": "Aggregate micro_data_array => new indicator_value. For instance, sum of net_value_after_tax for a quarter => new GDP."
               }
             ],
             "constraints": []
           },
-
+  
           {
             "name": "PolicyInstrument",
-            "description": "Represents a government or central bank policy tool—e.g. interest rate, tax rate, subsidy, or regulation—that can affect markets or agents.",
+            "description": "Represents a government or central bank policy instrument (interest rate, tax rate, subsidy, regulation) that can be applied to relevant agents or markets.",
             "fields": [
               {
                 "name": "instrument_id",
                 "type": "scalar",
                 "datatype": "string",
-                "primary_key": true
+                "primary_key": true,
+                "description": "Unique ID for the policy, e.g. 'interest_rate_1'."
               },
               {
                 "name": "instrument_name",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "e.g. 'InterestRate', 'TaxRate', 'SubsidyProgram'"
+                "description": "Label: 'InterestRate', 'IncomeTaxRate', 'SubsidyProgram', etc."
               },
               {
                 "name": "instrument_value",
                 "type": "scalar",
                 "datatype": "float",
-                "note": "Percentage or base numeric value (like interest rate= 2.5)."
+                "description": "Main numeric level, e.g. '2.5' for a 2.5% interest rate, or 20.0 for 20% tax rate."
               },
               {
                 "name": "applicable_domain",
                 "type": "scalar",
                 "datatype": "string",
-                "note": "e.g. 'income_tax', 'VAT', 'monetary_policy'"
+                "description": "Which domain is targeted: 'monetary_policy','income_tax','VAT','subsidy','price_control', etc."
               },
               {
                 "name": "start_date",
                 "type": "scalar",
-                "datatype": "datetime"
+                "datatype": "datetime",
+                "description": "When this policy becomes active."
               },
               {
                 "name": "end_date",
                 "type": "scalar",
-                "datatype": "datetime"
+                "datatype": "datetime",
+                "description": "When this policy expires or is replaced."
+              },
+              {
+                "name": "scenario_id",
+                "type": "lookup",
+                "target_entity": "FinancialScenarioRecord",
+                "description": "Which scenario this policy is part of. Could be multi-scenario if bridging is used."
               },
               {
                 "name": "notes",
                 "type": "scalar",
-                "datatype": "string"
+                "datatype": "string",
+                "description": "Remarks or legal references about the policy."
               }
             ],
             "lookups": [],
-            "aggregations": [],
+            "aggregations": [
+              {
+                "name": "time_active_days",
+                "type": "rollup",
+                "formula": "DATEDIFF(end_date, start_date, 'days')",
+                "description": "Rough measure of how many days the policy is in effect (assuming contiguous date range)."
+              }
+            ],
             "lambdas": [
               {
                 "name": "apply_instrument",
                 "parameters": ["agent_or_market_id"],
-                "formula": "Adjust relevant fields e.g. liquid_assets, transaction taxes, or market prices, etc."
+                "description": "Adjust the relevant fields (e.g. agent.liquid_assets, transaction taxes, or market price) by the instrument_value. Implementation logic is purely stored in formula references.",
+                "formula": "If instrument_name='InterestRate' => agent.apply_interest(instrument_value). If tax => transaction tax rate, etc."
               }
             ],
             "constraints": []
           }
         ]
       },
+  
       "data": {
+        "FinancialScenarioRecord": [
+          {
+            "scenario_id": "scenario_baseline_2025",
+            "scenario_description": "A baseline economy scenario for year 2025 simulation",
+            "scenario_metadata": {
+              "population_size": 100000,
+              "currency_name": "USD"
+            }
+          }
+        ],
         "EconomicAgent": [
           {
             "id": "agent_alice",
             "agent_name": "Alice Smith",
             "agent_type": "consumer",
             "liquid_assets": 1000.0,
-            "notes": "Looking to buy produce"
+            "notes": "Looking to buy produce",
+            "scenario_id": "scenario_baseline_2025",
+            "credit_line": 500.0,
+            "outstanding_debt": 200.0
           },
           {
             "id": "agent_bob_farm",
             "agent_name": "Bob's Farm",
             "agent_type": "producer",
             "liquid_assets": 5000.0,
-            "notes": "Sells fresh vegetables"
+            "notes": "Sells fresh vegetables",
+            "scenario_id": "scenario_baseline_2025",
+            "credit_line": 2000.0,
+            "outstanding_debt": 0.0
           }
         ],
         "GoodOrService": [
@@ -6278,7 +6907,11 @@
             "id": "farmer_market_1",
             "market_name": "Local Farmer's Market",
             "good_id": "good_tomatoes",
-            "notes": "Open every weekend"
+            "notes": "Open every weekend",
+            "scenario_id": "scenario_baseline_2025",
+            "opening_time": "2025-02-15T07:00:00Z",
+            "closing_time": "2025-02-15T14:00:00Z",
+            "clearing_price": 0.0
           }
         ],
         "Transaction": [
@@ -6290,7 +6923,9 @@
             "quantity": 50.0,
             "price_per_unit": 2.0,
             "transaction_timestamp": "2025-02-15T08:00:00Z",
-            "notes": "Bob is supplying 50 kg of tomatoes"
+            "notes": "Bob is supplying 50 kg of tomatoes",
+            "tax_or_fee_amount": 0.0,
+            "instrument_applied": null
           },
           {
             "id": "tx_demand_1",
@@ -6300,7 +6935,9 @@
             "quantity": 5.0,
             "price_per_unit": 2.5,
             "transaction_timestamp": "2025-02-15T08:30:00Z",
-            "notes": "Alice wants 5 kg of tomatoes"
+            "notes": "Alice wants 5 kg of tomatoes",
+            "tax_or_fee_amount": 0.5,
+            "instrument_applied": "tax_rate_income"
           }
         ],
         "UtilityFunction": [
@@ -6315,7 +6952,8 @@
               },
               "formula": "U(x, y) = x^0.4 * y^0.6"
             },
-            "description": "Cobb-Douglas utility for 2 goods"
+            "description": "Cobb-Douglas utility for 2 goods, ignoring time discount.",
+            "time_preference_rate": 0.0
           }
         ],
         "BudgetConstraint": [
@@ -6325,8 +6963,9 @@
             "income": 1200.0,
             "constraint_equation": {
               "type": "Linear",
-              "expression": "p_x * x + p_y * y <= 1200.0"
+              "expression": "p_x*x + p_y*y <= 1200.0"
             },
+            "scenario_id": "scenario_baseline_2025",
             "notes": "Alice's monthly budget"
           }
         ],
@@ -6336,6 +6975,7 @@
             "indicator_name": "GDP",
             "indicator_value": 1000000.0,
             "timestamp": "2025-02-15T00:00:00Z",
+            "scenario_id": "scenario_baseline_2025",
             "notes": "Initial GDP estimate"
           },
           {
@@ -6343,6 +6983,7 @@
             "indicator_name": "InflationRate",
             "indicator_value": 3.2,
             "timestamp": "2025-02-15T00:00:00Z",
+            "scenario_id": "scenario_baseline_2025",
             "notes": "Annualized inflation percent"
           }
         ],
@@ -6354,7 +6995,9 @@
             "applicable_domain": "monetary_policy",
             "start_date": "2025-02-01T00:00:00Z",
             "end_date": "2025-12-31T23:59:59Z",
-            "notes": "Central Bank sets 2.5% interest rate"
+            "scenario_id": "scenario_baseline_2025",
+            "notes": "Central Bank sets 2.5% interest rate",
+            "time_active_days": null
           },
           {
             "instrument_id": "tax_rate_income",
@@ -6363,12 +7006,13 @@
             "applicable_domain": "income_tax",
             "start_date": "2025-01-01T00:00:00Z",
             "end_date": "2025-12-31T23:59:59Z",
-            "notes": "Flat 20% income tax"
+            "scenario_id": "scenario_baseline_2025",
+            "notes": "Flat 20% income tax",
+            "time_active_days": null
           }
         ]
       }
     },
-
     "CMCC_Complete_ToEMM_Astronomy": {
       "name": "All-In-One CMCC Astronomy Model",
       "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
