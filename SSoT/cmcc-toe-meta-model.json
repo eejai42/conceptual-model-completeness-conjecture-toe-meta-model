@@ -259,6 +259,18 @@
                 "type": "rollup",
                 "description": "Checks if the set has exactly one element.",
                 "formula": "COUNT(elements) = 1"
+              },
+              {
+                "name": "average_of_elements",
+                "type": "rollup",
+                "description": "If numeric elements exist, returns the average. Null otherwise.",
+                "formula": "IF (all e in elements are numeric) THEN AVERAGE(elements.value) ELSE null"
+              },
+              {
+                "name": "supremum",
+                "type": "rollup",
+                "description": "For an ordered set, attempts to find the least upper bound among elements, or null if not well-defined.",
+                "formula": "FindSupremum(elements)"
               }
             ],
             "lambdas": [
@@ -285,6 +297,18 @@
                 "parameters": ["other_set_id"],
                 "description": "Returns the cartesian product of this set with another set. Implementation is conceptual.",
                 "formula": "GenerateCartesianProduct(this.elements, LOOKUP(other_set_id).elements)"
+              },
+              {
+                "name": "union",
+                "parameters": ["other_set_id"],
+                "description": "Computes the union of this set with another set, returning a new set record or reference.",
+                "formula": "CreateSet( DISTINCT( elements ∪ LOOKUP(other_set_id).elements ) )"
+              },
+              {
+                "name": "difference",
+                "parameters": ["other_set_id"],
+                "description": "All elements that are in this set but not in the other. Returns a new set reference.",
+                "formula": "CreateSet( elements.filter(e => e NOT IN LOOKUP(other_set_id).elements) )"
               }
             ],
             "constraints": [
@@ -397,9 +421,28 @@
                 "type": "rollup",
                 "description": "Finds e in domain_set_id such that e op x = x op e = x for all x, or returns null if none.",
                 "formula": "SearchForIdentityElement(symbol, domain_set_id)"
+              },
+              {
+                "name": "neutral_element_exists",
+                "type": "rollup",
+                "description": "Simpler variant checking if any identity element is found in the domain.",
+                "formula": "IF neutral_element != null THEN true ELSE false"
+              },
+              {
+                "name": "is_bounded",
+                "type": "rollup",
+                "description": "Checks if the operator yields outputs within a certain range for all inputs in domain_set_id. Implementation is conceptual.",
+                "formula": "CheckBoundedness(symbol, domain_set_id)"
               }
             ],
-            "lambdas": [],
+            "lambdas": [
+              {
+                "name": "restrict_operator_domain",
+                "parameters": ["subset_set_id"],
+                "description": "Returns a new ArithmeticOperator record referencing a subset of the domain for which this operator is well-defined.",
+                "formula": "CreateRestrictedOperator(this.id, subset_set_id)"
+              }
+            ],
             "constraints": []
           },
           {
@@ -494,6 +537,18 @@
                 "type": "rollup",
                 "description": "The set of all distinct outputs in the codomain that f maps to.",
                 "formula": "CreateSet( domain_set_id.elements.map(x => ApplyRule(rule,x)) )"
+              },
+              {
+                "name": "surjectivity_ratio",
+                "type": "rollup",
+                "description": "Ratio of how many elements in the codomain are actually hit by f, over total codomain size if finite.",
+                "formula": "IF (codomain_set_id.is_finite) THEN (COUNT(DISTINCT image_set) / COUNT(codomain_set_id.elements)) ELSE null"
+              },
+              {
+                "name": "non_trivial_preimages_count",
+                "type": "rollup",
+                "description": "Count how many distinct output values have more than one input mapping to them.",
+                "formula": "ComputeNumberOfOutputValuesWithMultiples(domain_set_id, rule)"
               }
             ],
             "lambdas": [
@@ -520,6 +575,18 @@
                 "parameters": ["target_value"],
                 "description": "Returns all x in domain such that f(x) = target_value.",
                 "formula": "domain_set_id.elements.filter(x => ApplyRule(rule,x) = target_value)"
+              },
+              {
+                "name": "compose_self",
+                "parameters": [],
+                "description": "Returns a new function that is f∘f if codomain and domain match.",
+                "formula": "IF (domain_set_id = codomain_set_id) THEN ComposeRules(rule, rule) ELSE null"
+              },
+              {
+                "name": "partial_eval",
+                "parameters": ["subset_domain_id"],
+                "description": "Restricts the function’s application to a specified subset of the domain, returning a partial mapping object.",
+                "formula": "CreateNewFunction( domain=subset_domain_id, codomain=codomain_set_id, rule=rule restricted )"
               }
             ],
             "constraints": []
@@ -623,6 +690,18 @@
                 "type": "rollup",
                 "description": "Returns a list of propositions with statements that match a certain similarity threshold to this statement.",
                 "formula": "ComputePropositionSimilarity(this.statement)"
+              },
+              {
+                "name": "operation_count",
+                "type": "rollup",
+                "description": "Counts how many distinct operations are defined in algebraic_operations JSON.",
+                "formula": "COUNT_KEYS(algebraic_operations)"
+              },
+              {
+                "name": "commutative_operations_list",
+                "type": "rollup",
+                "description": "Returns a list of operations that are verified to be commutative on base_set_id.",
+                "formula": "For each op in algebraic_operations => if CheckCommutativity(op, base_set_id) => add op"
               }
             ],
             "lambdas": [
@@ -637,8 +716,13 @@
                 "parameters": ["axiom_proposition_id"],
                 "description": "Temporarily treat an axiom proposition as true for the proof steps of this proposition.",
                 "formula": "AddPropositionDependency(this.id, axiom_proposition_id)"
+              },
+              {
+                "name": "validate_structure_type",
+                "parameters": [],
+                "description": "Checks if the structure_type truly matches the aggregator results (e.g. is_ring, is_field, etc.).",
+                "formula": "CompareDeclaredStructureTypeWithAxioms(this.id)"
               }
-
             ],
             "constraints": []
           },
@@ -698,9 +782,33 @@
                 "type": "rollup",
                 "formula": "IF LENGTH(derivation_steps) <= 2 THEN true ELSE false",
                 "description": "Naive aggregator: if proof is extremely short, we label it 'trivial'."
+              },
+              {
+                "name": "complexity_estimate",
+                "type": "rollup",
+                "description": "A naive measure of proof complexity, e.g. # of steps or references in derivation_steps.",
+                "formula": "LENGTH(derivation_steps)"
+              },
+              {
+                "name": "reference_count",
+                "type": "rollup",
+                "description": "How many distinct external references or theorems appear in 'depends_on'.",
+                "formula": "IF depends_on != null THEN LENGTH(depends_on) ELSE 0"
               }
             ],
             "lambdas": [
+              {
+                "name": "remove_dependency",
+                "parameters": ["prop_id"],
+                "description": "Removes a proposition from 'depends_on' if it’s no longer required or has been replaced.",
+                "formula": "UpdateDependsOn(this.id, prop_id, 'remove')"
+              },
+              {
+                "name": "mark_proof_as_complete",
+                "parameters": [],
+                "description": "Sets is_proven aggregator to true by adding a final step that references a recognized authority or proof checker.",
+                "formula": "ValidateAndFinalizeProof(this.id)"
+              },
               {
                 "name": "apply",
                 "parameters": ["context"],
@@ -785,8 +893,19 @@
                 "type": "rollup",
                 "description": "If polynomial is quadratic, returns b^2 - 4ac or the appropriate generalization. Else null.",
                 "formula": "IF (degree=2) THEN ComputeQuadraticDiscriminant(equation_text) ELSE null"
+              },
+              {
+                "name": "num_variables",
+                "type": "rollup",
+                "description": "Counts distinct variable symbols used in equation_text, e.g. {x, y, z}.",
+                "formula": "ParseVariables(equation_text).length"
+              },
+              {
+                "name": "is_homogeneous_polynomial",
+                "type": "rollup",
+                "description": "True if polynomial and every term has the same total degree. Else false or null.",
+                "formula": "CheckHomogeneity(equation_text)"
               }
-      
             ],
             "lambdas": [
               {
@@ -794,6 +913,18 @@
                 "parameters": ["var_list"],
                 "description": "Symbolically solves for the provided var(s) if feasible. Returns solutions or null if none found.",
                 "formula": "ApplySymbolicSolver(equation_text, var_list)"
+              },
+              {
+                "name": "simplify_equation",
+                "parameters": [],
+                "description": "Performs symbolic simplification, returning an updated equation text or new record.",
+                "formula": "SymbolicallySimplify(equation_text)"
+              },
+              {
+                "name": "partial_derivative",
+                "parameters": ["var_name"],
+                "description": "If equation is differentiable, returns a new equation for d/d(var_name). Otherwise null.",
+                "formula": "ComputePartialDerivative(equation_text, var_name)"
               }
             ],
             "constraints": []
