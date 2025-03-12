@@ -138,7 +138,7 @@
     "CMCC_Complete_ToEMM_Math": {
       "name": "CMCC Complete Mathematics TOE Meta Model",
       "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single ACID-compliant, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
-      "version": "v2.04",
+      "version": "v2.05",
       "schema": {
         "entities": [
           {
@@ -313,6 +313,72 @@
                 "type": "rollup",
                 "description": "Computes LCM of all positive integers in the set, if applicable.",
                 "formula": "IF all e in elements are positive integers THEN LCM(elements.value) ELSE null"
+              },
+              {
+                "name": "contains_only_primes",
+                "type": "rollup",
+                "description": "True if every element in this set is a prime integer. Null if non-integer or empty.",
+                "formula": "IF (all e in elements are integers) THEN (FOR ALL e in elements => isPrime(e.value)) ELSE null"
+              },
+              {
+                "name": "max_gap_between_consecutive_elements",
+                "type": "rollup",
+                "description": "For a sorted set of integers, computes the largest difference between consecutive elements. Null if non-integer or empty.",
+                "formula": "IF (all e in elements are integers) THEN (MAX( consecutiveDifferences(sorted(elements.value)) )) ELSE null"
+              },
+              {
+                "name": "sum_of_squares",
+                "type": "rollup",
+                "description": "Sums the squares of each numeric element, or null if any element is non-numeric.",
+                "formula": "IF (all e in elements are numeric) THEN SUM( e.value^2 for e in elements ) ELSE null"
+              },
+              {
+                "name": "gcd_of_elements",
+                "type": "rollup",
+                "description": "Computes the GCD of all integer elements, or null if non-integer or empty.",
+                "formula": "IF (all e in elements are integers AND COUNT(elements) > 0) THEN GCD(elements.value) ELSE null"
+              },
+              {
+                "name": "standard_deviation",
+                "type": "rollup",
+                "description": "Sample standard deviation of numeric elements. Null if not numeric or too few elements.",
+                "formula": "IF (all e in elements are numeric AND COUNT(elements) > 1) THEN ComputeStdDev(elements.value) ELSE null"
+              },
+              {
+                "name": "closure_under_addition",
+                "type": "rollup",
+                "description": "Checks if for all x,y in the set, x + y is still in the set. Implementation conceptual; references a known addition operator if relevant.",
+                "formula": "CheckClosureOverAddition(this.id)"
+              },
+              {
+                "name": "accumulation_point_count",
+                "type": "rollup",
+                "description": "If subset of reals, attempts to count how many distinct accumulation points. Null otherwise.",
+                "formula": "IF (discrete_or_continuous='continuous' OR all e in elements are real) THEN CountAccumulationPoints(elements) ELSE null"
+              },
+              {
+                "name": "lowest_negative_element",
+                "type": "rollup",
+                "description": "Finds the minimum among negative elements if the set is numeric and has negative values.",
+                "formula": "IF (all e in elements are numeric) THEN MIN(e in elements WHERE e.value < 0) ELSE null"
+              },
+              {
+                "name": "contains_rational_numbers",
+                "type": "rollup",
+                "description": "Checks if every numeric element is a rational number (p/q). Returns null if set is non-numeric or empty.",
+                "formula": "IF (all e in elements are numeric) THEN (FOR ALL e in elements => isRational(e.value)) ELSE null"
+              },
+              {
+                "name": "contains_square_numbers_only",
+                "type": "rollup",
+                "description": "True if every integer element is a perfect square, false if any element is a non-square, null if non-integer or empty.",
+                "formula": "IF (all e in elements are integers AND COUNT(elements) > 0) THEN (FOR ALL e in elements => isPerfectSquare(e.value)) ELSE null"
+              },
+              {
+                "name": "has_primitive_root",
+                "type": "rollup",
+                "description": "For sets referencing modular arithmetic, checks if a generator (primitive root) exists. Conceptual, returns boolean/null.",
+                "formula": "CheckPrimitiveRootExists(this.id)"
               }
             ],
             "lambdas": [
@@ -357,6 +423,12 @@
                 "parameters": [],
                 "description": "Selects one element uniformly at random from the set, if the set is nonempty and sampling is supported.",
                 "formula": "PickRandom(elements)"
+              },
+              {
+                "name": "random_subset",
+                "parameters": [],
+                "description": "Selects a random subset of this set. Implementation conceptual, often requires random sampling from elements.",
+                "formula": "GenerateRandomSubset(this.elements)"
               }
             ],
             "constraints": [
@@ -436,6 +508,30 @@
                 "type": "rollup",
                 "description": "Returns prime factors of an integer, or null otherwise.",
                 "formula": "IF value_type='int' THEN FactorInteger(value) ELSE null"
+              },
+              {
+                "name": "is_prime",
+                "type": "rollup",
+                "description": "Checks if this element’s value is prime (only valid for int).",
+                "formula": "IF (value_type='int') THEN CheckPrimality(value) ELSE null"
+              },
+              {
+                "name": "digit_sum",
+                "type": "rollup",
+                "description": "Sum of the decimal digits if this element is an integer.",
+                "formula": "IF (value_type='int') THEN SumOfDigits(value) ELSE null"
+              },
+              {
+                "name": "count_of_distinct_prime_factors",
+                "type": "rollup",
+                "description": "Number of distinct prime factors if value_type='int'. Null otherwise.",
+                "formula": "IF (value_type='int') THEN LENGTH(UNIQUE(PrimeFactorization(value))) ELSE null"
+              },
+              {
+                "name": "complex_conjugate",
+                "type": "rollup",
+                "description": "If the element is a complex number, return its conjugate. Null if real-only or not complex.",
+                "formula": "IF (value_type='complex') THEN Conjugate(value) ELSE null"
               }
             ],
             "lambdas": [],
@@ -541,6 +637,24 @@
                 "type": "rollup",
                 "description": "Constructs the set of {x op y | x,y in domain} and checks subset. Implementation conceptual.",
                 "formula": "CreateSetOfOperationResults(symbol, domain_set_id)"
+              },
+              {
+                "name": "exponentiation_table",
+                "type": "rollup",
+                "description": "If the domain is finite and operator is multiplication, enumerates x^y for x,y in domain. Null otherwise.",
+                "formula": "IF (symbol='*' AND domain_set_id.is_finite) THEN BuildExponentTable(domain_set_id) ELSE null"
+              },
+              {
+                "name": "is_associated_operator",
+                "type": "rollup",
+                "description": "Checks if this operator is recognized as the official operation in a referencing AlgebraicStructure record.",
+                "formula": "ScanAlgebraicStructuresForOperator(this.id)"
+              },
+              {
+                "name": "closure_under_operator_with_identity",
+                "type": "rollup",
+                "description": "Verifies closure plus presence of identity in domain_set_id for this operator. Returns bool or null.",
+                "formula": "IF (CheckClosure(domain_set_id, symbol) AND FindIdentityElement(domain_set_id, symbol) != null) THEN true ELSE false"
               }
             ],
             "lambdas": [
@@ -693,6 +807,42 @@
                 "type": "rollup",
                 "description": "If codomain is finite, computes (|image_set| / |codomain|)*100.",
                 "formula": "IF codomain_set_id.is_finite THEN (COUNT(DISTINCT image_set) / COUNT(codomain_set_id.elements)) * 100 ELSE null"
+              },
+              {
+                "name": "limit_at_infinity",
+                "type": "rollup",
+                "description": "Attempts to evaluate lim(x→∞) of f(x) if domain is unbounded real. Returns numeric or symbolic result.",
+                "formula": "IF (domain_set_id = 'reals') THEN EvaluateLimitAtInfinity(rule) ELSE null"
+              },
+              {
+                "name": "derivative_expression",
+                "type": "rollup",
+                "description": "Symbolic derivative if domain is real and f is differentiable. Returns expression or null.",
+                "formula": "IF (domain_set_id = 'reals') THEN DifferentiateExpression(rule) ELSE null"
+              },
+              {
+                "name": "is_monotonic",
+                "type": "rollup",
+                "description": "Checks if f is strictly increasing, strictly decreasing, or neither, over real domain.",
+                "formula": "IF (domain_set_id = 'reals') THEN CheckMonotonicity(rule) ELSE null"
+              },
+              {
+                "name": "function_table",
+                "type": "rollup",
+                "description": "If domain is finite, returns a table mapping each input to its output.",
+                "formula": "IF (domain_set_id.is_finite) THEN ConstructFunctionTable(domain_set_id.elements, rule) ELSE null"
+              },
+              {
+                "name": "bounded_function_check",
+                "type": "rollup",
+                "description": "For real-valued f: domain->ℝ, checks if |f(x)| ≤ M < ∞ for all x. Null if not numeric or domain infinite.",
+                "formula": "IF (domain_set_id='reals') THEN CheckFunctionBoundedness(rule) ELSE null"
+              },
+              {
+                "name": "superadditive_check",
+                "type": "rollup",
+                "description": "If numeric, checks f(x+y) ≥ f(x) + f(y). Implementation conceptual. Returns bool or null.",
+                "formula": "IF (domain_set_id='reals') THEN CheckSuperadditivity(rule) ELSE null"
               }
             ],
             "lambdas": [
@@ -876,6 +1026,48 @@
                 "type": "rollup",
                 "description": "All elements e for which e op e = e (in the relevant operation).",
                 "formula": "IF 'multiplication' in algebraic_operations THEN For all e => e * e = e ELSE null"
+              },
+              {
+                "name": "operation_table",
+                "type": "rollup",
+                "description": "Constructs a Cayley/operation table if the domain set is finite and not too large.",
+                "formula": "IF (domain_set_id.is_finite) THEN BuildOperationTable(this.id, domain_set_id) ELSE null"
+              },
+              {
+                "name": "invertible_element_count",
+                "type": "rollup",
+                "description": "If the operator behaves group-like, counts how many elements have inverses. Implementation conceptual.",
+                "formula": "CountInvertibleElements(this.id, domain_set_id)"
+              },
+              {
+                "name": "commutator_subgroup",
+                "type": "rollup",
+                "description": "If the structure is a group, returns the subgroup generated by all commutators [a,b]. Null otherwise.",
+                "formula": "IF algebraic_structure_type='group' THEN GenerateCommutatorSubgroup(base_set_id, algebraic_operations) ELSE null"
+              },
+              {
+                "name": "maximal_ideals_list",
+                "type": "rollup",
+                "description": "If the structure is a ring, attempts to list its maximal ideals. Implementation conceptual.",
+                "formula": "IF algebraic_structure_type='ring' THEN FindMaximalIdeals(base_set_id, algebraic_operations) ELSE null"
+              },
+              {
+                "name": "dimension_if_vector_space",
+                "type": "rollup",
+                "description": "If this structure is a vector space, tries to compute dimension over its field. Null otherwise.",
+                "formula": "IF algebraic_structure_type='vector_space' THEN ComputeVectorSpaceDimension(base_set_id) ELSE null"
+              },
+              {
+                "name": "homomorphism_count",
+                "type": "rollup",
+                "description": "Counts how many Functions in the data are labeled or detected as homomorphisms from this structure to any other.",
+                "formula": "SearchFunctionsForHomomorphisms(this.id)"
+              },
+              {
+                "name": "group_center_cardinality",
+                "type": "rollup",
+                "description": "If structure_type='group', returns the size of the center Z(G). Null if not a group.",
+                "formula": "IF (algebraic_structure_type='group') THEN COUNT(FindCenter(base_set_id, algebraic_operations)) ELSE null"
               }
             ],
             "lambdas": [
@@ -998,6 +1190,36 @@
                 "type": "rollup",
                 "description": "Compares proposition statement to known library, returns similarity measure [0..1].",
                 "formula": "ComputeStatementSimilarity(this.statement)"
+              },
+              {
+                "name": "is_equivalence_statement",
+                "type": "rollup",
+                "description": "True if statement has the form p <-> q or is logically a biconditional.",
+                "formula": "CheckBiconditional(statement)"
+              },
+              {
+                "name": "requires_choice_axiom",
+                "type": "rollup",
+                "description": "Heuristic aggregator to see if the proof steps rely on the Axiom of Choice.",
+                "formula": "DetectAxiomOfChoiceUsage(derivation_steps)"
+              },
+              {
+                "name": "equivalent_statements_list",
+                "type": "rollup",
+                "description": "Search for other Proposition statements that appear logically equivalent (p ⇔ q). Returns an array or null.",
+                "formula": "ComputeEquivalentPropositions(this.id)"
+              },
+              {
+                "name": "used_logical_axioms_list",
+                "type": "rollup",
+                "description": "Parses derivation_steps to detect references to standard logical axioms or proof rules.",
+                "formula": "ScanProofForLogicalAxioms(derivation_steps)"
+              },
+              {
+                "name": "corollary_generation_suggestions",
+                "type": "rollup",
+                "description": "Heuristic aggregator: suggests corollaries or immediate consequences that might be proven from this proposition.",
+                "formula": "ComputePotentialCorollaries(this.id)"
               }
             ],
             "lambdas": [
@@ -1151,6 +1373,42 @@
                 "type": "rollup",
                 "description": "If related_sets includes ℕ, evaluates eqn for n=0..some range, collecting results or solutions.",
                 "formula": "IF 'naturals' in related_sets THEN EvaluateEqnOverRange(equation_text, n=0..10) ELSE null"
+              },
+              {
+                "name": "integer_solutions_count",
+                "type": "rollup",
+                "description": "Counts how many integer solutions exist if feasible. Implementation conceptual.",
+                "formula": "IF (related_sets includes 'integers') THEN CountIntegerSolutions(equation_text) ELSE null"
+              },
+              {
+                "name": "solutions_mod_n",
+                "type": "rollup",
+                "description": "Enumerates or counts solutions modulo a given n if the equation is integer-based. Implementation conceptual.",
+                "formula": "IF (related_sets includes 'integers') THEN SolveModN(equation_text, n) ELSE null"
+              },
+              {
+                "name": "numerical_solution_count",
+                "type": "rollup",
+                "description": "Estimates how many numeric solutions exist (finite/infinite) or returns null if unknown.",
+                "formula": "AttemptNumericSolve(equation_text, related_sets)"
+              },
+              {
+                "name": "dominant_term",
+                "type": "rollup",
+                "description": "Identifies which term in the equation (polynomial or rational form) dominates as |x|→∞. Null if not polynomial-like.",
+                "formula": "FindDominantTerm(equation_text)"
+              },
+              {
+                "name": "evaluate_at_infinity",
+                "type": "rollup",
+                "description": "Evaluates or approximates the limit of LHS (and possibly RHS) as x→∞/-∞. Returns symbolic or numeric result.",
+                "formula": "CheckLimitAtInfinity(equation_text)"
+              },
+              {
+                "name": "coefficient_vector",
+                "type": "rollup",
+                "description": "For polynomial equations, extracts the list of coefficients in standard form, e.g. x^3+4x-7 => [1,0,4,-7]. Null otherwise.",
+                "formula": "IF (is_polynomial) THEN ParsePolynomialCoefficients(equation_text) ELSE null"
               }
             ],
             "lambdas": [
@@ -1303,6 +1561,48 @@
                 "type": "rollup",
                 "description": "Counts how many equivalences of categories from this cat to itself.",
                 "formula": "IdentifyAutoEquivalences(this.id)"
+              },
+              {
+                "name": "has_pullbacks",
+                "type": "rollup",
+                "description": "Checks if every diagram has a pullback object and morphisms. Implementation conceptual.",
+                "formula": "AnalyzePullbacks(objects, morphisms)"
+              },
+              {
+                "name": "has_pushouts",
+                "type": "rollup",
+                "description": "Checks if every cospan has a pushout object and morphisms. Implementation conceptual.",
+                "formula": "AnalyzePushouts(objects, morphisms)"
+              },
+              {
+                "name": "is_cartesian_closed",
+                "type": "rollup",
+                "description": "Verifies if the category has exponentials B^A with the usual universal property. Implementation conceptual.",
+                "formula": "CheckCartesianClosedProperty(this.id)"
+              },
+              {
+                "name": "automorphism_count",
+                "type": "rollup",
+                "description": "Counts isomorphisms object->itself across all objects, summing for a total number of 'auto' morphisms in this category.",
+                "formula": "ComputeCategoryAutomorphisms(this.id)"
+              },
+              {
+                "name": "inverse_morphism_count",
+                "type": "rollup",
+                "description": "Counts how many morphisms are invertible. Implementation conceptual, scanning morphisms for isomorphisms.",
+                "formula": "CountInvertibleMorphisms(morphisms)"
+              },
+              {
+                "name": "endofunction_count",
+                "type": "rollup",
+                "description": "If objects are sets, counts how many endofunctions exist for each object f: A->A, summing across the category. Null if infinite.",
+                "formula": "Sum(For each Obj in objects => |Obj|^|Obj|) // conceptual"
+              },
+              {
+                "name": "functor_composition_closure_check",
+                "type": "rollup",
+                "description": "Verifies that if functor F: Cat->Cat2 and G: Cat2->Cat3 exist, the composition G∘F is recognized as a functor as well.",
+                "formula": "CheckFunctorComposition(this.id)"
               }
             ],
             "lambdas": [
