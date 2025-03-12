@@ -7589,7 +7589,7 @@
       "depends_on": [
         "CMCC_Complete_ToEMM_Math" 
       ],
-      "version":"v2.0",
+      "version":"v2.1",
       "meta": {
         "title": "CMCC Complete Economics ToE Meta-Model",
         "subtitle": "A Declarative Framework for Agents, Markets, and Economic Dynamics",
@@ -7703,6 +7703,36 @@
                 "type": "rollup",
                 "formula": "Σ over all linked_markets => (total_supply - total_demand). Summed or listed individually.",
                 "description": "A scenario-level aggregator that checks if markets collectively have supply-demand imbalances."
+              },
+              {
+                "name": "scenario_gini_coefficient",
+                "type": "rollup",
+                "formula": "ComputeGiniCoefficient( linked_agents.net_worth_estimate )",
+                "description": "Computes the scenario’s Gini coefficient using each agent’s net_worth_estimate."
+              },
+              {
+                "name": "scenario_total_tax_revenue",
+                "type": "rollup",
+                "formula": "SUM( FOR ALL agent in linked_agents => SUM(agent.transactions.tax_or_fee_amount) )",
+                "description": "Totals all taxes/fees collected across transactions in this scenario."
+              },
+              {
+                "name": "scenario_money_velocity",
+                "type": "rollup",
+                "formula": "IF( LOOKUP(linked_indicators WHERE indicator_name='MoneySupply') != null ) THEN ( SUM(ALL transactions.net_value_after_tax ) / LOOKUP(linked_indicators WHERE indicator_name='MoneySupply').indicator_value ) ELSE null",
+                "description": "Approximates money velocity by total transaction value divided by the money supply."
+              },
+              {
+                "name": "scenario_unemployment_rate",
+                "type": "rollup",
+                "formula": "LOOKUP(linked_indicators WHERE indicator_name='UnemploymentRate').indicator_value",
+                "description": "Retrieves or references the scenario’s unemployment rate from MacroIndicator."
+              },
+              {
+                "name": "scenario_credit_utilization",
+                "type": "rollup",
+                "formula": "SUM(linked_agents.outstanding_debt) / SUM(linked_agents.credit_line)",
+                "description": "Measures how much of the total available credit is in use across all agents."
               }
             ],
             "lambdas": [
@@ -7792,6 +7822,36 @@
                 "type": "rollup",
                 "formula": "COUNT(transactions)",
                 "description": "Count how many transaction records reference this agent."
+              },
+              {
+                "name": "available_credit",
+                "type": "rollup",
+                "formula": "credit_line - outstanding_debt",
+                "description": "How much credit remains for this agent."
+              },
+              {
+                "name": "real_net_worth",
+                "type": "rollup",
+                "formula": "IF( LOOKUP(scenario_id.linked_indicators WHERE indicator_name='InflationRate') != null ) THEN ( net_worth_estimate / (1 + (LOOKUP(scenario_id.linked_indicators WHERE indicator_name='InflationRate').indicator_value / 100)) ) ELSE net_worth_estimate",
+                "description": "Adjusts the agent’s net worth estimate for inflation, if an inflation rate is present."
+              },
+              {
+                "name": "default_risk_flag",
+                "type": "rollup",
+                "formula": "IF( (outstanding_debt / GREATEST(liquid_assets,1)) > 3, 'HIGH_RISK', 'OK' )",
+                "description": "Simple heuristic that flags high-risk if debt is more than 3x the agent’s liquid assets."
+              },
+              {
+                "name": "debt_service_cost",
+                "type": "rollup",
+                "formula": "IF( scenario_id.linked_policies != null ) THEN ( outstanding_debt * FindInterestRate(scenario_id.linked_policies) ) ELSE 0",
+                "description": "Estimates the agent’s interest cost by multiplying debt by the scenario’s interest rate policy."
+              },
+              {
+                "name": "consumption_expenditure",
+                "type": "rollup",
+                "formula": "SUM( transactions WHERE type='demand' => net_value_after_tax )",
+                "description": "Total spending on demanded goods by the agent in this scenario."
               }
             ],
             "lambdas": [
@@ -7947,6 +8007,30 @@
                 "type": "rollup",
                 "formula": "MEDIAN(transactions.price_per_unit)",
                 "description": "The median posted transaction price in the market so far."
+              },
+              {
+                "name": "approx_price_elasticity",
+                "type": "rollup",
+                "formula": "ComputeElasticityOverTime( clearing_price, total_demand )",
+                "description": "Naive aggregator that compares changes in clearing_price vs. total_demand to estimate elasticity."
+              },
+              {
+                "name": "producer_surplus",
+                "type": "rollup",
+                "formula": "SUM( transactions WHERE type='supply' => (price_per_unit - reference_cost) * quantity )",
+                "description": "Naive aggregator for producer surplus, requires a reference_cost or average cost assumption."
+              },
+              {
+                "name": "consumer_surplus",
+                "type": "rollup",
+                "formula": "SUM( transactions WHERE type='demand' => (willingness_to_pay - price_per_unit) * quantity )",
+                "description": "Naive aggregator for consumer surplus, referencing a 'willingness_to_pay' assumption if available."
+              },
+              {
+                "name": "market_tax_collected",
+                "type": "rollup",
+                "formula": "SUM( transactions.tax_or_fee_amount )",
+                "description": "Totals the taxes or fees collected in this market."
               }
             ],
             "lambdas": [
@@ -8047,6 +8131,24 @@
                 "type": "rollup",
                 "formula": "total_value - tax_or_fee_amount",
                 "description": "Value after subtracting the tax or fee."
+              },
+              {
+                "name": "loan_repayment_amount",
+                "type": "rollup",
+                "formula": "IF(type='repayment', net_value_after_tax, 0)",
+                "description": "Identifies how much of the transaction goes toward repaying debt if type='repayment'."
+              },
+              {
+                "name": "effective_tax_rate",
+                "type": "rollup",
+                "formula": "IF(total_value>0, (tax_or_fee_amount / total_value)*100, null)",
+                "description": "Percentage tax/fee rate for this transaction."
+              },
+              {
+                "name": "subsidy_applied_amount",
+                "type": "rollup",
+                "formula": "IF( instrument_applied.applicable_domain='subsidy', some_subsidy_calc, 0 )",
+                "description": "How much subsidy was effectively applied to this transaction (placeholder aggregator)."
               }
             ],
             "lambdas": [
@@ -8116,6 +8218,18 @@
                 "type": "scalar",
                 "datatype": "float",
                 "description": "Discount factor for future consumption, e.g. 0.05 => 5% discount rate. If not relevant, can be 0."
+              },
+              {
+                "name": "multi_good_utility",
+                "parameters": ["consumption_vector"],
+                "description": "Evaluates a multi-dimensional Cobb-Douglas or other function across N goods.",
+                "formula": "For i in consumption_vector => partial_product_of( x_i ^ alpha_i ), etc."
+              },
+              {
+                "name": "intertemporal_utility",
+                "parameters": ["timeindexed_bundles"],
+                "description": "Sums discounted utility across multiple time points, referencing time_preference_rate.",
+                "formula": "Σ (U(bundle_t) * e^(-time_preference_rate * t))"
               }
             ],
             "lookups": [],
@@ -8179,6 +8293,18 @@
                 "type": "scalar",
                 "datatype": "string",
                 "description": "Free-text remarks, e.g. 'monthly budget' or 'weekly groceries'."
+              },
+              {
+                "name": "budget_slack",
+                "type": "rollup",
+                "formula": "IF(consumption_bundle != null, income - SUM( price_i * consumption_bundle[i] ), null)",
+                "description": "Calculates leftover income after planned consumption bundle, if known."
+              },
+              {
+                "name": "overrun_check",
+                "type": "rollup",
+                "formula": "budget_slack < 0",
+                "description": "Returns true/false if the chosen bundle cost exceeds income."
               }
             ],
             "lookups": [],
@@ -8240,6 +8366,18 @@
                 "type": "scalar",
                 "datatype": "string",
                 "description": "Extra detail about data source or methodology."
+              },
+              {
+                "name": "phillips_curve_proxy",
+                "type": "rollup",
+                "formula": "CheckInflationVsUnemployment(this.scenario_id, indicator_name)",
+                "description": "Correlates inflation vs. unemployment if both are present to approximate a naive Phillips Curve relationship."
+              },
+              {
+                "name": "gov_deficit_estimate",
+                "type": "rollup",
+                "formula": "IF(indicator_name='GovernmentSpending') THEN ( indicator_value - scenario_id.scenario_total_tax_revenue ) ELSE null",
+                "description": "Compares government spending vs. total tax revenue as a naive deficit measure."
               }
             ],
             "lookups": [],
@@ -8329,6 +8467,18 @@
                 "type": "rollup",
                 "formula": "DATEDIFF(end_date, start_date, 'days')",
                 "description": "Rough measure of how many days the policy is in effect (assuming contiguous date range)."
+              },
+              {
+                "name": "binding_price_control_status",
+                "type": "rollup",
+                "formula": "IF(applicable_domain='price_control', EvaluateBinding( instrument_value, relevant_market.clearing_price ), null)",
+                "description": "Determines if a price floor/ceiling is binding by comparing instrument_value to market clearing_price."
+              },
+              {
+                "name": "estimated_deadweight_loss",
+                "type": "rollup",
+                "formula": "IF(instrument_name='TaxRate', ComputeDeadweightLoss( scenario_id, instrument_value ), null)",
+                "description": "Approximates the deadweight loss from a tax, referencing supply/demand elasticities in the scenario."
               }
             ],
             "lambdas": [
