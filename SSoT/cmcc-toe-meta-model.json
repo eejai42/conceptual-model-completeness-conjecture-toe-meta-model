@@ -920,6 +920,96 @@
                 "type": "rollup",
                 "formula": "ComputeDMEntanglementCorrelation(linked_wavefunctions, linked_classical_systems, linked_particles, DarkMatterInferenceRecord.*)",
                 "description": "Searches for correlations between quantum entanglement measures and the presence of large missing mass in dark-matter inference records."
+              },
+              {
+                "name": "cross_interpretation_probability_flow",
+                "type": "rollup",
+                "formula": "CompareSingleOutcomeVsMWBranchWeights(linked_measurements, linked_wavefunctions)",
+                "description": "Traces outcome probabilities in wavefunctions marked with different interpretations (Copenhagen vs. ManyWorlds) to see if the sum of branch weights matches single-outcome probabilities."
+              },
+              {
+                "name": "multi_level_observer_paradox_scan",
+                "type": "rollup",
+                "formula": "RecursiveParadoxSearch(linked_relationships)",
+                "description": "Examines observer relationships for nested/cyclical Wigner’s friend setups, generating a multi-tier paradox score."
+              },
+              {
+                "name": "quantum_classical_coupling_entropy",
+                "type": "rollup",
+                "formula": "ComputeCouplingEntropy(linked_wavefunctions, linked_classical_systems)",
+                "description": "Blends wavefunction decoherence metrics with classical system mass or environment parameters to yield an effective quantum–classical coupling entropy."
+              },
+              {
+                "name": "multi_interpretation_branch_probability_divergence",
+                "type": "rollup",
+                "formula": "ComputeBranchProbabilityDivergence(linked_wavefunctions, linked_measurements)",
+                "description": "Compares actual single-outcome frequencies vs Many-Worlds branch weights. Identifies wavefunctions flagged as Copenhagen but displaying repeated multi-branch measurements, or vice versa."
+              },
+              {
+                "name": "nested_observer_observer_paradox_score",
+                "type": "rollup",
+                "formula": "ComputeMultiLevelObserverParadox(linked_relationships)",
+                "description": "Detects cyclical or deeply nested Wigner’s friend (observer A measures B while B measures A, etc.), producing a multi-level paradox severity score."
+              },
+              {
+                "name": "entanglement_decoherence_boundaries",
+                "type": "rollup",
+                "formula": "IdentifyEntanglementDecoherenceBoundaries(linked_wavefunctions, linked_classical_systems)",
+                "description": "Finds the boundary between quantum subsystems (non-negligible entanglement) and effectively classical subsystems (decohered) within large composite scenarios."
+              },
+              {
+                "name": "interpretation_mismatch_vs_branch_depth",
+                "type": "rollup",
+                "formula": "CorrelateMismatchEventsWithBranchDepth(linked_wavefunctions, linked_measurements)",
+                "description": "Examines whether interpretation mismatch events (e.g. single-outcome logs in a Many-Worlds-labeled wavefunction) correlate with higher branch depth or advanced decoherence stages."
+              },
+              {
+                "name": "quantum_classical_coupling_entropy",
+                "type": "rollup",
+                "formula": "ComputeQuantumClassicalCouplingEntropy(linked_wavefunctions, linked_classical_systems)",
+                "description": "Blends wavefunction decoherence metrics with classical environment properties to yield an effective coupling entropy, indicating how strongly the environment drives wavefunction collapse."
+              },
+              {
+                "name": "nested_observer_paradox_depth",
+                "type": "rollup",
+                "formula": "ComputeNestedObserverParadoxDepth(linked_observers, linked_relationships)",
+                "description": "Determines how many levels of 'observer measuring observer' can be stacked before a paradox arises."
+              },
+              {
+                "name": "multi_wavefunction_interference_matrix",
+                "type": "rollup",
+                "formula": "BuildInterferenceMatrixAcrossWavefunctions(linked_wavefunctions)",
+                "description": "Constructs a matrix of cross-interference or orthogonality measures among all wavefunctions in this scenario."
+              },
+              {
+                "name": "entanglement_graph_among_observers",
+                "type": "rollup",
+                "formula": "GenerateObserverEntanglementGraph(linked_observers, linked_measurements)",
+                "description": "Examines correlated outcomes among different ObserverFrames to form a graph of intersubjective entanglement or correlation."
+              },
+              {
+                "name": "cross_validation_partialtrace_branch",
+                "type": "rollup",
+                "formula": "CompareDensityMatrixPartialTraceWithBranchRecords(linked_wavefunctions, DensityMatrixRecord.*)",
+                "description": "Checks consistency between partial-trace density matrices and branch-based (Many-Worlds) decompositions for the same system."
+              },
+              {
+                "name": "environment_assisted_classicality_spread",
+                "type": "rollup",
+                "formula": "ComputeDarwinismSpreadRate(linked_observers, linked_wavefunctions)",
+                "description": "Evaluates how quickly pointer states replicate across multiple environment fragments (Quantum Darwinism) in the entire scenario."
+              },
+              {
+                "name": "mw_vs_objective_collapse_diagnostics",
+                "type": "rollup",
+                "formula": "ContrastBranchingDepthAgainstSingleOutcomePatterns(linked_wavefunctions, linked_measurements)",
+                "description": "Flags wavefunctions labeled 'ManyWorlds' that show effectively single-outcome data, or 'Copenhagen' wavefunctions that spawn branches."
+              },
+              {
+                "name": "macro_scale_interference_revival_prob",
+                "type": "rollup",
+                "formula": "EstimateMacroRevivalProbability(linked_wavefunctions, BranchRecord.*, classical_systems)",
+                "description": "Computes the small but non-zero chance that large systems might re-interfere (revival) if there's residual coherence."
               }
             ],
             "lambdas": [
@@ -1236,6 +1326,42 @@
                 "type": "rollup",
                 "formula": "IF(AVERAGE(branches.observer_scope_overlap) > threshold, 'Partial Branching', 'Full Branching')",
                 "description": "Classifies branching as partial (RQM-style) or full (Many-Worlds) based on average overlap of observer scopes across branches."
+              },
+              {
+                "name": "re_interference_windows",
+                "type": "rollup",
+                "formula": "DetectReInterferencePossibility(amplitude_data, decoherence_map)",
+                "description": "Identifies wavefunction sectors that have not fully decohered and can still interfere."
+              },
+              {
+                "name": "correlation_branch_depth_classical_limit",
+                "type": "rollup",
+                "formula": "CorrelateBranchDepthWithClassicalLimit(branch_count, classical_limit_indicator)",
+                "description": "Checks if deeper branching reliably corresponds to a near-classical wavefunction or if interference persists."
+              },
+              {
+                "name": "pointer_basis_drift_analysis",
+                "type": "rollup",
+                "formula": "TrackPointerBasisShiftOverTime(this.state_id)",
+                "description": "Analyzes whether the stable pointer basis changes under environment interactions or time evolution."
+              },
+              {
+                "name": "macro_vs_micro_entanglement_boundary",
+                "type": "rollup",
+                "formula": "CheckEntanglementBetweenMacroscopicSubsystemsAndMicroscopicOnes(subsystem_spec, amplitude_data)",
+                "description": "Determines if large 'classical-scale' subsystems remain unentangled while microscopic ones are significantly entangled."
+              },
+              {
+                "name": "cross_interpretation_probability_flow",
+                "type": "rollup",
+                "formula": "CompareBornRuleFrequenciesToManyWorldsBranchWeights(this.state_id, MeasurementEvent.*)",
+                "description": "Traces outcome probabilities vs. the sum of branch weights, revealing potential interpretation mismatch or confirmation."
+              },
+              {
+                "name": "time_dependent_classical_emergence_rate",
+                "type": "rollup",
+                "formula": "ComputeClassicalEmergenceRateOverTime(this.state_id, decoherence_map, QuantumEvolution.*)",
+                "description": "Estimates how quickly a wavefunction becomes effectively classical under time evolution or repeated measurements."
               }
             ],
             "lambdas": [
@@ -1533,6 +1659,18 @@
                 "type": "rollup",
                 "formula": "IF(selected_outcome != '', outcome_probabilities[selected_outcome], null)",
                 "description": "Retrieves the Born-rule probability for the measurement's collapsed outcome, if single-outcome was selected."
+              },
+              {
+                "name": "determine_macro_object_quantum_tracing",
+                "type": "rollup",
+                "formula": "CheckIfMacroscopicSystemUnderMeasurementRetainsQuantumSuperposition(meas_id, wavefunction_id)",
+                "description": "Examines whether a large, presumably classical object is still in superposition post-measurement or has collapsed."
+              },
+              {
+                "name": "extended_kochen_specker_survey",
+                "type": "rollup",
+                "formula": "AggregateContextualityViolationsAcrossMeasurementSets(this.meas_id, wavefunction_id)",
+                "description": "Checks multiple measurement bases for Kochen–Specker–type contextual contradictions in the same measurement dataset."
               }
             ],
             "lambdas": [
@@ -1715,6 +1853,30 @@
                 "type": "rollup",
                 "formula": "ComputeSuperobserverIndex(this.observer_id, view_of_other_observers)",
                 "description": "Scores how comprehensively this observer can reconstruct the states of other observers (Wigner-like vantage)."
+              },
+              {
+                "name": "observer_observer_frame_overlap",
+                "type": "rollup",
+                "formula": "ComputeFrameOverlap(this.observer_id, view_of_other_observers)",
+                "description": "Measures how much this observer's vantage or transforms coincide with other observers' known frames."
+              },
+              {
+                "name": "superobserver_emergence_index",
+                "type": "rollup",
+                "formula": "AssessSuperobserverCoverage(this.observer_id, view_of_other_observers)",
+                "description": "Rates how completely this observer can reconstruct other observers' wavefunction states—i.e. a 'Wigner vantage.'"
+              },
+              {
+                "name": "rqm_relative_timeline_consistency",
+                "type": "rollup",
+                "formula": "CheckTimelineOrderConsistency(this.observer_id, self_observed_history, ObserverRelationship.*)",
+                "description": "Verifies that the sequence of events in this observer’s local timeline does not contradict external observer logs."
+              },
+              {
+                "name": "observer_pointer_basis_stability_timeline",
+                "type": "rollup",
+                "formula": "EvaluatePointerBasisStabilityOverTime(this.observer_id, contextual_state_data)",
+                "description": "Tracks how stable the local pointer basis is from this observer’s vantage as new measurements or environment data arrive."
               }
             ],
             "lambdas": [
@@ -1872,6 +2034,30 @@
                 "type": "rollup",
                 "formula": "ComputeRelationalMergeIndex(this.branch_id, observer_scope, coherence_factor)",
                 "description": "Rates how likely partial RQM branches can unify from an observer’s perspective, considering overlap in observer_scope."
+              },
+              {
+                "name": "branch_probability_flow_over_time",
+                "type": "rollup",
+                "formula": "ComputeProbabilityFlowFromParentBranchesToChildren(this.branch_id)",
+                "description": "Shows how amplitude/weight flows from one measurement event to the next across branching records."
+              },
+              {
+                "name": "branch_reunification_pathway",
+                "type": "rollup",
+                "formula": "IdentifyPotentialBranchMerges(this.branch_id, sibling_branches)",
+                "description": "Analyzes whether this branch can unify with siblings, given coherence_factor, relative_phase, and observer scopes."
+              },
+              {
+                "name": "partial_branch_probability_vs_observer_scope",
+                "type": "rollup",
+                "formula": "SummarizePartialBranchDistribution(this.branch_id, observer_scope)",
+                "description": "Computes the fraction of events or amplitude where only some observers see a collapsed branch but others do not."
+              },
+              {
+                "name": "branch_interpretation_switching_or_coexistence",
+                "type": "rollup",
+                "formula": "CheckBranchLevelInterpretationConflicts(origin_meas_id, wavefunction_id.interpretation_policy_id)",
+                "description": "Flags if the branch's measurement event indicates a different interpretation mode than the wavefunction’s assigned policy."
               }
             ],
             "lambdas": [
@@ -1994,6 +2180,18 @@
                 "type": "rollup",
                 "formula": "ComputeClassicalCorrelation(matrix_data)",
                 "description": "Separates the classical portion of correlations, used with quantum discord to distinguish classical vs. quantum correlations."
+              },
+              {
+                "name": "density_matrix_extended_kochen_specker_survey",
+                "type": "rollup",
+                "formula": "ComputeContextualityFromDensityMatrix(matrix_data, associated_measurements)",
+                "description": "Applies Kochen–Specker checks by generating projectors from the density matrix's observable bases."
+              },
+              {
+                "name": "partial_trace_vs_branch_consistency_check",
+                "type": "rollup",
+                "formula": "CompareTracedOutDensityMatrixWithBranchProbabilities(record_id, BranchRecord.*)",
+                "description": "Ensures the partial-trace viewpoint matches the sum of branch probabilities for the same subsystems (Many-Worlds vs. density operator)."
               }
             ],
             "lambdas": [
@@ -3183,6 +3381,12 @@
                 "type": "rollup",
                 "formula": "AnalyzeBranchDepthAndBHProperties(scenario_id.max_branch_depth_across_scenario, this.schwarzschild_radius, hawking_temperature)",
                 "description": "Correlates the scenario's maximum wavefunction branch depth with black-hole horizon properties."
+              },
+              {
+                "name": "branch_cut_analysis",
+                "type": "rollup",
+                "formula": "AnalyzeBHAsHeisenbergCut(this.bh_system_id, scenario_id)",
+                "description": "Checks if the black-hole horizon functions as a decoherence boundary, correlating wavefunction branching data with BH mass/horizon size."
               }
             ],
             "lambdas": [
@@ -3258,7 +3462,14 @@
               }
             ],
             "lookups": [],
-            "aggregations": [],
+            "aggregations": [
+              {
+                "name": "dm_entanglement_correlation",
+                "type": "rollup",
+                "formula": "CorrelateEntanglementWithMissingMass(this.record_id, scenario_id)",
+                "description": "Analyzes wavefunction entanglement across the scenario and compares it with the fraction of missing dark mass."
+              }
+            ],
             "lambdas": [],
             "constraints": []
           },
