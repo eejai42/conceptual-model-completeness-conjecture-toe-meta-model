@@ -138,7 +138,7 @@
     "CMCC_Complete_ToEMM_Math": {
       "name": "CMCC Complete Mathematics TOE Meta Model",
       "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single ACID-compliant, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
-      "version": "v2.01",
+      "version": "v2.02",
       "schema": {
         "entities": [
           {
@@ -229,6 +229,36 @@
                 "type": "rollup",
                 "description": "Finds the minimum element if a strict ordering is known. Null if not found or no order defined.",
                 "formula": "IF (some ordering is declared) THEN pick e in elements s.t. ∀x in elements, e <= x, else null"
+              },
+              {
+                "name": "has_min_element",
+                "type": "rollup",
+                "description": "Checks if there is a well-defined minimum element among 'elements'.",
+                "formula": "IF (min_element != null) THEN true ELSE false"
+              },
+              {
+                "name": "has_max_element",
+                "type": "rollup",
+                "description": "Checks if there is a well-defined maximum element among 'elements'.",
+                "formula": "IF (some ordering is declared AND an element e s.t. ∀x in elements: x ≤ e) THEN true ELSE false"
+              },
+              {
+                "name": "sum_of_elements",
+                "type": "rollup",
+                "description": "If numeric, returns the sum of all elements. Null if non-numeric or infinite.",
+                "formula": "IF (all e in elements are numeric) THEN SUM(elements.value) ELSE null"
+              },
+              {
+                "name": "is_subset_of_integers",
+                "type": "rollup",
+                "description": "True if every element of this set is also in the 'integers' set. Null if 'integers' not found.",
+                "formula": "IF LOOKUP('integers') != null THEN FOR ALL e in this.elements => e IN LOOKUP('integers').elements ELSE null"
+              },
+              {
+                "name": "singleton_check",
+                "type": "rollup",
+                "description": "Checks if the set has exactly one element.",
+                "formula": "COUNT(elements) = 1"
               }
             ],
             "lambdas": [
@@ -249,6 +279,12 @@
                 "parameters": ["other_set_id"],
                 "description": "Computes the set of Elements that are present in both sets (this and other_set).",
                 "formula": "CreateSet( elements.filter(e => e IN LOOKUP(other_set_id).elements ) )"
+              },
+              {
+                "name": "cartesian_product",
+                "parameters": ["other_set_id"],
+                "description": "Returns the cartesian product of this set with another set. Implementation is conceptual.",
+                "formula": "GenerateCartesianProduct(this.elements, LOOKUP(other_set_id).elements)"
               }
             ],
             "constraints": [
@@ -349,6 +385,18 @@
                 "type": "rollup",
                 "description": "Indicates if the operator is commutative over its domain set. E.g. '+' on ℤ => true, '-' => false.",
                 "formula": "CheckPairwiseCommutativity(symbol, domain_set_id)"
+              },
+              {
+                "name": "is_associative",
+                "type": "rollup",
+                "description": "Checks if (a op b) op c = a op (b op c) for all a,b,c in domain_set_id, ignoring domain/codomain if not numeric.",
+                "formula": "CheckPairwiseAssociativity(symbol, domain_set_id)"
+              },
+              {
+                "name": "neutral_element",
+                "type": "rollup",
+                "description": "Finds e in domain_set_id such that e op x = x op e = x for all x, or returns null if none.",
+                "formula": "SearchForIdentityElement(symbol, domain_set_id)"
               }
             ],
             "lambdas": [],
@@ -434,6 +482,18 @@
                 "type": "rollup",
                 "description": "Checks if the function is defined for every element in its domain set. If any missing mapping => false.",
                 "formula": "Scan domain_set_id.elements => all have a mapped output in rule => true, else false"
+              },
+              {
+                "name": "fixed_points",
+                "type": "rollup",
+                "description": "All elements x in the domain for which f(x) = x.",
+                "formula": "FOR ALL x in domain_set_id.elements => if (ApplyRule(rule, x) = x) then collect x"
+              },
+              {
+                "name": "image_set",
+                "type": "rollup",
+                "description": "The set of all distinct outputs in the codomain that f maps to.",
+                "formula": "CreateSet( domain_set_id.elements.map(x => ApplyRule(rule,x)) )"
               }
             ],
             "lambdas": [
@@ -454,6 +514,12 @@
                 "parameters": ["subset_set_id"],
                 "description": "Returns a partial function restricted to a subset of the original domain.",
                 "formula": "CreateNewFunction( domain=subset_set_id, codomain=codomain_set_id, rule=rule restricted to that subset )"
+              },
+              {
+                "name": "fiber_over_value",
+                "parameters": ["target_value"],
+                "description": "Returns all x in domain such that f(x) = target_value.",
+                "formula": "domain_set_id.elements.filter(x => ApplyRule(rule,x) = target_value)"
               }
             ],
             "constraints": []
@@ -527,6 +593,36 @@
                 "type": "rollup",
                 "formula": "CheckIfNoZeroDivisors(base_set_id, algebraic_operations.multiplication)",
                 "description": "True if ring has no zero divisors, ignoring edge cases unless structure_type is 'ring'."
+              },
+              {
+                "name": "has_identity_for_all_ops",
+                "type": "rollup",
+                "description": "Checks if there is a single element that serves as identity for each operation in 'algebraic_operations'.",
+                "formula": "CheckCommonIdentityElement(base_set_id, algebraic_operations)"
+              },
+              {
+                "name": "all_inverses_exist",
+                "type": "rollup",
+                "description": "If the structure is supposed to be a group or field, ensures every non-zero element has an inverse w.r.t. each operation.",
+                "formula": "For each op in algebraic_operations => checkInverses(base_set_id, op)"
+              },
+              {
+                "name": "is_commutative_ring",
+                "type": "rollup",
+                "description": "If structure_type is 'ring', checks if addition and multiplication are commutative for all elements.",
+                "formula": "IF (algebraic_structure_type='ring') THEN CheckRingCommutativity(base_set_id, algebraic_operations) ELSE null"
+              },
+              {
+                "name": "potential_contradictions",
+                "type": "rollup",
+                "description": "Searches for other propositions that might contradict this one if both are proven.",
+                "formula": "FindContradictoryPropositions(this.id)"
+              },
+              {
+                "name": "similar_propositions",
+                "type": "rollup",
+                "description": "Returns a list of propositions with statements that match a certain similarity threshold to this statement.",
+                "formula": "ComputePropositionSimilarity(this.statement)"
               }
             ],
             "lambdas": [
@@ -535,7 +631,14 @@
                 "parameters": [],
                 "description": "Checks if there is a neutral element for multiplication, relevant for ring/field. Returns the element or null if none.",
                 "formula": "Scan base_set_id for e => ∀x, e*x = x*e = x. If found, return e else null"
+              },
+              {
+                "name": "invoke_axiom",
+                "parameters": ["axiom_proposition_id"],
+                "description": "Temporarily treat an axiom proposition as true for the proof steps of this proposition.",
+                "formula": "AddPropositionDependency(this.id, axiom_proposition_id)"
               }
+
             ],
             "constraints": []
           },
@@ -670,6 +773,18 @@
                 "type": "rollup",
                 "description": "Examines equation_text to see if it’s a polynomial equation in standard variables, e.g. a1*x^n + ... = 0.",
                 "formula": "CheckIfPolynomial(equation_text)"
+              },
+              {
+                "name": "degree",
+                "type": "rollup",
+                "description": "If the equation is a polynomial, returns the highest exponent found. Otherwise null.",
+                "formula": "IF (is_polynomial) THEN DeterminePolynomialDegree(equation_text) ELSE null"
+              },
+              {
+                "name": "discriminant",
+                "type": "rollup",
+                "description": "If polynomial is quadratic, returns b^2 - 4ac or the appropriate generalization. Else null.",
+                "formula": "IF (degree=2) THEN ComputeQuadraticDiscriminant(equation_text) ELSE null"
               }
       
             ],
@@ -739,6 +854,24 @@
                 "type": "rollup",
                 "description": "Detects if there’s an object that is both initial and terminal. For each object, check if it’s unique that all morphisms come from/to it in exactly one way. Returns true if found.",
                 "formula": "Search objects => find candidate that’s both initial_object & terminal_object => if found => true else false"
+              },
+              {
+                "name": "object_count",
+                "type": "rollup",
+                "description": "Number of declared objects in the category.",
+                "formula": "COUNT(objects)"
+              },
+              {
+                "name": "morphism_count",
+                "type": "rollup",
+                "description": "Number of declared morphisms in the category (summing if 'morphisms' is an object map).",
+                "formula": "IF (morphisms is array) THEN COUNT(morphisms) ELSE SUM(LENGTH(morphisms))"
+              },
+              {
+                "name": "has_initial_object",
+                "type": "rollup",
+                "description": "Checks if there's an object I s.t. there's exactly one morphism from I to any object in the category.",
+                "formula": "For each candidate I in objects => check uniqueness of morphisms(I -> X) for all X"
               }
             ],
             "lambdas": [
