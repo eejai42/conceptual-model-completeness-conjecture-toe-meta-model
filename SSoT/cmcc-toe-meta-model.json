@@ -138,7 +138,7 @@
     "CMCC_Complete_ToEMM_Math": {
       "name": "CMCC Complete Mathematics TOE Meta Model",
       "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single ACID-compliant, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
-      "version": "v2.03",
+      "version": "v2.04",
       "schema": {
         "entities": [
           {
@@ -295,6 +295,24 @@
                 "type": "rollup",
                 "description": "Same as power_set_size for a finite set. If infinite, returns null.",
                 "formula": "IF (is_finite) THEN POWER(2, COUNT(elements)) ELSE null"
+              },
+              {
+                "name": "count_of_even_elements",
+                "type": "rollup",
+                "description": "Counts how many elements are even integers, if numeric.",
+                "formula": "IF all e in elements are integers THEN COUNT(e where e.value % 2 = 0) ELSE null"
+              },
+              {
+                "name": "contains_only_positive_numbers",
+                "type": "rollup",
+                "description": "Checks if every numeric element in the set is > 0.",
+                "formula": "IF all e in elements are numeric THEN (FOR ALL e in elements => e.value > 0) ELSE null"
+              },
+              {
+                "name": "lowest_common_multiple",
+                "type": "rollup",
+                "description": "Computes LCM of all positive integers in the set, if applicable.",
+                "formula": "IF all e in elements are positive integers THEN LCM(elements.value) ELSE null"
               }
             ],
             "lambdas": [
@@ -400,6 +418,24 @@
                 "type": "rollup",
                 "description": "If numeric, returns |value|. Otherwise null.",
                 "formula": "IF (value_type in [\"int\",\"float\"]) THEN ABS(value) ELSE null"
+              },
+              {
+                "name": "is_zero_element",
+                "type": "rollup",
+                "description": "Checks if this element is 0, for numeric types.",
+                "formula": "IF value_type in ['int','float'] THEN (value == 0) ELSE null"
+              },
+              {
+                "name": "negation",
+                "type": "rollup",
+                "description": "Returns the additive inverse if numeric, else null.",
+                "formula": "IF value_type in ['int','float'] THEN (-value) ELSE null"
+              },
+              {
+                "name": "prime_factorization",
+                "type": "rollup",
+                "description": "Returns prime factors of an integer, or null otherwise.",
+                "formula": "IF value_type='int' THEN FactorInteger(value) ELSE null"
               }
             ],
             "lambdas": [],
@@ -487,6 +523,24 @@
                 "type": "rollup",
                 "description": "Finds an element a such that a op x = a for all x in domain_set_id. Returns the element or null if none.",
                 "formula": "FindAbsorbingElement(symbol, domain_set_id)"
+              },
+              {
+                "name": "is_left_invertible",
+                "type": "rollup",
+                "description": "True if for every x in domain, ∃y s.t. y op x = identity. Implementation conceptual.",
+                "formula": "CheckLeftInvertibility(symbol, domain_set_id)"
+              },
+              {
+                "name": "closed_under_operator",
+                "type": "rollup",
+                "description": "Verifies that x op y remains in the domain for all x,y.",
+                "formula": "FOR ALL x,y in domain_set_id => (x op y) in domain_set_id"
+              },
+              {
+                "name": "range_in_domain",
+                "type": "rollup",
+                "description": "Constructs the set of {x op y | x,y in domain} and checks subset. Implementation conceptual.",
+                "formula": "CreateSetOfOperationResults(symbol, domain_set_id)"
               }
             ],
             "lambdas": [
@@ -621,6 +675,24 @@
                 "type": "rollup",
                 "description": "Returns the largest cardinality among all preimages for a single codomain value.",
                 "formula": "ComputeMaxPreimageSize(domain_set_id, rule)"
+              },
+              {
+                "name": "injectivity_violations_list",
+                "type": "rollup",
+                "description": "All pairs (x1,x2) with x1 != x2 but f(x1) = f(x2).",
+                "formula": "GatherInjectivityViolations(rule, domain_set_id)"
+              },
+              {
+                "name": "antiderivative_check",
+                "type": "rollup",
+                "description": "If domain is real, tries symbolic integration and returns indefinite integral if possible.",
+                "formula": "IF domain_set_id = 'reals' THEN AttemptSymbolicAntiderivative(rule) ELSE null"
+              },
+              {
+                "name": "codomain_coverage_percentage",
+                "type": "rollup",
+                "description": "If codomain is finite, computes (|image_set| / |codomain|)*100.",
+                "formula": "IF codomain_set_id.is_finite THEN (COUNT(DISTINCT image_set) / COUNT(codomain_set_id.elements)) * 100 ELSE null"
               }
             ],
             "lambdas": [
@@ -786,6 +858,24 @@
                 "type": "rollup",
                 "description": "For rings/fields, smallest n>0 s.t. n*1=0, or 0 if none. Implementation conceptual.",
                 "formula": "ComputeCharacteristic(base_set_id, algebraic_operations)"
+              },
+              {
+                "name": "commutative_operations_count",
+                "type": "rollup",
+                "description": "Counts how many operations in algebraic_operations are commutative over base_set_id.",
+                "formula": "For each op in algebraic_operations => if CheckCommutativity(op, base_set_id) then increment count"
+              },
+              {
+                "name": "zero_divisor_detection",
+                "type": "rollup",
+                "description": "Collects all (a,b) != (0,0) with a*b=0 in ring structures.",
+                "formula": "IF algebraic_structure_type in ['ring','field'] THEN FindZeroDivisors(base_set_id, algebraic_operations) ELSE null"
+              },
+              {
+                "name": "idempotent_elements_list",
+                "type": "rollup",
+                "description": "All elements e for which e op e = e (in the relevant operation).",
+                "formula": "IF 'multiplication' in algebraic_operations THEN For all e => e * e = e ELSE null"
               }
             ],
             "lambdas": [
@@ -890,6 +980,24 @@
                 "type": "rollup",
                 "description": "Returns true if result_type or proof_type indicates an axiom, or forcibly accepted with no dependencies.",
                 "formula": "CheckIfAxiom(this.result_type, this.proof_type, this.depends_on)"
+              },
+              {
+                "name": "references_in_proof",
+                "type": "rollup",
+                "description": "Parses derivation_steps to locate any cited references or external theorems.",
+                "formula": "ExtractReferences(derivation_steps)"
+              },
+              {
+                "name": "use_of_contradiction",
+                "type": "rollup",
+                "description": "Checks if proof uses a contradiction approach (assume ¬p => derive false).",
+                "formula": "DetectProofByContradiction(derivation_steps)"
+              },
+              {
+                "name": "statement_similarity_score",
+                "type": "rollup",
+                "description": "Compares proposition statement to known library, returns similarity measure [0..1].",
+                "formula": "ComputeStatementSimilarity(this.statement)"
               }
             ],
             "lambdas": [
@@ -1025,6 +1133,24 @@
                 "type": "rollup",
                 "description": "For linear equations, estimates dimension of solution set. Implementation is conceptual.",
                 "formula": "ComputeSolutionSpaceDimension(equation_text, related_sets)"
+              },
+              {
+                "name": "definite_integral",
+                "type": "rollup",
+                "description": "For single-var real eqn, attempts ∫ f(x) dx from a to b if specified somewhere.",
+                "formula": "IF (is_polynomial AND domain=ℝ) THEN EvaluateDefIntegral(equation_text, bounds) ELSE null"
+              },
+              {
+                "name": "leading_coefficient",
+                "type": "rollup",
+                "description": "If polynomial, returns the coefficient of highest-degree term.",
+                "formula": "IF is_polynomial THEN GetLeadingCoefficient(equation_text) ELSE null"
+              },
+              {
+                "name": "evaluate_for_naturals",
+                "type": "rollup",
+                "description": "If related_sets includes ℕ, evaluates eqn for n=0..some range, collecting results or solutions.",
+                "formula": "IF 'naturals' in related_sets THEN EvaluateEqnOverRange(equation_text, n=0..10) ELSE null"
               }
             ],
             "lambdas": [
@@ -1153,6 +1279,30 @@
                 "type": "rollup",
                 "description": "Counts pairs of objects (A,B) that are isomorphic. Implementation conceptual.",
                 "formula": "CountIsomorphicObjectPairs(objects, morphisms)"
+              },
+              {
+                "name": "terminal_object_count",
+                "type": "rollup",
+                "description": "Counts how many objects T have exactly one morphism from every other object.",
+                "formula": "CountTerminalObjects(objects, morphisms)"
+              },
+              {
+                "name": "exponential_objects_check",
+                "type": "rollup",
+                "description": "Checks if the category has exponentials B^A for all A,B, with evaluation morphism.",
+                "formula": "ScanForExponentialObjects(this.id)"
+              },
+              {
+                "name": "number_of_endofunctors",
+                "type": "rollup",
+                "description": "Counts all functors from this category to itself in the stored data.",
+                "formula": "CountEndofunctors(this.id)"
+              },
+              {
+                "name": "auto_equivalences_count",
+                "type": "rollup",
+                "description": "Counts how many equivalences of categories from this cat to itself.",
+                "formula": "IdentifyAutoEquivalences(this.id)"
               }
             ],
             "lambdas": [
