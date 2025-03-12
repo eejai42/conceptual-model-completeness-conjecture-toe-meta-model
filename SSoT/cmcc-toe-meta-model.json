@@ -138,7 +138,7 @@
     "CMCC_Complete_ToEMM_Math": {
       "name": "CMCC Complete Mathematics TOE Meta Model",
       "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single ACID-compliant, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
-      "version": "v2.02",
+      "version": "v2.03",
       "schema": {
         "entities": [
           {
@@ -271,6 +271,30 @@
                 "type": "rollup",
                 "description": "For an ordered set, attempts to find the least upper bound among elements, or null if not well-defined.",
                 "formula": "FindSupremum(elements)"
+              },
+              {
+                "name": "power_set_size",
+                "type": "rollup",
+                "description": "Number of all subsets, i.e. 2^n if the set is finite with n elements.",
+                "formula": "IF (is_finite) THEN POWER(2, COUNT(elements)) ELSE null"
+              },
+              {
+                "name": "infimum",
+                "type": "rollup",
+                "description": "Least element or lower bound if numeric. Returns null if not well-defined or set is empty.",
+                "formula": "ComputeInfimum(elements)"
+              },
+              {
+                "name": "largest_element",
+                "type": "rollup",
+                "description": "Returns the maximum element if an order is declared and a maximum exists, otherwise null.",
+                "formula": "IF (some ordering is declared) THEN MaxElement(elements) ELSE null"
+              },
+              {
+                "name": "finite_subset_count",
+                "type": "rollup",
+                "description": "Same as power_set_size for a finite set. If infinite, returns null.",
+                "formula": "IF (is_finite) THEN POWER(2, COUNT(elements)) ELSE null"
               }
             ],
             "lambdas": [
@@ -309,6 +333,12 @@
                 "parameters": ["other_set_id"],
                 "description": "All elements that are in this set but not in the other. Returns a new set reference.",
                 "formula": "CreateSet( elements.filter(e => e NOT IN LOOKUP(other_set_id).elements) )"
+              },
+              {
+                "name": "random_element",
+                "parameters": [],
+                "description": "Selects one element uniformly at random from the set, if the set is nonempty and sampling is supported.",
+                "formula": "PickRandom(elements)"
               }
             ],
             "constraints": [
@@ -358,6 +388,18 @@
                 "type": "rollup",
                 "formula": "RankWithin(containing_set_id.elements, this.id)",
                 "description": "An optional aggregator to position the element within the set’s ordering (if any). If no ordering, returns null."
+              },
+              {
+                "name": "is_positive",
+                "type": "rollup",
+                "description": "Checks if this element’s numeric value is > 0, if containing_set_id is integers/reals.",
+                "formula": "IF (containing_set_id in [\"integers\",\"reals\"]) THEN (value > 0) ELSE null"
+              },
+              {
+                "name": "absolute_value",
+                "type": "rollup",
+                "description": "If numeric, returns |value|. Otherwise null.",
+                "formula": "IF (value_type in [\"int\",\"float\"]) THEN ABS(value) ELSE null"
               }
             ],
             "lambdas": [],
@@ -433,6 +475,18 @@
                 "type": "rollup",
                 "description": "Checks if the operator yields outputs within a certain range for all inputs in domain_set_id. Implementation is conceptual.",
                 "formula": "CheckBoundedness(symbol, domain_set_id)"
+              },
+              {
+                "name": "is_idempotent",
+                "type": "rollup",
+                "description": "Verifies x op x = x for all x in the domain.",
+                "formula": "CheckIdempotency(symbol, domain_set_id)"
+              },
+              {
+                "name": "absorbing_element",
+                "type": "rollup",
+                "description": "Finds an element a such that a op x = a for all x in domain_set_id. Returns the element or null if none.",
+                "formula": "FindAbsorbingElement(symbol, domain_set_id)"
               }
             ],
             "lambdas": [
@@ -549,6 +603,24 @@
                 "type": "rollup",
                 "description": "Count how many distinct output values have more than one input mapping to them.",
                 "formula": "ComputeNumberOfOutputValuesWithMultiples(domain_set_id, rule)"
+              },
+              {
+                "name": "coimage_set",
+                "type": "rollup",
+                "description": "Groups domain elements by their mapped output to create the coimage structure.",
+                "formula": "ConstructCoimage(domain_set_id, rule)"
+              },
+              {
+                "name": "rank",
+                "type": "rollup",
+                "description": "If finite domain/codomain, rank is the size of the image. Else null.",
+                "formula": "IF (domain_set_id.is_finite AND codomain_set_id.is_finite) THEN COUNT(DISTINCT domain_set_id.elements.map(e => ApplyRule(rule,e))) ELSE null"
+              },
+              {
+                "name": "max_fiber_size",
+                "type": "rollup",
+                "description": "Returns the largest cardinality among all preimages for a single codomain value.",
+                "formula": "ComputeMaxPreimageSize(domain_set_id, rule)"
               }
             ],
             "lambdas": [
@@ -702,6 +774,18 @@
                 "type": "rollup",
                 "description": "Returns a list of operations that are verified to be commutative on base_set_id.",
                 "formula": "For each op in algebraic_operations => if CheckCommutativity(op, base_set_id) => add op"
+              },
+              {
+                "name": "center_of_structure",
+                "type": "rollup",
+                "description": "All elements z that commute with every x in base_set for each operation in algebraic_operations.",
+                "formula": "FindCenter(base_set_id, algebraic_operations)"
+              },
+              {
+                "name": "characteristic",
+                "type": "rollup",
+                "description": "For rings/fields, smallest n>0 s.t. n*1=0, or 0 if none. Implementation conceptual.",
+                "formula": "ComputeCharacteristic(base_set_id, algebraic_operations)"
               }
             ],
             "lambdas": [
@@ -794,6 +878,18 @@
                 "type": "rollup",
                 "description": "How many distinct external references or theorems appear in 'depends_on'.",
                 "formula": "IF depends_on != null THEN LENGTH(depends_on) ELSE 0"
+              },
+              {
+                "name": "dependency_depth",
+                "type": "rollup",
+                "description": "Longest chain of nested depends_on references leading to axioms or base statements.",
+                "formula": "ComputeDependencyDepth(this.id)"
+              },
+              {
+                "name": "is_axiom",
+                "type": "rollup",
+                "description": "Returns true if result_type or proof_type indicates an axiom, or forcibly accepted with no dependencies.",
+                "formula": "CheckIfAxiom(this.result_type, this.proof_type, this.depends_on)"
               }
             ],
             "lambdas": [
@@ -905,6 +1001,30 @@
                 "type": "rollup",
                 "description": "True if polynomial and every term has the same total degree. Else false or null.",
                 "formula": "CheckHomogeneity(equation_text)"
+              },
+              {
+                "name": "root_count",
+                "type": "rollup",
+                "description": "If domain is finite, count how many assignments satisfy the equation. Otherwise null or partial.",
+                "formula": "CountFiniteSolutions(equation_text, related_sets)"
+              },
+              {
+                "name": "is_solvable_by_radicals",
+                "type": "rollup",
+                "description": "Checks if polynomial degree ≤4 for symbolic solutions. True/false/unknown.",
+                "formula": "DetermineSolvabilityByRadicals(equation_text)"
+              },
+              {
+                "name": "symmetry_detection",
+                "type": "rollup",
+                "description": "Identifies which variables can be permuted without changing the equation’s form.",
+                "formula": "AnalyzeEquationSymmetry(equation_text)"
+              },
+              {
+                "name": "dimension_of_solution_space",
+                "type": "rollup",
+                "description": "For linear equations, estimates dimension of solution set. Implementation is conceptual.",
+                "formula": "ComputeSolutionSpaceDimension(equation_text, related_sets)"
               }
             ],
             "lambdas": [
@@ -1003,6 +1123,36 @@
                 "type": "rollup",
                 "description": "Checks if there's an object I s.t. there's exactly one morphism from I to any object in the category.",
                 "formula": "For each candidate I in objects => check uniqueness of morphisms(I -> X) for all X"
+              },
+              {
+                "name": "has_binary_products",
+                "type": "rollup",
+                "description": "Checks if a product object exists for every pair of objects, with suitable projection morphisms.",
+                "formula": "CheckBinaryProducts(objects, morphisms)"
+              },
+              {
+                "name": "has_equalizers",
+                "type": "rollup",
+                "description": "Checks if for all parallel morphisms f,g an equalizer object and morphism exist.",
+                "formula": "CheckEqualizers(objects, morphisms)"
+              },
+              {
+                "name": "distinct_object_pairs_count",
+                "type": "rollup",
+                "description": "Counts ordered pairs (A,B) of distinct objects in the category. Implementation is straightforward.",
+                "formula": "ComputeDistinctObjectPairs(objects)"
+              },
+              {
+                "name": "functor_count",
+                "type": "rollup",
+                "description": "How many known Functor definitions originate from this category to others.",
+                "formula": "CountFunctorsFromThisCategory(this.id)"
+              },
+              {
+                "name": "object_isomorphism_pairs_count",
+                "type": "rollup",
+                "description": "Counts pairs of objects (A,B) that are isomorphic. Implementation conceptual.",
+                "formula": "CountIsomorphicObjectPairs(objects, morphisms)"
               }
             ],
             "lambdas": [
