@@ -2,12 +2,12 @@
     "id": "CMCC_ToEMM_Baseball",
     "meta-model": {
       "name": "Baseball ToE Meta Model",
-      "description": "A unified meta-model capturing the entire domain of baseball—teams, players, games, innings, stats, and rules—within a single Snapshot-Consistent, declarative structure. All domain logic—like scoring, outs, pitch outcomes, lineups, or statistics—are expressed using lookups, aggregations, lambdas, and constraints.",
-      "version": "v1.1",
+      "description": "A unified meta-model capturing the entire domain of baseball—teams, players, games, innings, stats, and rules—within a purely declarative structure. All domain logic—like scoring, outs, pitch outcomes, lineups, or statistics—are expressed using lookups, aggregations, constraints, and event-based facts—no imperative instructions.",
+      "version": "v1.2",
       "nickname": "baseball",
       "meta": {
         "title": "Baseball ToE Meta-Model",
-        "subtitle": "A Unified Declarative Framework for the Sport's Structures and Rules",
+        "subtitle": "A 100% Declarative Framework for the Sport's Structures and Rules",
         "authors": [
           {
             "name": "EJ Alexandra",
@@ -19,25 +19,24 @@
           }
         ],
         "date": "March 2025",
-        "abstract": "The Baseball extension of the CMCC (Conceptual Model Completeness Conjecture) systematically represents baseball’s core objects—Teams, Players, Games, Innings, At-Bats—under a single Snapshot-Consistent schema. Using five foundational primitives (S, D, L, A, F), it encodes rules around scoring, outs, pitching results, roster management, and advanced stats, enabling cross-system synergy and easy maintenance. Everything from ball/strike logic to multi-season aggregated metrics can be modeled and updated as purely declarative data, removing the need for domain-specific baseball DSLs or ad hoc, code-scattered rules.",
+        "abstract": "The Baseball extension of the CMCC (Conceptual Model Completeness Conjecture) systematically represents baseball’s core objects—Teams, Players, Games, Innings, At-Bats—under a single Snapshot-Consistent schema. We’ve rewritten the entire specification to be 100% declarative, replacing stepwise imperative logic with event-based or aggregator-based facts. Everything from run scoring, outs, pitch results, and roster assignments is specified as constraints, lookups, aggregator fields, or derived booleans—ensuring that the model is purely descriptive. No domain logic is expressed as do-this-then-do-that instructions.",
         "executive_summary": {
           "key_points": [
-            "Models baseball’s entire rule structure—teams, rosters, innings, batting orders, stats—declaratively with aggregator formulas, lambdas, and constraints.",
-            "Eliminates the need for dedicated baseball-simulation languages by storing the 'what' (the game logic) as first-class data relationships.",
-            "Demonstrates flexibility for advanced sabermetrics: from pitch-level detail to advanced team-level analytics.",
-            "Seamlessly integrates with other CMCC domains (e.g., economics or sociology) for cross-domain synergy (financial aspects of baseball, fan demographics, etc.)."
+            "Models baseball’s entire rule structure—teams, rosters, innings, batting orders, stats—declaratively with aggregator formulas, event-based facts, and constraints.",
+            "Eliminates the need for any imperative code blocks or specialized DSL instructions.",
+            "Demonstrates flexibility for advanced sabermetrics, tying directly into this purely factual data structure.",
+            "Seamlessly integrates with other CMCC domains (e.g., economics or sociology) for cross-domain synergy."
           ],
           "implications": [
-            "Provides a universal environment for capturing the rules of baseball—from simple youth-league style to MLB-level detail.",
-            "Easily extended or internationalized (e.g., minor league variants, overseas leagues) without rewriting core logic.",
-            "Supports advanced analytics and queries—once in the data, any aggregator or custom lambda can examine on-base percentages, fielding metrics, or predicted outcomes."
+            "Provides a universal environment for capturing baseball rules in a purely fact-based manner.",
+            "Greatly simplifies or eliminates stateful code, since all logic is derived from the presence/absence of events or stated data.",
+            "Supports advanced analytics—once in the data, aggregator fields can unify everything from pitch-level detail to multi-season advanced metrics."
           ],
           "narrative": [
             {
-              "title": "CMCC Baseball Extension",
+              "title": "Purely Declarative Baseball Extension",
               "content": [
-                "Baseball is a famously data-heavy sport, from the rules around balls and strikes to the infinite array of metrics (batting average, ERA, WAR, etc.). Historically, baseball logic has been scattered through textual rulebooks, custom-coded simulators, or ad hoc spreadsheets. Each approach repeats or re-implements the same concepts—teams, innings, outs, runs, at-bats—in its own way.",
-                "By contrast, the CMCC Baseball Model encodes all these domain concepts in a purely declarative fashion, capturing every rule from the simplest (3 strikes = 1 out) to the more subtle (infield fly, balk, defensive shifts, advanced sabermetrics). It becomes the single source of truth for all baseball logic—human-readable, machine-readable, and universally translatable. Whether you’re building a fantasy league platform, a simulation game, or advanced baseball analytics, the same structural definitions serve as the foundation, letting you query, transform, or expand the baseball domain without rewriting business logic in code."
+                "In this version, we removed all imperative instructions (e.g., 'increment outs', 'set status') and replaced them with aggregator fields or constraints referencing new event entities or pre-existing relationships. For instance, an InningHalf’s outs are now simply the count of 'OutEvent' records referencing that half-inning. A game is 'in progress' if certain conditions in the data hold (status='IN_PROGRESS' AND we haven't reached final conditions). No procedure calls are needed to change states; the data itself drives the logic. This architecture helps ensure the system remains consistent and transparent: any change to the data is automatically reflected in the aggregator fields, with no hidden or procedural steps to update them."
               ]
             }
           ]
@@ -87,40 +86,40 @@
                 {
                   "name": "bestTeam",
                   "type": "rollup",
-                  "description": "(NEW #1) The team with the highest win percentage in this league.",
-                  "formula": "MAXBY(teams, t => t.winPercentage)" 
+                  "description": "The team with the highest win percentage in this league (declarative aggregator).",
+                  "formula": "MAXBY(teams, t => t.winPercentage)"
                 },
                 {
                   "name": "worstTeam",
                   "type": "rollup",
-                  "description": "(NEW #2) The team with the lowest win percentage in this league.",
+                  "description": "The team with the lowest win percentage in this league (declarative aggregator).",
                   "formula": "MINBY(teams, t => t.winPercentage)"
                 },
                 {
                   "name": "averageTeamERA",
                   "type": "rollup",
-                  "description": "(NEW #3) The average ERA across all teams in this league. Implementation conceptual, requires summing or averaging pitchers’ ERA or team-level ERA.",
-                  "formula": "AVG(teams -> eachTeamERA)" 
+                  "description": "The average ERA across all teams in this league. Implementation conceptual, could sum or average pitchers’ ERA or overall team ERA.",
+                  "formula": "AVG(teams -> eachTeamERA)"
                 },
                 {
                   "name": "totalLeagueHomeRuns",
                   "type": "rollup",
-                  "description": "(NEW #4) The sum of all home runs hit by players on all teams in this league.",
-                  "formula": "SUM(teams.roster -> sum of careerHomeRuns )"
+                  "description": "The sum of all home runs hit by players on all teams in this league, purely data-based aggregator.",
+                  "formula": "SUM(teams.roster -> careerHomeRuns)"
                 },
                 {
                   "name": "totalLeagueStolenBases",
                   "type": "rollup",
-                  "description": "(NEW #5) The sum of all stolen bases by players on all teams in this league.",
-                  "formula": "SUM(teams.roster -> sum of careerStolenBases )"
+                  "description": "The sum of all stolen bases by players on all teams in this league.",
+                  "formula": "SUM(teams.roster -> careerStolenBases)"
                 }
               ],
               "lambdas": [
                 {
                   "name": "scheduleMatchups",
                   "parameters": [],
-                  "description": "Generates a default schedule for all teams in the league (round-robin, balanced, or MLB-style). Implementation conceptual.",
-                  "formula": "CreateScheduledGames(teams)"
+                  "description": "// CHANGED (DECLARATIVE): Instead of 'create' schedules, we declare that a 'ScheduledMatchup' entity must exist for each pair of teams. Implementation conceptual.",
+                  "formula": "ALL_PAIRINGS(teams) => SHOULD_HAVE_ScheduledMatchup"
                 }
               ],
               "constraints": []
@@ -169,13 +168,13 @@
                 {
                   "name": "gamesPlayed",
                   "type": "rollup",
-                  "description": "Number of Games in which this team has participated. Implementation conceptual.",
+                  "description": "Number of Games in which this team has participated (data-based aggregator).",
                   "formula": "COUNT(Game where (homeTeamId=this.id OR awayTeamId=this.id))"
                 },
                 {
                   "name": "wins",
                   "type": "rollup",
-                  "description": "Count of Games this team has won.",
+                  "description": "Count of Games this team has won (pure aggregator, no imperative updates).",
                   "formula": "COUNT(Game where (winnerId=this.id))"
                 },
                 {
@@ -193,37 +192,37 @@
                 {
                   "name": "averageTeamBattingAverage",
                   "type": "rollup",
-                  "description": "(NEW #6) The average batting average among all players on the roster.",
+                  "description": "The average batting average among all players on the roster, purely aggregator.",
                   "formula": "AVG(roster.careerBattingAverage)"
                 },
                 {
                   "name": "totalTeamRuns",
                   "type": "rollup",
-                  "description": "(NEW #7) Total runs scored by this team (across all games). Implementation conceptual.",
+                  "description": "Total runs scored by this team (across all games). Implementation conceptual.",
                   "formula": "SUM(GameInnings where offense=this.id => runsScored )"
                 },
                 {
                   "name": "totalTeamHomeRuns",
                   "type": "rollup",
-                  "description": "(NEW #8) Sum of home runs hit by all players on this team.",
-                  "formula": "SUM(roster -> careerHomeRuns )"
+                  "description": "Sum of home runs hit by all players on this team.",
+                  "formula": "SUM(roster -> careerHomeRuns)"
                 },
                 {
                   "name": "totalTeamStolenBases",
                   "type": "rollup",
-                  "description": "(NEW #9) Sum of stolen bases by all players on this team.",
-                  "formula": "SUM(roster -> careerStolenBases )"
+                  "description": "Sum of stolen bases by all players on this team.",
+                  "formula": "SUM(roster -> careerStolenBases)"
                 },
                 {
                   "name": "averageFieldingPercentage",
                   "type": "rollup",
-                  "description": "(NEW #10) The team’s overall fielding percentage, averaging all players’ fielding percentages who actively field.",
+                  "description": "The team’s overall fielding percentage, averaging all players’ fielding percentages who actively field.",
                   "formula": "AVG(roster -> careerFieldingPercentage )"
                 },
                 {
                   "name": "winningPercentageInStadium",
                   "type": "rollup",
-                  "description": "(NEW #25) The team’s historical winning percentage in a given stadium (home or away). Implementation conceptual—would require stadium-based filter on Games.",
+                  "description": "Team’s historical winning percentage in a given stadium—pure aggregator referencing stadium-based game data.",
                   "formula": "WIN_PCT_BY_STADIUM_FUNCTION(this.id)"
                 }
               ],
@@ -233,16 +232,16 @@
                   "parameters": [
                     "player_id"
                   ],
-                  "description": "Adds a Player to this team's roster. Implementation conceptual.",
-                  "formula": "Set Player.team_id = this.id"
+                  "description": "// CHANGED (DECLARATIVE): Instead of 'Set Player.team_id = ...', we state a constraint/fact: 'Player.team_id' should match 'this.id'.",
+                  "formula": "Player(team_id=player_id).team_id == this.id"
                 },
                 {
                   "name": "removePlayerFromRoster",
                   "parameters": [
                     "player_id"
                   ],
-                  "description": "Removes a Player from this team's roster if present. Implementation conceptual.",
-                  "formula": "Set Player.team_id = null"
+                  "description": "// CHANGED (DECLARATIVE): In a purely declarative sense, removing means 'player.team_id = null' is a valid state. No imperative steps.",
+                  "formula": "Player(player_id).team_id == null"
                 }
               ],
               "constraints": []
@@ -332,31 +331,31 @@
                 {
                   "name": "onBasePercentage",
                   "type": "rollup",
-                  "description": "(NEW #11) Calculated as (H + BB + HBP) / (AB + BB + HBP + SF). Implementation conceptual; requires deeper data of walks (BB), HBP, sac flies (SF).",
+                  "description": "OBP = (H + BB + HBP) / (AB + BB + HBP + SF). Implementation conceptual if advanced data is tracked.",
                   "formula": "IF (plateAppearances>0) THEN ((careerHits + careerWalks + careerHitByPitch) / (careerAtBats + careerWalks + careerHitByPitch + careerSacFlies)) ELSE null"
                 },
                 {
                   "name": "sluggingPercentage",
                   "type": "rollup",
-                  "description": "(NEW #12) Total bases / at-bats. Implementation conceptual if we store how many doubles, triples, HR, etc. the player has.",
+                  "description": "Total bases / at-bats. Implementation conceptual if we track 2B,3B,HR, etc.",
                   "formula": "IF (careerAtBats>0) THEN (sumOfTotalBases / careerAtBats) ELSE null"
                 },
                 {
                   "name": "ops",
                   "type": "rollup",
-                  "description": "(NEW #13) On-base plus slugging. onBasePercentage + sluggingPercentage.",
+                  "description": "On-base plus slugging, purely aggregator of the OBP + SLG fields.",
                   "formula": "onBasePercentage + sluggingPercentage"
                 },
                 {
                   "name": "stolenBasePercentage",
                   "type": "rollup",
-                  "description": "(NEW #14) ratio = stolenBases / (stolenBases + timesCaught). Implementation conceptual.",
+                  "description": "stolenBases / (stolenBases + caughtStealing). Implementation conceptual if we track that data.",
                   "formula": "IF ((careerStolenBases + careerCaughtStealing) > 0) THEN (careerStolenBases / (careerStolenBases + careerCaughtStealing)) ELSE null"
                 },
                 {
                   "name": "isTwoWayPlayer",
                   "type": "rollup",
-                  "description": "(NEW #15) Boolean indicating if this player has pitched significantly and also batted as a non-pitcher. Implementation conceptual.",
+                  "description": "Boolean indicating if the player has pitched and also batted as a regular hitter. Implementation conceptual.",
                   "formula": "IF (careerInningsPitched > 0 AND careerAtBats > 0) THEN true ELSE false"
                 }
               ],
@@ -366,8 +365,8 @@
                   "parameters": [
                     "newHand"
                   ],
-                  "description": "Updates the player's batting hand to newHand. Implementation conceptual.",
-                  "formula": "Set this.battingHand = newHand"
+                  "description": "// CHANGED (DECLARATIVE): Instead of imperative 'Set battingHand=newHand', we declare a constraint that the player's battingHand must match 'newHand'.",
+                  "formula": "this.battingHand == newHand"
                 }
               ],
               "constraints": []
@@ -446,20 +445,20 @@
                 {
                   "name": "runsHome",
                   "type": "rollup",
-                  "description": "Total runs scored by the home team, summing the relevant half-innings if offense=homeTeamId.",
+                  "description": "Total runs scored by the home team, summing relevant half-innings for the home offense.",
                   "formula": "SUM( InningHalf.runsScored for all bottomHalves with offensiveTeamId=homeTeamId )"
                 },
                 {
                   "name": "runsAway",
                   "type": "rollup",
-                  "description": "Total runs scored by the away team, summing the relevant half-innings if offense=awayTeamId.",
+                  "description": "Total runs scored by the away team, summing relevant half-innings for the away offense.",
                   "formula": "SUM( InningHalf.runsScored for all topHalves with offensiveTeamId=awayTeamId )"
                 },
                 {
                   "name": "winnerId",
                   "type": "rollup",
-                  "description": "If status='FINAL', determine which team has more runs. Null if tie or incomplete.",
-                  "formula": "IF status='FINAL' THEN (IF runsHome>runsAway THEN homeTeamId ELSE IF runsAway>runsHome THEN awayTeamId ELSE null) ELSE null"
+                  "description": "If status='FINAL', whichever team has more runs. Null if tie or incomplete.",
+                  "formula": "IF (status='FINAL') THEN (IF runsHome>runsAway THEN homeTeamId ELSE IF runsAway>runsHome THEN awayTeamId ELSE null) ELSE null"
                 },
                 {
                   "name": "loserId",
@@ -470,28 +469,28 @@
                 {
                   "name": "totalPitchesInGame",
                   "type": "rollup",
-                  "description": "(NEW #16) Total number of pitches thrown by both sides in this game.",
-                  "formula": "COUNT( all Pitches in all AtBats that belong to this game )"
+                  "description": "Total number of pitches thrown in this game (pure aggregator across all at-bats).",
+                  "formula": "COUNT( Pitch where pitch.atBatId.inningHalfId.inningId.gameId=this.id )"
                 },
                 {
                   "name": "hasWalkOffOpportunity",
                   "type": "rollup",
-                  "description": "(NEW #17) True if it's the bottom of the final inning or extras and the home team can win with the current at-bat. Implementation conceptual.",
-                  "formula": "CHECK_IF_BOTTOM_INNING_WITH_SCORE_MARGIN(this.id)"
+                  "description": "True if it's bottom of 9th+ with the home team trailing/tied so a scoring play could end the game. Implementation conceptual, purely declarative.",
+                  "formula": "EVALUATE_WALKOFF_CONDITION(this.id)"
                 }
               ],
               "lambdas": [
                 {
                   "name": "startGame",
                   "parameters": [],
-                  "description": "Sets status='IN_PROGRESS', initializes the first Inning, etc.",
-                  "formula": "this.status='IN_PROGRESS'; Create(Inning for inningNumber=1)"
+                  "description": "// CHANGED (DECLARATIVE): Instead of setting 'status=IN_PROGRESS', we define a constraint: if the game has begun, status must be 'IN_PROGRESS'.",
+                  "formula": "IF (EXISTS(any pitch or any top inning started)) THEN (this.status == 'IN_PROGRESS')"
                 },
                 {
                   "name": "endGame",
                   "parameters": [],
-                  "description": "Sets status='FINAL', no further changes allowed to this game record.",
-                  "formula": "this.status='FINAL'"
+                  "description": "// CHANGED (DECLARATIVE): Instead of setting 'status=FINAL', we define conditions for final. If 9+ innings done, runs differ, status must be 'FINAL'.",
+                  "formula": "IF (CONDITIONS_FOR_GAME_COMPLETION) THEN (this.status == 'FINAL')"
                 }
               ],
               "constraints": [
@@ -545,8 +544,8 @@
                 {
                   "name": "isComplete",
                   "type": "rollup",
-                  "description": "True if top and bottom half are both complete, or if no bottom half needed (walk-off scenario).",
-                  "formula": "top.isComplete AND (bottom == null OR bottom.isComplete)"
+                  "description": "True if top and bottom half are both complete, or if there's a walk-off scenario that ends the inning early.",
+                  "formula": "top.isComplete AND (bottom==null OR bottom.isComplete)"
                 }
               ],
               "lambdas": [],
@@ -554,7 +553,7 @@
             },
             {
               "name": "InningHalf",
-              "description": "Represents either top or bottom portion of an inning, with outs, runs, at-bats, etc.",
+              "description": "Represents either top or bottom portion of an inning, with outs, runs, at-bats, etc. All purely event/aggregator based.",
               "fields": [
                 {
                   "name": "id",
@@ -587,19 +586,19 @@
                   "name": "outs",
                   "type": "scalar",
                   "datatype": "integer",
-                  "description": "Number of outs recorded so far (0..3)."
+                  "description": "Number of outs recorded so far. // CHANGED (DECLARATIVE) We keep this as a 'field' but treat it as an aggregator from OutEvents."
                 },
                 {
                   "name": "runsScored",
                   "type": "scalar",
                   "datatype": "integer",
-                  "description": "Tally of runs scored in this half-inning."
+                  "description": "Tally of runs in this half-inning. // CHANGED (DECLARATIVE) Treated as aggregator from RunEvents or from sum of AtBat.rbi."
                 },
                 {
                   "name": "isComplete",
                   "type": "scalar",
                   "datatype": "boolean",
-                  "description": "True when 3 outs have been recorded, or the half-inning ended otherwise (walk-off, etc.)."
+                  "description": "True if 3 outs are reached or walk-off ends this half. // CHANGED (DECLARATIVE) We interpret as aggregator or constraint."
                 }
               ],
               "lookups": [
@@ -627,7 +626,7 @@
                 {
                   "name": "leftOnBase",
                   "type": "rollup",
-                  "description": "(NEW #18) How many baserunners remained stranded when the half-inning ended. Implementation conceptual.",
+                  "description": "How many baserunners remained stranded when the half-inning ended. Implementation conceptual, purely aggregator over base-runner state.",
                   "formula": "CALCULATE_STRANDED_RUNNERS(this.id)"
                 }
               ],
@@ -635,16 +634,16 @@
                 {
                   "name": "recordOut",
                   "parameters": [],
-                  "description": "Increments 'outs'. If outs==3, set isComplete=true. Implementation conceptual.",
-                  "formula": "outs = outs + 1; IF outs>=3 THEN isComplete=true;"
+                  "description": "// CHANGED (DECLARATIVE): Instead of incrementing outs, we define an 'OutEvent' entity. 'outs' aggregator = COUNT(OutEvent).",
+                  "formula": "InningHalf.outs = COUNT(OutEvent where outEvent.inningHalfId=this.id)"
                 },
                 {
                   "name": "scoreRun",
                   "parameters": [
                     "count"
                   ],
-                  "description": "Increments runsScored by 'count'. Implementation conceptual.",
-                  "formula": "runsScored = runsScored + count;"
+                  "description": "// CHANGED (DECLARATIVE): Instead of incrementing runs, a 'RunEvent' entity or sum of AtBat.rbi. 'runsScored' aggregator = SUM(RunEvent.runs).",
+                  "formula": "InningHalf.runsScored = SUM(RunEvent where runEvent.inningHalfId=this.id => runEvent.runCount)"
                 }
               ],
               "constraints": [
@@ -652,12 +651,17 @@
                   "name": "validOutCount",
                   "formula": "outs >= 0 AND outs <= 3",
                   "error_message": "Outs must be between 0 and 3 inclusive."
+                },
+                {
+                  "name": "isCompleteWhen3OutsOrWalkoff",
+                  "formula": "isComplete == ((outs >= 3) OR (CHECK_WALKOFF_CONDITION(this.id)))",
+                  "error_message": "Half-inning completes with 3 outs or a declared walk-off event."
                 }
               ]
             },
             {
               "name": "AtBat",
-              "description": "A single plate appearance, from the start of the batter's turn to its final result.",
+              "description": "A single plate appearance, from the start of the batter's turn to its final result. All logic is aggregator-based, no step-by-step updates.",
               "fields": [
                 {
                   "name": "id",
@@ -725,7 +729,7 @@
                 {
                   "name": "expectedBattingAverage",
                   "type": "rollup",
-                  "description": "(NEW #19) A sabermetric measure (xBA) based on exit velocity, launch angle, etc. Implementation conceptual.",
+                  "description": "A sabermetric measure (xBA) based on exit velocity, launch angle, etc. Implementation conceptual, purely aggregator.",
                   "formula": "SABERMETRIC_xBA_FORMULA(this.id)"
                 }
               ],
@@ -735,21 +739,21 @@
                   "parameters": [
                     "pitchData"
                   ],
-                  "description": "Appends a new Pitch record referencing this at-bat. Implementation conceptual.",
-                  "formula": "INSERT Pitch { atBatId: this.id, ...pitchData }"
+                  "description": "// CHANGED (DECLARATIVE): Instead of 'INSERT' pitch, we declare that all pitch entities referencing this atBatId belong to 'pitches'.",
+                  "formula": "Pitch.atBatId == this.id => belongs to 'pitches' collection"
                 },
                 {
                   "name": "finalizeAtBat",
                   "parameters": [],
-                  "description": "Locks in the final result and updates inningHalf outs/runs as needed. Implementation conceptual.",
-                  "formula": "If (result in [GROUNDOUT,FLYOUT,STRIKEOUT]) => InningHalf.recordOut(); If (result in [SINGLE,DOUBLE,TRIPLE,HOMERUN, etc.]) => InningHalf.scoreRun(rbi);"
+                  "description": "// CHANGED (DECLARATIVE): No step to 'lock in' result. We have a constraint: AtBat is complete if 'result' is one of the final states. No imperative update needed.",
+                  "formula": "AtBatIsComplete(this.id) == (this.result != null)"
                 }
               ],
               "constraints": []
             },
             {
               "name": "Pitch",
-              "description": "Represents a single pitch thrown in an at-bat. Tracks velocity, location, outcome, etc.",
+              "description": "Represents a single pitch thrown in an at-bat. Tracks velocity, location, outcome, etc., with no imperative instructions.",
               "fields": [
                 {
                   "name": "id",
@@ -781,7 +785,7 @@
                   "name": "pitchSpinRate",
                   "type": "scalar",
                   "datatype": "number",
-                  "description": "(NEW #20) Spin rate of the pitch in revolutions per minute (rpm)."
+                  "description": "Spin rate of the pitch in revolutions per minute (rpm)."
                 }
               ],
               "lookups": [],
@@ -835,7 +839,7 @@
                   "name": "lastUpdated",
                   "type": "scalar",
                   "datatype": "datetime",
-                  "description": "(NEW #21) Timestamp indicating when this stat was last updated."
+                  "description": "Timestamp indicating when this stat was last updated."
                 }
               ],
               "lookups": [],
@@ -845,7 +849,7 @@
             },
             {
               "name": "Stadium",
-              "description": "(NEW #22) Represents a ballpark or stadium where games are played.",
+              "description": "Represents a ballpark or stadium where games are played. Purely declarative references to capacity, location, etc.",
               "fields": [
                 {
                   "name": "id",
@@ -872,16 +876,84 @@
                 {
                   "name": "gamesPlayedInStadium",
                   "type": "rollup",
-                  "description": "(NEW #23) The number of games that have taken place in this stadium. Implementation conceptual, would require a link from Game to Stadium.",
+                  "description": "Number of games that have taken place in this stadium. Implementation conceptual, would require a link from Game to Stadium.",
                   "formula": "COUNT(Game where Game.stadiumId = this.id)"
                 },
                 {
                   "name": "averageAttendance",
                   "type": "rollup",
-                  "description": "(NEW #24) Average attendance across all games played here. Implementation conceptual.",
+                  "description": "Average attendance across all games played here. Implementation conceptual.",
                   "formula": "AVG(GameAttendanceRecords where stadiumId=this.id)"
                 }
               ],
+              "lambdas": [],
+              "constraints": []
+            },
+            {
+              "name": "OutEvent",
+              "description": "// NEW: Fact-based approach for recording outs. Each OutEvent references which half-inning or at-bat triggered the out. Eliminates imperative increments.",
+              "fields": [
+                {
+                  "name": "id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true,
+                  "description": "Unique out event record."
+                },
+                {
+                  "name": "inningHalfId",
+                  "type": "lookup",
+                  "target_entity": "InningHalf",
+                  "foreign_key": true,
+                  "description": "Which half-inning this out belongs to."
+                },
+                {
+                  "name": "atBatId",
+                  "type": "lookup",
+                  "target_entity": "AtBat",
+                  "foreign_key": true,
+                  "description": "Optional reference to which at-bat caused the out. Could be null if it's a pickoff or baserunning out."
+                }
+              ],
+              "lookups": [],
+              "aggregations": [],
+              "lambdas": [],
+              "constraints": []
+            },
+            {
+              "name": "RunEvent",
+              "description": "// NEW: Fact-based approach for runs. Each RunEvent references which half-inning or at-bat triggered a run, ensuring no imperative 'scoreRun()'.",
+              "fields": [
+                {
+                  "name": "id",
+                  "type": "scalar",
+                  "datatype": "string",
+                  "primary_key": true,
+                  "description": "Unique run event record."
+                },
+                {
+                  "name": "inningHalfId",
+                  "type": "lookup",
+                  "target_entity": "InningHalf",
+                  "foreign_key": true,
+                  "description": "Which half-inning this run belongs to."
+                },
+                {
+                  "name": "atBatId",
+                  "type": "lookup",
+                  "target_entity": "AtBat",
+                  "foreign_key": true,
+                  "description": "Optional reference to the at-bat that batted in the run. Could be null if it’s a wild pitch, error, etc."
+                },
+                {
+                  "name": "runCount",
+                  "type": "scalar",
+                  "datatype": "integer",
+                  "description": "How many runs scored on this event (often 1, but could be more if multiple runners score simultaneously)."
+                }
+              ],
+              "lookups": [],
+              "aggregations": [],
               "lambdas": [],
               "constraints": []
             }
@@ -978,55 +1050,55 @@
               "stadiumName": "Yankee Stadium",
               "capacity": 50000
             }
-          ]
+          ],
+          "OutEvent": [],
+          "RunEvent": []
         }
       },
-    "root-meta-model": {
-      "title": "The Conceptual Model Completeness Conjecture (CMCC)",
-      "subtitle": "A Universal Declarative Computational Framework",
-      "authors": [
-        {
-          "name": "EJ Alexandra",
-          "contact": "start@anabstractlevel.com",
-          "affiliations": [
-            "SSoT.me",
-            "EffortlessAPI.com"
-          ]
-        }
-      ],
-      "date": "January 2025",
-      "abstract": "The Conceptual Model Completeness Conjecture (CMCC) posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an Snapshot-Consistent environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework.",
-      "executive_summary": {
-        "key_points": [
-          "CMCC proposes that five primitives (S, D, L, A, F) suffice to model all computable domain rules.",
-          "It achieves Turing-completeness by mapping to Lambda Calculus and Rule 110.",
-          "Aligns structurally with Wolfram’s multiway systems (the Ruliad).",
-          "Demonstrates broad applicability in Physics, Chemistry, Biology, Math, and now Baseball.",
-          "A purely declarative approach: 'what' is separate from 'how' (the runtime)."
+      "root-meta-model": {
+        "title": "The Conceptual Model Completeness Conjecture (CMCC)",
+        "subtitle": "A Universal Declarative Computational Framework",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
         ],
-        "implications": [
-          "Potential unification of domain modeling under a single declarative rulebook.",
-          "Scalable approach to cross-domain data management and knowledge representation.",
-          "Opens possibilities for AI, simulation, and multiway branching analyses, including advanced sports analytics."
-        ],
-        "narrative": {
-          "sections": [
-            {
-              "title": "Executive Summary",
-              "content": [
-                "In many domains, describing “what” we want—a baseball rule, a financial regulation, or a quantum property—involves restating ideas in code or in plain English. This leads to repeated translations and potential drift over time. CMCC posits that one robust structural approach (S, D, L, A, F) can house all these rules unambiguously.",
-                "Baseball offers a perfect demonstration. We can treat everything from lineups, innings, and pitch counts to advanced sabermetrics as purely declarative relationships and aggregator formulas. This eliminates the need for specialized DSLs or complicated code to track outs, runs, or situational stats. Once the baseball domain is structurally modeled, other systems—fan apps, analytics platforms, fantasy leagues—can re-use the same data model, preventing logic duplication and divergences.",
-                "In short, by applying CMCC to baseball, we illustrate a real-world, data-rich domain that historically relied on heavily textual or code-based rule sets. Storing the entire domain as an integrated, schema-driven knowledge graph with aggregator fields and lambda-based logic truly aligns with the universal approach championed by CMCC."
-              ]
-            }
-          ]
+        "date": "January 2025",
+        "abstract": "The Conceptual Model Completeness Conjecture (CMCC) posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an Snapshot-Consistent environment. This updated baseball model exemplifies how all domain logic can be expressed purely as constraints, aggregator fields, or relationships, removing all imperative steps.",
+        "executive_summary": {
+          "key_points": [
+            "Demonstrates how to remove imperative step-by-step logic and convert it to data-driven or aggregator-driven facts.",
+            "Proves the feasibility of purely declarative baseball rules, from runs to outs to final game states.",
+            "Illustrates how new entities like OutEvent and RunEvent can remove the need for explicit 'recordOut()' or 'scoreRun()' calls."
+          ],
+          "implications": [
+            "Potential unification of domain modeling under a purely fact-based approach, cutting out mutable, stepwise logic.",
+            "Data changes automatically reflect in aggregator fields, ensuring consistency at all times with no update commands.",
+            "Enables advanced simulation, analytics, or knowledge-graph queries in any environment supporting declarative rule evaluation."
+          ],
+          "narrative": {
+            "sections": [
+              {
+                "title": "Executive Summary",
+                "content": [
+                  "The pivot from partial-imperative to purely declarative removes the last bits of 'if-then-do-something' logic. All game states—outs, runs, or game completion—are determined by the presence of event records and aggregator formulas. We introduced entities like OutEvent and RunEvent for outs and runs, so that at any time, the system can see 'outs=3' or 'runs>opponentRuns' and derive that an inning/game is finished. No imperative instruction is needed to 'increment' or 'set' these values; they follow naturally from the underlying event data.",
+                  "This approach underscores the power of the CMCC framework (S, D, L, A, F). The domain structure is expressed via the schema (S), actual values or events appear in the data (D), references or relationships are lookups (L), aggregator fields (A) compute rollups or derived states, and lambda fields (F) can define purely functional or constraint-based logic. The entire baseball domain logic emerges from these relationships—no custom code is required to orchestrate state transitions."
+                ]
+              }
+            ]
+          }
         },
         "CMCC_ToEMM_Domain_List": [
           {
             "id": "CMCC_ToEMM_Baseball",
             "fullname": "Baseball ToE Meta-Model",
             "name": "Baseball ToE Meta-Model",
-            "description": "A structured model capturing the domain of baseball, including leagues, teams, players, games, innings, at-bats, and stats.",
+            "description": "A structured model capturing the domain of baseball, including leagues, teams, players, games, innings, at-bats, and stats, in a 100% declarative style.",
             "nickname": "baseball"
           },
           {
@@ -1124,4 +1196,4 @@
       }
     }
   }
-}
+  
