@@ -77,6 +77,18 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **totalLeagueStolenBases**  
   *Description:* The sum of all stolen bases by players on all teams in this league.  
   *Formula:* `SUM(teams.roster -> careerStolenBases)`
+- **leagueOPSLeaders**  
+  *Description:* Top 3 players in the league by OPS. Implementation conceptual using all rosters in this league.  
+  *Formula:* `TOPN(3, teams.roster, p => p.ops)`
+- **leagueMinERA**  
+  *Description:* Identifies the single pitcher in the league with the lowest ERA. Implementation conceptual—filters for pitchers only.  
+  *Formula:* `MINBY(teams.roster where playerIsPitcher=true, p => p.careerERA)`
+- **mostCommonBattingHand**  
+  *Description:* Identifies the batting hand (L, R, or S) that is most common among all players in the league's teams.  
+  *Formula:* `MODE(teams.roster.battingHand)`
+- **leagueWalkToStrikeoutRatio**  
+  *Description:* Computes total walks / total strikeouts across all players in the league. Conceptual aggregator.  
+  *Formula:* `SUM(teams.roster => careerWalks) / SUM(teams.roster => careerStrikeouts)`
 
 ### Lambdas
 - **scheduleMatchups**
@@ -142,6 +154,30 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **winningPercentageInStadium**  
   *Description:* Team’s historical winning percentage in a given stadium—pure aggregator referencing stadium-based game data.  
   *Formula:* `WIN_PCT_BY_STADIUM_FUNCTION(this.id)`
+- **bestPitcher**  
+  *Description:* Finds the pitcher on this team with the lowest ERA (pure aggregator).  
+  *Formula:* `MINBY(roster where playerIsPitcher=true, p => p.careerERA)`
+- **totalWalks**  
+  *Description:* Sums all walks drawn by players on this team.  
+  *Formula:* `SUM(roster => careerWalks)`
+- **totalHitByPitch**  
+  *Description:* Sums all HBP events for players on this team.  
+  *Formula:* `SUM(roster => careerHitByPitch)`
+- **teamSluggingPct**  
+  *Description:* Overall slugging percentage for the team, computed by summing total bases across all players and dividing by total at-bats.  
+  *Formula:* `(SUM(roster => totalBases) / SUM(roster => careerAtBats))`
+- **homeRunsPerGame**  
+  *Description:* Team’s home runs divided by the total games played, if gamesPlayed>0.  
+  *Formula:* `IF(gamesPlayed>0) THEN (totalTeamHomeRuns / gamesPlayed) ELSE null`
+- **pitcherCount**  
+  *Description:* Number of players on the roster who are pitchers (or have pitched). Implementation conceptual if 'playerIsPitcher' is known.  
+  *Formula:* `COUNT(roster WHERE playerIsPitcher=true)`
+- **shutoutsAchieved**  
+  *Description:* Count how many shutout wins this team has recorded. Conceptual aggregator scanning final games where runsAllowed=0.  
+  *Formula:* `COUNT(Game WHERE winnerId=this.id AND (IF homeTeamId=this.id THEN runsAway=0 ELSE runsHome=0))`
+- **currentWinStreak**  
+  *Description:* How many consecutive games (starting with the most recent) the team has won. Implementation conceptual, purely aggregator-based.  
+  *Formula:* `CALC_CURRENT_WIN_STREAK(this.id)`
 
 ### Lambdas
 - **addPlayerToRoster**
@@ -216,6 +252,39 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **isTwoWayPlayer**  
   *Description:* Boolean indicating if the player has pitched and also batted as a regular hitter. Implementation conceptual.  
   *Formula:* `IF (careerInningsPitched > 0 AND careerAtBats > 0) THEN true ELSE false`
+- **careerWalks**  
+  *Description:* Count of times the player reached base via walk (BB).  
+  *Formula:* `COUNT( AtBat where batterId=this.id AND result='WALK' )`
+- **careerHitByPitch**  
+  *Description:* Count of times the player was hit by a pitch (HBP).  
+  *Formula:* `COUNT( AtBat where batterId=this.id AND result='HIT_BY_PITCH' )`
+- **careerSacFlies**  
+  *Description:* Count of official at-bats with a sac fly result.  
+  *Formula:* `COUNT( AtBat where batterId=this.id AND result='SAC_FLY')`
+- **careerDoublePlaysGroundedInto**  
+  *Description:* Number of times the player has grounded into a double play.  
+  *Formula:* `COUNT( AtBat where batterId=this.id AND result='GROUNDED_INTO_DOUBLE_PLAY')`
+- **highestExitVelocity**  
+  *Description:* Max exit velocity recorded for batted balls by this player (across all relevant at-bats).  
+  *Formula:* `MAX( AtBat where batterId=this.id => exitVelocity )`
+- **lowestExitVelocity**  
+  *Description:* Min exit velocity recorded for batted balls by this player.  
+  *Formula:* `MIN( AtBat where batterId=this.id => exitVelocity )`
+- **careerSluggingPct**  
+  *Description:* Slugging percentage across all at-bats in the player's career (total bases / careerAtBats). Implementation conceptual.  
+  *Formula:* `IF(careerAtBats>0) THEN (SUM_OF_PLAYER_TOTAL_BASES(this.id) / careerAtBats) ELSE null`
+- **careerOPS**  
+  *Description:* Career On-base plus slugging for this player: onBasePercentage + careerSluggingPct.  
+  *Formula:* `onBasePercentage + careerSluggingPct`
+- **hitsAbove100ExitVelo**  
+  *Description:* Number of hits where the exit velocity exceeded 100 mph.  
+  *Formula:* `COUNT( AtBat where batterId=this.id AND exitVelocity>100 AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN'])`
+- **outsRecordedAsPitcher**  
+  *Description:* How many outs this player has generated in a pitching role. Implementation conceptual—count OutEvents where pitcherId=this.id.  
+  *Formula:* `COUNT( OutEvent where (atBatId!=null AND AtBat.pitcherId=this.id) OR (someOtherPitcherOutRef) )`
+- **totalBases**  
+  *Description:* Sum of bases the player has earned via hits (1 for single, 2 for double, etc.). Implementation conceptual scanning all hits.  
+  *Formula:* `SUM( AtBat where batterId=this.id => mapHitToBases(result) )`
 
 ### Lambdas
 - **adjustBattingHand**
@@ -290,6 +359,24 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **hasWalkOffOpportunity**  
   *Description:* True if it's bottom of 9th+ with the home team trailing/tied so a scoring play could end the game. Implementation conceptual, purely declarative.  
   *Formula:* `EVALUATE_WALKOFF_CONDITION(this.id)`
+- **attendance**  
+  *Description:* Reference or aggregator for game attendance, e.g., from an external record or data field.  
+  *Formula:* `LOOKUP_IN(GameAttendanceRecords, gameId=this.id => attendanceValue)`
+- **isExtraInnings**  
+  *Description:* Boolean indicating if the game went beyond the 9th inning.  
+  *Formula:* `MAX(innings.inningNumber) > 9`
+- **largestLead**  
+  *Description:* Maximum difference in runs between the two teams at any point in this game.  
+  *Formula:* `CALCULATE_LARGEST_LEAD(gameId=this.id)`
+- **isShutout**  
+  *Description:* True if one team finishes with 0 runs (and the game is FINAL).  
+  *Formula:* `IF (status='FINAL') THEN ((runsHome==0 AND runsAway>0) OR (runsAway==0 AND runsHome>0)) ELSE false`
+- **shutoutTeamId**  
+  *Description:* If the game is a shutout, indicates which team allowed 0 runs. Null if no shutout or tie at 0-0.  
+  *Formula:* `IF (isShutout=true) THEN (IF runsHome==0 THEN awayTeamId ELSE IF runsAway==0 THEN homeTeamId ELSE null) ELSE null`
+- **totalWalksInGame**  
+  *Description:* Count of all at-bats with 'result=WALK' in both halves across all innings for this game.  
+  *Formula:* `COUNT(AtBat WHERE inningHalfId.inningId.gameId=this.id AND result='WALK')`
 
 ### Lambdas
 - **startGame**
@@ -337,6 +424,15 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **isComplete**  
   *Description:* True if top and bottom half are both complete, or if there's a walk-off scenario that ends the inning early.  
   *Formula:* `top.isComplete AND (bottom==null OR bottom.isComplete)`
+- **runsThisInning**  
+  *Description:* Sum of runs in top and bottom half of this inning.  
+  *Formula:* `(IF top!=null THEN top.runsScored ELSE 0) + (IF bottom!=null THEN bottom.runsScored ELSE 0)`
+- **averageExitVelocityInInning**  
+  *Description:* Mean exit velocity of all batted balls (AtBat.exitVelocity) in top+bottom halves of this inning.  
+  *Formula:* `AVG(AtBat where AtBat.inningHalfId.inningId=this.id => exitVelocity)`
+- **totalWalksInInning**  
+  *Description:* Count of at-bats with 'result=WALK' in the top and bottom half of this inning combined.  
+  *Formula:* `COUNT(AtBat where AtBat.inningHalfId.inningId=this.id AND result='WALK')`
 
 
 
@@ -386,6 +482,18 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **leftOnBase**  
   *Description:* How many baserunners remained stranded when the half-inning ended. Implementation conceptual, purely aggregator over base-runner state.  
   *Formula:* `CALCULATE_STRANDED_RUNNERS(this.id)`
+- **walksInHalf**  
+  *Description:* Count of at-bats with 'result= WALK' in this half-inning.  
+  *Formula:* `COUNT(AtBat where inningHalfId=this.id AND result='WALK')`
+- **hitByPitchInHalf**  
+  *Description:* Count of at-bats with 'result=HIT_BY_PITCH' in this half-inning.  
+  *Formula:* `COUNT(AtBat where inningHalfId=this.id AND result='HIT_BY_PITCH')`
+- **mostPitchesFacedBySingleBatter**  
+  *Description:* The maximum pitch count in any single AtBat within this half-inning.  
+  *Formula:* `MAX(atBats.pitchCountInAtBat)`
+- **hitsWithExitVelocityAbove90**  
+  *Description:* Number of hits in this half-inning that had exitVelocity > 90 mph.  
+  *Formula:* `COUNT(AtBat where inningHalfId=this.id AND exitVelocity>90 AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN'])`
 
 ### Lambdas
 - **recordOut**
@@ -428,6 +536,12 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **rbi**  
   *Type:* scalar, *Datatype:* integer  
   
+- **exitVelocity**  
+  *Type:* scalar, *Datatype:* number  
+  
+- **launchAngle**  
+  *Type:* scalar, *Datatype:* number  
+  
 
 ### Lookups
 - **pitches**  
@@ -446,6 +560,15 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **expectedBattingAverage**  
   *Description:* A sabermetric measure (xBA) based on exit velocity, launch angle, etc. Implementation conceptual, purely aggregator.  
   *Formula:* `SABERMETRIC_xBA_FORMULA(this.id)`
+- **wasWalk**  
+  *Description:* Boolean aggregator: true if result='WALK'.  
+  *Formula:* `result == 'WALK'`
+- **plateDisciplineIndex**  
+  *Description:* Conceptual measure of a batter's plate discipline for this at-bat, e.g. proportion of 'chases' outside the zone vs. total pitches.  
+  *Formula:* `CALC_PLATE_DISCIPLINE(atBatId=this.id)`
+- **numberOfBalls**  
+  *Description:* Count of pitches in this at-bat where pitchResult='BALL'.  
+  *Formula:* `COUNT( Pitch where atBatId=this.id AND pitchResult='BALL')`
 
 ### Lambdas
 - **addPitch**
@@ -480,6 +603,16 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
   
 
 
+### Aggregations
+- **isStrike**  
+  *Description:* Boolean aggregator: true if pitchResult is CALLED_STRIKE or SWINGING_STRIKE.  
+  *Formula:* `pitchResult IN ['CALLED_STRIKE','SWINGING_STRIKE']`
+- **isQualityPitch**  
+  *Description:* True if pitchVelocity > 95 and pitchSpinRate > 2200, purely an example threshold-based aggregator.  
+  *Formula:* `pitchVelocity>95 AND pitchSpinRate>2200`
+- **adjustedSpinRate**  
+  *Description:* Derived spin rate that might account for velocity or environmental factors. Implementation conceptual.  
+  *Formula:* `pitchSpinRate * ADJUSTMENT_FACTOR(pitchVelocity)`
 
 
 
@@ -541,6 +674,15 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **averageAttendance**  
   *Description:* Average attendance across all games played here. Implementation conceptual.  
   *Formula:* `AVG(GameAttendanceRecords where stadiumId=this.id)`
+- **mostRunsInSingleGame**  
+  *Description:* Maximum total runs (home + away) for any game played in this stadium.  
+  *Formula:* `MAX( Game where stadiumId=this.id => (runsHome + runsAway) )`
+- **averageHRPerGame**  
+  *Description:* Average number of home runs per game in this stadium. Implementation conceptual if we track HR data by stadium.  
+  *Formula:* `AVG(Game => totalHRsInGame) WHERE stadiumId=this.id`
+- **daysSinceLastGame**  
+  *Description:* Time (in days) since the most recent game played here. Implementation conceptual—compares current date to the MAX(gameDate).  
+  *Formula:* `CURRENT_DATE - MAX(Game where stadiumId=this.id => gameDate)`
 
 
 
@@ -586,6 +728,65 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
   
 
 
+
+
+
+---
+
+## Entity: Season
+
+**Description**: // NEW ENTITY: Represents a baseball season, with a start/end date, name, etc.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **seasonName**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **startDate**  
+  *Type:* scalar, *Datatype:* date  
+  
+- **endDate**  
+  *Type:* scalar, *Datatype:* date  
+  
+
+### Lookups
+- **seasonGames**  
+  *Target Entity:* Game, *Type:* one_to_many  
+    
+  (Join condition: **Game.seasonId = this.id**)  
+  *Description:* All games referencing this season.
+
+### Aggregations
+- **gamesInSeason**  
+  *Description:* Counts how many games are in this season (pure aggregator).  
+  *Formula:* `COUNT(seasonGames)`
+
+
+
+---
+
+## Entity: SeasonTeamStats
+
+**Description**: // NEW ENTITY: Ties a Team to a particular Season, storing aggregated seasonal stats, e.g. winning streaks, etc.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **seasonId**  
+  *Type:* lookup, *Datatype:*   
+  
+- **teamId**  
+  *Type:* lookup, *Datatype:*   
+  
+
+
+### Aggregations
+- **teamWinningStreak**  
+  *Description:* Longest consecutive wins streak for the team during this season. Implementation conceptual.  
+  *Formula:* `CALCULATE_MAX_WIN_STREAK(teamId, seasonId)`
 
 
 
