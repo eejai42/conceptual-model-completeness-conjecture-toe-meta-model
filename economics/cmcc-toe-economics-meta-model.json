@@ -1,10 +1,10 @@
 {
-    "id": "CMCC_Complete_ToEMM_Economics",    
+    "id": "CMCC_ToEMM_Economics",    
     "meta-model": {
   "name": "All-In-One CMCC Economics Model",
   "description": "Covers basic and advanced economic entities—agents, markets, goods, transactions, supply-demand constraints, utility/budget, macro indicators, policies, plus a top-level scenario aggregator. Each entity is designed so it can be executed with no extra sidecar logic: all rules are captured using Schema (S), Data (D), Lookups (L), Aggregations (A), and Calculated Fields (F).",
   "depends_on": [
-    "CMCC_Complete_ToEMM_Math"
+    "CMCC_ToEMM_Math"
   ],
   "version": "v2.4",
   "meta": {

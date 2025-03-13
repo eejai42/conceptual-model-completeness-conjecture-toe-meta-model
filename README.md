@@ -42,6 +42,46 @@ For a full list of thepapers, please see the [CMCC Research](/research/README.md
 
 Below is a list of TOE models included in this repository. Click on any domain to read its detailed meta-model documentation:
 
+### Mathematics CMCC Meta-Model
+**CMCC Complete Mathematics ToE Meta-Model**
+
+A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.. Read more about the [math](math/README.md) CMCC Complete Meta-Model.
+
+### Physics ToE Meta-Model
+**CMCC Complete Physics ToE Meta-Model**
+
+A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.. Read more about the [physics](physics/README.md) CMCC Complete Meta-Model.
+
+### Chemistry ToE Meta-Model
+**CMCC Complete Chemistry ToE Meta-Model**
+
+Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.. Read more about the [chemistry](chemistry/README.md) CMCC Complete Meta-Model.
+
+### Biology ToE Meta-Model
+**CMCC Complete Biology ToE Meta-Model**
+
+Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.. Read more about the [biology](biology/README.md) CMCC Complete Meta-Model.
+
+### Artificial Intelligence ToE Meta-Model
+**CMCC Complete Artificial Intelligence ToE Meta-Model**
+
+Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.. Read more about the [ai](ai/README.md) CMCC Complete Meta-Model.
+
+### Economics ToE Meta-Model
+**CMCC Complete Economics ToE Meta-Model**
+
+A computational model for economic agents, markets, transactions, and supply-demand constraints.. Read more about the [economics](economics/README.md) CMCC Complete Meta-Model.
+
+### Astronomy ToE Meta-Model
+**CMCC Complete Astronomy ToE Meta-Model**
+
+An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.. Read more about the [astronomy](astronomy/README.md) CMCC Complete Meta-Model.
+
+### Geology
+**CMCC Complete Geology oE Meta-Model**
+
+A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.. Read more about the [geology](geology/README.md) CMCC Complete Meta-Model.
+
 
 ## Example: Mathematical Details
 

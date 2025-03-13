@@ -1,11 +1,11 @@
 {
-    "id": "CMCC_Complete_ToEMM_Chemistry",    
+    "id": "CMCC_ToEMM_Chemistry",    
     "meta-model": {
   "name": "All-In-One CMCC Chemistry Model",
   "description": "A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.",
   "depends_on": [
-    "CMCC_Complete_ToEMM_Math",
-    "CMCC_Complete_ToEMM_Physics"
+    "CMCC_ToEMM_Math",
+    "CMCC_ToEMM_Physics"
   ],
   "version": "v2.3",
   "meta": {
@@ -84,7 +84,7 @@
           {
             "name": "underlying_particle_id",
             "type": "lookup",
-            "target_entity": "CMCC_Complete_ToEMM_Physics.Particle",
+            "target_entity": "CMCC_ToEMM_Physics.Particle",
             "foreign_key": false,
             "note": "Optional link to the physics-level Particle if we want to unify mass, spin, etc."
           }
@@ -301,7 +301,7 @@
           {
             "name": "wavefunction_id",
             "type": "lookup",
-            "target_entity": "CMCC_Complete_ToEMM_Physics.Wavefunction",
+            "target_entity": "CMCC_ToEMM_Physics.Wavefunction",
             "foreign_key": false,
             "note": "If we have a quantum wavefunction at the molecular level"
           }
@@ -542,7 +542,7 @@
           {
             "name": "alias_R",
             "type": "rollup",
-            "formula": "LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='R').value",
+            "formula": "LOOKUP(CMCC_ToEMM_Physics.PhysicalConstants where symbol='R').value",
             "note": "Universal gas constant (toy). If not in your physics constants, you can store it there or do partial reference."
           },
           {

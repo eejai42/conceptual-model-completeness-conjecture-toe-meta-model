@@ -3,15 +3,15 @@
 A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.
 
 ## Depends On:
-- CMCC_Complete_ToEMM_Math
-- CMCC_Complete_ToEMM_Physics
+- CMCC_ToEMM_Math
+- CMCC_ToEMM_Physics
 
 ## Metadata
 
 **Title**: CMCC Complete Chemistry ToE Meta-Model  
 **Subtitle**: A Declarative Structural Approach to Chemical Entities and Reactions  
 **Date**: March 2025
-**ID**: CMCC_Complete_ToEMM_Chemistry
+**Domain Identifier**: CMCC_ToEMM_Chemistry
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  
@@ -338,7 +338,7 @@ Whether you're investigating ring strain, measuring reaction feasibility, or bri
 ### Aggregations
 - **alias_R**  
   *Description:*   
-  *Formula:* `LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='R').value`
+  *Formula:* `LOOKUP(CMCC_ToEMM_Physics.PhysicalConstants where symbol='R').value`
 - **delta_mass**  
   *Description:*   
   *Formula:* `SUM(products.molecular_mass) - SUM(reactants.molecular_mass)`

@@ -3,15 +3,15 @@
 Extends Physics and Chemistry to handle minerals, rock formations, tectonic plates, etc.
 
 ## Depends On:
-- CMCC_Complete_ToEMM_Physics
-- CMCC_Complete_ToEMM_Chemistry
+- CMCC_ToEMM_Physics
+- CMCC_ToEMM_Chemistry
 
 ## Metadata
 
 **Title**: CMCC Complete Geology ToE Meta-Model  
 **Subtitle**: A Declarative Data Architecture for Minerals, Rock Formations, and Tectonic Processes  
 **Date**: March 2025
-**ID**: CMCC_Complete_ToEMM_Geology
+**Domain Identifier**: CMCC_ToEMM_Geology
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

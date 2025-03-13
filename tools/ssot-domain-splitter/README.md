@@ -4,7 +4,7 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 ## NAME: Mathematics CMCC Meta-Model
 
-**ID**: CMCC_Complete_ToEMM_Math  
+**ID**: CMCC_ToEMM_Math  
 **Full Name**: CMCC Complete Mathematics ToE Meta-Model  
 **Description**: A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.  
 **Nickname**: math
@@ -13,7 +13,7 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 ## NAME: Physics ToE Meta-Model
 
-**ID**: CMCC_Complete_ToEMM_Physics  
+**ID**: CMCC_ToEMM_Physics  
 **Full Name**: CMCC Complete Physics ToE Meta-Model  
 **Description**: A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.  
 **Nickname**: physics
@@ -22,7 +22,7 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 ## NAME: Chemistry ToE Meta-Model
 
-**ID**: CMCC_Complete_ToEMM_Chemistry  
+**ID**: CMCC_ToEMM_Chemistry  
 **Full Name**: CMCC Complete Chemistry ToE Meta-Model  
 **Description**: Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.  
 **Nickname**: chemistry
@@ -31,7 +31,7 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 ## NAME: Biology ToE Meta-Model
 
-**ID**: CMCC_Complete_ToEMM_Biology  
+**ID**: CMCC_ToEMM_Biology  
 **Full Name**: CMCC Complete Biology ToE Meta-Model  
 **Description**: Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.  
 **Nickname**: biology
@@ -40,7 +40,7 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 ## NAME: Artificial Intelligence ToE Meta-Model
 
-**ID**: CMCC_Complete_ToEMM_AI  
+**ID**: CMCC_ToEMM_AI  
 **Full Name**: CMCC Complete Artificial Intelligence ToE Meta-Model  
 **Description**: Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.  
 **Nickname**: ai
@@ -49,7 +49,7 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 ## NAME: Economics ToE Meta-Model
 
-**ID**: CMCC_Complete_ToEMM_Economics  
+**ID**: CMCC_ToEMM_Economics  
 **Full Name**: CMCC Complete Economics ToE Meta-Model  
 **Description**: A computational model for economic agents, markets, transactions, and supply-demand constraints.  
 **Nickname**: economics
@@ -58,7 +58,7 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 ## NAME: Astronomy ToE Meta-Model
 
-**ID**: CMCC_Complete_ToEMM_Astronomy  
+**ID**: CMCC_ToEMM_Astronomy  
 **Full Name**: CMCC Complete Astronomy ToE Meta-Model  
 **Description**: An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.  
 **Nickname**: astronomy
@@ -67,7 +67,7 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 ## NAME: Geology
 
-**ID**: CMCC_Complete_ToEMM_Geology  
+**ID**: CMCC_ToEMM_Geology  
 **Full Name**: CMCC Complete Geology oE Meta-Model  
 **Description**: A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.  
 **Nickname**: geology

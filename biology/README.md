@@ -3,15 +3,15 @@
 
 
 ## Depends On:
-- CMCC_Complete_ToEMM_Chemistry
-- CMCC_Complete_ToEMM_Physics
+- CMCC_ToEMM_Chemistry
+- CMCC_ToEMM_Physics
 
 ## Metadata
 
 **Title**: CMCC Complete Biology ToE Meta-Model  
 **Subtitle**: A Unified Declarative Schema for Genes, Proteins, and Cellular Systems  
 **Date**: March 2025
-**ID**: CMCC_Complete_ToEMM_Biology
+**Domain Identifier**: CMCC_ToEMM_Biology
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

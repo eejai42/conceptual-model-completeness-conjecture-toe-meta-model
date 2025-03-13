@@ -3,14 +3,14 @@
 Covers basic and advanced economic entities—agents, markets, goods, transactions, supply-demand constraints, utility/budget, macro indicators, policies, plus a top-level scenario aggregator. Each entity is designed so it can be executed with no extra sidecar logic: all rules are captured using Schema (S), Data (D), Lookups (L), Aggregations (A), and Calculated Fields (F).
 
 ## Depends On:
-- CMCC_Complete_ToEMM_Math
+- CMCC_ToEMM_Math
 
 ## Metadata
 
 **Title**: CMCC Complete Economics ToE Meta-Model  
 **Subtitle**: A Declarative Framework for Agents, Markets, and Economic Dynamics  
 **Date**: March 2025
-**ID**: CMCC_Complete_ToEMM_Economics
+**Domain Identifier**: CMCC_ToEMM_Economics
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

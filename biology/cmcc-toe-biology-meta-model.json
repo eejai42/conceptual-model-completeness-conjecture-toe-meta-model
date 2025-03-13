@@ -1,9 +1,9 @@
 {
-    "id": "CMCC_Complete_ToEMM_Biology",    
+    "id": "CMCC_ToEMM_Biology",    
     "meta-model": {
   "depends_on": [
-    "CMCC_Complete_ToEMM_Chemistry",
-    "CMCC_Complete_ToEMM_Physics"
+    "CMCC_ToEMM_Chemistry",
+    "CMCC_ToEMM_Physics"
   ],
   "version": "v2.0",
   "meta": {
@@ -127,7 +127,7 @@
           {
             "name": "associated_molecule_id",
             "type": "lookup",
-            "target_entity": "CMCC_Complete_ToEMM_Chemistry.Molecule",
+            "target_entity": "CMCC_ToEMM_Chemistry.Molecule",
             "foreign_key": false,
             "note": "Optional link to a Molecule entry that represents the 3D structure or partial info"
           },
@@ -389,7 +389,7 @@
           {
             "name": "reaction_id",
             "type": "lookup",
-            "target_entity": "CMCC_Complete_ToEMM_Chemistry.Reaction",
+            "target_entity": "CMCC_ToEMM_Chemistry.Reaction",
             "foreign_key": true,
             "note": "Underlying stoichiometric details from the chemistry schema"
           },

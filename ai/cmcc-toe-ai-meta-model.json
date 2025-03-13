@@ -1,10 +1,10 @@
 {
-    "id": "CMCC_Complete_ToEMM_AI",    
+    "id": "CMCC_ToEMM_AI",    
     "meta-model": {
   "name": "All-In-One CMCC AI Model",
   "description": "Models core AI/ML artifacts: neural nets, training data, inference events, etc.",
   "depends_on": [
-    "CMCC_Complete_ToEMM_Math"
+    "CMCC_ToEMM_Math"
   ],
   "version": "v2.0",
   "meta": {

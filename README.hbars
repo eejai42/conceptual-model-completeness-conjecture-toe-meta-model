@@ -43,7 +43,7 @@ For a full list of thepapers, please see the [CMCC Research](/research/README.md
 
 Below is a list of TOE models included in this repository. Click on any domain to read its detailed meta-model documentation:
 
-{{#each meta.CMCC_ToEMM_Domains}}
+{{#each meta.CMCC_ToEMM_Domain_List}}
 ### {{name}}
 **{{fullname}}**
 

@@ -1,11 +1,11 @@
 {
-    "id": "CMCC_Complete_ToEMM_Astronomy",    
+    "id": "CMCC_ToEMM_Astronomy",    
     "meta-model": {
   "name": "All-In-One CMCC Astronomy Model",
   "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
   "depends_on": [
-    "CMCC_Complete_ToEMM_Physics",
-    "CMCC_Complete_ToEMM_Math"
+    "CMCC_ToEMM_Physics",
+    "CMCC_ToEMM_Math"
   ],
   "version": "v2.0",
   "meta": {
@@ -84,7 +84,7 @@
           {
             "name": "reference_particle_id",
             "type": "lookup",
-            "target_entity": "CMCC_Complete_ToEMM_Physics.Particle",
+            "target_entity": "CMCC_ToEMM_Physics.Particle",
             "foreign_key": false,
             "note": "If you want to unify with a Particle record from physics."
           },
@@ -99,7 +99,7 @@
           {
             "name": "gravitational_parameter",
             "type": "rollup",
-            "formula": "approx_mass * LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='G').value"
+            "formula": "approx_mass * LOOKUP(CMCC_ToEMM_Physics.PhysicalConstants where symbol='G').value"
           }
         ],
         "lambdas": [

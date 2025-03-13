@@ -1,11 +1,11 @@
 {
-    "id": "CMCC_Complete_ToEMM_Geology",    
+    "id": "CMCC_ToEMM_Geology",    
     "meta-model": {
   "name": "All-In-One CMCC Geology Model",
   "description": "Extends Physics and Chemistry to handle minerals, rock formations, tectonic plates, etc.",
   "depends_on": [
-    "CMCC_Complete_ToEMM_Physics",
-    "CMCC_Complete_ToEMM_Chemistry"
+    "CMCC_ToEMM_Physics",
+    "CMCC_ToEMM_Chemistry"
   ],
   "version": "v2.1",
   "meta": {

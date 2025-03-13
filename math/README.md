@@ -8,7 +8,7 @@ A unified meta-model capturing foundational mathematics (sets, elements, functio
 **Title**: CMCC Complete Mathematics ToE Meta-Model  
 **Subtitle**: A Unified Declarative Framework for Abstract Structures, Axioms, and Proofs  
 **Date**: March 2025
-**ID**: CMCC_Complete_ToEMM_Math
+**Domain Identifier**: CMCC_ToEMM_Math
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

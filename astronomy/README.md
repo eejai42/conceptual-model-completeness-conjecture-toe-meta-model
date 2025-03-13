@@ -3,15 +3,15 @@
 Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.
 
 ## Depends On:
-- CMCC_Complete_ToEMM_Physics
-- CMCC_Complete_ToEMM_Math
+- CMCC_ToEMM_Physics
+- CMCC_ToEMM_Math
 
 ## Metadata
 
 **Title**: CMCC Complete Astronomy ToE Meta-Model  
 **Subtitle**: Declarative Data Structures for Celestial Bodies, Cosmic Dynamics, and Observational Records  
 **Date**: March 2025
-**ID**: CMCC_Complete_ToEMM_Astronomy
+**Domain Identifier**: CMCC_ToEMM_Astronomy
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  
@@ -72,7 +72,7 @@ By placing these concepts in the CMCC framework, we encode stars, exoplanets, bl
 ### Aggregations
 - **gravitational_parameter**  
   *Description:*   
-  *Formula:* `approx_mass * LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='G').value`
+  *Formula:* `approx_mass * LOOKUP(CMCC_ToEMM_Physics.PhysicalConstants where symbol='G').value`
 
 ### Lambdas
 - **compute_escape_velocity**

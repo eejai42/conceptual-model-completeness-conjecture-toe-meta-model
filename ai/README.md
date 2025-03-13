@@ -3,14 +3,14 @@
 Models core AI/ML artifacts: neural nets, training data, inference events, etc.
 
 ## Depends On:
-- CMCC_Complete_ToEMM_Math
+- CMCC_ToEMM_Math
 
 ## Metadata
 
 **Title**: CMCC Complete Artificial Intelligence ToE Meta-Model  
 **Subtitle**: A Cross-Domain Declarative Framework for Machine Learning, Neural Networks, and Inference Engines  
 **Date**: March 2025
-**ID**: CMCC_Complete_ToEMM_AI
+**Domain Identifier**: CMCC_ToEMM_AI
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

@@ -1,5 +1,5 @@
 {
-    "id": "CMCC_Complete_ToEMM_Physics",    
+    "id": "CMCC_ToEMM_Physics",    
     "meta-model": {
   "name": "All-In-One CMCC Physics Model",
   "description": "A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.",
