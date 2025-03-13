@@ -15,7 +15,7 @@ The Economics extension of the CMCC (Conceptual Model Completeness Conjecture) p
 
 ![Economics ToE Meta-Model Entity Diagram](economics.png)
 #### Depends On:
-- CMCC_ToEMM_Math
+- [Mathematics CMCC Meta-Model](../math)
 
 
 ### Key Points

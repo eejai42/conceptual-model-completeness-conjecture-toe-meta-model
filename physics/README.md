@@ -14,6 +14,8 @@ A unified data+rule schema capturing classical mechanics, quantum wavefunctions,
 This Physics extension of the CMCC (Conceptual Model Completeness Conjecture) unifies classical mechanics, quantum wavefunctions, relativistic effects, and multiway branching under one coherent, Snapshot-Consistent schema. By leveraging the same five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda formulas—it provides a purely declarative framework capable of modeling everything from basic Newtonian systems to Many-Worlds quantum branching events, seamlessly integrating with the broader CMCC environment.
 
 ![Physics ToE Meta-Model Entity Diagram](physics.png)
+#### Depends On:
+- [Mathematics CMCC Meta-Model](../math)
 
 
 ### Key Points

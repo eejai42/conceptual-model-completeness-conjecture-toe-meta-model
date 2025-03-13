@@ -15,8 +15,8 @@ This Chemistry extension broadens the CMCC (Conceptual Model Completeness Conjec
 
 ![Chemistry ToE Meta-Model Entity Diagram](chemistry.png)
 #### Depends On:
-- CMCC_ToEMM_Math
-- CMCC_ToEMM_Physics
+- [Mathematics CMCC Meta-Model](../math)
+- [Physics ToE Meta-Model](../physics)
 
 
 ### Key Points

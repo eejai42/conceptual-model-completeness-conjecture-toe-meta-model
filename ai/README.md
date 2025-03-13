@@ -15,7 +15,7 @@ This AI-focused extension of the CMCC environment structures machine learning mo
 
 ![Artificial Intelligence ToE Meta-Model Entity Diagram](ai.png)
 #### Depends On:
-- CMCC_ToEMM_Math
+- [Mathematics CMCC Meta-Model](../math)
 
 
 ### Key Points

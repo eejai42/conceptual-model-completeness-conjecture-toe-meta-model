@@ -15,8 +15,8 @@ This CMCC Astronomy extension provides an Snapshot-Consistent schema to model ce
 
 ![Astronomy ToE Meta-Model Entity Diagram](astronomy.png)
 #### Depends On:
-- CMCC_ToEMM_Physics
-- CMCC_ToEMM_Math
+- [Physics ToE Meta-Model](../physics)
+- [Mathematics CMCC Meta-Model](../math)
 
 
 ### Key Points

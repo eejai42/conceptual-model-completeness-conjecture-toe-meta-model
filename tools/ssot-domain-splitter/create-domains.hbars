@@ -20,7 +20,9 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 {{!-- Use a custom "lookup" helper to get the domain from CMCC_ToEMM_Domains by "id" --}}
 {
     "id": "{{this.id}}",{{#with (lookup ../CMCC_ToEMM_Domains this.id)}}    
-    "meta-model": {{json .}}
+        "meta-model": {{json .}},
+        "root-meta-model": {{json @root.meta}}
+
 }
 {{/with}}
 {{/each}}

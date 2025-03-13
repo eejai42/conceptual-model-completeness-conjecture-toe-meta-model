@@ -15,8 +15,8 @@ This Geology extension of the CMCC (Conceptual Model Completeness Conjecture) en
 
 ![Geology ToE Meta-Model Entity Diagram](geology.png)
 #### Depends On:
-- CMCC_ToEMM_Physics
-- CMCC_ToEMM_Chemistry
+- [Physics ToE Meta-Model](../physics)
+- [Chemistry ToE Meta-Model](../chemistry)
 
 
 ### Key Points

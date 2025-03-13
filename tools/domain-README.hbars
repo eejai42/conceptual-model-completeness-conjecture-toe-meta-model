@@ -21,7 +21,11 @@
 {{#if depends_on}}
 #### Depends On:
 {{#each depends_on}}
-- {{this}}
+  {{#each @root.root-meta-model.CMCC_ToEMM_Domain_List}}
+    {{#if (eq id ..)}}
+- [{{name}}](../{{nickname}})
+    {{/if}}
+  {{/each}}
 {{/each}}
 {{/if}}
 

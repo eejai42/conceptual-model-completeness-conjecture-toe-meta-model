@@ -15,8 +15,8 @@ This Biology extension of CMCC (Conceptual Model Completeness Conjecture) applie
 
 ![Biology ToE Meta-Model Entity Diagram](biology.png)
 #### Depends On:
-- CMCC_ToEMM_Chemistry
-- CMCC_ToEMM_Physics
+- [Chemistry ToE Meta-Model](../chemistry)
+- [Physics ToE Meta-Model](../physics)
 
 
 ### Key Points
