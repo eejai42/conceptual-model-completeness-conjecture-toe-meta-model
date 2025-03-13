@@ -34,6 +34,7 @@ Mathematics is famously broad, encompassing everything from the basics of set th
 In contrast, the CMCC Mathematics Model encodes these concepts within a single, self-describing schema. Each 'Set,' 'Element,' or 'Proposition' is a record in an ACID-compliant datastore, with domain logic (axioms, aggregator checks for commutativity or associativity, etc.) expressed as formulas. Proofs become derivation steps, re-usable by other theorems or even other domain models (like the CMCC Physics or Chemistry models).
 By remaining purely declarative, this approach decouples syntax from semantics. Whether capturing something simple like the geometry of triangles or something advanced like category theory, the math extension inherits the same fundamental building blocks (S, D, L, A, F) that drive the entire CMCC framework. This ensures the utmost consistency, reusability, and cross-domain synergy in your knowledge representation.
 
+![logo](math.png)
 
 ---
 

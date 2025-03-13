@@ -2,6 +2,7 @@
 
 A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.
 
+![logo](physics.png)
 
 ## Metadata
 
