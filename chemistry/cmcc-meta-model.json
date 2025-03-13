@@ -1,0 +1,872 @@
+{
+  "name": "All-In-One CMCC Chemistry Model",
+  "description": "A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.",
+  "depends_on": [
+    "CMCC_Complete_ToEMM_Math",
+    "CMCC_Complete_ToEMM_Physics"
+  ],
+  "version": "v2.3",
+  "meta": {
+    "title": "CMCC Complete Chemistry ToE Meta-Model",
+    "subtitle": "A Declarative Structural Approach to Chemical Entities and Reactions",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This Chemistry extension broadens the CMCC (Conceptual Model Completeness Conjecture) approach to cover atomic, molecular, and reaction-level concepts. Building on the existing ACID-based schema that unifies math and physics, this domain model encodes all chemical structures—like atoms, bonds, molecules, solutions, and reactions—via five fundamental primitives (S, D, L, A, F). The resulting framework allows cross-domain reasoning (such as quantum-level wavefunctions or reaction kinetics) in a unified, syntax-free data structure.",
+    "executive_summary": {
+      "key_points": [
+        "Introduces detailed entities for atoms, bonds, molecules, and reactions within the broader CMCC environment.",
+        "Showcases how aggregator rollups and lambda formulas handle chemical logic (e.g., stoichiometry, bond polarity, reaction energetics).",
+        "Demonstrates a purely declarative approach, enabling Turing-completeness without writing domain-specific code.",
+        "Integrates seamlessly with the CMCC Physics model for quantum wavefunctions and multiway branching, bridging quantum to classical chemistry."
+      ],
+      "implications": [
+        "Enables cross-domain queries (e.g., quantum wavefunctions plus reaction stoichiometry) using a single cohesive schema.",
+        "Reduces translation overhead between domain-specific tools, offering a universal repository for chemical knowledge.",
+        "Lays groundwork for expansions into biology or materials science by extending the same structural paradigm."
+      ],
+      "narrative": [
+        {
+          "title": "CMCC Chemistry Extension",
+          "content": [
+            "Chemistry often requires bridging multiple scales: quantum mechanical interactions, molecular geometry, reaction kinetics, and thermodynamics. In a standard approach, each scale might be handled by separate tools and data formats, leading to fragmentation and repeated redefinition of core concepts.",
+            "By contrast, the CMCC Chemistry Model encodes these layers in a single, self-describing set of tables, references, and formulas—every concept is data-driven. 'Atoms' link to fundamental 'Particle' definitions, 'Molecules' aggregate atoms (and optionally wavefunctions), while 'Reactions' track stoichiometry, thermodynamic estimates, and kinetic data. The system handles partial or complete references to quantum states for advanced calculations, but remains fully consistent with the overarching ACID-based design that anchors the entire CMCC framework.",
+            "Whether you're investigating ring strain, measuring reaction feasibility, or bridging into the biology domain, the same five fundamental primitives apply—Schema, Data, Lookups, Aggregations, and Lambda fields—ensuring minimal friction in cross-domain expansions and maximum clarity in capturing complex chemical phenomena."
+          ]
+        }
+      ]
+    }
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "Atom",
+        "description": "Represents a single element or ion, referencing the underlying physics Particle optionally.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "element_symbol",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "atomic_number",
+            "type": "scalar",
+            "datatype": "int"
+          },
+          {
+            "name": "mass_override",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "If present, use this mass instead of Particle.mass, e.g. for isotopes"
+          },
+          {
+            "name": "charge_state",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Net charge, e.g. +1 for Na+"
+          },
+          {
+            "name": "underlying_particle_id",
+            "type": "lookup",
+            "target_entity": "CMCC_Complete_ToEMM_Physics.Particle",
+            "foreign_key": false,
+            "note": "Optional link to the physics-level Particle if we want to unify mass, spin, etc."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "effective_mass",
+            "type": "rollup",
+            "formula": "IF mass_override != null THEN mass_override ELSE (LOOKUP(underlying_particle_id).mass)"
+          },
+          {
+            "name": "ion_electrons",
+            "type": "rollup",
+            "formula": "atomic_number - charge_state"
+          },
+          {
+            "name": "valence_electron_count",
+            "type": "rollup",
+            "formula": "ComputeValenceElectrons(atomic_number, charge_state)",
+            "description": "Approximate valence electron count by atomic number and charge."
+          },
+          {
+            "name": "electronegativity_estimate",
+            "type": "rollup",
+            "formula": "EstimateElectronegativity(atomic_number)",
+            "description": "Estimated electronegativity (Pauling-like scale)."
+          },
+          {
+            "name": "radius_estimate",
+            "type": "rollup",
+            "formula": "ApproximateAtomicRadius(atomic_number)",
+            "description": "Rough covalent radius or van der Waals radius in pm."
+          },
+          {
+            "name": "ionization_energy_estimate",
+            "type": "rollup",
+            "formula": "LookupIonizationEnergy(atomic_number)",
+            "description": "First-ionization energy approximation."
+          },
+          {
+            "name": "electron_affinity_estimate",
+            "type": "rollup",
+            "formula": "LookupElectronAffinity(atomic_number)",
+            "description": "Approximate electron affinity for the atom."
+          },
+          {
+            "name": "predicted_isotope_distribution",
+            "type": "rollup",
+            "formula": "ComputeIsotopeDistribution(atomic_number, mass_override)",
+            "description": "Returns approximate isotope ratios for this element."
+          },
+          {
+            "name": "orbital_configuration_string",
+            "type": "rollup",
+            "formula": "ApproximateElectronConfiguration(atomic_number, charge_state)",
+            "description": "Generates a string describing electron configuration, e.g. '1s2 2s2 ...'."
+          },
+          {
+            "name": "predicted_atomic_density",
+            "type": "rollup",
+            "formula": "EstimateAtomicDensity(atomic_number)",
+            "description": "A naive aggregator for density (g/cm³) in the bulk elemental form."
+          },
+          {
+            "name": "nuclear_binding_energy_estimate",
+            "type": "rollup",
+            "formula": "ComputeNuclearBindingEnergy(atomic_number, mass_override)",
+            "description": "Rough nuclear binding energy from mass defect."
+          }
+        ],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "integer_atom_number",
+            "formula": "atomic_number > 0",
+            "error_message": "Atomic number must be positive integer"
+          },
+          {
+            "name": "valid_charge_state",
+            "formula": "charge_state >= -atomic_number",
+            "error_message": "Cannot have more electrons than Z+some large number, toy rule"
+          }
+        ]
+      },
+      {
+        "name": "Bond",
+        "description": "Represents a chemical bond between two atoms (intra-molecular or otherwise).",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "bond_type",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "e.g. single, double, triple, ionic, etc."
+          },
+          {
+            "name": "atom_id_1",
+            "type": "lookup",
+            "target_entity": "Atom",
+            "foreign_key": true
+          },
+          {
+            "name": "atom_id_2",
+            "type": "lookup",
+            "target_entity": "Atom",
+            "foreign_key": true
+          },
+          {
+            "name": "bond_order",
+            "type": "scalar",
+            "datatype": "float"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "bond_polarity_index",
+            "type": "rollup",
+            "formula": "ABS(Atom(atom_id_1).electronegativity_estimate - Atom(atom_id_2).electronegativity_estimate)",
+            "description": "Rough measure of bond polarity from electronegativity difference."
+          },
+          {
+            "name": "bond_length_estimate",
+            "type": "rollup",
+            "formula": "ApproximateBondLength( atom_id_1.radius_estimate, atom_id_2.radius_estimate, bond_order )",
+            "description": "Estimates bond length in Å or pm."
+          },
+          {
+            "name": "bond_dissociation_energy_estimate",
+            "type": "rollup",
+            "formula": "ComputeBondDissociationEnergy(bond_type, bond_order, bond_polarity_index)",
+            "description": "A rough BDE estimate, e.g. single vs double bond, polar vs nonpolar."
+          },
+          {
+            "name": "is_resonance_bond",
+            "type": "rollup",
+            "formula": "CheckForResonance(atom_id_1, atom_id_2)",
+            "description": "Flags if this bond might be part of a resonance system."
+          },
+          {
+            "name": "bond_angle_with_third_atom",
+            "type": "rollup",
+            "parameters": [
+              "third_atom_id"
+            ],
+            "formula": "ComputeBondAngle(atom_id_1, atom_id_2, third_atom_id)",
+            "description": "Predicts angle (in degrees) formed with a third reference atom (toy geometry approach)."
+          },
+          {
+            "name": "bond_vibrational_frequency",
+            "type": "rollup",
+            "formula": "EstimateBondVibrationFrequency(atom_id_1.effective_mass, atom_id_2.effective_mass, bond_order)",
+            "description": "Approx IR vibrational frequency (cm^-1) using reduced mass and bond order."
+          },
+          {
+            "name": "bond_rotational_barrier",
+            "type": "rollup",
+            "formula": "EstimateRotationalBarrier(bond_type, bond_order, atom_id_1, atom_id_2)",
+            "description": "Estimates torsional barrier for single bonds or partial for double."
+          },
+          {
+            "name": "bond_reactivity_score",
+            "type": "rollup",
+            "formula": "ComputeBondReactivity(bond_order, bond_polarity_index, local_environment)",
+            "description": "Scores how likely the bond is to break or rearrange under common reactions."
+          },
+          {
+            "name": "estimated_bond_angle_strain",
+            "type": "rollup",
+            "formula": "CheckBondAngleStrain(atom_id_1, atom_id_2)",
+            "description": "Flags strain if part of a ring or unusual geometry, referencing ring size or known angle deviance."
+          }
+        ],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "bond_atoms_different",
+            "formula": "atom_id_1 != atom_id_2",
+            "error_message": "No self-bonds"
+          },
+          {
+            "name": "bond_order_valid",
+            "formula": "bond_order > 0 AND bond_order <= 3",
+            "error_message": "Toy constraint: bond_order must be between 0 and 3"
+          }
+        ]
+      },
+      {
+        "name": "Molecule",
+        "description": "Collection of atoms connected by bonds, plus optional reference to quantum wavefunction.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "wavefunction_id",
+            "type": "lookup",
+            "target_entity": "CMCC_Complete_ToEMM_Physics.Wavefunction",
+            "foreign_key": false,
+            "note": "If we have a quantum wavefunction at the molecular level"
+          }
+        ],
+        "lookups": [
+          {
+            "name": "atoms",
+            "description": "Atoms in the molecule",
+            "target_entity": "Atom",
+            "type": "many_to_many",
+            "join_entity": "MoleculeAtomMapping",
+            "join_condition": "MoleculeAtomMapping.molecule_id = this.id AND MoleculeAtomMapping.atom_id = Atom.id"
+          },
+          {
+            "name": "bonds",
+            "description": "Bonds referencing this molecule (optionally)",
+            "target_entity": "Bond",
+            "type": "one_to_many",
+            "join_condition": "Bond.atom_id_1 IN atoms OR Bond.atom_id_2 IN atoms"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "molecular_mass",
+            "type": "rollup",
+            "formula": "SUM( atoms.effective_mass )"
+          },
+          {
+            "name": "total_net_charge",
+            "type": "rollup",
+            "formula": "SUM( atoms.charge_state )"
+          },
+          {
+            "name": "formula_string",
+            "type": "rollup",
+            "formula": "ComputeStoichiometricFormula(atoms)"
+          },
+          {
+            "name": "total_valence_electrons",
+            "type": "rollup",
+            "formula": "SUM( atoms.valence_electron_count )",
+            "description": "Sum of valence electrons from all constituent atoms."
+          },
+          {
+            "name": "is_organic",
+            "type": "rollup",
+            "formula": "IF( COUNT( atoms where element_symbol='C' ) > 0, true, false )",
+            "description": "Simple check for presence of carbon to label molecule as organic."
+          },
+          {
+            "name": "predicted_solubility_in_water",
+            "type": "rollup",
+            "formula": "EstimateSolubility(atoms, total_net_charge)",
+            "description": "Rough guess of water solubility from polar groups and net charge."
+          },
+          {
+            "name": "formal_charge_distribution",
+            "type": "rollup",
+            "formula": "ComputeFormalCharges(atoms, bonds)",
+            "description": "Array or mapping of formal charges for each atom."
+          },
+          {
+            "name": "heavy_atom_count",
+            "type": "rollup",
+            "formula": "COUNT( atoms where atomic_number > 1 )",
+            "description": "Number of atoms heavier than hydrogen."
+          },
+          {
+            "name": "estimated_boiling_point",
+            "type": "rollup",
+            "formula": "PredictBoilingPoint(molecular_mass, predicted_solubility_in_water)",
+            "description": "Naive or ML-based boiling point predictor."
+          },
+          {
+            "name": "predicted_HOMO_energy",
+            "type": "rollup",
+            "formula": "ComputeHOMOEnergy(wavefunction_id, total_valence_electrons)",
+            "description": "Estimated HOMO energy from partial quantum or empirical approach."
+          },
+          {
+            "name": "predicted_LUMO_energy",
+            "type": "rollup",
+            "formula": "ComputeLUMOEnergy(wavefunction_id, total_valence_electrons)",
+            "description": "Estimated LUMO energy from partial quantum or empirical approach."
+          },
+          {
+            "name": "HOMO_LUMO_gap",
+            "type": "rollup",
+            "formula": "predicted_LUMO_energy - predicted_HOMO_energy",
+            "description": "Difference between the predicted LUMO and HOMO energies."
+          },
+          {
+            "name": "approximate_pKa",
+            "type": "rollup",
+            "formula": "EstimatePkaFromFunctionalGroups(atoms, bonds)",
+            "description": "Naive aggregator for acid dissociation constant based on functional groups."
+          },
+          {
+            "name": "predicted_UV_Vis_absorbance",
+            "type": "rollup",
+            "formula": "ApproximateUVVisPeak(HOMO_LUMO_gap, heavy_atom_count)",
+            "description": "Rough guess of UV-Vis absorbance max in nm."
+          },
+          {
+            "name": "ro5_violation_count",
+            "type": "rollup",
+            "formula": "CountRuleOfFiveViolations(molecular_mass, total_valence_electrons, predicted_solubility_in_water)",
+            "description": "Counts how many Lipinski Rule of 5 criteria are violated."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "optimize_geometry",
+            "parameters": [],
+            "formula": "PerformMolecularGeometryOptimization(bonds, wavefunction_id)"
+          },
+          {
+            "name": "compute_properties",
+            "parameters": [
+              "temperature"
+            ],
+            "formula": "RunQuantumChemistryCalc(wavefunction_id, temperature)"
+          },
+          {
+            "name": "possible_tautomers",
+            "parameters": [],
+            "description": "Returns a set of potential tautomeric forms for the molecule.",
+            "formula": "GenerateTautomers(this.id, atoms, bonds)"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "bond_connectivity_check",
+            "formula": "CheckIfAllAtomsConnected(bonds)",
+            "error_message": "All atoms in a molecule must be connected via bonds"
+          }
+        ]
+      },
+      {
+        "name": "MoleculeAtomMapping",
+        "description": "Bridging table for many-to-many: which atoms belong to which molecule and in what count (for coarse stoichiometric models).",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "molecule_id",
+            "type": "lookup",
+            "target_entity": "Molecule",
+            "foreign_key": true
+          },
+          {
+            "name": "atom_id",
+            "type": "lookup",
+            "target_entity": "Atom",
+            "foreign_key": true
+          },
+          {
+            "name": "count_in_molecule",
+            "type": "scalar",
+            "datatype": "int",
+            "note": "If >1, e.g. for repeated subunits"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "fraction_in_molecule",
+            "type": "rollup",
+            "formula": "count_in_molecule / SUM(MoleculeAtomMapping.count_in_molecule WHERE molecule_id = this.molecule_id)",
+            "description": "Fraction of total atom count for this species in the molecule."
+          },
+          {
+            "name": "mass_fraction_in_molecule",
+            "type": "rollup",
+            "formula": "(Atom(effective_mass) * count_in_molecule) / Molecule(molecule_id).molecular_mass",
+            "description": "Fraction of total molecular mass contributed by this atom type."
+          }
+        ],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "nonnegative_count",
+            "formula": "count_in_molecule >= 1",
+            "error_message": "Must have at least one"
+          }
+        ]
+      },
+      {
+        "name": "Reaction",
+        "description": "A chemical reaction with references to reactants, products, and optional details.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "label",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "activation_energy",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "In Joules or eV, etc."
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [
+          {
+            "name": "reactants",
+            "description": "Reactant molecules",
+            "target_entity": "Molecule",
+            "type": "many_to_many",
+            "join_entity": "ReactionParticipant",
+            "join_condition": "ReactionParticipant.reaction_id = this.id AND ReactionParticipant.role='reactant'"
+          },
+          {
+            "name": "products",
+            "description": "Product molecules",
+            "target_entity": "Molecule",
+            "type": "many_to_many",
+            "join_entity": "ReactionParticipant",
+            "join_condition": "ReactionParticipant.reaction_id = this.id AND ReactionParticipant.role='product'"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "alias_R",
+            "type": "rollup",
+            "formula": "LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='R').value",
+            "note": "Universal gas constant (toy). If not in your physics constants, you can store it there or do partial reference."
+          },
+          {
+            "name": "delta_mass",
+            "type": "rollup",
+            "formula": "SUM(products.molecular_mass) - SUM(reactants.molecular_mass)"
+          },
+          {
+            "name": "arrhenius_rate",
+            "type": "rollup",
+            "parameters": [
+              "temperature",
+              "pre_exponential_factor"
+            ],
+            "formula": "pre_exponential_factor * EXP( -activation_energy / (alias_R * temperature) )"
+          },
+          {
+            "name": "reaction_exothermicity_estimate",
+            "type": "rollup",
+            "formula": "SUM(products.molecular_mass) * SomeEnthalpyTable - SUM(reactants.molecular_mass)* AnotherEnthalpyTable",
+            "description": "Crude enthalpy difference to gauge exo vs endo."
+          },
+          {
+            "name": "reaction_order_estimate",
+            "type": "rollup",
+            "formula": "SUM( reactants.ReactionParticipant.stoichiometric_coefficient )",
+            "description": "Counts sum of stoichiometric exponents as naive overall order."
+          },
+          {
+            "name": "reaction_rate_constant_estimate",
+            "type": "rollup",
+            "formula": "ArrheniusEstimate( activation_energy, alias_R, some_temperature )",
+            "description": "A direct aggregator for rate constant using Arrhenius-like logic."
+          },
+          {
+            "name": "equilibrium_constant_estimate",
+            "type": "rollup",
+            "formula": "ComputeEquilibriumConstant( reaction_exothermicity_estimate, some_temperature )",
+            "description": "Rough K_eq from enthalpy/entropy or guess."
+          },
+          {
+            "name": "reaction_feasibility_score",
+            "type": "rollup",
+            "formula": "AssessReactionFeasibility(delta_mass, reaction_exothermicity_estimate, alias_R)",
+            "description": "Generates an integer or float rating: 0=not feasible, 1=partially feasible, etc."
+          },
+          {
+            "name": "approximate_gibbs_free_energy",
+            "type": "rollup",
+            "formula": "ComputeGibbsEnergyFromEnthalpyAndEntropy(reaction_exothermicity_estimate, some_temperature)",
+            "description": "Rough ∆G estimate from enthalpy difference and guessed entropy term."
+          },
+          {
+            "name": "predicted_equilibrium_conversion",
+            "type": "rollup",
+            "formula": "ComputeEqConversion(equilibrium_constant_estimate, reaction_feasibility_score)",
+            "description": "Guesses reaction's extent at equilibrium using a toy model."
+          },
+          {
+            "name": "reaction_mechanism_classification",
+            "type": "rollup",
+            "formula": "ClassifyReactionMechanism(reactants, products, activation_energy)",
+            "description": "Labels reaction as SN2, radical, elimination, etc., in a simplified manner."
+          },
+          {
+            "name": "catalysis_susceptibility",
+            "type": "rollup",
+            "formula": "AssessCatalysisFeasibility( reaction_mechanism_classification, activation_energy )",
+            "description": "Rates how easily a catalyst can lower the barrier, from 0=low to 1=high."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "perform_reaction_step",
+            "parameters": [
+              "time_step",
+              "reactant_concentrations"
+            ],
+            "formula": "UpdateConcentrationsUsingKinetics( this, time_step, reactant_concentrations )"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "mass_conservation",
+            "formula": "ABS( delta_mass ) < tiny_epsilon",
+            "error_message": "Mass must be conserved (toy constraint ignoring binding energy)."
+          },
+          {
+            "name": "charge_conservation",
+            "formula": "SUM(products.total_net_charge) = SUM(reactants.total_net_charge) ± tiny_epsilon",
+            "error_message": "Charge must be conserved"
+          }
+        ]
+      },
+      {
+        "name": "ReactionParticipant",
+        "description": "Bridging entity for Reaction, specifying which Molecule is a reactant or product.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "reaction_id",
+            "type": "lookup",
+            "target_entity": "Reaction",
+            "foreign_key": true
+          },
+          {
+            "name": "molecule_id",
+            "type": "lookup",
+            "target_entity": "Molecule",
+            "foreign_key": true
+          },
+          {
+            "name": "role",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "'reactant' or 'product' etc."
+          },
+          {
+            "name": "stoichiometric_coefficient",
+            "type": "scalar",
+            "datatype": "float"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "quantity_needed",
+            "type": "rollup",
+            "formula": "stoichiometric_coefficient * SomeBaseScaleFactor",
+            "description": "Compute how many moles or grams are required given stoichiometry."
+          },
+          {
+            "name": "limiting_reagent_check",
+            "type": "rollup",
+            "formula": "CheckIfLimitingReagent(this.reaction_id, this.molecule_id)",
+            "description": "Flags if this reactant is limiting based on available amounts."
+          },
+          {
+            "name": "stoichiometric_excess",
+            "type": "rollup",
+            "formula": "ComputeStoichiometricExcess( this.molecule_id, this.reaction_id )",
+            "description": "Checks how much of this participant is over the stoichiometric need, referencing what's 'on-hand'."
+          },
+          {
+            "name": "partial_pressure_contribution",
+            "type": "rollup",
+            "formula": "EstimatePartialPressure( this.molecule_id, reaction_id, total_pressure )",
+            "description": "Estimates partial pressure if gas-phase and partial pressures are tracked."
+          },
+          {
+            "name": "per_atom_contribution",
+            "type": "rollup",
+            "formula": "ComputePerAtomReactionShare(this.molecule_id, stoichiometric_coefficient)",
+            "description": "Fraction of total reaction atoms contributed by this participant."
+          }
+        ],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "valid_role",
+            "formula": "role IN ('reactant','product','catalyst')",
+            "error_message": "Role must be recognized"
+          }
+        ]
+      },
+      {
+        "name": "Solution",
+        "description": "A new entity for solutions or mixtures containing one or more solutes and a solvent.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "solvent_molecule_id",
+            "type": "lookup",
+            "target_entity": "Molecule",
+            "foreign_key": false,
+            "description": "The primary solvent used in this solution."
+          },
+          {
+            "name": "temperature",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Temperature of the solution (K)."
+          },
+          {
+            "name": "volume_liters",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Volume of the solution in liters."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "solute_molecules",
+            "type": "many_to_many",
+            "target_entity": "Molecule",
+            "join_entity": "SolutionSoluteMapping",
+            "join_condition": "SolutionSoluteMapping.solution_id = this.id AND SolutionSoluteMapping.solute_molecule_id = Molecule.id"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "total_solute_concentration",
+            "type": "rollup",
+            "formula": "SUM( SolutionSoluteMapping.concentration_of_solute WHERE solution_id = this.id )",
+            "description": "Sum of all solute concentrations in the solution."
+          },
+          {
+            "name": "solution_ionic_strength",
+            "type": "rollup",
+            "formula": "ComputeIonicStrength(solute_molecules, volume_liters)",
+            "description": "Half the sum of c_i * z_i^2 for each ionic species i in the solution."
+          },
+          {
+            "name": "freezing_point_depression_estimate",
+            "type": "rollup",
+            "formula": "ComputeColligativeFPDepression( total_solute_concentration, solvent_molecule_id )",
+            "description": "Predicts ∆Tf from a simplistic colligative property formula."
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "SolutionSoluteMapping",
+        "description": "Bridging entity to link solutions with solute molecules, storing concentration or amount data.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "solution_id",
+            "type": "lookup",
+            "target_entity": "Solution",
+            "foreign_key": true
+          },
+          {
+            "name": "solute_molecule_id",
+            "type": "lookup",
+            "target_entity": "Molecule",
+            "foreign_key": true
+          },
+          {
+            "name": "concentration_of_solute",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Concentration of a particular solute in mol/L or another consistent unit."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": [],
+        "constraints": []
+      }
+    ]
+  },
+  "data": {
+    "Atom": [
+      {
+        "id": "atom_H1",
+        "element_symbol": "H",
+        "atomic_number": 1,
+        "mass_override": 1.008,
+        "charge_state": 0
+      },
+      {
+        "id": "atom_O1",
+        "element_symbol": "O",
+        "atomic_number": 8,
+        "mass_override": 15.999,
+        "charge_state": 0
+      }
+    ],
+    "Molecule": [
+      {
+        "id": "water_mol",
+        "name": "H2O",
+        "notes": "Water"
+      }
+    ],
+    "MoleculeAtomMapping": [
+      {
+        "id": "map_H1",
+        "molecule_id": "water_mol",
+        "atom_id": "atom_H1",
+        "count_in_molecule": 2
+      },
+      {
+        "id": "map_O1",
+        "molecule_id": "water_mol",
+        "atom_id": "atom_O1",
+        "count_in_molecule": 1
+      }
+    ],
+    "Reaction": [
+      {
+        "id": "reaction_water_formation",
+        "label": "2H2 + O2 -> 2H2O",
+        "activation_energy": 200000
+      }
+    ],
+    "ReactionParticipant": [
+      {
+        "id": "rp1",
+        "reaction_id": "reaction_water_formation",
+        "molecule_id": "water_mol",
+        "role": "product",
+        "stoichiometric_coefficient": 2
+      }
+    ]
+  }
+}

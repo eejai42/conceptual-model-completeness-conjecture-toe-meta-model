@@ -1,0 +1,324 @@
+{
+  "name": "All-In-One CMCC Astronomy Model",
+  "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
+  "depends_on": [
+    "CMCC_Complete_ToEMM_Physics",
+    "CMCC_Complete_ToEMM_Math"
+  ],
+  "version": "v2.0",
+  "meta": {
+    "title": "CMCC Complete Astronomy ToE Meta-Model",
+    "subtitle": "Declarative Data Structures for Celestial Bodies, Cosmic Dynamics, and Observational Records",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This CMCC Astronomy extension provides an ACID-based schema to model celestial objects (stars, planets, galaxies) and large-scale cosmic structures, bridging them with the fundamental physics in the CMCC framework. Celestial orbits, gravitational fields, and cosmic evolution snapshots are captured as aggregator-based data references, making it straightforward to combine classical or relativistic physics with observational data sets for unified astrophysical analyses.",
+    "executive_summary": {
+      "key_points": [
+        "Represents stars, planets, galaxies, or dark matter halos as data-driven entities with aggregator checks for orbital parameters, luminosities, etc.",
+        "Supports multi-scale cosmic evolution logs (e.g., redshift-based snapshots), referencing the same aggregator logic used in CMCC Physics.",
+        "Declarative structure fosters cross-domain synergy—for instance, connecting quantum wavefunctions (if desired) to cosmic-level phenomena.",
+        "Provides purely data-centric constraints for gravitational interactions, large-scale structures, or multi-observer frames (relativistic)."
+      ],
+      "implications": [
+        "Enables integrated cosmic modeling: link gravitational aggregator formulas directly to other CMCC physics or even AI-based data processing.",
+        "Facilitates complex observational logs—telescopes, reference frames—without separate code, storing all ‘what’ logic in aggregator or constraint fields.",
+        "Bridges the gap between astrophysical theories and other domains—like quantum or economics (e.g., astro-finance?), all in one environment."
+      ],
+      "narrative": [
+        {
+          "title": "CMCC Astronomy Extension",
+          "content": [
+            "Astronomy involves massive data sets and diverse theoretical frameworks—from orbital mechanics to the large-scale structure of the universe. Conventional approaches require specialized software for each domain (e.g., star catalogs, cosmological simulations).",
+            "By placing these concepts in the CMCC framework, we encode stars, exoplanets, black hole metrics, or cosmic evolution data via aggregator fields and lookups. Newtonian or relativistic equations become constraints or aggregator formulas, while observational records integrate into the same ACID-based environment. This unified approach simplifies cross-checking cosmic data with quantum or classical models, fosters reusability of aggregator logic, and ensures that large-scale cosmic phenomena can be trivially combined with micro-scale physics or complex multi-observer contexts."
+          ]
+        }
+      ]
+    }
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "CelestialBody",
+        "description": "Generic celestial object: star, planet, asteroid, etc. References physics Particle or black hole if needed.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "body_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "body_type",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "e.g. star, planet, dwarf, asteroid, black_hole, etc."
+          },
+          {
+            "name": "approx_mass",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "In kg, or another standard unit."
+          },
+          {
+            "name": "radius",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Mean radius in meters."
+          },
+          {
+            "name": "reference_particle_id",
+            "type": "lookup",
+            "target_entity": "CMCC_Complete_ToEMM_Physics.Particle",
+            "foreign_key": false,
+            "note": "If you want to unify with a Particle record from physics."
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "gravitational_parameter",
+            "type": "rollup",
+            "formula": "approx_mass * LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='G').value"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "compute_escape_velocity",
+            "parameters": [],
+            "formula": "SQRT( (2 * gravitational_parameter) / radius )"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "mass_positive",
+            "formula": "approx_mass > 0",
+            "error_message": "Celestial body mass must be positive"
+          }
+        ]
+      },
+      {
+        "name": "StarSystem",
+        "description": "Collection of celestial bodies orbiting a primary star. Summaries for total mass, etc.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "system_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [
+          {
+            "name": "members",
+            "description": "Celestial bodies in this star system",
+            "target_entity": "CelestialBody",
+            "type": "many_to_many",
+            "join_entity": "StarSystemMembership",
+            "join_condition": "StarSystemMembership.system_id = this.id AND StarSystemMembership.body_id = CelestialBody.id"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "total_system_mass",
+            "type": "rollup",
+            "formula": "SUM(members.approx_mass)"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "StarSystemMembership",
+        "description": "Bridging table linking CelestialBody to StarSystem with orbital data, etc.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "system_id",
+            "type": "lookup",
+            "target_entity": "StarSystem",
+            "foreign_key": true
+          },
+          {
+            "name": "body_id",
+            "type": "lookup",
+            "target_entity": "CelestialBody",
+            "foreign_key": true
+          },
+          {
+            "name": "semimajor_axis",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Orbital semimajor axis in meters."
+          },
+          {
+            "name": "eccentricity",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Orbital eccentricity"
+          },
+          {
+            "name": "orbital_period",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Orbital period in seconds."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "perihelion_distance",
+            "type": "rollup",
+            "formula": "semimajor_axis * (1 - eccentricity)"
+          },
+          {
+            "name": "aphelion_distance",
+            "type": "rollup",
+            "formula": "semimajor_axis * (1 + eccentricity)"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "compute_orbital_period",
+            "parameters": [],
+            "formula": "2π * SQRT( semimajor_axis^3 / (G * mass_of_primary_star) )"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "valid_eccentricity",
+            "formula": "eccentricity >= 0 AND eccentricity < 1.0",
+            "error_message": "Eccentricity must be between 0 and 1 (excluding parabolic orbits)."
+          }
+        ]
+      },
+      {
+        "name": "Galaxy",
+        "description": "A large-scale structure containing multiple star systems.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "galaxy_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "galaxy_type",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "e.g., spiral, elliptical, irregular"
+          },
+          {
+            "name": "approx_stellar_mass_sum",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Crude sum of star masses in the galaxy"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": [],
+        "constraints": []
+      }
+    ]
+  },
+  "data": {
+    "CelestialBody": [
+      {
+        "id": "sun",
+        "body_name": "Sun",
+        "body_type": "star",
+        "approx_mass": 1.989e+30,
+        "radius": 696340000,
+        "reference_particle_id": null,
+        "notes": "G-type main-sequence star"
+      },
+      {
+        "id": "earth",
+        "body_name": "Earth",
+        "body_type": "planet",
+        "approx_mass": 5.972e+24,
+        "radius": 6371000,
+        "reference_particle_id": "orbiting_body_B",
+        "notes": "Third planet of the Solar System"
+      }
+    ],
+    "StarSystem": [
+      {
+        "id": "sol_system",
+        "system_name": "Solar System",
+        "notes": "Includes the Sun, Earth, etc."
+      }
+    ],
+    "StarSystemMembership": [
+      {
+        "id": "sol_sun",
+        "system_id": "sol_system",
+        "body_id": "sun",
+        "semimajor_axis": 0,
+        "eccentricity": 0,
+        "orbital_period": 0
+      },
+      {
+        "id": "sol_earth",
+        "system_id": "sol_system",
+        "body_id": "earth",
+        "semimajor_axis": 149600000000,
+        "eccentricity": 0.0167,
+        "orbital_period": "365.25 * 24.0 * 3600.0"
+      }
+    ],
+    "Galaxy": [
+      {
+        "id": "milky_way",
+        "galaxy_name": "Milky Way",
+        "galaxy_type": "spiral",
+        "approx_stellar_mass_sum": 1500000000000,
+        "notes": "Contains the Solar System among ~100-400 billion stars"
+      }
+    ]
+  }
+}

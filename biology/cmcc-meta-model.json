@@ -1,0 +1,529 @@
+{
+  "depends_on": [
+    "CMCC_Complete_ToEMM_Chemistry",
+    "CMCC_Complete_ToEMM_Physics"
+  ],
+  "version": "v2.0",
+  "meta": {
+    "title": "CMCC Complete Biology ToE Meta-Model",
+    "subtitle": "A Unified Declarative Schema for Genes, Proteins, and Cellular Systems",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This Biology extension of CMCC (Conceptual Model Completeness Conjecture) applies the same ACID-based, Turing-complete framework to model biological entities from genes and proteins up to complex organisms and ecosystems. By leveraging aggregator-based logic and lookups, we encode metabolic pathways, regulatory networks, and evolutionary processes in a syntax-free, declarative manner, seamlessly connecting to underlying chemistry or physics data.",
+    "executive_summary": {
+      "key_points": [
+        "Encodes fundamental biological structures—genes, proteins, metabolic pathways—using aggregator formulas for function annotations, expression levels, and more.",
+        "Unifies data from molecular scale (genetics, protein folding) to higher-level processes (homeostasis, cellular automata).",
+        "Supports broad expansions: organism-level phenotypes or population genetics, cross-referencing existing CMCC Chemistry or AI modules.",
+        "Provides constraints for biological rules (e.g., stoichiometric balances in metabolism), enabling real-time consistency checks across data."
+      ],
+      "implications": [
+        "Facilitates an end-to-end representation of biology that directly ties into the same data environment as quantum or chemical processes.",
+        "Reduces complexity by removing domain-specific code: aggregator-based formulas store all rules about gene regulation, protein-ligand interactions, etc.",
+        "Encourages advanced cross-domain modeling—like bridging AI-based gene expression predictions or physics-based protein folding simulations—through a single ACID-compliant structure."
+      ],
+      "narrative": [
+        {
+          "title": "CMCC Biology Extension",
+          "content": [
+            "Biology spans from microscopic gene expression to macroscopic ecological networks. Typically, each scale uses its own specialized modeling tools, making integrated, cross-scale analyses cumbersome.",
+            "In the CMCC Biology Model, everything from DNA sequences and protein interactions to cellular processes is defined as data, referencing aggregator formulas for logic (e.g., binding affinities, regulatory feedback). Because the schema is Turing-complete and purely declarative, you can update or extend biological rules without separate code rewriting. Moreover, it seamlessly leverages the existing CMCC Chemistry (for metabolic pathways) or CMCC AI (for machine learning–driven predictions), all under the same universal structural approach."
+          ]
+        }
+      ]
+    }
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "Gene",
+        "description": "Represents a segment of DNA with regulatory + coding regions, etc.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "gene_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "dna_sequence",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "Toy example storing raw A/C/G/T"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "sequence_length",
+            "type": "rollup",
+            "formula": "LENGTH(dna_sequence)"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "transcribe_to_rna",
+            "parameters": [],
+            "formula": "Replace(dna_sequence, T->U) // extremely simplified"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "valid_nucleotides",
+            "formula": "dna_sequence contains only {A,C,G,T}",
+            "error_message": "Gene must have valid DNA characters"
+          }
+        ]
+      },
+      {
+        "name": "Protein",
+        "description": "A polypeptide chain. Optionally references a Molecule record in chemistry-schema if modeled at that level.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "protein_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "amino_acid_sequence",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "Single-letter code for amino acids, e.g. 'MKT...' etc."
+          },
+          {
+            "name": "encoded_by_gene_id",
+            "type": "lookup",
+            "target_entity": "Gene",
+            "foreign_key": false,
+            "note": "Which gene codes for this protein"
+          },
+          {
+            "name": "associated_molecule_id",
+            "type": "lookup",
+            "target_entity": "CMCC_Complete_ToEMM_Chemistry.Molecule",
+            "foreign_key": false,
+            "note": "Optional link to a Molecule entry that represents the 3D structure or partial info"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "sequence_length",
+            "type": "rollup",
+            "formula": "LENGTH(amino_acid_sequence)"
+          },
+          {
+            "name": "approx_molecular_mass",
+            "type": "rollup",
+            "formula": "sequence_length * 110.0 // Toy approx: 110 Da per residue"
+          },
+          {
+            "name": "chemistry_mass",
+            "type": "rollup",
+            "formula": "IF associated_molecule_id != null THEN LOOKUP(associated_molecule_id).molecular_mass ELSE approx_molecular_mass"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "fold_protein",
+            "parameters": [],
+            "formula": "ComputeFoldingConformation(amino_acid_sequence)"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "valid_amino_acids",
+            "formula": "amino_acid_sequence contains only {ACDEFGHIKLMNPQRSTVWY}",
+            "error_message": "Protein must have valid single-letter amino acids (toy example)."
+          }
+        ]
+      },
+      {
+        "name": "Cell",
+        "description": "Basic cellular entity containing genes, proteins, or referencing molecules. Could be prokaryote or eukaryote.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "cell_type",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [
+          {
+            "name": "genes",
+            "description": "Genes present in the cell (toy assumption: we store them in bridging table).",
+            "target_entity": "Gene",
+            "type": "many_to_many",
+            "join_entity": "CellGeneMapping",
+            "join_condition": "CellGeneMapping.cell_id = this.id AND CellGeneMapping.gene_id = Gene.id"
+          },
+          {
+            "name": "proteins",
+            "description": "Proteins present in the cell (toy bridging).",
+            "target_entity": "Protein",
+            "type": "many_to_many",
+            "join_entity": "CellProteinMapping",
+            "join_condition": "CellProteinMapping.cell_id = this.id AND CellProteinMapping.protein_id = Protein.id"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "total_protein_mass",
+            "type": "rollup",
+            "formula": "SUM(proteins.chemistry_mass)"
+          },
+          {
+            "name": "gene_count",
+            "type": "rollup",
+            "formula": "COUNT(genes)"
+          },
+          {
+            "name": "protein_count",
+            "type": "rollup",
+            "formula": "COUNT(proteins)"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "transcribe_all_genes",
+            "parameters": [],
+            "formula": "FOR each g in genes => g.transcribe_to_rna()"
+          },
+          {
+            "name": "translate_all_rna",
+            "parameters": [],
+            "formula": "FOR each r in transcribe_all_genes => ConvertRNAtoProtein(r) // toy placeholder"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "CellGeneMapping",
+        "description": "Bridging table for which genes exist in which cell, toy model ignoring diploidy, etc.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "cell_id",
+            "type": "lookup",
+            "target_entity": "Cell",
+            "foreign_key": true
+          },
+          {
+            "name": "gene_id",
+            "type": "lookup",
+            "target_entity": "Gene",
+            "foreign_key": true
+          },
+          {
+            "name": "copy_number",
+            "type": "scalar",
+            "datatype": "int",
+            "note": "How many copies of this gene in the cell (toy)."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "positive_copy_number",
+            "formula": "copy_number >= 1",
+            "error_message": "Must have at least one copy if present."
+          }
+        ]
+      },
+      {
+        "name": "Sequence",
+        "description": "Represents a function s: ℕ -> X for some set X, capturing the notion of a sequence. Provides aggregator checks for boundedness, Cauchy, etc.",
+        "fields": [
+          {
+            "name": "sequence_id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique ID for referencing the sequence."
+          },
+          {
+            "name": "domain_set_id",
+            "type": "lookup",
+            "target_entity": "Set",
+            "foreign_key": true,
+            "description": "Should typically be 'naturals'. If not 'naturals', partial usage. Stored purely as a reference."
+          },
+          {
+            "name": "codomain_set_id",
+            "type": "lookup",
+            "target_entity": "Set",
+            "foreign_key": true,
+            "description": "Which set the sequence values lie in, e.g. 'reals'."
+          },
+          {
+            "name": "term_rule",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Param-based or symbolic expression describing s(n). Could store a table or formula like '1/n'."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "is_bounded",
+            "type": "rollup",
+            "description": "Checks if all terms s(n) lie within some finite bound in the codomain. Implementation conceptual.",
+            "formula": "∀n => |s(n)| < M for some M. If no M found => false."
+          },
+          {
+            "name": "is_cauchy",
+            "type": "rollup",
+            "description": "For metric codomain (like ℝ), checks if for every ε>0, there's an N s.t. m,n> N => distance(s(m), s(n))<ε. Returns true if so.",
+            "formula": "CheckCauchyCondition(term_rule, codomain_set_id)"
+          }
+        ],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "domain_should_be_naturals",
+            "formula": "domain_set_id == 'naturals'",
+            "error_message": "Sequence domain must be 'naturals' to be a standard sequence."
+          }
+        ]
+      },
+      {
+        "name": "CellProteinMapping",
+        "description": "Bridging table for which proteins exist in which cell, plus concentration or copy number info.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "cell_id",
+            "type": "lookup",
+            "target_entity": "Cell",
+            "foreign_key": true
+          },
+          {
+            "name": "protein_id",
+            "type": "lookup",
+            "target_entity": "Protein",
+            "foreign_key": true
+          },
+          {
+            "name": "abundance",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "e.g. # molecules or concentration"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "non_negative_abundance",
+            "formula": "abundance >= 0",
+            "error_message": "Protein abundance cannot be negative"
+          }
+        ]
+      },
+      {
+        "name": "MetabolicReaction",
+        "description": "A biological reaction that references a chemistry Reaction for stoichiometry, plus an enzyme (Protein).",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "reaction_id",
+            "type": "lookup",
+            "target_entity": "CMCC_Complete_ToEMM_Chemistry.Reaction",
+            "foreign_key": true,
+            "note": "Underlying stoichiometric details from the chemistry schema"
+          },
+          {
+            "name": "enzyme_id",
+            "type": "lookup",
+            "target_entity": "Protein",
+            "foreign_key": false,
+            "note": "If there is a specific enzyme (protein) catalyzing it"
+          },
+          {
+            "name": "cell_id",
+            "type": "lookup",
+            "target_entity": "Cell",
+            "foreign_key": false,
+            "note": "Which cell it occurs in, if needed"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "baseline_rate",
+            "type": "rollup",
+            "parameters": [
+              "temperature",
+              "pre_exponential_factor"
+            ],
+            "formula": "LOOKUP(reaction_id).arrhenius_rate(temperature, pre_exponential_factor)"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "perform_metabolic_step",
+            "parameters": [
+              "time_step",
+              "substrate_concs"
+            ],
+            "formula": "UpdateCellSubstratesUsingKinetics(reaction_id, enzyme_id, time_step, substrate_concs)"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "enzyme_is_protein",
+            "formula": "IF enzyme_id != null THEN enzyme_id must reference a valid Protein record",
+            "error_message": "Enzyme must be a protein entity (toy example)."
+          }
+        ]
+      }
+    ]
+  },
+  "data": {
+    "Gene": [
+      {
+        "id": "gene_lacZ",
+        "gene_name": "lacZ",
+        "dna_sequence": "ATGGT...TAG",
+        "notes": "Encodes beta-galactosidase in E. coli (toy partial seq)."
+      },
+      {
+        "id": "gene_insulin",
+        "gene_name": "INS",
+        "dna_sequence": "ATGGCC...TAA",
+        "notes": "Human insulin gene (toy partial seq)."
+      }
+    ],
+    "Protein": [
+      {
+        "id": "protein_lacZ",
+        "protein_name": "Beta-galactosidase",
+        "amino_acid_sequence": "MKIP...VVKM",
+        "encoded_by_gene_id": "gene_lacZ",
+        "associated_molecule_id": null,
+        "notes": "E. coli enzyme that hydrolyzes lactose."
+      },
+      {
+        "id": "protein_insulin",
+        "protein_name": "Insulin",
+        "amino_acid_sequence": "MALWMRLLPLLALLALWGPDPAAA...",
+        "encoded_by_gene_id": "gene_insulin",
+        "associated_molecule_id": null,
+        "notes": "Human insulin (toy partial)."
+      }
+    ],
+    "Cell": [
+      {
+        "id": "cell_ecoli_1",
+        "cell_type": "E. coli",
+        "notes": "Toy E. coli cell"
+      },
+      {
+        "id": "cell_pancreatic_beta",
+        "cell_type": "Human pancreatic beta cell",
+        "notes": "Insulin-producing cell"
+      }
+    ],
+    "CellGeneMapping": [
+      {
+        "id": "cg_ecoli_lacZ",
+        "cell_id": "cell_ecoli_1",
+        "gene_id": "gene_lacZ",
+        "copy_number": 1
+      },
+      {
+        "id": "cg_beta_ins",
+        "cell_id": "cell_pancreatic_beta",
+        "gene_id": "gene_insulin",
+        "copy_number": 2
+      }
+    ],
+    "CellProteinMapping": [
+      {
+        "id": "cp_ecoli_lacZ",
+        "cell_id": "cell_ecoli_1",
+        "protein_id": "protein_lacZ",
+        "abundance": 1500
+      },
+      {
+        "id": "cp_beta_insulin",
+        "cell_id": "cell_pancreatic_beta",
+        "protein_id": "protein_insulin",
+        "abundance": 800
+      }
+    ],
+    "MetabolicReaction": [
+      {
+        "id": "mr_lactose_hydrolysis",
+        "reaction_id": "reaction_lactose_hydrolysis",
+        "enzyme_id": "protein_lacZ",
+        "cell_id": "cell_ecoli_1",
+        "notes": "Beta-gal catalyzes lactose -> glucose + galactose (toy)."
+      }
+    ]
+  }
+}

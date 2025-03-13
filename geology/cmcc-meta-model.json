@@ -1,0 +1,842 @@
+{
+  "name": "All-In-One CMCC Geology Model",
+  "description": "Extends Physics and Chemistry to handle minerals, rock formations, tectonic plates, etc.",
+  "depends_on": [
+    "CMCC_Complete_ToEMM_Physics",
+    "CMCC_Complete_ToEMM_Chemistry"
+  ],
+  "version": "v2.1",
+  "meta": {
+    "title": "CMCC Complete Geology ToE Meta-Model",
+    "subtitle": "A Declarative Data Architecture for Minerals, Rock Formations, and Tectonic Processes",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This Geology extension of the CMCC (Conceptual Model Completeness Conjecture) encodes geological structures and processes—minerals, rock layers, tectonic plates—into a unified, ACID-based schema. By leveraging the same core primitives (Schema, Data, Lookups, Aggregations, Lambdas), it provides a purely declarative framework for representing everything from mineral compositions and formation data to large-scale tectonic dynamics, tightly integrating with CMCC Physics and Chemistry for cross-domain geological modeling.",
+    "executive_summary": {
+      "key_points": [
+        "Formalizes geological entities (e.g., mineral records, rock formations, tectonic plates) through aggregator-based logic and constraints.",
+        "Bridges physical and chemical processes—like metamorphism or weathering—to the broader CMCC environment, allowing cross-domain synergy.",
+        "Remains Turing-complete: advanced geological simulations (e.g., plate tectonic evolution or geochemical cycle modeling) can be expressed declaratively.",
+        "Stores field data, measurement logs, and interpretive rules in a single ACID-compliant data substrate, eliminating specialized external scripts."
+      ],
+      "implications": [
+        "Simplifies geoscience data pipelines by unifying references to chemical composition, historical climate data, or seismic observations in one schema.",
+        "Increases reproducibility and collaboration: geological 'theories' (e.g., plate boundary models) become aggregator constraints, easily shareable with other domains like Astronomy or Biology.",
+        "Facilitates advanced cross-disciplinary insights—e.g., linking isotopic data (Chemistry) to tectonic uplift rates (Geology) and climate modeling in the same environment."
+      ],
+      "narrative": [
+        {
+          "title": "CMCC Geology Extension",
+          "content": [
+            "Geology spans from small-scale mineral compositions and crystal structures to continental-scale tectonics and planetary-scale geological cycles. Traditionally, these areas are handled by multiple disconnected tools, making integrated analysis difficult.",
+            "The CMCC Geology Model unifies such data: minerals reference chemical aggregator formulas, rock formations track layered compositions, and tectonic plate interactions rely on aggregator-based constraints for motion or stress. Because it is Turing-complete and purely declarative, researchers can add new interpretive logic (like metamorphic phase rules or volcanic activity triggers) as data, without rewriting specialized scripts. Meanwhile, synergy with CMCC Physics or Astronomy allows geoscientists to tie planetary geology directly to cosmic processes, or incorporate gravitational aggregator checks seamlessly."
+          ]
+        }
+      ]
+    }
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "Mineral",
+        "description": "Basic mineral with chemical composition, crystal structure, etc.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "mineral_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "chemical_formula",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "e.g. SiO2 for quartz"
+          },
+          {
+            "name": "hardness_mohs",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Mohs hardness scale"
+          },
+          {
+            "name": "lattice_structure",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "e.g. hexagonal, cubic, tetragonal"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "is_silicate",
+            "type": "rollup",
+            "description": "Checks if chemical formula suggests a silicate mineral.",
+            "formula": "IF CONTAINS(chemical_formula, 'Si') THEN true ELSE false"
+          },
+          {
+            "name": "common_rock_forming",
+            "type": "rollup",
+            "description": "Checks if hardness is > 2.5 and formula has common rock-forming elements (rough heuristic).",
+            "formula": "IF (hardness_mohs > 2.5 AND (CONTAINS(chemical_formula,'Si') OR CONTAINS(chemical_formula,'Al'))) THEN true ELSE false"
+          },
+          {
+            "name": "hardness_category",
+            "type": "rollup",
+            "description": "Categorizes hardness into 'very hard' (>=7), 'hard' (4-7), 'soft' (<4).",
+            "formula": "IF hardness_mohs >= 7 THEN 'very hard' ELSE IF hardness_mohs >=4 THEN 'hard' ELSE 'soft'"
+          },
+          {
+            "name": "carbonate_check",
+            "type": "rollup",
+            "description": "Returns true if the formula includes CO3, typical of carbonate minerals.",
+            "formula": "IF CONTAINS(chemical_formula, 'CO3') THEN true ELSE false"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "RockFormation",
+        "description": "A body of rock with one or more minerals, geologic age, etc.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "formation_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "rock_type",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "igneous, sedimentary, metamorphic, etc."
+          },
+          {
+            "name": "geologic_age_mya",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Approx age in million years"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [
+          {
+            "name": "minerals_in_formation",
+            "description": "Bridging to list which minerals appear",
+            "target_entity": "Mineral",
+            "type": "many_to_many",
+            "join_entity": "FormationMineralMapping",
+            "join_condition": "FormationMineralMapping.formation_id = this.id AND FormationMineralMapping.mineral_id = Mineral.id"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "num_mineral_types",
+            "type": "rollup",
+            "formula": "COUNT(minerals_in_formation)",
+            "description": "Number of distinct minerals in this rock formation."
+          },
+          {
+            "name": "dominant_mineral",
+            "type": "rollup",
+            "description": "Identifies the mineral with the highest percentage_estimate in this formation.",
+            "formula": "MAX_BY(minerals_in_formation, FormationMineralMapping.percentage_estimate).mineral_name"
+          },
+          {
+            "name": "calcite_content_percent",
+            "type": "rollup",
+            "description": "Sum of calcite percentage in this formation if present.",
+            "formula": "SUM_OF( FormationMineralMapping.percentage_estimate WHERE Mineral.chemical_formula LIKE 'CaCO3' )"
+          },
+          {
+            "name": "average_mohs_hardness",
+            "type": "rollup",
+            "description": "Weighted average hardness of minerals in formation based on percentage_estimate.",
+            "formula": "SUM( FormationMineralMapping.percentage_estimate * Mineral.hardness_mohs ) / 100"
+          },
+          {
+            "name": "is_fossil_bearing",
+            "type": "rollup",
+            "description": "Heuristic check if formation is known to contain fossils.",
+            "formula": "IF rock_type = 'sedimentary' AND (some fossil flag available) THEN true ELSE false"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "FormationMineralMapping",
+        "description": "Bridge many minerals to many rock formations",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "formation_id",
+            "type": "lookup",
+            "target_entity": "RockFormation",
+            "foreign_key": true
+          },
+          {
+            "name": "mineral_id",
+            "type": "lookup",
+            "target_entity": "Mineral",
+            "foreign_key": true
+          },
+          {
+            "name": "percentage_estimate",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Approx percentage by volume or mass"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "relative_hardness_factor",
+            "type": "rollup",
+            "description": "Partial contribution to hardness based on percentage and the mineral's Mohs hardness.",
+            "formula": "(percentage_estimate / 100) * Mineral.hardness_mohs"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "TectonicPlate",
+        "description": "Major or minor plate in Earth's lithosphere, referencing geometry if needed.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "plate_name",
+            "type": "scalar",
+            "datatype": "string"
+          },
+          {
+            "name": "approx_area",
+            "type": "scalar",
+            "datatype": "float",
+            "note": "Area in sq. km or m^2"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [
+          {
+            "name": "plate_boundaries",
+            "description": "All boundary events that reference this plate",
+            "target_entity": "PlateBoundaryEvent",
+            "type": "one_to_many",
+            "join_condition": "(PlateBoundaryEvent.plate1_id = this.id) OR (PlateBoundaryEvent.plate2_id = this.id)"
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "plate_boundary_count",
+            "type": "rollup",
+            "description": "Counts how many boundary events this plate is involved in.",
+            "formula": "COUNT(plate_boundaries)"
+          },
+          {
+            "name": "largest_boundary_activity",
+            "type": "rollup",
+            "description": "Finds the boundary with the highest activity_level (conceptual, treating 'high' > 'moderate' > 'low').",
+            "formula": "MAX_BY(plate_boundaries, activity_level)"
+          },
+          {
+            "name": "subduction_count",
+            "type": "rollup",
+            "description": "Counts how many convergent boundaries this plate has.",
+            "formula": "COUNT(plate_boundaries WHERE boundary_type='convergent')"
+          },
+          {
+            "name": "plate_motion_estimate",
+            "type": "rollup",
+            "description": "Placeholder aggregator referencing geophys data to produce velocity (cm/year).",
+            "formula": "RetrievePlateMotionData(plate_name)"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "PlateBoundaryEvent",
+        "description": "Captures interactions between tectonic plates (divergent, convergent, transform).",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "plate1_id",
+            "type": "lookup",
+            "target_entity": "TectonicPlate",
+            "foreign_key": true
+          },
+          {
+            "name": "plate2_id",
+            "type": "lookup",
+            "target_entity": "TectonicPlate",
+            "foreign_key": true
+          },
+          {
+            "name": "boundary_type",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "divergent, convergent, transform"
+          },
+          {
+            "name": "activity_level",
+            "type": "scalar",
+            "datatype": "string",
+            "note": "e.g. high, moderate, low"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "boundary_risk_score",
+            "type": "rollup",
+            "description": "Combines boundary_type + activity_level to yield numeric risk measure. Example logic only.",
+            "formula": "IF boundary_type='convergent' AND activity_level='high' THEN 9 ELSE IF boundary_type='transform' AND activity_level='high' THEN 8 ELSE 3"
+          },
+          {
+            "name": "plate_overlap_area",
+            "type": "rollup",
+            "description": "Conceptual aggregator to find overlap or direct contact zone geometry, if known.",
+            "formula": "ComputePlateOverlap(plate1_id, plate2_id)"
+          },
+          {
+            "name": "is_subduction_zone",
+            "type": "rollup",
+            "description": "Returns true if boundary_type='convergent'.",
+            "formula": "IF boundary_type='convergent' THEN true ELSE false"
+          }
+        ],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "different_plates",
+            "formula": "plate1_id != plate2_id",
+            "error_message": "Boundary must involve two distinct plates"
+          }
+        ]
+      },
+      {
+        "name": "VolcanicSystem",
+        "description": "Represents a volcanic system, potentially related to a tectonic plate or boundary.",
+        "fields": [
+          {
+            "name": "system_id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique ID for the volcanic system."
+          },
+          {
+            "name": "system_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name or label of the volcano/volcanic system."
+          },
+          {
+            "name": "dominant_plate_id",
+            "type": "lookup",
+            "target_entity": "TectonicPlate",
+            "description": "Which plate this volcanic system is most associated with."
+          },
+          {
+            "name": "volcano_type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "e.g. stratovolcano, shield, caldera, etc."
+          },
+          {
+            "name": "recent_eruption_dates",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Array/list of date/timestamps or year markers for recent eruptions."
+          },
+          {
+            "name": "avg_magma_composition",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "String label for typical magma type (basaltic, andesitic, etc.)."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "eruption_frequency",
+            "type": "rollup",
+            "description": "Counts how many eruption entries are listed in recent_eruption_dates within some time range.",
+            "formula": "COUNT(recent_eruption_dates WHERE date_in_last_100_years)"
+          },
+          {
+            "name": "dominant_magma_type",
+            "type": "rollup",
+            "description": "Interprets avg_magma_composition to classify the magma (basaltic, andesitic, etc.).",
+            "formula": "CLASSIFY_MAGMA(avg_magma_composition)"
+          },
+          {
+            "name": "volcanic_explosivity_index_estimate",
+            "type": "rollup",
+            "description": "Heuristic aggregator referencing known eruption volumes or historical data to estimate VEI.",
+            "formula": "EstimateVEIFromHistory(recent_eruption_dates)"
+          },
+          {
+            "name": "tectonic_association",
+            "type": "rollup",
+            "description": "Checks if the associated plate is at a convergent boundary or hotspot, etc.",
+            "formula": "InferTectonicSetting(dominant_plate_id)"
+          },
+          {
+            "name": "average_eruption_interval",
+            "type": "rollup",
+            "description": "Computes average time gap between consecutive eruptions in recent_eruption_dates.",
+            "formula": "ComputeAverageInterval(recent_eruption_dates)"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "EarthquakeRecord",
+        "description": "Logs a seismic event, potentially referencing plate boundaries, magnitude, depth, etc.",
+        "fields": [
+          {
+            "name": "eq_id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique ID for the earthquake record."
+          },
+          {
+            "name": "boundary_event_id",
+            "type": "lookup",
+            "target_entity": "PlateBoundaryEvent",
+            "foreign_key": true,
+            "description": "Which plate boundary event (if any) this earthquake is associated with."
+          },
+          {
+            "name": "magnitude",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Earthquake magnitude on a recognized scale, e.g. Mw (moment magnitude)."
+          },
+          {
+            "name": "depth_km",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Focal depth of the quake in kilometers."
+          },
+          {
+            "name": "time_stamp",
+            "type": "scalar",
+            "datatype": "datetime",
+            "description": "Date/time of the event."
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Any extra commentary or contextual info."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "energy_release",
+            "type": "rollup",
+            "description": "Estimates total seismic energy in Joules from magnitude (conceptual formula).",
+            "formula": "10^(1.5 * magnitude + 4.8)"
+          },
+          {
+            "name": "shallow_or_deep",
+            "type": "rollup",
+            "description": "Classifies quake depth as 'shallow' (<70 km), 'intermediate' (<300 km), or 'deep' (>=300 km).",
+            "formula": "IF depth_km < 70 THEN 'shallow' ELSE IF depth_km < 300 THEN 'intermediate' ELSE 'deep'"
+          },
+          {
+            "name": "aftershock_probability",
+            "type": "rollup",
+            "description": "A heuristic aggregator returning a rough probability of significant aftershocks based on magnitude.",
+            "formula": "ComputeAftershockProb(magnitude)"
+          }
+        ],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "magnitude_range_check",
+            "formula": "magnitude >= 0 AND magnitude <= 10",
+            "error_message": "Magnitude must be in [0..10]."
+          }
+        ]
+      },
+      {
+        "name": "AdvancedGeologyRecord",
+        "description": "Integrates data from multiple geology domains (plates, formations, minerals, etc.) to compute advanced cross-cutting inferences.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique ID for this advanced geology record."
+          },
+          {
+            "name": "record_label",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Human-friendly label for this advanced record or region."
+          },
+          {
+            "name": "plate_ids",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List of TectonicPlate IDs relevant to this advanced record."
+          },
+          {
+            "name": "formation_ids",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List of RockFormation IDs in this region or scenario."
+          },
+          {
+            "name": "volcanic_system_ids",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List of VolcanicSystem IDs, if any."
+          },
+          {
+            "name": "mineral_ids",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List of Mineral IDs relevant to the region."
+          },
+          {
+            "name": "earthquake_ids",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List of EarthquakeRecord IDs referencing local seismic events."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "mineral_weathering_index",
+            "type": "rollup",
+            "description": "Aggregates presence of easily weathered minerals (e.g., calcite) plus environment parameters to produce a weathering index.",
+            "formula": "ComputeWeatheringIndex(mineral_ids)"
+          },
+          {
+            "name": "metamorphic_grade_inference",
+            "type": "rollup",
+            "description": "Estimates metamorphic grade from known index minerals (garnet, kyanite, etc.) in relevant formations.",
+            "formula": "InferMetamorphicGrade(formation_ids)"
+          },
+          {
+            "name": "subduction_zone_volcanicity_potential",
+            "type": "rollup",
+            "description": "Checks if any plate boundary among plate_ids is convergent and correlates with known volcanic systems.",
+            "formula": "IF EXISTS(subduction boundary) AND volcanic_system_ids != [] THEN HIGH ELSE LOW"
+          },
+          {
+            "name": "transform_fault_earthquake_rate_prediction",
+            "type": "rollup",
+            "description": "Predicts quake frequency if there's a transform boundary in plate_ids plus past quake logs.",
+            "formula": "ComputeTransformEQRate(plate_ids, earthquake_ids)"
+          },
+          {
+            "name": "plate_boundary_conflict_risk",
+            "type": "rollup",
+            "description": "Aggregates boundary risk scores from plate boundaries in plate_ids to produce an overall conflict risk factor.",
+            "formula": "AGGREGATE(PlateBoundaryEvent.boundary_risk_score for each boundary in plate_ids) / COUNT(plate_ids)"
+          },
+          {
+            "name": "overburden_pressure_estimate",
+            "type": "rollup",
+            "description": "Heuristic calculation of lithostatic pressure for deeper formations in this region.",
+            "formula": "CalculateOverburdenPressure(formation_ids)"
+          },
+          {
+            "name": "sediment_compaction_factor",
+            "type": "rollup",
+            "description": "Estimates compaction of sedimentary layers given thickness and time data from relevant formations.",
+            "formula": "EstimateSedimentCompaction(formation_ids)"
+          },
+          {
+            "name": "fossil_preservation_likelihood",
+            "type": "rollup",
+            "description": "If rock_type='sedimentary' and environment is stable, returns a higher preservation likelihood.",
+            "formula": "ComputeFossilPreservation(formation_ids)"
+          },
+          {
+            "name": "limestone_dissolution_risk",
+            "type": "rollup",
+            "description": "Looks for carbonate-rich formations plus acidic conditions to gauge dissolution (karst) risk.",
+            "formula": "CheckKarstPotential(formation_ids, mineral_ids)"
+          },
+          {
+            "name": "shock_metamorphism_indicator",
+            "type": "rollup",
+            "description": "Searches for evidence of meteor impacts or high-pressure minerals in region.",
+            "formula": "DetectShockMetamorphism(formation_ids, mineral_ids)"
+          },
+          {
+            "name": "geothermal_gradient_estimator",
+            "type": "rollup",
+            "description": "Approximates geothermal gradient from local volcanic data or deep well logs if present.",
+            "formula": "EstimateGeothermalGradient(volcanic_system_ids, formation_ids)"
+          },
+          {
+            "name": "volcanic_gas_emission_rate",
+            "type": "rollup",
+            "description": "Combines volcanic system eruption frequency and average composition to guess gas emission rate.",
+            "formula": "ComputeVolcanicGasRate(volcanic_system_ids)"
+          },
+          {
+            "name": "hotspot_trace_age_inference",
+            "type": "rollup",
+            "description": "If region includes a hotspot chain, estimates the age progression along that chain.",
+            "formula": "ComputeHotspotTraceAge(plate_ids, volcanic_system_ids)"
+          },
+          {
+            "name": "earthquake_recurrence_interval",
+            "type": "rollup",
+            "description": "A simple average recurrence period for moderate+ quakes in this region.",
+            "formula": "ComputeEQRecurrenceInterval(earthquake_ids)"
+          },
+          {
+            "name": "plate_motion_direction",
+            "type": "rollup",
+            "description": "Derives net motion vector from plate_motion_estimate of each TectonicPlate in plate_ids.",
+            "formula": "AggregatePlateMotionVectors(plate_ids)"
+          },
+          {
+            "name": "mineral_stability_field",
+            "type": "rollup",
+            "description": "Checks T/P conditions vs. known stable fields for minerals present in region.",
+            "formula": "AnalyzeMineralStability(mineral_ids)"
+          },
+          {
+            "name": "regional_lithology_mix",
+            "type": "rollup",
+            "description": "Tallies how many formations are igneous vs sedimentary vs metamorphic, producing a mix ratio.",
+            "formula": "ComputeLithologyMix(formation_ids)"
+          },
+          {
+            "name": "rock_deformation_mode_inference",
+            "type": "rollup",
+            "description": "Summarizes local stress/strain data from boundary types and quake mechanisms.",
+            "formula": "InferDeformationMode(plate_ids, earthquake_ids)"
+          },
+          {
+            "name": "plate_boundary_suture_zone_complexity",
+            "type": "rollup",
+            "description": "Examines if region has collided plates historically, indicating complex suture zones.",
+            "formula": "EvaluateSutureZoneComplexity(plate_ids)"
+          },
+          {
+            "name": "oceanic_crust_spreading_index",
+            "type": "rollup",
+            "description": "If region includes mid-ocean ridges, estimates local spreading rate or index.",
+            "formula": "ComputeSpreadingIndex(plate_ids)"
+          },
+          {
+            "name": "continental_rift_activity_flag",
+            "type": "rollup",
+            "description": "Detects if region is in an active rift zone by boundary data plus quake patterns.",
+            "formula": "CheckRiftActivity(plate_ids, earthquake_ids)"
+          },
+          {
+            "name": "orogenic_belt_evolution_stage",
+            "type": "rollup",
+            "description": "Estimates orogeny stage (early, peak, declining) from uplift rates, metamorphic grade, etc.",
+            "formula": "DetermineOrogenicStage(formation_ids, plate_ids)"
+          },
+          {
+            "name": "sedimentary_basin_subsidence_rate",
+            "type": "rollup",
+            "description": "Calculates how fast a sedimentary basin is sinking, referencing thickness/time or well data.",
+            "formula": "ComputeBasinSubsidence(formation_ids)"
+          },
+          {
+            "name": "tectonic_stress_regime",
+            "type": "rollup",
+            "description": "Aggregates quake focal mechanisms, boundary types, plate motions to classify stress (compression, extension, strike-slip).",
+            "formula": "InferTectonicStress(plate_ids, earthquake_ids)"
+          },
+          {
+            "name": "major_igneous_intrusion_probability",
+            "type": "rollup",
+            "description": "Checks tectonic setting plus history of pluton/batholith formation to guess chance of large new intrusion.",
+            "formula": "EstimateIntrusionProbability(plate_ids, formation_ids)"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      }
+    ]
+  },
+  "data": {
+    "Mineral": [
+      {
+        "id": "min_quartz",
+        "mineral_name": "Quartz",
+        "chemical_formula": "SiO2",
+        "hardness_mohs": 7,
+        "lattice_structure": "hexagonal",
+        "notes": "One of the most common minerals in Earth's crust"
+      },
+      {
+        "id": "min_calcite",
+        "mineral_name": "Calcite",
+        "chemical_formula": "CaCO3",
+        "hardness_mohs": 3,
+        "lattice_structure": "trigonal",
+        "notes": "Major component of limestone"
+      }
+    ],
+    "RockFormation": [
+      {
+        "id": "grand_canyon_strata",
+        "formation_name": "Grand Canyon Strata",
+        "rock_type": "sedimentary",
+        "geologic_age_mya": 500,
+        "notes": "Layered sedimentary rocks"
+      }
+    ],
+    "FormationMineralMapping": [
+      {
+        "id": "map_gcs_quartz",
+        "formation_id": "grand_canyon_strata",
+        "mineral_id": "min_quartz",
+        "percentage_estimate": 30
+      },
+      {
+        "id": "map_gcs_calcite",
+        "formation_id": "grand_canyon_strata",
+        "mineral_id": "min_calcite",
+        "percentage_estimate": 10
+      }
+    ],
+    "TectonicPlate": [
+      {
+        "id": "pacific_plate",
+        "plate_name": "Pacific Plate",
+        "approx_area": 103300000,
+        "notes": "Largest tectonic plate"
+      },
+      {
+        "id": "north_american_plate",
+        "plate_name": "North American Plate",
+        "approx_area": 75000000,
+        "notes": "Significant portion covers North America"
+      }
+    ],
+    "PlateBoundaryEvent": [
+      {
+        "id": "boundary_san_andreas",
+        "plate1_id": "pacific_plate",
+        "plate2_id": "north_american_plate",
+        "boundary_type": "transform",
+        "activity_level": "high",
+        "notes": "San Andreas Fault system"
+      }
+    ],
+    "VolcanicSystem": [
+      {
+        "system_id": "volc_st_helens",
+        "system_name": "Mount St. Helens",
+        "dominant_plate_id": "north_american_plate",
+        "volcano_type": "stratovolcano",
+        "recent_eruption_dates": [
+          "1980-05-18",
+          "2004-09-23"
+        ],
+        "avg_magma_composition": "andesitic"
+      }
+    ],
+    "EarthquakeRecord": [
+      {
+        "eq_id": "eq_example_1",
+        "boundary_event_id": "boundary_san_andreas",
+        "magnitude": 6.7,
+        "depth_km": 15,
+        "time_stamp": "2022-01-15T10:00:00Z",
+        "notes": "Moderate quake along the San Andreas"
+      }
+    ],
+    "AdvancedGeologyRecord": [
+      {
+        "id": "agr_test_1",
+        "record_label": "Test Region Inference",
+        "plate_ids": [
+          "pacific_plate",
+          "north_american_plate"
+        ],
+        "formation_ids": [
+          "grand_canyon_strata"
+        ],
+        "volcanic_system_ids": [
+          "volc_st_helens"
+        ],
+        "mineral_ids": [
+          "min_quartz",
+          "min_calcite"
+        ],
+        "earthquake_ids": [
+          "eq_example_1"
+        ]
+      }
+    ]
+  }
+}

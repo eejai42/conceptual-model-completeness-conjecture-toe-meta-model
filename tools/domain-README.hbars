@@ -1,0 +1,102 @@
+# {{name}}
+
+{{description}}
+
+## Depends On:
+{{#each depends_on}}
+- {{this}}
+{{/each}}
+
+## Metadata
+
+**Title**: {{meta.title}}  
+**Subtitle**: {{meta.subtitle}}  
+**Date**: {{meta.date}}
+
+### Authors
+{{#each meta.authors}}
+- **{{this.name}}** <{{this.contact}}>  
+  Affiliations: {{#each this.affiliations}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+{{/each}}
+
+### Abstract
+{{meta.abstract}}
+
+### Key Points
+{{#each meta.executive_summary.key_points}}
+- {{this}}
+{{/each}}
+
+### Implications
+{{#each meta.executive_summary.implications}}
+- {{this}}
+{{/each}}
+
+### Narrative
+{{#each meta.executive_summary.narrative}}
+#### {{this.title}}
+{{#each this.content}}
+{{this}}
+{{/each}}
+
+{{/each}}
+
+---
+
+# Schema Overview
+
+{{#each schema.entities}}
+## Entity: {{this.name}}
+
+**Description**: {{this.description}}
+
+{{#if this.fields}}
+### Fields
+{{#each this.fields}}
+- **{{this.name}}**  
+  *Type:* {{this.type}}, *Datatype:* {{this.datatype}}  
+  {{#if this.note}}> Note: {{this.note}}{{/if}}
+{{/each}}
+{{/if}}
+
+{{#if this.lookups}}
+### Lookups
+{{#each this.lookups}}
+- **{{this.name}}**  
+  *Target Entity:* {{this.target_entity}}, *Type:* {{this.type}}  
+  {{#if this.join_entity}}(Join entity: **{{this.join_entity}}**){{/if}}  
+  {{#if this.join_condition}}(Join condition: **{{this.join_condition}}**){{/if}}  
+  *Description:* {{this.description}}
+{{/each}}
+{{/if}}
+
+{{#if this.aggregations}}
+### Aggregations
+{{#each this.aggregations}}
+- **{{this.name}}**  
+  *Description:* {{this.description}}  
+  *Formula:* `{{this.formula}}`
+{{/each}}
+{{/if}}
+
+{{#if this.lambdas}}
+### Lambdas
+{{#each this.lambdas}}
+- **{{this.name}}**
+  {{#if this.parameters}}(Parameters: {{#each this.parameters}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}  
+  *Formula:* `{{this.formula}}`
+{{/each}}
+{{/if}}
+
+{{#if this.constraints}}
+### Constraints
+{{#each this.constraints}}
+- **{{this.name}}**  
+  *Formula:* `{{this.formula}}`  
+  {{#if this.error_message}}*Error Message:* {{this.error_message}}{{/if}}
+{{/each}}
+{{/if}}
+
+---
+
+{{/each}}

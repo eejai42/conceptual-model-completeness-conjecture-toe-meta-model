@@ -1,0 +1,25 @@
+[[FileSetFile/RelativePath[README.md]]]
+# CMCC ToE Domains
+
+Below is a list of domains included in the CMCC Complete Theory-of-Everything Meta Model.
+
+{{#each meta.CMCC_ToEMM_Domain_List}}
+## NAME: {{this.name}}
+
+**ID**: {{this.id}}  
+**Full Name**: {{this.fullname}}  
+**Description**: {{this.description}}  
+**Nickname**: {{this.nickname}}
+
+
+
+{{/each}}
+
+{{#each meta.CMCC_ToEMM_Domain_List}}
+[[FileSetFile/RelativePath[../../{{this.nickname}}/cmcc-meta-model.json]]]
+{{!-- Use a custom "lookup" helper to get the domain from CMCC_ToEMM_Domains by "id" --}}
+{{#with (lookup ../CMCC_ToEMM_Domains this.id)}}
+{{!-- Then stringify that domain’s object as JSON via a "json" helper --}}
+{{json .}}
+{{/with}}
+{{/each}}

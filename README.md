@@ -1,7 +1,7 @@
 # The CMCC Complete Theory-of-Everything Meta Model
 
 ## Overview
-This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more.  These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework
+This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework
 
 ## TL;DR;
 ### The Model
@@ -10,24 +10,30 @@ To skip the rigamarole, and just cut to the chase, this is the [CMCC ToE Meta-Mo
 
 The Conceptual Model Completeness Conjecture (CMCC) provides a unified, self‐describing framework for modeling domains as diverse as Mathematics, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, and Economics. Underpinned by five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—the CMCC model is both declarative and operational. It guarantees Turing-completeness and aligns with Wolfram’s multiway systems, offering a universal substrate for capturing the "what" of domain knowledge while leaving the "how" to the runtime.
 
-## 🔴 HARDCORE FALSIFICATION CHECKLIST
+## 🔴 HARDCORE CMCC FALSIFICATION CHECKLIST
 
-⚠️ STOP! BEFORE YOU CLAIM CMCC FAILS, YOU MUST PROVE YOU DID THIS: ⚠️
+⚠️ STOP! BEFORE YOU CLAIM CMCC FAILS, DOUBLE CHECK THAT YOU ACTUALLY DID THIS: ⚠️
+
 ✅ Step 1: DO NOT LIST 5 POSSIBLE PROBLEMS
-(Red Flags: IF your falsification attempt includes words like Could, May, Might, or Maybe, that is not a falsification, it is a presupposition - that is going to melt away under scrutiny)
+   (Red Flags: IF your falsification attempt includes words like Could, May, Might, or Maybe, that is not a falsification, it is a presupposition - that is going to melt away under scrutiny)
 
-✅ Step 2: PICK A SPECIFIC RULE YOU THINK BREAKS CMCC
-(Write it down. If you didn’t, you’re just assuming failure instead of testing it.)
+✅ Step 2: PICK THE MOST OUTRAGEOUS RULE THAT YOU THINK BREAKS CMCC
+   (Write it down. If you didn’t, you’re just assuming failure instead of testing it.)
+
 ✅ Step 3: DECOMPOSE IT INTO CMCC PRIMITIVES (S, D, L, A, F)
-(Write how it could be represented declaratively. If you skipped this, you didn’t actually test it.)
+   (Write how it could be represented declaratively. If you skipped this, you didn’t actually test it.)
+
 ✅ Step 4: CHECK IF THE RUNTIME ENGINE CAN HANDLE IT
 💡 Remember: CMCC defines the WHAT, not the HOW. The runtime executes the rules. Performance, and scaling are runtime concerns. Is your rule actually a runtime concern? 
+
 ✅ Step 5: IF YOU STILL THINK IT FAILS, TRY AGAIN
-Seriously. Every time I thought I falsified it, I realized I was looking at it wrong. Are you sure you aren’t just assuming imperative execution is required?
+   Seriously. Every time I thought I falsified it, I realized I was looking at it wrong. Are you sure you aren’t just assuming imperative execution is required?
+
 🚀 IF YOU STILL THINK CMCC FAILS… EMAIL ME YOUR CASE!
-(And expect me to ask if you really followed these steps. 😂)
+   (And expect me to ask if you really followed these steps. 😂)
 
 #### [CMCC Research](/research/README.md)
+
 This entire self describing model is based on the Conceptual Model Completeness conjecture.  
 For a full list of thepapers, please see the [CMCC Research](/research/README.md) section.
 
@@ -35,46 +41,6 @@ For a full list of thepapers, please see the [CMCC Research](/research/README.md
 ## Theory of Everything (TOE) Domains
 
 Below is a list of TOE models included in this repository. Click on any domain to read its detailed meta-model documentation:
-
-### Mathematics CMCC Meta-Model
-**CMCC Complete Mathematics ToE Meta-Model**
-
-A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.. Read more about the [math](math/README.md) CMCC Complete Meta-Model.
-
-### Physics ToE Meta-Model
-**CMCC Complete Physics ToE Meta-Model**
-
-A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.. Read more about the [physics](physics/README.md) CMCC Complete Meta-Model.
-
-### Chemistry ToE Meta-Model
-**CMCC Complete Chemistry ToE Meta-Model**
-
-Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.. Read more about the [chemistry](chemistry/README.md) CMCC Complete Meta-Model.
-
-### Biology ToE Meta-Model
-**CMCC Complete Biology ToE Meta-Model**
-
-Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.. Read more about the [biology](biology/README.md) CMCC Complete Meta-Model.
-
-### Artificial Intelligence ToE Meta-Model
-**CMCC Complete Artificial Intelligence ToE Meta-Model**
-
-Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.. Read more about the [ai](ai/README.md) CMCC Complete Meta-Model.
-
-### Economics ToE Meta-Model
-**CMCC Complete Economics ToE Meta-Model**
-
-A computational model for economic agents, markets, transactions, and supply-demand constraints.. Read more about the [economics](economics/README.md) CMCC Complete Meta-Model.
-
-### Astronomy ToE Meta-Model
-**CMCC Complete Astronomy ToE Meta-Model**
-
-An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.. Read more about the [astronomy](astronomy/README.md) CMCC Complete Meta-Model.
-
-### Geology
-**CMCC Complete Geology oE Meta-Model**
-
-A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.. Read more about the [geology](geology/README.md) CMCC Complete Meta-Model.
 
 
 ## Example: Mathematical Details

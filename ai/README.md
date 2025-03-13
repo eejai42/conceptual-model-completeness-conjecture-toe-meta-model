@@ -1,44 +1,198 @@
-# Artificial Intelligence ToE Meta-Model
-### 
+# All-In-One CMCC AI Model
 
-## Overview
-Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.
+Models core AI/ML artifacts: neural nets, training data, inference events, etc.
 
+## Depends On:
+- CMCC_Complete_ToEMM_Math
 
-[More about CMCC →](../README.md)
+## Metadata
+
+**Title**: CMCC Complete Artificial Intelligence ToE Meta-Model  
+**Subtitle**: A Cross-Domain Declarative Framework for Machine Learning, Neural Networks, and Inference Engines  
+**Date**: March 2025
+
+### Authors
+- **EJ Alexandra** <start@anabstractlevel.com>  
+  Affiliations: SSoT.me, EffortlessAPI.com
+
+### Abstract
+This AI-focused extension of the CMCC environment structures machine learning models, training datasets, neural network topologies, and inference rules as first-class records in an ACID-based schema. By unifying them under the same aggregator-driven approach that powers math, physics, biology, and more, it paves the way for integrated knowledge representation, advanced analytics, and cross-domain synergy—from real-time model training to quantum-inspired or biologically motivated neural nets.
+
+### Key Points
+- Captures machine learning model definitions (e.g., neural network layers) as aggregator formulas, referencing training sets and hyperparameters.
+- Integrates easily with other CMCC domains—use chemical data for QSAR, or track quantum states in quantum machine learning contexts.
+- Provides a purely declarative style for model architecture and parameter updates, ensuring Turing-complete workflows without specialized code.
+- Enables aggregator-based or constraint-based checks on model accuracy, training progress, or bias/fairness metrics.
+
+### Implications
+- Promotes synergy among AI, mathematics, physics, etc. (e.g., referencing linear algebra from the math domain to define neural operations).
+- Reduces friction in data pipelines: AI is stored as data, not black-box code, ensuring all logic is introspectable, modifiable, and ACID-compliant.
+- Increases reproducibility: aggregator formulas track how model updates occur, while constraints can enforce fairness or stability requirements.
+
+### Narrative
+#### CMCC Artificial Intelligence Extension
+Modern AI often relies on specialized frameworks or scripting languages. This isolation complicates integration with domain data, whether from biology, physics, or economics.
+The CMCC AI Model inverts this paradigm by storing all aspects of a machine learning process—architecture, weights, training steps—as data. Aggregator formulas implement the 'learning rules' or backprop updates, which can reference domain-specific knowledge from any other CMCC model. This fosters a powerful cross-domain synergy, letting an AI model self-consistently refine chemical or biological predictions, or respond to real-time economic data, all within one declarative, Turing-complete environment.
+
 
 ---
 
+# Schema Overview
+
+## Entity: TrainingDataset
+
+**Description**: Dataset used to train AI models, referencing domain/size.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
   
-**Schema Overview:**
-- **TrainingDataset**: Dataset used to train AI models, referencing domain/size.
-- **NeuralNetworkModel**: Stores metadata for a trained or untrained neural network model.
-- **InferenceEvent**: Represents a single inference/prediction call made to a trained AI model.
-- **ReinforcementAgent**: Stores an RL agent’s policy and environment references.
+- **dataset_name**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **description**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **num_samples**  
+  *Type:* scalar, *Datatype:* int  
+  > Note: Approx number of records or examples
+- **domain_area**  
+  *Type:* scalar, *Datatype:* string  
+  > Note: E.g. 'image classification','text NLP','reinforcement environment'
 
+
+### Aggregations
+- **average_label_value**  
+  *Description:*   
+  *Formula:* `ComputeAvgLabel(...)`
+
+
+### Constraints
+- **positive_samples**  
+  *Formula:* `num_samples > 0`  
+  *Error Message:* Training dataset must have at least 1 sample
+
+---
+
+## Entity: NeuralNetworkModel
+
+**Description**: Stores metadata for a trained or untrained neural network model.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **model_name**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **architecture**  
+  *Type:* scalar, *Datatype:* string  
+  > Note: E.g. 'CNN','Transformer','RNN','MLP'
+- **hyperparameters**  
+  *Type:* scalar, *Datatype:* json  
+  > Note: Learning rate, batch size, etc.
+- **training_dataset_id**  
+  *Type:* lookup, *Datatype:*   
+  
+- **model_parameters**  
+  *Type:* scalar, *Datatype:* json  
+  > Note: Weights/biases or references to an external storage location
+
+
+### Aggregations
+- **num_parameters**  
+  *Description:*   
+  *Formula:* `CountParameters(model_parameters)`
+- **model_size_mb**  
+  *Description:*   
+  *Formula:* `ComputeMemoryFootprint(model_parameters)`
+
+### Lambdas
+- **train_model**
+  (Parameters: training_epochs)  
+  *Formula:* `PerformTraining(this, training_dataset_id, hyperparameters, training_epochs)`
+- **evaluate_model**
+  (Parameters: test_dataset_id)  
+  *Formula:* `ComputeMetrics(this.model_parameters, test_dataset_id)`
+
+### Constraints
+- **valid_architecture**  
+  *Formula:* `architecture IN ['CNN','Transformer','RNN','MLP','Other']`  
+  *Error Message:* Model architecture must be recognized (toy example).
+
+---
+
+## Entity: InferenceEvent
+
+**Description**: Represents a single inference/prediction call made to a trained AI model.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **model_id**  
+  *Type:* lookup, *Datatype:*   
+  
+- **input_data**  
+  *Type:* scalar, *Datatype:* json  
+  > Note: Content to be inferred upon
+- **prediction_output**  
+  *Type:* scalar, *Datatype:* json  
+  > Note: Result of inference
+- **inference_timestamp**  
+  *Type:* scalar, *Datatype:* datetime  
+  
+
+
+### Aggregations
+- **model_accuracy_estimate**  
+  *Description:*   
+  *Formula:* `LOOKUP(model_id).SomeEvaluatedAccuracy`
+
+### Lambdas
+- **run_inference**
+    
+  *Formula:* `NeuralNetworkModel(model_id).ForwardPass(input_data)`
 
 
 ---
-# Appendices
+
+## Entity: ReinforcementAgent
+
+**Description**: Stores an RL agent’s policy and environment references.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **agent_name**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **policy_model_id**  
+  *Type:* lookup, *Datatype:*   
+  > Note: Which neural net controls the agent's policy
+- **environment_description**  
+  *Type:* scalar, *Datatype:* string  
+  > Note: Short text about environment (toy).
+- **notes**  
+  *Type:* scalar, *Datatype:* string  
+  
+
+
+### Aggregations
+- **policy_parameters_count**  
+  *Description:*   
+  *Formula:* `LOOKUP(policy_model_id).num_parameters`
+
+### Lambdas
+- **perform_action**
+  (Parameters: state_obs)  
+  *Formula:* `ComputeActionFromPolicy(policy_model_id, state_obs)`
+- **update_policy**
+  (Parameters: reward_signal)  
+  *Formula:* `Train(policy_model_id, reward_signal)`
+
+
 ---
 
-## Other Domains in the Model
 
-  ### math
-**Mathematics CMCC Meta-Model** – A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.. [Read more about math](../math/README.md)
-  ### physics
-**Physics ToE Meta-Model** – A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.. [Read more about physics](../physics/README.md)
-  ### chemistry
-**Chemistry ToE Meta-Model** – Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.. [Read more about chemistry](../chemistry/README.md)
-  ### biology
-**Biology ToE Meta-Model** – Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.. [Read more about biology](../biology/README.md)
-  ### ai
-**Artificial Intelligence ToE Meta-Model** – Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.. [Read more about ai](../ai/README.md)
-  ### economics
-**Economics ToE Meta-Model** – A computational model for economic agents, markets, transactions, and supply-demand constraints.. [Read more about economics](../economics/README.md)
-  ### astronomy
-**Astronomy ToE Meta-Model** – An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.. [Read more about astronomy](../astronomy/README.md)
-  ### geology
-**Geology** – A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.. [Read more about geology](../geology/README.md)
-
-*This document was generated from the CMCC Complete Domain Meta Models. Any updates to the metadata automatically update this README.*
