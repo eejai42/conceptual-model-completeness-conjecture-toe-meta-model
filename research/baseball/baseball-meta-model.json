@@ -110,6 +110,19 @@
               "type": "rollup",
               "description": "The sum of all stolen bases by players on all teams in this league.",
               "formula": "SUM(teams.roster -> careerStolenBases)"
+            },
+
+            {
+              "name": "leagueOPSLeaders",
+              "type": "rollup",
+              "description": "Top 3 players in the league by OPS. Implementation conceptual using all rosters in this league.",
+              "formula": "TOPN(3, teams.roster, p => p.ops)"
+            },
+            {
+              "name": "leagueMinERA",
+              "type": "rollup",
+              "description": "Identifies the single pitcher in the league with the lowest ERA. Implementation conceptual—filters for pitchers only.",
+              "formula": "MINBY(teams.roster where playerIsPitcher=true, p => p.careerERA)"
             }
           ],
           "lambdas": [
@@ -222,6 +235,25 @@
               "type": "rollup",
               "description": "Team’s historical winning percentage in a given stadium—pure aggregator referencing stadium-based game data.",
               "formula": "WIN_PCT_BY_STADIUM_FUNCTION(this.id)"
+            },
+
+            {
+              "name": "bestPitcher",
+              "type": "rollup",
+              "description": "Finds the pitcher on this team with the lowest ERA (pure aggregator).",
+              "formula": "MINBY(roster where playerIsPitcher=true, p => p.careerERA)"
+            },
+            {
+              "name": "totalWalks",
+              "type": "rollup",
+              "description": "Sums all walks drawn by players on this team.",
+              "formula": "SUM(roster => careerWalks)"
+            },
+            {
+              "name": "totalHitByPitch",
+              "type": "rollup",
+              "description": "Sums all HBP events for players on this team.",
+              "formula": "SUM(roster => careerHitByPitch)"
             }
           ],
           "lambdas": [
@@ -351,6 +383,43 @@
               "type": "rollup",
               "description": "Boolean indicating if the player has pitched and also batted as a regular hitter. Implementation conceptual.",
               "formula": "IF (careerInningsPitched > 0 AND careerAtBats > 0) THEN true ELSE false"
+            },
+
+            {
+              "name": "careerWalks",
+              "type": "rollup",
+              "description": "Count of times the player reached base via walk (BB).",
+              "formula": "COUNT( AtBat where batterId=this.id AND result='WALK' )"
+            },
+            {
+              "name": "careerHitByPitch",
+              "type": "rollup",
+              "description": "Count of times the player was hit by a pitch (HBP).",
+              "formula": "COUNT( AtBat where batterId=this.id AND result='HIT_BY_PITCH' )"
+            },
+            {
+              "name": "careerSacFlies",
+              "type": "rollup",
+              "description": "Count of official at-bats with a sac fly result.",
+              "formula": "COUNT( AtBat where batterId=this.id AND result='SAC_FLY')"
+            },
+            {
+              "name": "careerDoublePlaysGroundedInto",
+              "type": "rollup",
+              "description": "Number of times the player has grounded into a double play.",
+              "formula": "COUNT( AtBat where batterId=this.id AND result='GROUNDED_INTO_DOUBLE_PLAY')"
+            },
+            {
+              "name": "highestExitVelocity",
+              "type": "rollup",
+              "description": "Max exit velocity recorded for batted balls by this player (across all relevant at-bats).",
+              "formula": "MAX( AtBat where batterId=this.id => exitVelocity )"
+            },
+            {
+              "name": "lowestExitVelocity",
+              "type": "rollup",
+              "description": "Min exit velocity recorded for batted balls by this player.",
+              "formula": "MIN( AtBat where batterId=this.id => exitVelocity )"
             }
           ],
           "lambdas": [
@@ -469,6 +538,19 @@
               "type": "rollup",
               "description": "True if it's bottom of 9th+ with the home team trailing/tied so a scoring play could end the game. Implementation conceptual, purely declarative.",
               "formula": "EVALUATE_WALKOFF_CONDITION(this.id)"
+            },
+
+            {
+              "name": "attendance",
+              "type": "rollup",
+              "description": "Reference or aggregator for game attendance, e.g., from an external record or data field.",
+              "formula": "LOOKUP_IN(GameAttendanceRecords, gameId=this.id => attendanceValue)"
+            },
+            {
+              "name": "isExtraInnings",
+              "type": "rollup",
+              "description": "Boolean indicating if the game went beyond the 9th inning.",
+              "formula": "MAX(innings.inningNumber) > 9"
             }
           ],
           "lambdas": [
@@ -538,6 +620,12 @@
               "type": "rollup",
               "description": "True if top and bottom half are both complete, or if there's a walk-off scenario that ends the inning early.",
               "formula": "top.isComplete AND (bottom==null OR bottom.isComplete)"
+            },
+            {
+              "name": "runsThisInning",
+              "type": "rollup",
+              "description": "Sum of runs in top and bottom half of this inning.",
+              "formula": "(IF top!=null THEN top.runsScored ELSE 0) + (IF bottom!=null THEN bottom.runsScored ELSE 0)"
             }
           ],
           "lambdas": [],
@@ -620,6 +708,18 @@
               "type": "rollup",
               "description": "How many baserunners remained stranded when the half-inning ended. Implementation conceptual, purely aggregator over base-runner state.",
               "formula": "CALCULATE_STRANDED_RUNNERS(this.id)"
+            },
+            {
+              "name": "walksInHalf",
+              "type": "rollup",
+              "description": "Count of at-bats with 'result= WALK' in this half-inning.",
+              "formula": "COUNT(AtBat where inningHalfId=this.id AND result='WALK')"
+            },
+            {
+              "name": "hitByPitchInHalf",
+              "type": "rollup",
+              "description": "Count of at-bats with 'result=HIT_BY_PITCH' in this half-inning.",
+              "formula": "COUNT(AtBat where inningHalfId=this.id AND result='HIT_BY_PITCH')"
             }
           ],
           "lambdas": [
@@ -685,13 +785,25 @@
               "name": "result",
               "type": "scalar",
               "datatype": "string",
-              "description": "Outcome: e.g. 'SINGLE','DOUBLE','TRIPLE','HOMERUN','WALK','STRIKEOUT','GROUNDOUT','FLYOUT','HIT_BY_PITCH', etc."
+              "description": "Outcome: e.g. 'SINGLE','DOUBLE','TRIPLE','HOMERUN','WALK','STRIKEOUT','GROUNDOUT','FLYOUT','HIT_BY_PITCH','SAC_FLY','GROUNDED_INTO_DOUBLE_PLAY', etc."
             },
             {
               "name": "rbi",
               "type": "scalar",
               "datatype": "integer",
               "description": "Number of runs batted in on this at-bat (0..4)."
+            },
+            {
+              "name": "exitVelocity",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Measured speed of the batted ball off the bat (mph), if the ball was put in play. Null if not in play."
+            },
+            {
+              "name": "launchAngle",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Angle (in degrees) of the batted ball’s trajectory, if in play."
             }
           ],
           "lookups": [
@@ -721,6 +833,12 @@
               "type": "rollup",
               "description": "A sabermetric measure (xBA) based on exit velocity, launch angle, etc. Implementation conceptual, purely aggregator.",
               "formula": "SABERMETRIC_xBA_FORMULA(this.id)"
+            },
+            {
+              "name": "wasWalk",
+              "type": "rollup",
+              "description": "Boolean aggregator: true if result='WALK'.",
+              "formula": "result == 'WALK'"
             }
           ],
           "lambdas": [
@@ -777,7 +895,14 @@
             }
           ],
           "lookups": [],
-          "aggregations": [],
+          "aggregations": [
+            {
+              "name": "isStrike",
+              "type": "rollup",
+              "description": "Boolean aggregator: true if pitchResult is CALLED_STRIKE or SWINGING_STRIKE.",
+              "formula": "pitchResult IN ['CALLED_STRIKE','SWINGING_STRIKE']"
+            }
+          ],
           "lambdas": [],
           "constraints": []
         },
@@ -872,6 +997,18 @@
               "type": "rollup",
               "description": "Average attendance across all games played here. Implementation conceptual.",
               "formula": "AVG(GameAttendanceRecords where stadiumId=this.id)"
+            },
+            {
+              "name": "mostRunsInSingleGame",
+              "type": "rollup",
+              "description": "Maximum total runs (home + away) for any game played in this stadium.",
+              "formula": "MAX( Game where stadiumId=this.id => (runsHome + runsAway) )"
+            },
+            {
+              "name": "averageHRPerGame",
+              "type": "rollup",
+              "description": "Average number of home runs per game in this stadium. Implementation conceptual if we track HR data by stadium.",
+              "formula": "AVG(Game => totalHRsInGame) WHERE stadiumId=this.id"
             }
           ],
           "lambdas": [],
@@ -906,7 +1043,15 @@
           "lookups": [],
           "aggregations": [],
           "lambdas": [],
-          "constraints": []
+          "constraints": [],
+          "fields_additional": [
+            {
+              "name": "outType",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Describes how the out occurred (flyout, groundout, strikeout, etc.)."
+            }
+          ]
         },
         {
           "name": "RunEvent",
@@ -943,106 +1088,210 @@
           "lookups": [],
           "aggregations": [],
           "lambdas": [],
+          "constraints": [],
+          "fields_additional": [
+            {
+              "name": "runScorerIds",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "List or array of the player IDs who actually crossed home plate in this run event. Implementation conceptual."
+            }
+          ]
+        },
+        {
+          "name": "Season",
+          "description": "// NEW ENTITY: Represents a baseball season, with a start/end date, name, etc.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the season."
+            },
+            {
+              "name": "seasonName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Label for the season (e.g. '2025 MLB Season')."
+            },
+            {
+              "name": "startDate",
+              "type": "scalar",
+              "datatype": "date",
+              "description": "Official start date of this season."
+            },
+            {
+              "name": "endDate",
+              "type": "scalar",
+              "datatype": "date",
+              "description": "Official end date of this season."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "seasonGames",
+              "target_entity": "Game",
+              "type": "one_to_many",
+              "join_condition": "Game.seasonId = this.id",
+              "description": "All games referencing this season."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "gamesInSeason",
+              "type": "rollup",
+              "description": "Counts how many games are in this season (pure aggregator).",
+              "formula": "COUNT(seasonGames)"
+            }
+          ],
+          "lambdas": [],
+          "constraints": []
+        },
+        {
+          "name": "SeasonTeamStats",
+          "description": "// NEW ENTITY: Ties a Team to a particular Season, storing aggregated seasonal stats, e.g. winning streaks, etc.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for this SeasonTeamStats record."
+            },
+            {
+              "name": "seasonId",
+              "type": "lookup",
+              "target_entity": "Season",
+              "foreign_key": true,
+              "description": "Which season this record belongs to."
+            },
+            {
+              "name": "teamId",
+              "type": "lookup",
+              "target_entity": "Team",
+              "foreign_key": true,
+              "description": "Which team is being tracked."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [
+            {
+              "name": "teamWinningStreak",
+              "type": "rollup",
+              "description": "Longest consecutive wins streak for the team during this season. Implementation conceptual.",
+              "formula": "CALCULATE_MAX_WIN_STREAK(teamId, seasonId)"
+            }
+          ],
+          "lambdas": [],
           "constraints": []
         }
-      ]
+      ],
+      "data": {
+        "League": [
+          {
+            "id": "league_MLB",
+            "leagueName": "Major League Baseball"
+          }
+        ],
+        "Team": [
+          {
+            "id": "team_NYY",
+            "teamName": "Yankees",
+            "league_id": "league_MLB"
+          },
+          {
+            "id": "team_BOS",
+            "teamName": "Red Sox",
+            "league_id": "league_MLB"
+          }
+        ],
+        "Player": [
+          {
+            "id": "player_101",
+            "fullName": "John Pitcher",
+            "battingHand": "R",
+            "throwingHand": "R",
+            "team_id": "team_NYY"
+          },
+          {
+            "id": "player_102",
+            "fullName": "Mike Slugger",
+            "battingHand": "L",
+            "throwingHand": "R",
+            "team_id": "team_BOS"
+          }
+        ],
+        "DefensivePosition": [
+          {
+            "id": "1",
+            "positionName": "Pitcher"
+          },
+          {
+            "id": "2",
+            "positionName": "Catcher"
+          },
+          {
+            "id": "6",
+            "positionName": "Shortstop"
+          },
+          {
+            "id": "DH",
+            "positionName": "Designated Hitter"
+          }
+        ],
+        "Game": [
+          {
+            "id": "game_2025_03_13",
+            "homeTeamId": "team_NYY",
+            "awayTeamId": "team_BOS",
+            "status": "SCHEDULED"
+          }
+        ],
+        "Inning": [],
+        "InningHalf": [],
+        "AtBat": [],
+        "Pitch": [],
+        "Statistic": [
+          {
+            "id": "stat_001",
+            "entityType": "Player",
+            "entityId": "player_101",
+            "statName": "ERA",
+            "statValue": 3.45,
+            "season": "2025",
+            "lastUpdated": "2025-03-01T10:00:00Z"
+          },
+          {
+            "id": "stat_002",
+            "entityType": "Player",
+            "entityId": "player_102",
+            "statName": "BattingAverage",
+            "statValue": 0.285,
+            "season": "2025",
+            "lastUpdated": "2025-03-02T14:30:00Z"
+          }
+        ],
+        "Stadium": [
+          {
+            "id": "stadium_001",
+            "stadiumName": "Yankee Stadium",
+            "capacity": 50000
+          }
+        ],
+        "OutEvent": [],
+        "RunEvent": [],
+        "Season": [
+          {
+            "id": "season_2025",
+            "seasonName": "2025 MLB Regular Season",
+            "startDate": "2025-03-15",
+            "endDate": "2025-10-01"
+          }
+        ],
+        "SeasonTeamStats": []
+      }
     },
-    "data": {
-      "League": [
-        {
-          "id": "league_MLB",
-          "leagueName": "Major League Baseball"
-        }
-      ],
-      "Team": [
-        {
-          "id": "team_NYY",
-          "teamName": "Yankees",
-          "league_id": "league_MLB"
-        },
-        {
-          "id": "team_BOS",
-          "teamName": "Red Sox",
-          "league_id": "league_MLB"
-        }
-      ],
-      "Player": [
-        {
-          "id": "player_101",
-          "fullName": "John Pitcher",
-          "battingHand": "R",
-          "throwingHand": "R",
-          "team_id": "team_NYY"
-        },
-        {
-          "id": "player_102",
-          "fullName": "Mike Slugger",
-          "battingHand": "L",
-          "throwingHand": "R",
-          "team_id": "team_BOS"
-        }
-      ],
-      "DefensivePosition": [
-        {
-          "id": "1",
-          "positionName": "Pitcher"
-        },
-        {
-          "id": "2",
-          "positionName": "Catcher"
-        },
-        {
-          "id": "6",
-          "positionName": "Shortstop"
-        },
-        {
-          "id": "DH",
-          "positionName": "Designated Hitter"
-        }
-      ],
-      "Game": [
-        {
-          "id": "game_2025_03_13",
-          "homeTeamId": "team_NYY",
-          "awayTeamId": "team_BOS",
-          "status": "SCHEDULED"
-        }
-      ],
-      "Inning": [],
-      "InningHalf": [],
-      "AtBat": [],
-      "Pitch": [],
-      "Statistic": [
-        {
-          "id": "stat_001",
-          "entityType": "Player",
-          "entityId": "player_101",
-          "statName": "ERA",
-          "statValue": 3.45,
-          "season": "2025",
-          "lastUpdated": "2025-03-01T10:00:00Z"
-        },
-        {
-          "id": "stat_002",
-          "entityType": "Player",
-          "entityId": "player_102",
-          "statName": "BattingAverage",
-          "statValue": 0.285,
-          "season": "2025",
-          "lastUpdated": "2025-03-02T14:30:00Z"
-        }
-      ],
-      "Stadium": [
-        {
-          "id": "stadium_001",
-          "stadiumName": "Yankee Stadium",
-          "capacity": 50000
-        }
-      ],
-      "OutEvent": [],
-      "RunEvent": []
-    },
-
     "root-meta-model": {
       "title": "The Conceptual Model Completeness Conjecture (CMCC)",
       "subtitle": "A Universal Declarative Computational Framework",
