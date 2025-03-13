@@ -11,6 +11,7 @@
 **Title**: CMCC Complete Biology ToE Meta-Model  
 **Subtitle**: A Unified Declarative Schema for Genes, Proteins, and Cellular Systems  
 **Date**: March 2025
+**ID**: CMCC_Complete_ToEMM_Biology
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

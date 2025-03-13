@@ -1,4 +1,6 @@
 {
+    "id": "CMCC_Complete_ToEMM_Geology",    
+    "meta-model": {
   "name": "All-In-One CMCC Geology Model",
   "description": "Extends Physics and Chemistry to handle minerals, rock formations, tectonic plates, etc.",
   "depends_on": [
@@ -839,4 +841,5 @@
       }
     ]
   }
+}
 }

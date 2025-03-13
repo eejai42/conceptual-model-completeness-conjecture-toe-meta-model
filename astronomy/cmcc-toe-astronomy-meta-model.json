@@ -1,4 +1,6 @@
 {
+    "id": "CMCC_Complete_ToEMM_Astronomy",    
+    "meta-model": {
   "name": "All-In-One CMCC Astronomy Model",
   "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
   "depends_on": [
@@ -321,4 +323,5 @@
       }
     ]
   }
+}
 }

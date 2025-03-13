@@ -2,13 +2,13 @@
 
 A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single ACID-compliant, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.
 
-## Depends On:
 
 ## Metadata
 
 **Title**: CMCC Complete Mathematics ToE Meta-Model  
 **Subtitle**: A Unified Declarative Framework for Abstract Structures, Axioms, and Proofs  
 **Date**: March 2025
+**ID**: CMCC_Complete_ToEMM_Math
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

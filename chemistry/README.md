@@ -11,6 +11,7 @@ A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.
 **Title**: CMCC Complete Chemistry ToE Meta-Model  
 **Subtitle**: A Declarative Structural Approach to Chemical Entities and Reactions  
 **Date**: March 2025
+**ID**: CMCC_Complete_ToEMM_Chemistry
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

@@ -1,4 +1,6 @@
 {
+    "id": "CMCC_Complete_ToEMM_Biology",    
+    "meta-model": {
   "depends_on": [
     "CMCC_Complete_ToEMM_Chemistry",
     "CMCC_Complete_ToEMM_Physics"
@@ -526,4 +528,5 @@
       }
     ]
   }
+}
 }

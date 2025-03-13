@@ -37,7 +37,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/math",
-      "CommandLine": "json-hbars-transform -i ./cmcc-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-math-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
       "TranspilerGroup": "math"
     },
     {
@@ -48,7 +48,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/physics",
-      "CommandLine": "json-hbars-transform -i ./cmcc-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-physics-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
       "TranspilerGroup": "physics"
     },
     {
@@ -59,7 +59,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/chemistry",
-      "CommandLine": "json-hbars-transform -i ./cmcc-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-chemistry-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
       "TranspilerGroup": "chemistry"
     },
     {
@@ -70,7 +70,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/biology",
-      "CommandLine": "json-hbars-transform -i ./cmcc-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-biology-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
       "TranspilerGroup": "biology"
     },
     {
@@ -81,7 +81,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/ai",
-      "CommandLine": "json-hbars-transform -i ./cmcc-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-ai-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
       "TranspilerGroup": "ai"
     },
     {
@@ -92,7 +92,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/economics",
-      "CommandLine": "json-hbars-transform -i ./cmcc-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-economics-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
       "TranspilerGroup": "economics"
     },
     {
@@ -103,7 +103,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/astronomy",
-      "CommandLine": "json-hbars-transform -i ./cmcc-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-astronomy-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
       "TranspilerGroup": "astronomy"
     },
     {
@@ -114,7 +114,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/geology",
-      "CommandLine": "json-hbars-transform -i ./cmcc-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-geology-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
       "TranspilerGroup": "geology"
     },
     {

@@ -77,56 +77,56 @@
     },
     "CMCC_ToEMM_Domain_List": [
       {
-        "id": "CMCC_Complete_ToEMM_Math",
+        "id": "CMCC_ToEMM_Math",
         "fullname": "CMCC Complete Mathematics ToE Meta-Model",
         "name": "Mathematics CMCC Meta-Model",
         "description": "A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.",
         "nickname": "math"
       },
       {
-        "id": "CMCC_Complete_ToEMM_Physics",
+        "id": "CMCC_ToEMM_Physics",
         "fullname": "CMCC Complete Physics ToE Meta-Model",
         "name": "Physics ToE Meta-Model",
         "description": "A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.",
         "nickname": "physics"
       },
       {
-        "id": "CMCC_Complete_ToEMM_Chemistry",
+        "id": "CMCC_ToEMM_Chemistry",
         "fullname": "CMCC Complete Chemistry ToE Meta-Model",
         "name": "Chemistry ToE Meta-Model",
         "description": "Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.",
         "nickname": "chemistry"
       },
       {
-        "id": "CMCC_Complete_ToEMM_Biology",
+        "id": "CMCC_ToEMM_Biology",
         "fullname": "CMCC Complete Biology ToE Meta-Model",
         "name": "Biology ToE Meta-Model",
         "description": "Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.",
         "nickname": "biology"
       },
       {
-        "id": "CMCC_Complete_ToEMM_AI",
+        "id": "CMCC_ToEMM_AI",
         "fullname": "CMCC Complete Artificial Intelligence ToE Meta-Model",
         "name": "Artificial Intelligence ToE Meta-Model",
         "description": "Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.",
         "nickname": "ai"
       },
       {
-        "id": "CMCC_Complete_ToEMM_Economics",
+        "id": "CMCC_ToEMM_Economics",
         "fullname": "CMCC Complete Economics ToE Meta-Model",
         "name": "Economics ToE Meta-Model",
         "description": "A computational model for economic agents, markets, transactions, and supply-demand constraints.",
         "nickname": "economics"
       },
       {
-        "id": "CMCC_Complete_ToEMM_Astronomy",
+        "id": "CMCC_ToEMM_Astronomy",
         "fullname": "CMCC Complete Astronomy ToE Meta-Model",
         "name": "Astronomy ToE Meta-Model",
         "description": "An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.",
         "nickname": "astronomy"
       },
       {
-        "id": "CMCC_Complete_ToEMM_Geology",
+        "id": "CMCC_ToEMM_Geology",
         "fullname": "CMCC Complete Geology oE Meta-Model",
         "name": "Geology",
         "description": "A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.",
@@ -135,7 +135,7 @@
     ]
   },
   "CMCC_ToEMM_Domains": {
-    "CMCC_Complete_ToEMM_Math": {
+    "CMCC_ToEMM_Math": {
       "name": "CMCC Complete Mathematics TOE Meta Model",
       "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single ACID-compliant, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
       "version": "v2.05",
@@ -1771,7 +1771,7 @@
         ]
       }
     },
-    "CMCC_Complete_ToEMM_Physics": {
+    "CMCC_ToEMM_Physics": {
       "name": "All-In-One CMCC Physics Model",
       "description": "A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.",
       "version": "v2.19",
@@ -5864,10 +5864,10 @@
         ]
       }
     },
-    "CMCC_Complete_ToEMM_Chemistry": {
+    "CMCC_ToEMM_Chemistry": {
       "name": "All-In-One CMCC Chemistry Model",
       "description": "A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.",
-      "depends_on": ["CMCC_Complete_ToEMM_Math", "CMCC_Complete_ToEMM_Physics"],
+      "depends_on": ["CMCC_ToEMM_Math", "CMCC_ToEMM_Physics"],
       "version": "v2.3",
       "meta": {
         "title": "CMCC Complete Chemistry ToE Meta-Model",
@@ -5938,7 +5938,7 @@
               {
                 "name": "underlying_particle_id",
                 "type": "lookup",
-                "target_entity": "CMCC_Complete_ToEMM_Physics.Particle",
+                "target_entity": "CMCC_ToEMM_Physics.Particle",
                 "foreign_key": false,
                 "note": "Optional link to the physics-level Particle if we want to unify mass, spin, etc."
               }
@@ -6141,7 +6141,7 @@
               {
                 "name": "wavefunction_id",
                 "type": "lookup",
-                "target_entity": "CMCC_Complete_ToEMM_Physics.Wavefunction",
+                "target_entity": "CMCC_ToEMM_Physics.Wavefunction",
                 "foreign_key": false,
                 "note": "If we have a quantum wavefunction at the molecular level"
               }
@@ -6372,7 +6372,7 @@
               {
                 "name": "alias_R",
                 "type": "rollup",
-                "formula": "LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='R').value",
+                "formula": "LOOKUP(CMCC_ToEMM_Physics.PhysicalConstants where symbol='R').value",
                 "note": "Universal gas constant (toy). If not in your physics constants, you can store it there or do partial reference."
               },
               {
@@ -6686,10 +6686,10 @@
         ]
       }
     },
-    "CMCC_Complete_ToEMM_Biology": {
+    "CMCC_ToEMM_Biology": {
       "depends_on": [
-        "CMCC_Complete_ToEMM_Chemistry",
-        "CMCC_Complete_ToEMM_Physics"
+        "CMCC_ToEMM_Chemistry",
+        "CMCC_ToEMM_Physics"
       ],
       "version": "v2.0",
       "meta": {
@@ -6802,7 +6802,7 @@
               {
                 "name": "associated_molecule_id",
                 "type": "lookup",
-                "target_entity": "CMCC_Complete_ToEMM_Chemistry.Molecule",
+                "target_entity": "CMCC_ToEMM_Chemistry.Molecule",
                 "foreign_key": false,
                 "note": "Optional link to a Molecule entry that represents the 3D structure or partial info"
               },
@@ -7052,7 +7052,7 @@
               {
                 "name": "reaction_id",
                 "type": "lookup",
-                "target_entity": "CMCC_Complete_ToEMM_Chemistry.Reaction",
+                "target_entity": "CMCC_ToEMM_Chemistry.Reaction",
                 "foreign_key": true,
                 "note": "Underlying stoichiometric details from the chemistry schema"
               },
@@ -7182,10 +7182,10 @@
         ]
       }
     },
-    "CMCC_Complete_ToEMM_Economics": {
+    "CMCC_ToEMM_Economics": {
       "name": "All-In-One CMCC Economics Model",
       "description": "Covers basic and advanced economic entities—agents, markets, goods, transactions, supply-demand constraints, utility/budget, macro indicators, policies, plus a top-level scenario aggregator. Each entity is designed so it can be executed with no extra sidecar logic: all rules are captured using Schema (S), Data (D), Lookups (L), Aggregations (A), and Calculated Fields (F).",
-      "depends_on": ["CMCC_Complete_ToEMM_Math"],
+      "depends_on": ["CMCC_ToEMM_Math"],
       "version": "v2.4",
       "meta": {
         "title": "CMCC Complete Economics ToE Meta-Model",
@@ -8691,12 +8691,12 @@
         ]
       }
     },
-    "CMCC_Complete_ToEMM_Geology": {
+    "CMCC_ToEMM_Geology": {
       "name": "All-In-One CMCC Geology Model",
       "description": "Extends Physics and Chemistry to handle minerals, rock formations, tectonic plates, etc.",
       "depends_on": [
-        "CMCC_Complete_ToEMM_Physics",
-        "CMCC_Complete_ToEMM_Chemistry"
+        "CMCC_ToEMM_Physics",
+        "CMCC_ToEMM_Chemistry"
       ],
       "version": "v2.1",
       "meta": {
@@ -9495,10 +9495,10 @@
         ]
       }
     },
-    "CMCC_Complete_ToEMM_AI": {
+    "CMCC_ToEMM_AI": {
       "name": "All-In-One CMCC AI Model",
       "description": "Models core AI/ML artifacts: neural nets, training data, inference events, etc.",
-      "depends_on": ["CMCC_Complete_ToEMM_Math"],
+      "depends_on": ["CMCC_ToEMM_Math"],
       "version": "v2.0",
       "meta": {
         "title": "CMCC Complete Artificial Intelligence ToE Meta-Model",
@@ -9809,10 +9809,10 @@
         ]
       }
     },
-    "CMCC_Complete_ToEMM_Astronomy": {
+    "CMCC_ToEMM_Astronomy": {
       "name": "All-In-One CMCC Astronomy Model",
       "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
-      "depends_on": ["CMCC_Complete_ToEMM_Physics", "CMCC_Complete_ToEMM_Math"],
+      "depends_on": ["CMCC_ToEMM_Physics", "CMCC_ToEMM_Math"],
       "version": "v2.0",
       "meta": {
         "title": "CMCC Complete Astronomy ToE Meta-Model",
@@ -9883,7 +9883,7 @@
               {
                 "name": "reference_particle_id",
                 "type": "lookup",
-                "target_entity": "CMCC_Complete_ToEMM_Physics.Particle",
+                "target_entity": "CMCC_ToEMM_Physics.Particle",
                 "foreign_key": false,
                 "note": "If you want to unify with a Particle record from physics."
               },
@@ -9894,7 +9894,7 @@
               {
                 "name": "gravitational_parameter",
                 "type": "rollup",
-                "formula": "approx_mass * LOOKUP(CMCC_Complete_ToEMM_Physics.PhysicalConstants where symbol='G').value"
+                "formula": "approx_mass * LOOKUP(CMCC_ToEMM_Physics.PhysicalConstants where symbol='G').value"
               }
             ],
             "lambdas": [

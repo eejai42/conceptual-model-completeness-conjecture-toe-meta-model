@@ -16,10 +16,11 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 {{/each}}
 
 {{#each meta.CMCC_ToEMM_Domain_List}}
-[[FileSetFile/RelativePath[../../{{this.nickname}}/cmcc-meta-model.json]]]
+[[FileSetFile/RelativePath[../../{{this.nickname}}/cmcc-toe-{{this.nickname}}-meta-model.json]]]
 {{!-- Use a custom "lookup" helper to get the domain from CMCC_ToEMM_Domains by "id" --}}
-{{#with (lookup ../CMCC_ToEMM_Domains this.id)}}
-{{!-- Then stringify that domain’s object as JSON via a "json" helper --}}
-{{json .}}
+{
+    "id": "{{this.id}}",{{#with (lookup ../CMCC_ToEMM_Domains this.id)}}    
+    "meta-model": {{json .}}
+}
 {{/with}}
 {{/each}}

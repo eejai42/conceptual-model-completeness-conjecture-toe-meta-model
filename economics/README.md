@@ -10,6 +10,7 @@ Covers basic and advanced economic entities—agents, markets, goods, transactio
 **Title**: CMCC Complete Economics ToE Meta-Model  
 **Subtitle**: A Declarative Framework for Agents, Markets, and Economic Dynamics  
 **Date**: March 2025
+**ID**: CMCC_Complete_ToEMM_Economics
 
 ### Authors
 - **EJ Alexandra** <start@anabstractlevel.com>  

@@ -1,4 +1,6 @@
 {
+    "id": "CMCC_Complete_ToEMM_Chemistry",    
+    "meta-model": {
   "name": "All-In-One CMCC Chemistry Model",
   "description": "A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.",
   "depends_on": [
@@ -869,4 +871,5 @@
       }
     ]
   }
+}
 }

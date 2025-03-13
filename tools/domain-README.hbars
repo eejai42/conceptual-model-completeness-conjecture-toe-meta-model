@@ -1,17 +1,21 @@
+{{#with meta-model}}
 # {{name}}
 
 {{description}}
 
+{{#if depends_on}}
 ## Depends On:
 {{#each depends_on}}
 - {{this}}
 {{/each}}
+{{/if}}
 
 ## Metadata
 
 **Title**: {{meta.title}}  
 **Subtitle**: {{meta.subtitle}}  
 **Date**: {{meta.date}}
+**Domain Identifier**: {{../id}}
 
 ### Authors
 {{#each meta.authors}}
@@ -100,3 +104,4 @@
 ---
 
 {{/each}}
+{{/with}}
