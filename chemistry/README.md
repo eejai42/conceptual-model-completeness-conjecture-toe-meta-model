@@ -500,5 +500,3 @@ Whether you're investigating ring strain, measuring reaction feasibility, or bri
 
 
 ---
-
-

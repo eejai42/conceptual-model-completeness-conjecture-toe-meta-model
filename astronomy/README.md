@@ -187,5 +187,3 @@ By placing these concepts in the CMCC framework, we encode stars, exoplanets, bl
 
 
 ---
-
-

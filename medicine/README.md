@@ -322,5 +322,3 @@ This meta-model provides a syntax‐free, declarative representation for medicin
 
 
 ---
-
-

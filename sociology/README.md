@@ -1,4 +1,4 @@
-# Sociology & Anthropology ToE Meta-Model
+# CMCC Complete Sociology & Anthropology ToE Meta-Model
 ## A Declarative Framework for Modeling Social Dynamics and Cultural Norms
 
 A unified meta-model capturing social structures, cultural norms, and interaction networks. This model encodes survey data, demographic records, and social network relationships, and enables predictive modeling of social behavior and network dynamics.
@@ -13,7 +13,7 @@ A unified meta-model capturing social structures, cultural norms, and interactio
 ### Abstract
 This meta-model represents social structures, cultural norms, and interaction networks in a syntax‐free, ACID‐compliant environment. By leveraging declarative primitives, it supports community health indexing, social cohesion metrics, and predictive modeling of network dynamics.
 
-![Sociology & Anthropology ToE Meta-Model Entity Diagram](sociology.png)
+![CMCC Complete Sociology & Anthropology ToE Meta-Model Entity Diagram](sociology.png)
 
 
 ### Key Points
@@ -392,5 +392,3 @@ This meta-model represents social structures, cultural norms, and interaction ne
 
 
 ---
-
-

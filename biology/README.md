@@ -302,5 +302,3 @@ In the CMCC Biology Model, everything from DNA sequences and protein interaction
   *Error Message:* Enzyme must be a protein entity (toy example).
 
 ---
-
-

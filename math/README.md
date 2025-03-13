@@ -846,5 +846,3 @@ By remaining purely declarative, this approach decouples syntax from semantics. 
   *Error Message:* Category must be closed under morphism composition.
 
 ---
-
-

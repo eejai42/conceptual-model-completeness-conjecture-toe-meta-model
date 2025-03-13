@@ -774,5 +774,3 @@ This model treats supply-demand curves, monetary rules, and even advanced scenar
 
 
 ---
-
-

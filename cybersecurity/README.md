@@ -230,5 +230,3 @@ This meta-model enables a syntax‐free declarative representation of cybersecur
 
 
 ---
-
-

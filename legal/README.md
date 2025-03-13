@@ -293,5 +293,3 @@ This meta-model provides a declarative, syntax-free framework for legal systems 
 
 
 ---
-
-

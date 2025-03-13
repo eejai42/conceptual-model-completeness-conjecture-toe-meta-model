@@ -257,5 +257,3 @@ This meta-model represents climate science and environmental systems using five 
 
 
 ---
-
-

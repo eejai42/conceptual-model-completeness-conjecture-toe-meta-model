@@ -11932,13 +11932,13 @@
     },
     "CMCC_ToEMM_Sociology" : {
       "id": "CMCC_ToEMM_Sociology",
-      "fullname": "Sociology and Anthropology ToE Meta-Model",
+      "fullname": "CMCC Complete Sociology and Anthropology ToE Meta-Model",
       "name": "Sociology & Anthropology ToE Meta-Model",
       "description": "A unified meta-model capturing social structures, cultural norms, and interaction networks. This model encodes survey data, demographic records, and social network relationships, and enables predictive modeling of social behavior and network dynamics.",
       "nickname": "sociology",
       "version": "v2.2",
       "meta": {
-        "title": "Sociology & Anthropology ToE Meta-Model",
+        "title": "CMCC Complete Sociology & Anthropology ToE Meta-Model",
         "subtitle": "A Declarative Framework for Modeling Social Dynamics and Cultural Norms",
         "authors": [
           {
@@ -12690,8 +12690,7 @@
           }
         ]
       }
-    }
-    
+    }    
   },
   "Research": {
     "Toy_Universes": [
