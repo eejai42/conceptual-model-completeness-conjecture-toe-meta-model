@@ -1,7 +1,7 @@
 # Baseball ToE Meta-Model
-## A Unified Declarative Framework for the Sport's Structures and Rules
+## A 100% Declarative Framework for the Sport's Structures and Rules
 
-A unified meta-model capturing the entire domain of baseball—teams, players, games, innings, stats, and rules—within a single Snapshot-Consistent, declarative structure. All domain logic—like scoring, outs, pitch outcomes, lineups, or statistics—are expressed using lookups, aggregations, lambdas, and constraints.
+A unified meta-model capturing the entire domain of baseball—teams, players, games, innings, stats, and rules—within a purely declarative structure. All domain logic—like scoring, outs, pitch outcomes, lineups, or statistics—are expressed using lookups, aggregations, constraints, and event-based facts—no imperative instructions.
 
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Baseball
@@ -11,26 +11,25 @@ A unified meta-model capturing the entire domain of baseball—teams, players, g
   Affiliations: SSoT.me, EffortlessAPI.com
 
 ### Abstract
-The Baseball extension of the CMCC (Conceptual Model Completeness Conjecture) systematically represents baseball’s core objects—Teams, Players, Games, Innings, At-Bats—under a single Snapshot-Consistent schema. Using five foundational primitives (S, D, L, A, F), it encodes rules around scoring, outs, pitching results, roster management, and advanced stats, enabling cross-system synergy and easy maintenance. Everything from ball/strike logic to multi-season aggregated metrics can be modeled and updated as purely declarative data, removing the need for domain-specific baseball DSLs or ad hoc, code-scattered rules.
+The Baseball extension of the CMCC (Conceptual Model Completeness Conjecture) systematically represents baseball’s core objects—Teams, Players, Games, Innings, At-Bats—under a single Snapshot-Consistent schema. We’ve rewritten the entire specification to be 100% declarative, replacing stepwise imperative logic with event-based or aggregator-based facts. Everything from run scoring, outs, pitch results, and roster assignments is specified as constraints, lookups, aggregator fields, or derived booleans—ensuring that the model is purely descriptive. No domain logic is expressed as do-this-then-do-that instructions.
 
 ![Baseball ToE Meta-Model Entity Diagram](baseball.png)
 
 
 ### Key Points
-- Models baseball’s entire rule structure—teams, rosters, innings, batting orders, stats—declaratively with aggregator formulas, lambdas, and constraints.
-- Eliminates the need for dedicated baseball-simulation languages by storing the 'what' (the game logic) as first-class data relationships.
-- Demonstrates flexibility for advanced sabermetrics: from pitch-level detail to advanced team-level analytics.
-- Seamlessly integrates with other CMCC domains (e.g., economics or sociology) for cross-domain synergy (financial aspects of baseball, fan demographics, etc.).
+- Models baseball’s entire rule structure—teams, rosters, innings, batting orders, stats—declaratively with aggregator formulas, event-based facts, and constraints.
+- Eliminates the need for any imperative code blocks or specialized DSL instructions.
+- Demonstrates flexibility for advanced sabermetrics, tying directly into this purely factual data structure.
+- Seamlessly integrates with other CMCC domains (e.g., economics or sociology) for cross-domain synergy.
 
 ### Implications
-- Provides a universal environment for capturing the rules of baseball—from simple youth-league style to MLB-level detail.
-- Easily extended or internationalized (e.g., minor league variants, overseas leagues) without rewriting core logic.
-- Supports advanced analytics and queries—once in the data, any aggregator or custom lambda can examine on-base percentages, fielding metrics, or predicted outcomes.
+- Provides a universal environment for capturing baseball rules in a purely fact-based manner.
+- Greatly simplifies or eliminates stateful code, since all logic is derived from the presence/absence of events or stated data.
+- Supports advanced analytics—once in the data, aggregator fields can unify everything from pitch-level detail to multi-season advanced metrics.
 
 ### Narrative
-#### CMCC Baseball Extension
-Baseball is a famously data-heavy sport, from the rules around balls and strikes to the infinite array of metrics (batting average, ERA, WAR, etc.). Historically, baseball logic has been scattered through textual rulebooks, custom-coded simulators, or ad hoc spreadsheets. Each approach repeats or re-implements the same concepts—teams, innings, outs, runs, at-bats—in its own way.
-By contrast, the CMCC Baseball Model encodes all these domain concepts in a purely declarative fashion, capturing every rule from the simplest (3 strikes = 1 out) to the more subtle (infield fly, balk, defensive shifts, advanced sabermetrics). It becomes the single source of truth for all baseball logic—human-readable, machine-readable, and universally translatable. Whether you’re building a fantasy league platform, a simulation game, or advanced baseball analytics, the same structural definitions serve as the foundation, letting you query, transform, or expand the baseball domain without rewriting business logic in code.
+#### Purely Declarative Baseball Extension
+In this version, we removed all imperative instructions (e.g., 'increment outs', 'set status') and replaced them with aggregator fields or constraints referencing new event entities or pre-existing relationships. For instance, an InningHalf’s outs are now simply the count of 'OutEvent' records referencing that half-inning. A game is 'in progress' if certain conditions in the data hold (status='IN_PROGRESS' AND we haven't reached final conditions). No procedure calls are needed to change states; the data itself drives the logic. This architecture helps ensure the system remains consistent and transparent: any change to the data is automatically reflected in the aggregator fields, with no hidden or procedural steps to update them.
 
 
 ---
@@ -62,12 +61,27 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
   *Formula:* `COUNT(teams)`
 - **totalGamesPlayed**  
   *Description:* Sum of all Games completed by all Teams in the league. Implementation conceptual, scanning each team's 'gamesPlayed'.  
-  *Formula:* `SUM(teams.gamesPlayed) // or a more direct approach scanning a separate 'Game' entity`
+  *Formula:* `SUM(teams.gamesPlayed)`
+- **bestTeam**  
+  *Description:* The team with the highest win percentage in this league (declarative aggregator).  
+  *Formula:* `MAXBY(teams, t => t.winPercentage)`
+- **worstTeam**  
+  *Description:* The team with the lowest win percentage in this league (declarative aggregator).  
+  *Formula:* `MINBY(teams, t => t.winPercentage)`
+- **averageTeamERA**  
+  *Description:* The average ERA across all teams in this league. Implementation conceptual, could sum or average pitchers’ ERA or overall team ERA.  
+  *Formula:* `AVG(teams -> eachTeamERA)`
+- **totalLeagueHomeRuns**  
+  *Description:* The sum of all home runs hit by players on all teams in this league, purely data-based aggregator.  
+  *Formula:* `SUM(teams.roster -> careerHomeRuns)`
+- **totalLeagueStolenBases**  
+  *Description:* The sum of all stolen bases by players on all teams in this league.  
+  *Formula:* `SUM(teams.roster -> careerStolenBases)`
 
 ### Lambdas
 - **scheduleMatchups**
     
-  *Formula:* `CreateScheduledGames(teams)`
+  *Formula:* `ALL_PAIRINGS(teams) => SHOULD_HAVE_ScheduledMatchup`
 
 
 ---
@@ -99,25 +113,43 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
   *Description:* Number of players on the team's active roster.  
   *Formula:* `COUNT(roster)`
 - **gamesPlayed**  
-  *Description:* Number of Games in which this team has participated. Implementation conceptual.  
-  *Formula:* `COUNT( Game where (homeTeamId=this.id OR awayTeamId=this.id) )`
+  *Description:* Number of Games in which this team has participated (data-based aggregator).  
+  *Formula:* `COUNT(Game where (homeTeamId=this.id OR awayTeamId=this.id))`
 - **wins**  
-  *Description:* Count of Games this team has won.  
-  *Formula:* `COUNT( Game where (winnerId=this.id) )`
+  *Description:* Count of Games this team has won (pure aggregator, no imperative updates).  
+  *Formula:* `COUNT(Game where (winnerId=this.id))`
 - **losses**  
   *Description:* Count of Games this team has lost.  
-  *Formula:* `COUNT( Game where (loserId=this.id) )`
+  *Formula:* `COUNT(Game where (loserId=this.id))`
 - **winPercentage**  
   *Description:* wins / (wins + losses), if any games played. Null otherwise.  
   *Formula:* `IF (gamesPlayed>0) THEN (wins / gamesPlayed) ELSE null`
+- **averageTeamBattingAverage**  
+  *Description:* The average batting average among all players on the roster, purely aggregator.  
+  *Formula:* `AVG(roster.careerBattingAverage)`
+- **totalTeamRuns**  
+  *Description:* Total runs scored by this team (across all games). Implementation conceptual.  
+  *Formula:* `SUM(GameInnings where offense=this.id => runsScored )`
+- **totalTeamHomeRuns**  
+  *Description:* Sum of home runs hit by all players on this team.  
+  *Formula:* `SUM(roster -> careerHomeRuns)`
+- **totalTeamStolenBases**  
+  *Description:* Sum of stolen bases by all players on this team.  
+  *Formula:* `SUM(roster -> careerStolenBases)`
+- **averageFieldingPercentage**  
+  *Description:* The team’s overall fielding percentage, averaging all players’ fielding percentages who actively field.  
+  *Formula:* `AVG(roster -> careerFieldingPercentage )`
+- **winningPercentageInStadium**  
+  *Description:* Team’s historical winning percentage in a given stadium—pure aggregator referencing stadium-based game data.  
+  *Formula:* `WIN_PCT_BY_STADIUM_FUNCTION(this.id)`
 
 ### Lambdas
 - **addPlayerToRoster**
   (Parameters: player_id)  
-  *Formula:* `Set Player.team_id = this.id`
+  *Formula:* `Player(team_id=player_id).team_id == this.id`
 - **removePlayerFromRoster**
   (Parameters: player_id)  
-  *Formula:* `Set Player.team_id = null`
+  *Formula:* `Player(player_id).team_id == null`
 
 
 ---
@@ -168,12 +200,27 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
   *Formula:* `COUNT( AtBat where (pitcherId=this.id AND result='STRIKEOUT') )`
 - **careerInningsPitched**  
   *Description:* Summation of partial innings if the player is a pitcher. Implementation conceptual.  
-  *Formula:* `AccumulateInningsFromOuts( (sum of outs recorded by pitcherId=this.id) )`
+  *Formula:* `AccumulateInningsFromOuts( sum_of_outs_where_pitcherId=this.id )`
+- **onBasePercentage**  
+  *Description:* OBP = (H + BB + HBP) / (AB + BB + HBP + SF). Implementation conceptual if advanced data is tracked.  
+  *Formula:* `IF (plateAppearances>0) THEN ((careerHits + careerWalks + careerHitByPitch) / (careerAtBats + careerWalks + careerHitByPitch + careerSacFlies)) ELSE null`
+- **sluggingPercentage**  
+  *Description:* Total bases / at-bats. Implementation conceptual if we track 2B,3B,HR, etc.  
+  *Formula:* `IF (careerAtBats>0) THEN (sumOfTotalBases / careerAtBats) ELSE null`
+- **ops**  
+  *Description:* On-base plus slugging, purely aggregator of the OBP + SLG fields.  
+  *Formula:* `onBasePercentage + sluggingPercentage`
+- **stolenBasePercentage**  
+  *Description:* stolenBases / (stolenBases + caughtStealing). Implementation conceptual if we track that data.  
+  *Formula:* `IF ((careerStolenBases + careerCaughtStealing) > 0) THEN (careerStolenBases / (careerStolenBases + careerCaughtStealing)) ELSE null`
+- **isTwoWayPlayer**  
+  *Description:* Boolean indicating if the player has pitched and also batted as a regular hitter. Implementation conceptual.  
+  *Formula:* `IF (careerInningsPitched > 0 AND careerAtBats > 0) THEN true ELSE false`
 
 ### Lambdas
 - **adjustBattingHand**
   (Parameters: newHand)  
-  *Formula:* `Set this.battingHand = newHand`
+  *Formula:* `this.battingHand == newHand`
 
 
 ---
@@ -226,25 +273,31 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
   *Description:* Highest inningNumber in innings that have started or are in progress.  
   *Formula:* `IF innings != null THEN MAX(innings.inningNumber) ELSE null`
 - **runsHome**  
-  *Description:* Total runs scored by the home team, summing the relevant half-innings if offense=homeTeamId.  
+  *Description:* Total runs scored by the home team, summing relevant half-innings for the home offense.  
   *Formula:* `SUM( InningHalf.runsScored for all bottomHalves with offensiveTeamId=homeTeamId )`
 - **runsAway**  
-  *Description:* Total runs scored by the away team, summing the relevant half-innings if offense=awayTeamId.  
+  *Description:* Total runs scored by the away team, summing relevant half-innings for the away offense.  
   *Formula:* `SUM( InningHalf.runsScored for all topHalves with offensiveTeamId=awayTeamId )`
 - **winnerId**  
-  *Description:* If status='FINAL', determine which team has more runs. Null if tie or incomplete.  
-  *Formula:* `IF status='FINAL' THEN (IF runsHome>runsAway THEN homeTeamId ELSE IF runsAway>runsHome THEN awayTeamId ELSE null) ELSE null`
+  *Description:* If status='FINAL', whichever team has more runs. Null if tie or incomplete.  
+  *Formula:* `IF (status='FINAL') THEN (IF runsHome>runsAway THEN homeTeamId ELSE IF runsAway>runsHome THEN awayTeamId ELSE null) ELSE null`
 - **loserId**  
   *Description:* Symmetric aggregator to winnerId; identifies losing team if final and not tied.  
   *Formula:* `IF status='FINAL' AND runsHome!=runsAway THEN (IF winnerId=homeTeamId THEN awayTeamId ELSE homeTeamId) ELSE null`
+- **totalPitchesInGame**  
+  *Description:* Total number of pitches thrown in this game (pure aggregator across all at-bats).  
+  *Formula:* `COUNT( Pitch where pitch.atBatId.inningHalfId.inningId.gameId=this.id )`
+- **hasWalkOffOpportunity**  
+  *Description:* True if it's bottom of 9th+ with the home team trailing/tied so a scoring play could end the game. Implementation conceptual, purely declarative.  
+  *Formula:* `EVALUATE_WALKOFF_CONDITION(this.id)`
 
 ### Lambdas
 - **startGame**
     
-  *Formula:* `this.status='IN_PROGRESS'; Create(Inning for inningNumber=1)`
+  *Formula:* `IF (EXISTS(any pitch or any top inning started)) THEN (this.status == 'IN_PROGRESS')`
 - **endGame**
     
-  *Formula:* `this.status='FINAL'`
+  *Formula:* `IF (CONDITIONS_FOR_GAME_COMPLETION) THEN (this.status == 'FINAL')`
 
 ### Constraints
 - **teamMismatch**  
@@ -282,8 +335,8 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
 
 ### Aggregations
 - **isComplete**  
-  *Description:* True if top and bottom half are both complete, or if no bottom half needed (walk-off scenario).  
-  *Formula:* `top.isComplete AND ( bottom == null OR bottom.isComplete )`
+  *Description:* True if top and bottom half are both complete, or if there's a walk-off scenario that ends the inning early.  
+  *Formula:* `top.isComplete AND (bottom==null OR bottom.isComplete)`
 
 
 
@@ -291,7 +344,7 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
 
 ## Entity: InningHalf
 
-**Description**: Represents either top or bottom portion of an inning, with outs, runs, at-bats, etc.
+**Description**: Represents either top or bottom portion of an inning, with outs, runs, at-bats, etc. All purely event/aggregator based.
 
 ### Fields
 - **id**  
@@ -330,25 +383,31 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
 - **hitsInHalf**  
   *Description:* How many hits (1B,2B,3B,HR) occurred in this half.  
   *Formula:* `COUNT( AtBat where (inningHalfId=this.id AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN']) )`
+- **leftOnBase**  
+  *Description:* How many baserunners remained stranded when the half-inning ended. Implementation conceptual, purely aggregator over base-runner state.  
+  *Formula:* `CALCULATE_STRANDED_RUNNERS(this.id)`
 
 ### Lambdas
 - **recordOut**
     
-  *Formula:* `outs = outs + 1; IF outs>=3 THEN isComplete=true;`
+  *Formula:* `InningHalf.outs = COUNT(OutEvent where outEvent.inningHalfId=this.id)`
 - **scoreRun**
   (Parameters: count)  
-  *Formula:* `runsScored = runsScored + count;`
+  *Formula:* `InningHalf.runsScored = SUM(RunEvent where runEvent.inningHalfId=this.id => runEvent.runCount)`
 
 ### Constraints
 - **validOutCount**  
   *Formula:* `outs >= 0 AND outs <= 3`  
   *Error Message:* Outs must be between 0 and 3 inclusive.
+- **isCompleteWhen3OutsOrWalkoff**  
+  *Formula:* `isComplete == ((outs >= 3) OR (CHECK_WALKOFF_CONDITION(this.id)))`  
+  *Error Message:* Half-inning completes with 3 outs or a declared walk-off event.
 
 ---
 
 ## Entity: AtBat
 
-**Description**: A single plate appearance, from the start of the batter's turn to its final result.
+**Description**: A single plate appearance, from the start of the batter's turn to its final result. All logic is aggregator-based, no step-by-step updates.
 
 ### Fields
 - **id**  
@@ -384,21 +443,24 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
 - **fouls**  
   *Description:* Number of foul pitches among 'pitches'.  
   *Formula:* `COUNT( Pitch where (atBatId=this.id AND pitchResult='FOUL') )`
+- **expectedBattingAverage**  
+  *Description:* A sabermetric measure (xBA) based on exit velocity, launch angle, etc. Implementation conceptual, purely aggregator.  
+  *Formula:* `SABERMETRIC_xBA_FORMULA(this.id)`
 
 ### Lambdas
 - **addPitch**
   (Parameters: pitchData)  
-  *Formula:* `INSERT Pitch { atBatId: this.id, ...pitchData }`
+  *Formula:* `Pitch.atBatId == this.id => belongs to 'pitches' collection`
 - **finalizeAtBat**
     
-  *Formula:* `If (result in [GROUNDOUT,FLYOUT,STRIKEOUT]) => InningHalf.recordOut(); If (result in [SINGLE,DOUBLE,TRIPLE,HOMERUN, etc.]) => maybe InningHalf.scoreRun(x);`
+  *Formula:* `AtBatIsComplete(this.id) == (this.result != null)`
 
 
 ---
 
 ## Entity: Pitch
 
-**Description**: Represents a single pitch thrown in an at-bat. Tracks velocity, location, outcome, etc.
+**Description**: Represents a single pitch thrown in an at-bat. Tracks velocity, location, outcome, etc., with no imperative instructions.
 
 ### Fields
 - **id**  
@@ -411,6 +473,9 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
   *Type:* scalar, *Datatype:* string  
   
 - **pitchVelocity**  
+  *Type:* scalar, *Datatype:* number  
+  
+- **pitchSpinRate**  
   *Type:* scalar, *Datatype:* number  
   
 
@@ -442,6 +507,82 @@ By contrast, the CMCC Baseball Model encodes all these domain concepts in a pure
   
 - **season**  
   *Type:* scalar, *Datatype:* string  
+  
+- **lastUpdated**  
+  *Type:* scalar, *Datatype:* datetime  
+  
+
+
+
+
+
+---
+
+## Entity: Stadium
+
+**Description**: Represents a ballpark or stadium where games are played. Purely declarative references to capacity, location, etc.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **stadiumName**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **capacity**  
+  *Type:* scalar, *Datatype:* integer  
+  
+
+
+### Aggregations
+- **gamesPlayedInStadium**  
+  *Description:* Number of games that have taken place in this stadium. Implementation conceptual, would require a link from Game to Stadium.  
+  *Formula:* `COUNT(Game where Game.stadiumId = this.id)`
+- **averageAttendance**  
+  *Description:* Average attendance across all games played here. Implementation conceptual.  
+  *Formula:* `AVG(GameAttendanceRecords where stadiumId=this.id)`
+
+
+
+---
+
+## Entity: OutEvent
+
+**Description**: // NEW: Fact-based approach for recording outs. Each OutEvent references which half-inning or at-bat triggered the out. Eliminates imperative increments.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **inningHalfId**  
+  *Type:* lookup, *Datatype:*   
+  
+- **atBatId**  
+  *Type:* lookup, *Datatype:*   
+  
+
+
+
+
+
+---
+
+## Entity: RunEvent
+
+**Description**: // NEW: Fact-based approach for runs. Each RunEvent references which half-inning or at-bat triggered a run, ensuring no imperative 'scoreRun()'.
+
+### Fields
+- **id**  
+  *Type:* scalar, *Datatype:* string  
+  
+- **inningHalfId**  
+  *Type:* lookup, *Datatype:*   
+  
+- **atBatId**  
+  *Type:* lookup, *Datatype:*   
+  
+- **runCount**  
+  *Type:* scalar, *Datatype:* integer  
   
 
 
