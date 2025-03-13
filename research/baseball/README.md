@@ -178,6 +178,18 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **currentWinStreak**  
   *Description:* How many consecutive games (starting with the most recent) the team has won. Implementation conceptual, purely aggregator-based.  
   *Formula:* `CALC_CURRENT_WIN_STREAK(this.id)`
+- **pythagWinPct**  
+  *Description:* Estimates winning percentage from runs scored vs. runs allowed (Pythagorean expectation).  
+  *Formula:* `IF(totalTeamRuns>0 OR runsAllowed>0) THEN (POWER(totalTeamRuns,2)/(POWER(totalTeamRuns,2)+POWER(runsAllowed,2))) ELSE null`
+- **teamWalkRate**  
+  *Description:* Walks drawn per plate appearance by the entire team.  
+  *Formula:* `totalWalks / totalPlateAppearances`
+- **teamStrikeoutRate**  
+  *Description:* Team-wide ratio of strikeouts to total plate appearances.  
+  *Formula:* `(COUNT(AtBat WHERE offenseTeam=this.id AND result='STRIKEOUT')) / totalPlateAppearances`
+- **runsAllowed**  
+  *Description:* Total runs allowed by this team across all games (aggregator from the defensive perspective).  
+  *Formula:* `SUM(GameInnings WHERE defenseTeamId=this.id => runsScored)`
 
 ### Lambdas
 - **addPlayerToRoster**
@@ -285,6 +297,54 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **totalBases**  
   *Description:* Sum of bases the player has earned via hits (1 for single, 2 for double, etc.). Implementation conceptual scanning all hits.  
   *Formula:* `SUM( AtBat where batterId=this.id => mapHitToBases(result) )`
+- **hasCycleInAnyGame**  
+  *Description:* Indicates whether the player has ever completed a single, double, triple, and home run in the same game.  
+  *Formula:* `EXISTS(Game WHERE EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='SINGLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='DOUBLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='TRIPLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='HOMERUN']))`
+- **longestHitStreak**  
+  *Description:* The maximum consecutive-game hitting streak in the player's career.  
+  *Formula:* `CALCULATE_MAX_CONSECUTIVE_HIT_GAMES(playerId=this.id)`
+- **longestOnBaseStreak**  
+  *Description:* The maximum consecutive-game streak where the player reached base at least once (hit, walk, HBP, etc.).  
+  *Formula:* `CALCULATE_MAX_CONSECUTIVE_ONBASE_GAMES(playerId=this.id)`
+- **careerIso**  
+  *Description:* Isolated Power = slugging percentage - batting average.  
+  *Formula:* `IF(careerSluggingPct!=null AND careerBattingAverage!=null) THEN (careerSluggingPct - careerBattingAverage) ELSE null`
+- **careerDoublePlaysTurned**  
+  *Description:* How many double plays the player has been credited with turning on defense.  
+  *Formula:* `COUNT(OutEvent WHERE designation='DOUBLE_PLAY' AND fielderId=this.id)`
+- **careerTriplePlaysTurned**  
+  *Description:* How many triple plays the player has been credited with turning on defense.  
+  *Formula:* `COUNT(OutEvent WHERE designation='TRIPLE_PLAY' AND fielderId=this.id)`
+- **careerMaxHomeRunDistance**  
+  *Description:* Maximum recorded distance of any home run for this player.  
+  *Formula:* `MAX(AtBat WHERE batterId=this.id AND result='HOMERUN' => battedBallDistance)`
+- **careerGrandSlams**  
+  *Description:* Number of home runs with the bases loaded (4 RBI).  
+  *Formula:* `COUNT(AtBat WHERE batterId=this.id AND result='HOMERUN' AND baseStateBeforePitch='BASES_LOADED')`
+- **careerWalkOffHits**  
+  *Description:* Count of game-ending hits delivered by the player (walk-off singles, doubles, etc.).  
+  *Formula:* `COUNT(AtBat WHERE batterId=this.id AND result IN ['SINGLE','DOUBLE','TRIPLE','HOMERUN'] AND AtBatEndsGame=true)`
+- **careerWOBA**  
+  *Description:* Weighted On-Base Average, using established wOBA coefficients.  
+  *Formula:* `CALCULATE_WOBA(this.id)`
+- **careerWRCPlus**  
+  *Description:* Weighted Runs Created Plus, comparing player to league average = 100.  
+  *Formula:* `CALCULATE_WRC_PLUS(this.id, LEAGUE_OFFENSIVE_ENVIRONMENT)`
+- **careerDefensiveErrors**  
+  *Description:* Number of times the player committed an error (tracked via ErrorEvent).  
+  *Formula:* `COUNT(ErrorEvent WHERE fielderId=this.id)`
+- **careerPlateAppearances**  
+  *Description:* Comprehensive aggregator for all times the player came to bat, including walks, HBP, sacrifices, etc.  
+  *Formula:* `(careerAtBats + careerWalks + careerHitByPitch + careerSacFlies + careerSacBunts)`
+- **careerDefensiveChances**  
+  *Description:* Sum of outs plus errors for which this player was the fielder (defensive opportunities).  
+  *Formula:* `(COUNT(OutEvent WHERE fielderId=this.id) + careerDefensiveErrors)`
+- **careerFieldingPercentage**  
+  *Description:* Fielding percentage = (chances - errors) / chances, if chances > 0.  
+  *Formula:* `IF(careerDefensiveChances>0) THEN ((careerDefensiveChances - careerDefensiveErrors)/careerDefensiveChances) ELSE null`
+- **careerSacBunts**  
+  *Description:* Number of successful sacrifice bunts for the player.  
+  *Formula:* `COUNT(AtBat WHERE batterId=this.id AND result='SAC_BUNT')`
 
 ### Lambdas
 - **adjustBattingHand**
@@ -377,6 +437,12 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **totalWalksInGame**  
   *Description:* Count of all at-bats with 'result=WALK' in both halves across all innings for this game.  
   *Formula:* `COUNT(AtBat WHERE inningHalfId.inningId.gameId=this.id AND result='WALK')`
+- **leadChanges**  
+  *Description:* How many times the lead switched from one team to another during this game.  
+  *Formula:* `CALCULATE_LEAD_CHANGES(gameId=this.id)`
+- **tieCount**  
+  *Description:* How many times the score returned to a tie after first pitch.  
+  *Formula:* `CALCULATE_TIE_COUNT(gameId=this.id)`
 
 ### Lambdas
 - **startGame**
@@ -787,6 +853,9 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **teamWinningStreak**  
   *Description:* Longest consecutive wins streak for the team during this season. Implementation conceptual.  
   *Formula:* `CALCULATE_MAX_WIN_STREAK(teamId, seasonId)`
+- **runDifferential**  
+  *Description:* Runs scored minus runs allowed by a team in a given season.  
+  *Formula:* `(SUM(Game[seasonId=this.seasonId AND (homeTeamId=this.teamId OR awayTeamId=this.teamId) => runsScoredByTeam]) - SUM(Game[seasonId=this.seasonId AND (homeTeamId=this.teamId OR awayTeamId=this.teamId) => runsAllowedByTeam]))`
 
 
 

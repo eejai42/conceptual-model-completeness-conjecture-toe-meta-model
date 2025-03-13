@@ -299,6 +299,30 @@
                 "type": "rollup",
                 "description": "How many consecutive games (starting with the most recent) the team has won. Implementation conceptual, purely aggregator-based.",
                 "formula": "CALC_CURRENT_WIN_STREAK(this.id)"
+              },
+              {
+                "name": "pythagWinPct",
+                "type": "rollup",
+                "description": "Estimates winning percentage from runs scored vs. runs allowed (Pythagorean expectation).",
+                "formula": "IF(totalTeamRuns>0 OR runsAllowed>0) THEN (POWER(totalTeamRuns,2)/(POWER(totalTeamRuns,2)+POWER(runsAllowed,2))) ELSE null"
+              },
+              {
+                "name": "teamWalkRate",
+                "type": "rollup",
+                "description": "Walks drawn per plate appearance by the entire team.",
+                "formula": "totalWalks / totalPlateAppearances"
+              },
+              {
+                "name": "teamStrikeoutRate",
+                "type": "rollup",
+                "description": "Team-wide ratio of strikeouts to total plate appearances.",
+                "formula": "(COUNT(AtBat WHERE offenseTeam=this.id AND result='STRIKEOUT')) / totalPlateAppearances"
+              },
+              {
+                "name": "runsAllowed",
+                "type": "rollup",
+                "description": "Total runs allowed by this team across all games (aggregator from the defensive perspective).",
+                "formula": "SUM(GameInnings WHERE defenseTeamId=this.id => runsScored)"
               }
             ],
             "lambdas": [
@@ -499,6 +523,102 @@
                 "type": "rollup",
                 "description": "Sum of bases the player has earned via hits (1 for single, 2 for double, etc.). Implementation conceptual scanning all hits.",
                 "formula": "SUM( AtBat where batterId=this.id => mapHitToBases(result) )"
+              },
+              {
+                "name": "hasCycleInAnyGame",
+                "type": "rollup",
+                "description": "Indicates whether the player has ever completed a single, double, triple, and home run in the same game.",
+                "formula": "EXISTS(Game WHERE EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='SINGLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='DOUBLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='TRIPLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='HOMERUN']))"
+              },
+              {
+                "name": "longestHitStreak",
+                "type": "rollup",
+                "description": "The maximum consecutive-game hitting streak in the player's career.",
+                "formula": "CALCULATE_MAX_CONSECUTIVE_HIT_GAMES(playerId=this.id)"
+              },
+              {
+                "name": "longestOnBaseStreak",
+                "type": "rollup",
+                "description": "The maximum consecutive-game streak where the player reached base at least once (hit, walk, HBP, etc.).",
+                "formula": "CALCULATE_MAX_CONSECUTIVE_ONBASE_GAMES(playerId=this.id)"
+              },
+              {
+                "name": "careerIso",
+                "type": "rollup",
+                "description": "Isolated Power = slugging percentage - batting average.",
+                "formula": "IF(careerSluggingPct!=null AND careerBattingAverage!=null) THEN (careerSluggingPct - careerBattingAverage) ELSE null"
+              },
+              {
+                "name": "careerDoublePlaysTurned",
+                "type": "rollup",
+                "description": "How many double plays the player has been credited with turning on defense.",
+                "formula": "COUNT(OutEvent WHERE designation='DOUBLE_PLAY' AND fielderId=this.id)"
+              },
+              {
+                "name": "careerTriplePlaysTurned",
+                "type": "rollup",
+                "description": "How many triple plays the player has been credited with turning on defense.",
+                "formula": "COUNT(OutEvent WHERE designation='TRIPLE_PLAY' AND fielderId=this.id)"
+              },
+              {
+                "name": "careerMaxHomeRunDistance",
+                "type": "rollup",
+                "description": "Maximum recorded distance of any home run for this player.",
+                "formula": "MAX(AtBat WHERE batterId=this.id AND result='HOMERUN' => battedBallDistance)"
+              },
+              {
+                "name": "careerGrandSlams",
+                "type": "rollup",
+                "description": "Number of home runs with the bases loaded (4 RBI).",
+                "formula": "COUNT(AtBat WHERE batterId=this.id AND result='HOMERUN' AND baseStateBeforePitch='BASES_LOADED')"
+              },
+              {
+                "name": "careerWalkOffHits",
+                "type": "rollup",
+                "description": "Count of game-ending hits delivered by the player (walk-off singles, doubles, etc.).",
+                "formula": "COUNT(AtBat WHERE batterId=this.id AND result IN ['SINGLE','DOUBLE','TRIPLE','HOMERUN'] AND AtBatEndsGame=true)"
+              },
+              {
+                "name": "careerWOBA",
+                "type": "rollup",
+                "description": "Weighted On-Base Average, using established wOBA coefficients.",
+                "formula": "CALCULATE_WOBA(this.id)"
+              },
+              {
+                "name": "careerWRCPlus",
+                "type": "rollup",
+                "description": "Weighted Runs Created Plus, comparing player to league average = 100.",
+                "formula": "CALCULATE_WRC_PLUS(this.id, LEAGUE_OFFENSIVE_ENVIRONMENT)"
+              },
+              {
+                "name": "careerDefensiveErrors",
+                "type": "rollup",
+                "description": "Number of times the player committed an error (tracked via ErrorEvent).",
+                "formula": "COUNT(ErrorEvent WHERE fielderId=this.id)"
+              },
+              {
+                "name": "careerPlateAppearances",
+                "type": "rollup",
+                "description": "Comprehensive aggregator for all times the player came to bat, including walks, HBP, sacrifices, etc.",
+                "formula": "(careerAtBats + careerWalks + careerHitByPitch + careerSacFlies + careerSacBunts)"
+              },
+              {
+                "name": "careerDefensiveChances",
+                "type": "rollup",
+                "description": "Sum of outs plus errors for which this player was the fielder (defensive opportunities).",
+                "formula": "(COUNT(OutEvent WHERE fielderId=this.id) + careerDefensiveErrors)"
+              },
+              {
+                "name": "careerFieldingPercentage",
+                "type": "rollup",
+                "description": "Fielding percentage = (chances - errors) / chances, if chances > 0.",
+                "formula": "IF(careerDefensiveChances>0) THEN ((careerDefensiveChances - careerDefensiveErrors)/careerDefensiveChances) ELSE null"
+              },
+              {
+                "name": "careerSacBunts",
+                "type": "rollup",
+                "description": "Number of successful sacrifice bunts for the player.",
+                "formula": "COUNT(AtBat WHERE batterId=this.id AND result='SAC_BUNT')"
               }
             ],
             "lambdas": [
@@ -656,6 +776,18 @@
                 "type": "rollup",
                 "description": "Count of all at-bats with 'result=WALK' in both halves across all innings for this game.",
                 "formula": "COUNT(AtBat WHERE inningHalfId.inningId.gameId=this.id AND result='WALK')"
+              },
+              {
+                "name": "leadChanges",
+                "type": "rollup",
+                "description": "How many times the lead switched from one team to another during this game.",
+                "formula": "CALCULATE_LEAD_CHANGES(gameId=this.id)"
+              },
+              {
+                "name": "tieCount",
+                "type": "rollup",
+                "description": "How many times the score returned to a tie after first pitch.",
+                "formula": "CALCULATE_TIE_COUNT(gameId=this.id)"
               }
             ],
             "lambdas": [
@@ -1349,6 +1481,12 @@
                 "type": "rollup",
                 "description": "Longest consecutive wins streak for the team during this season. Implementation conceptual.",
                 "formula": "CALCULATE_MAX_WIN_STREAK(teamId, seasonId)"
+              },
+              {
+                "name": "runDifferential",
+                "type": "rollup",
+                "description": "Runs scored minus runs allowed by a team in a given season.",
+                "formula": "(SUM(Game[seasonId=this.seasonId AND (homeTeamId=this.teamId OR awayTeamId=this.teamId) => runsScoredByTeam]) - SUM(Game[seasonId=this.seasonId AND (homeTeamId=this.teamId OR awayTeamId=this.teamId) => runsAllowedByTeam]))"
               }
             ],
             "lambdas": [],
