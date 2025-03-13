@@ -131,6 +131,41 @@
         "name": "Geology",
         "description": "A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.",
         "nickname": "geology"
+      },
+      {
+        "id": "CMCC_ToEMM_Medicine",
+        "fullname": "CMCC Complete Medicine and Healthcare ToE Meta-Model",
+        "name": "Medicine & Healthcare ToE Meta-Model",
+        "description": "A unified model capturing foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.",
+        "nickname": "medicine"
+      },
+      {
+        "id": "CMCC_ToEMM_Legal",
+        "fullname": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+        "name": "Legal Systems & Compliance ToE Meta-Model",
+        "description": "A unified model for legal systems, contracts, statutory frameworks, and regulatory compliance.",
+        "nickname": "legal"
+      },
+      {
+        "id": "CMCC_ToEMM_Climate",
+        "fullname": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+        "name": "Climate Science ToE Meta-Model",
+        "description": "A unified model for climate science and environmental modeling, capturing climate variables, ecosystems, pollution sources, and environmental data with built-in predictive and forecast capabilities.",
+        "nickname": "climate"
+      },
+      {
+        "id": "CMCC_ToEMM_Cybersecurity",
+        "fullname": "CMCC Complete Cybersecurity ToE Meta-Model",
+        "name": "Cybersecurity ToE Meta-Model",
+        "description": "A unified model for cybersecurity covering threat models, vulnerabilities, IT asset mappings, incident logs, and security audits.",
+        "nickname": "cybersecurity"
+      },
+      {
+        "id": "CMCC_ToEMM_Sociology",
+        "fullname": "CMCC Complete Sociology and Anthropology ToE Meta-Model",
+        "name": "Sociology & Anthropology ToE Meta-Model",
+        "description": "A structured model capturing social structures, cultural norms, and interaction networks using survey data, demographic records, and social network relationships.",
+        "nickname": "sociology"
       }
     ]
   },
@@ -10102,7 +10137,2174 @@
           }
         ]
       }
-    }
+    },
+    "CMCC_ToEMM_Medicine" : {
+      "id": "CMCC_ToEMM_Medicine",
+      "fullname": "CMCC Complete Medicine and Healthcare ToE Meta-Model",
+      "name": "Medicine & Healthcare ToE Meta-Model",
+      "description": "A unified meta-model capturing the foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.",
+      "nickname": "medicine",
+      "version": "v2.0",
+      "meta": {
+        "title": "CMCC Complete Medicine & Healthcare ToE Meta-Model",
+        "subtitle": "A Declarative Framework for Modeling Medical Data and Healthcare Processes",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This meta-model provides a syntax‐free, declarative representation for medicine and healthcare systems. It encodes patient records, conditions, symptoms, treatment plans, clinical trial data, lab results, and vital signs using the five fundamental primitives: Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields.",
+        "executive_summary": {
+          "key_points": [
+            "Enables a syntax‐free representation of medical and healthcare data.",
+            "Unifies patient records, clinical analytics, and treatment workflows within an ACID-compliant environment.",
+            "Facilitates risk assessment and predictive modeling via declarative calculated fields.",
+            "Bridges clinical, laboratory, and treatment data for comprehensive healthcare management."
+          ],
+          "implications": [
+            "Reduces redundancy and semantic drift in healthcare systems.",
+            "Supports rapid, no-code customization and integration across platforms.",
+            "Improves decision support through transparent and unified analytics."
+          ]
+        }
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "Patient",
+            "description": "Represents a patient in the healthcare system.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique patient identifier."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Patient's full name."
+              },
+              {
+                "name": "date_of_birth",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Patient's date of birth."
+              },
+              {
+                "name": "gender",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Patient's gender."
+              },
+              {
+                "name": "contact_information",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Patient's contact details."
+              },
+              {
+                "name": "medical_history",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Historical medical information."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "conditions",
+                "target_entity": "Condition",
+                "type": "one_to_many",
+                "join_condition": "Condition.patient_id = this.id",
+                "description": "Medical conditions diagnosed for the patient."
+              },
+              {
+                "name": "treatment_plans",
+                "target_entity": "TreatmentPlan",
+                "type": "one_to_many",
+                "join_condition": "TreatmentPlan.patient_id = this.id",
+                "description": "Treatment plans prescribed for the patient."
+              },
+              {
+                "name": "lab_results",
+                "target_entity": "LabResult",
+                "type": "one_to_many",
+                "join_condition": "LabResult.patient_id = this.id",
+                "description": "Lab test results for the patient."
+              },
+              {
+                "name": "vital_signs",
+                "target_entity": "VitalSign",
+                "type": "one_to_many",
+                "join_condition": "VitalSign.patient_id = this.id",
+                "description": "Vital sign measurements."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "age",
+                "type": "rollup",
+                "formula": "ComputeAge(date_of_birth)",
+                "description": "Calculates the patient's current age."
+              },
+              {
+                "name": "number_of_conditions",
+                "type": "rollup",
+                "formula": "COUNT(conditions)",
+                "description": "Counts the number of diagnosed conditions."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "risk_assessment",
+                "parameters": [],
+                "description": "Evaluates overall health risk based on conditions, lab results, and vital signs.",
+                "formula": "ComputeRisk(conditions, lab_results, vital_signs)"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "valid_date_of_birth",
+                "formula": "date_of_birth < CURRENT_DATE",
+                "error_message": "Date of birth must be in the past."
+              }
+            ]
+          },
+          {
+            "name": "Condition",
+            "description": "Represents a diagnosed medical condition for a patient.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the condition."
+              },
+              {
+                "name": "patient_id",
+                "type": "lookup",
+                "target_entity": "Patient",
+                "foreign_key": true,
+                "description": "Reference to the patient."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the condition."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Detailed description of the condition."
+              },
+              {
+                "name": "diagnosis_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date when the condition was diagnosed."
+              },
+              {
+                "name": "severity",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Severity level (e.g., mild, moderate, severe)."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "symptoms",
+                "target_entity": "Symptom",
+                "type": "one_to_many",
+                "join_condition": "Symptom.condition_id = this.id",
+                "description": "Symptoms associated with the condition."
+              },
+              {
+                "name": "treatment_plans",
+                "target_entity": "TreatmentPlan",
+                "type": "one_to_many",
+                "join_condition": "TreatmentPlan.condition_id = this.id",
+                "description": "Treatment plans addressing the condition."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "duration_since_diagnosis",
+                "type": "rollup",
+                "formula": "ComputeDuration(diagnosis_date, CURRENT_DATE)",
+                "description": "Time elapsed since diagnosis."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "Symptom",
+            "description": "Represents a symptom experienced by a patient, linked to a condition.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique symptom identifier."
+              },
+              {
+                "name": "condition_id",
+                "type": "lookup",
+                "target_entity": "Condition",
+                "foreign_key": true,
+                "description": "Reference to the associated condition."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the symptom."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Description of the symptom."
+              },
+              {
+                "name": "onset_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date when the symptom began."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "TreatmentPlan",
+            "description": "Represents a treatment plan prescribed for a specific condition.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique treatment plan identifier."
+              },
+              {
+                "name": "patient_id",
+                "type": "lookup",
+                "target_entity": "Patient",
+                "foreign_key": true,
+                "description": "Reference to the patient."
+              },
+              {
+                "name": "condition_id",
+                "type": "lookup",
+                "target_entity": "Condition",
+                "foreign_key": true,
+                "description": "Reference to the condition being treated."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Details of the treatment plan."
+              },
+              {
+                "name": "start_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Treatment start date."
+              },
+              {
+                "name": "end_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Treatment end date, if applicable."
+              },
+              {
+                "name": "medications",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "List of medications and dosages."
+              },
+              {
+                "name": "procedures",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Medical procedures involved in the treatment."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "treatment_duration",
+                "type": "rollup",
+                "formula": "ComputeDuration(start_date, end_date)",
+                "description": "Calculates the duration of the treatment plan."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "update_plan",
+                "parameters": ["new_details"],
+                "description": "Updates treatment plan details with new information.",
+                "formula": "Merge(this, new_details)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "ClinicalTrial",
+            "description": "Represents a clinical trial study for testing medical interventions.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique clinical trial identifier."
+              },
+              {
+                "name": "trial_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the clinical trial."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Detailed description of the trial."
+              },
+              {
+                "name": "start_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Trial start date."
+              },
+              {
+                "name": "end_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Trial end date."
+              },
+              {
+                "name": "phase",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Trial phase (e.g., Phase I, II, III, IV)."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "enrolled_patients",
+                "target_entity": "Patient",
+                "type": "many_to_many",
+                "join_condition": "Enrollment.trial_id = this.id",
+                "description": "Patients enrolled in this trial."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "number_of_patients",
+                "type": "rollup",
+                "formula": "COUNT(enrolled_patients)",
+                "description": "Counts the number of enrolled patients."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "LabResult",
+            "description": "Represents a laboratory test result for a patient.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique lab result identifier."
+              },
+              {
+                "name": "patient_id",
+                "type": "lookup",
+                "target_entity": "Patient",
+                "foreign_key": true,
+                "description": "Reference to the patient."
+              },
+              {
+                "name": "test_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the lab test."
+              },
+              {
+                "name": "result_value",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Numeric value of the test result."
+              },
+              {
+                "name": "unit",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Unit of measurement."
+              },
+              {
+                "name": "test_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date when the test was conducted."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "average_result",
+                "type": "rollup",
+                "formula": "AVERAGE(result_value)",
+                "description": "Average value of the test result."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "VitalSign",
+            "description": "Represents a vital sign measurement for a patient.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique vital sign identifier."
+              },
+              {
+                "name": "patient_id",
+                "type": "lookup",
+                "target_entity": "Patient",
+                "foreign_key": true,
+                "description": "Reference to the patient."
+              },
+              {
+                "name": "type",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Type of vital sign (e.g., blood pressure, heart rate)."
+              },
+              {
+                "name": "value",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Measured value."
+              },
+              {
+                "name": "unit",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Unit of measurement."
+              },
+              {
+                "name": "measurement_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date of the measurement."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "average_vital",
+                "type": "rollup",
+                "formula": "AVERAGE(value)",
+                "description": "Average measurement value for the vital sign."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "overall_health_risk",
+            "parameters": ["patient_id"],
+            "description": "Calculates an overall health risk score for a given patient by aggregating conditions, lab results, and vital signs.",
+            "formula": "ComputeOverallRisk(Patient(patient_id).conditions, Patient(patient_id).lab_results, Patient(patient_id).vital_signs)"
+          },
+          {
+            "name": "predictive_outcome",
+            "parameters": ["patient_id"],
+            "description": "Predicts patient outcomes based on current conditions, treatment plans, and historical data.",
+            "formula": "RunPredictiveModel(Patient(patient_id).medical_history, Patient(patient_id).treatment_plans)"
+          }
+        ]
+      },
+      "data": {
+        "Patient": [
+          {
+            "id": "patient_001",
+            "name": "John Doe",
+            "date_of_birth": "1980-05-15",
+            "gender": "Male",
+            "contact_information": { "email": "john@example.com", "phone": "555-1234" },
+            "medical_history": { "notes": "No significant past illnesses." }
+          }
+        ],
+        "Condition": [
+          {
+            "id": "condition_001",
+            "patient_id": "patient_001",
+            "name": "Hypertension",
+            "description": "Elevated blood pressure",
+            "diagnosis_date": "2010-09-01",
+            "severity": "Moderate"
+          }
+        ],
+        "Symptom": [
+          {
+            "id": "symptom_001",
+            "condition_id": "condition_001",
+            "name": "Headache",
+            "description": "Frequent headaches reported",
+            "onset_date": "2023-01-10"
+          }
+        ],
+        "TreatmentPlan": [
+          {
+            "id": "treatment_001",
+            "patient_id": "patient_001",
+            "condition_id": "condition_001",
+            "description": "Lifestyle modifications and medication",
+            "start_date": "2023-02-01",
+            "end_date": "2023-08-01",
+            "medications": [{ "name": "Lisinopril", "dosage": "10mg" }],
+            "procedures": []
+          }
+        ],
+        "ClinicalTrial": [
+          {
+            "id": "trial_001",
+            "trial_name": "Hypertension Drug Study",
+            "description": "A clinical trial for testing a new hypertension medication.",
+            "start_date": "2024-01-01",
+            "end_date": "2024-12-31",
+            "phase": "Phase III"
+          }
+        ],
+        "LabResult": [
+          {
+            "id": "lab_001",
+            "patient_id": "patient_001",
+            "test_name": "Cholesterol",
+            "result_value": 180,
+            "unit": "mg/dL",
+            "test_date": "2023-03-15"
+          }
+        ],
+        "VitalSign": [
+          {
+            "id": "vital_001",
+            "patient_id": "patient_001",
+            "type": "Blood Pressure",
+            "value": 130,
+            "unit": "mmHg",
+            "measurement_date": "2023-03-15"
+          }
+        ]
+      }
+    },
+    "CMCC_ToEMM_Legal" : {
+      "id": "CMCC_ToEMM_Legal",
+      "fullname": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+      "name": "Legal Systems & Compliance ToE Meta-Model",
+      "description": "A unified meta-model providing a syntax-free, declarative representation of legal systems and compliance frameworks. It integrates contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies to support automated compliance checking and risk assessment.",
+      "nickname": "legal",
+      "version": "v2.0",
+      "meta": {
+        "title": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+        "subtitle": "A Declarative Framework for Modeling Legal Documents, Regulations, and Compliance",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This meta-model provides a declarative, syntax-free framework for legal systems and compliance. It encodes contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies using the five primitives: Schema, Data, Lookups, Aggregations, and Calculated Fields.",
+        "executive_summary": {
+          "key_points": [
+            "Enables a syntax‐free representation of legal and compliance data.",
+            "Integrates contracts, statutes, case law, and audit trails into a unified model.",
+            "Facilitates automated contract interpretation and compliance scoring.",
+            "Supports risk assessments and dynamic policy enforcement."
+          ],
+          "implications": [
+            "Reduces ambiguity and improves consistency in legal documentation.",
+            "Streamlines compliance reporting and regulatory monitoring.",
+            "Enables automated analysis and trend reporting for regulatory risk."
+          ]
+        }
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "Contract",
+            "description": "Represents a legally binding contract between parties.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the contract."
+              },
+              {
+                "name": "contract_title",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Title of the contract."
+              },
+              {
+                "name": "contract_body",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Full text of the contract."
+              },
+              {
+                "name": "effective_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Effective date of the contract."
+              },
+              {
+                "name": "expiry_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Expiry date of the contract, if applicable."
+              },
+              {
+                "name": "involved_parties",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "List of parties involved in the contract."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "jurisdiction",
+                "target_entity": "Jurisdiction",
+                "type": "lookup",
+                "foreign_key": true,
+                "description": "Jurisdiction governing the contract."
+              },
+              {
+                "name": "regulations",
+                "target_entity": "Regulation",
+                "type": "many_to_many",
+                "join_condition": "ContractRegulation.contract_id = this.id",
+                "description": "Applicable regulations referenced by the contract."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "risk_assessment",
+                "type": "rollup",
+                "formula": "AssessContractRisk(contract_body)",
+                "description": "Calculates a risk score based on the contract content."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "interpret_contract",
+                "parameters": [],
+                "description": "Automatically interprets key clauses in the contract.",
+                "formula": "ExtractKeyClauses(contract_body)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "LegalFramework",
+            "description": "Represents a structured legal framework or system, such as statutes and regulatory structures.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the legal framework."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the legal framework."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Detailed description of the legal framework."
+              },
+              {
+                "name": "framework_type",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Type of framework (e.g., statutory, case-based)."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "jurisdictions",
+                "target_entity": "Jurisdiction",
+                "type": "many_to_many",
+                "join_condition": "FrameworkJurisdiction.framework_id = this.id",
+                "description": "Jurisdictions covered by this framework."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "compliance_metric",
+                "type": "rollup",
+                "formula": "AggregateCompliance(this.id)",
+                "description": "Aggregates compliance metrics within the framework."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "interpret_framework",
+                "parameters": [],
+                "description": "Automatically interprets the legal framework details.",
+                "formula": "ParseFrameworkDetails(description)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "Regulation",
+            "description": "Represents a specific regulation or statutory requirement.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the regulation."
+              },
+              {
+                "name": "regulation_title",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Title of the regulation."
+              },
+              {
+                "name": "regulation_text",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Full text of the regulation."
+              },
+              {
+                "name": "enactment_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date when the regulation was enacted."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "jurisdiction",
+                "target_entity": "Jurisdiction",
+                "type": "lookup",
+                "foreign_key": true,
+                "description": "Jurisdiction applicable to the regulation."
+              },
+              {
+                "name": "legal_framework",
+                "target_entity": "LegalFramework",
+                "type": "lookup",
+                "foreign_key": false,
+                "description": "The legal framework under which this regulation is enacted."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "compliance_scoring",
+                "type": "rollup",
+                "formula": "ComputeRegulationCompliance(regulation_text)",
+                "description": "Computes a compliance score based on the regulation text."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "Jurisdiction",
+            "description": "Represents a legal jurisdiction, such as a country, state, or region.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the jurisdiction."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the jurisdiction."
+              },
+              {
+                "name": "country",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Country or region of the jurisdiction."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Description of the jurisdiction."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "regulation_count",
+                "type": "rollup",
+                "formula": "COUNT(Regulation where Regulation.jurisdiction = this.id)",
+                "description": "Counts the number of regulations applicable to this jurisdiction."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "CaseLaw",
+            "description": "Represents a legal case or precedent that informs regulatory interpretation.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the case."
+              },
+              {
+                "name": "case_title",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Title of the legal case."
+              },
+              {
+                "name": "summary",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Summary of the case details."
+              },
+              {
+                "name": "decision_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date when the case was decided."
+              },
+              {
+                "name": "citation",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Legal citation for the case."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "precedent_regulations",
+                "target_entity": "Regulation",
+                "type": "many_to_many",
+                "join_condition": "CaseLawRegulation.case_id = this.id",
+                "description": "Regulations referenced as precedents in the case."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "precedent_count",
+                "type": "rollup",
+                "formula": "COUNT(precedent_regulations)",
+                "description": "Counts the number of precedent regulations referenced in the case."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "interpret_case",
+                "parameters": [],
+                "description": "Interprets key legal principles from the case summary.",
+                "formula": "ExtractLegalPrinciples(summary)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "AuditTrail",
+            "description": "Represents an audit record for tracking compliance actions and changes in legal documents.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the audit record."
+              },
+              {
+                "name": "related_entity_id",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Identifier for the related legal entity (e.g., Contract or Regulation)."
+              },
+              {
+                "name": "action",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Action performed (e.g., create, update, delete)."
+              },
+              {
+                "name": "timestamp",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Time of the action."
+              },
+              {
+                "name": "details",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Additional details about the action."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "audit_count",
+                "type": "rollup",
+                "formula": "COUNT(this)",
+                "description": "Counts the number of audit entries."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "OrganizationalPolicy",
+            "description": "Represents an internal policy or guideline within an organization.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique policy identifier."
+              },
+              {
+                "name": "policy_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the policy."
+              },
+              {
+                "name": "policy_text",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Full text of the policy."
+              },
+              {
+                "name": "effective_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date when the policy becomes effective."
+              },
+              {
+                "name": "review_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Scheduled review date for the policy."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "compliance_trend",
+                "type": "rollup",
+                "formula": "AnalyzePolicyComplianceTrends(policy_text)",
+                "description": "Analyzes trends in policy compliance."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "check_compliance",
+                "parameters": [],
+                "description": "Automatically checks if the policy meets compliance standards.",
+                "formula": "EvaluatePolicyCompliance(policy_text)"
+              }
+            ],
+            "constraints": []
+          }
+        ]
+      },
+      "data": {
+        "Contract": [
+          {
+            "id": "contract_001",
+            "contract_title": "Service Agreement",
+            "contract_body": "This agreement outlines the service terms between Company A and Company B...",
+            "effective_date": "2023-01-01",
+            "expiry_date": "2024-01-01",
+            "involved_parties": { "party1": "Company A", "party2": "Company B" }
+          }
+        ],
+        "LegalFramework": [
+          {
+            "id": "framework_001",
+            "name": "US Federal Regulations",
+            "description": "A framework encompassing federal laws and regulations in the United States.",
+            "framework_type": "Statutory"
+          }
+        ],
+        "Regulation": [
+          {
+            "id": "reg_001",
+            "regulation_title": "GDPR Compliance Regulation",
+            "regulation_text": "Text of GDPR compliance regulation...",
+            "enactment_date": "2018-05-25",
+            "jurisdiction": "jurisdiction_001"
+          }
+        ],
+        "Jurisdiction": [
+          {
+            "id": "jurisdiction_001",
+            "name": "European Union",
+            "country": "EU",
+            "description": "The jurisdiction covering European Union member states."
+          }
+        ],
+        "CaseLaw": [
+          {
+            "id": "caselaw_001",
+            "case_title": "Smith vs. DataCorp",
+            "summary": "A landmark case on data privacy and contractual obligations.",
+            "decision_date": "2020-07-15",
+            "citation": "2020 EU Case 123",
+            "precedent_regulations": ["reg_001"]
+          }
+        ],
+        "AuditTrail": [
+          {
+            "id": "audit_001",
+            "related_entity_id": "contract_001",
+            "action": "Update",
+            "timestamp": "2023-06-01T10:00:00Z",
+            "details": "Updated contract terms regarding liability."
+          }
+        ],
+        "OrganizationalPolicy": [
+          {
+            "id": "policy_001",
+            "policy_name": "Data Security Policy",
+            "policy_text": "This policy outlines the data security requirements for all departments...",
+            "effective_date": "2022-01-01",
+            "review_date": "2023-01-01"
+          }
+        ]
+      }
+    },
+    "CMCC_ToEMM_Climate": {
+      "id": "CMCC_ToEMM_Climate",
+      "fullname": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+      "name": "Climate Science ToE Meta-Model",
+      "description": "A unified meta-model that captures the foundational elements of climate science and environmental modeling—including climate variables, ecosystems, pollution sources, and environmental measurements—and supports predictive modeling and ecological forecasts using a declarative, ACID-compliant framework.",
+      "nickname": "climate",
+      "version": "v2.0",
+      "meta": {
+        "title": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+        "subtitle": "A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This meta-model represents climate science and environmental systems using five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields—within an ACID-compliant environment. It supports the modeling of climate variables, ecosystems, and pollution sources while enabling predictive climate models and ecological forecasts.",
+        "executive_summary": {
+          "key_points": [
+            "Declarative capture of environmental variables, ecosystems, and pollutant sources.",
+            "Integration of atmospheric, oceanographic, and biodiversity data.",
+            "Built-in support for predictive models and ecological forecasts via in-entity lambdas.",
+            "A unified, syntax-free representation of environmental semantics."
+          ],
+          "implications": [
+            "Enables rapid, no-code adjustments for environmental simulations.",
+            "Improves consistency and integration across diverse environmental datasets.",
+            "Supports scalable predictive modeling for climate and ecological systems."
+          ]
+        }
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "ClimateVariable",
+            "description": "Represents a measured climate variable (e.g., temperature, humidity, CO₂ levels).",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the climate variable."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the climate variable."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Description of what the variable measures."
+              },
+              {
+                "name": "unit",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Unit of measurement (e.g., °C, %, ppm)."
+              },
+              {
+                "name": "current_value",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "The most recent recorded value."
+              },
+              {
+                "name": "measurement_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date of the latest measurement."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "average_value",
+                "type": "rollup",
+                "formula": "AVERAGE(historical_values)",
+                "description": "Average value from historical measurements."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "predict_future_value",
+                "parameters": [],
+                "description": "Generates a predictive forecast for the variable based on historical data.",
+                "formula": "ForecastModel(current_value, measurement_date, historical_values)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "Ecosystem",
+            "description": "Represents an ecosystem or environmental region with its characteristic species and features.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ecosystem identifier."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the ecosystem."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Description of the ecosystem."
+              },
+              {
+                "name": "region",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Geographic region or location."
+              },
+              {
+                "name": "dominant_species",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "List of dominant species in the ecosystem."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "biodiversity_records",
+                "target_entity": "BiodiversityRecord",
+                "type": "one_to_many",
+                "join_condition": "BiodiversityRecord.ecosystem_id = this.id",
+                "description": "Biodiversity records associated with this ecosystem."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "habitat_quality",
+                "type": "rollup",
+                "formula": "AssessHabitatQuality(biodiversity_records)",
+                "description": "Evaluates the quality of the habitat based on biodiversity metrics."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "assess_habitat_health",
+                "parameters": [],
+                "description": "Generates an ecological forecast for the ecosystem.",
+                "formula": "EcologicalForecast(biodiversity_records, environmental_factors)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "PollutionSource",
+            "description": "Represents a source of pollution impacting the environment.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique pollution source identifier."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the pollution source."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Description of the pollution source."
+              },
+              {
+                "name": "pollutant_type",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Type of pollutant emitted."
+              },
+              {
+                "name": "emission_rate",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Rate of pollutant emission."
+              },
+              {
+                "name": "location",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Geographic location of the source."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "total_emissions",
+                "type": "rollup",
+                "formula": "SUM(emission_rate)",
+                "description": "Total emissions calculated from multiple readings."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "classify_pollutant",
+                "parameters": [],
+                "description": "Classifies the pollutant based on type and emission characteristics.",
+                "formula": "PollutantClassifier(pollutant_type, emission_rate)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "AtmosphericData",
+            "description": "Represents a set of atmospheric measurements for a climate variable.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the atmospheric data record."
+              },
+              {
+                "name": "variable_id",
+                "type": "lookup",
+                "target_entity": "ClimateVariable",
+                "foreign_key": true,
+                "description": "Reference to the associated climate variable."
+              },
+              {
+                "name": "measurement_value",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Recorded measurement value."
+              },
+              {
+                "name": "measurement_time",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Timestamp of the measurement."
+              },
+              {
+                "name": "location",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Geographic location of the measurement."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "average_atmospheric_value",
+                "type": "rollup",
+                "formula": "AVERAGE(measurement_value)",
+                "description": "Average value over a set of measurements."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "aggregate_atmospheric_data",
+                "parameters": [],
+                "description": "Aggregates multiple measurements to produce a summary statistic.",
+                "formula": "AggregateMeasurements(measurement_value, measurement_time)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "OceanographicMeasurement",
+            "description": "Represents measurements taken from oceanographic sensors.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the oceanographic measurement."
+              },
+              {
+                "name": "variable_id",
+                "type": "lookup",
+                "target_entity": "ClimateVariable",
+                "foreign_key": true,
+                "description": "Reference to the related climate variable (e.g., sea temperature)."
+              },
+              {
+                "name": "measurement_value",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Recorded measurement value."
+              },
+              {
+                "name": "measurement_time",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Timestamp of the measurement."
+              },
+              {
+                "name": "location",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Geographic location of the measurement."
+              },
+              {
+                "name": "depth",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Depth at which the measurement was taken (in meters)."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "average_ocean_value",
+                "type": "rollup",
+                "formula": "AVERAGE(measurement_value)",
+                "description": "Average oceanographic measurement value."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "predict_ocean_trend",
+                "parameters": [],
+                "description": "Forecasts trends in ocean measurements based on historical data.",
+                "formula": "OceanTrendModel(measurement_value, measurement_time)"
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "BiodiversityRecord",
+            "description": "Represents a record of species observation and population data within an ecosystem.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique biodiversity record identifier."
+              },
+              {
+                "name": "ecosystem_id",
+                "type": "lookup",
+                "target_entity": "Ecosystem",
+                "foreign_key": true,
+                "description": "Reference to the associated ecosystem."
+              },
+              {
+                "name": "species_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the species."
+              },
+              {
+                "name": "population_count",
+                "type": "scalar",
+                "datatype": "integer",
+                "description": "Observed population count."
+              },
+              {
+                "name": "observation_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date of the observation."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "total_species_count",
+                "type": "rollup",
+                "formula": "COUNT(species_name)",
+                "description": "Total number of species recorded in the ecosystem."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "forecast_population_change",
+                "parameters": [],
+                "description": "Predicts future population changes for the species based on historical observations.",
+                "formula": "PopulationForecast(population_count, observation_date)"
+              }
+            ],
+            "constraints": []
+          }
+        ]
+      },
+      "data": {
+        "ClimateVariable": [
+          {
+            "id": "cv_001",
+            "name": "Air Temperature",
+            "description": "Ambient air temperature measured in degrees Celsius.",
+            "unit": "°C",
+            "current_value": 22.5,
+            "measurement_date": "2025-03-10"
+          }
+        ],
+        "Ecosystem": [
+          {
+            "id": "eco_001",
+            "name": "Tropical Rainforest",
+            "description": "A biodiverse tropical rainforest ecosystem.",
+            "region": "Amazon Basin",
+            "dominant_species": ["Jaguar", "Macaw", "Capuchin Monkey"]
+          }
+        ],
+        "PollutionSource": [
+          {
+            "id": "ps_001",
+            "name": "Industrial Plant A",
+            "description": "A manufacturing facility emitting chemical pollutants.",
+            "pollutant_type": "NOx",
+            "emission_rate": 150.0,
+            "location": { "lat": -3.4653, "lon": -62.2159 }
+          }
+        ],
+        "AtmosphericData": [
+          {
+            "id": "atmo_001",
+            "variable_id": "cv_001",
+            "measurement_value": 22.5,
+            "measurement_time": "2025-03-10T08:00:00Z",
+            "location": { "lat": 0.0, "lon": 0.0 }
+          }
+        ],
+        "OceanographicMeasurement": [
+          {
+            "id": "ocean_001",
+            "variable_id": "cv_001",
+            "measurement_value": 18.2,
+            "measurement_time": "2025-03-10T09:00:00Z",
+            "location": { "lat": -15.0, "lon": 120.0 },
+            "depth": 50.0
+          }
+        ],
+        "BiodiversityRecord": [
+          {
+            "id": "bio_001",
+            "ecosystem_id": "eco_001",
+            "species_name": "Toucan",
+            "population_count": 120,
+            "observation_date": "2025-03-09"
+          }
+        ]
+      }
+    },
+    "CMCC_ToEMM_Cybersecurity": {
+      "id": "CMCC_ToEMM_Cybersecurity",
+      "fullname": "CMCC Complete Cybersecurity ToE Meta-Model",
+      "name": "Cybersecurity ToE Meta-Model",
+      "description": "A unified meta-model capturing cybersecurity aspects including threat models, vulnerabilities, IT asset mappings, incident logs, security audits, and patches, using a declarative, ACID-compliant approach.",
+      "nickname": "cybersecurity",
+      "version": "v2.0",
+      "meta": {
+        "title": "CMCC Complete Cybersecurity ToE Meta-Model",
+        "subtitle": "A Declarative Framework for Cybersecurity Data and Rule Management",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This meta-model enables a syntax‐free declarative representation of cybersecurity systems. It captures threat models, vulnerabilities, IT asset mappings, incident logs, security audits, and patches. Key computed fields include risk prioritization scoring and anomaly detection indicators.",
+        "executive_summary": {
+          "key_points": [
+            "Represents cybersecurity data using five primitives: Schema, Data, Lookups, Aggregations, and Calculated Fields.",
+            "Integrates threat models, vulnerabilities, and IT asset mapping with incident and audit data.",
+            "Provides computed risk scores and anomaly indicators to support dynamic security assessments."
+          ],
+          "implications": [
+            "Facilitates rapid, consistent security analysis across heterogeneous IT environments.",
+            "Reduces complexity and semantic drift via ACID-compliant, syntax‐free models.",
+            "Enables automated risk prioritization and real-time anomaly detection."
+          ]
+        }
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "ThreatModel",
+            "description": "Represents a conceptual model of potential threats against IT assets.",
+            "fields": [
+              { "name": "id", "type": "scalar", "datatype": "string", "primary_key": true, "description": "Unique threat model identifier." },
+              { "name": "name", "type": "scalar", "datatype": "string", "description": "Name of the threat model." },
+              { "name": "description", "type": "scalar", "datatype": "string", "description": "Detailed description of the threat scenario." },
+              { "name": "asset_scope", "type": "scalar", "datatype": "string", "description": "Scope of IT assets covered." }
+            ],
+            "lookups": [
+              {
+                "name": "vulnerabilities",
+                "target_entity": "Vulnerability",
+                "type": "one_to_many",
+                "join_condition": "Vulnerability.threat_model_id = this.id",
+                "description": "List of vulnerabilities associated with this threat model."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "vulnerability_count",
+                "type": "rollup",
+                "formula": "COUNT(vulnerabilities)",
+                "description": "Counts the number of associated vulnerabilities."
+              }
+            ]
+          },
+          {
+            "name": "Vulnerability",
+            "description": "Represents a vulnerability or weakness in an IT asset.",
+            "fields": [
+              { "name": "id", "type": "scalar", "datatype": "string", "primary_key": true, "description": "Unique vulnerability identifier." },
+              { "name": "threat_model_id", "type": "lookup", "target_entity": "ThreatModel", "foreign_key": true, "description": "Reference to the threat model." },
+              { "name": "name", "type": "scalar", "datatype": "string", "description": "Vulnerability name." },
+              { "name": "description", "type": "scalar", "datatype": "string", "description": "Details about the vulnerability." },
+              { "name": "severity", "type": "scalar", "datatype": "string", "description": "Severity level (e.g., low, medium, high)." },
+              { "name": "CVE_id", "type": "scalar", "datatype": "string", "description": "Common Vulnerabilities and Exposures (CVE) identifier." }
+            ],
+            "lookups": [
+              {
+                "name": "patches",
+                "target_entity": "Patch",
+                "type": "one_to_many",
+                "join_condition": "Patch.vulnerability_id = this.id",
+                "description": "Patches addressing this vulnerability."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "vulnerability_score",
+                "type": "rollup",
+                "formula": "ComputeVulnScore(severity)",
+                "description": "Calculated risk score based on severity."
+              }
+            ]
+          },
+          {
+            "name": "ITAsset",
+            "description": "Represents an IT asset such as servers, endpoints, or network devices.",
+            "fields": [
+              { "name": "id", "type": "scalar", "datatype": "string", "primary_key": true, "description": "Unique IT asset identifier." },
+              { "name": "name", "type": "scalar", "datatype": "string", "description": "Name of the IT asset." },
+              { "name": "asset_type", "type": "scalar", "datatype": "string", "description": "Type of asset (e.g., server, router)." },
+              { "name": "description", "type": "scalar", "datatype": "string", "description": "Detailed description of the asset." }
+            ],
+            "lookups": [
+              {
+                "name": "vulnerabilities",
+                "target_entity": "Vulnerability",
+                "type": "one_to_many",
+                "join_condition": "Vulnerability.it_asset_id = this.id",
+                "description": "Vulnerabilities affecting the asset."
+              },
+              {
+                "name": "incidents",
+                "target_entity": "Incident",
+                "type": "one_to_many",
+                "join_condition": "Incident.it_asset_id = this.id",
+                "description": "Security incidents associated with the asset."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "risk_score",
+                "type": "rollup",
+                "formula": "ComputeAssetRisk(vulnerabilities, incidents)",
+                "description": "Calculated overall risk score for the asset."
+              }
+            ]
+          },
+          {
+            "name": "Incident",
+            "description": "Represents a recorded security incident or intrusion detection event.",
+            "fields": [
+              { "name": "id", "type": "scalar", "datatype": "string", "primary_key": true, "description": "Unique incident identifier." },
+              { "name": "it_asset_id", "type": "lookup", "target_entity": "ITAsset", "foreign_key": true, "description": "Reference to the affected IT asset." },
+              { "name": "description", "type": "scalar", "datatype": "string", "description": "Description of the incident." },
+              { "name": "incident_date", "type": "scalar", "datatype": "datetime", "description": "Date and time of the incident." },
+              { "name": "type", "type": "scalar", "datatype": "string", "description": "Type of incident (e.g., intrusion, malware detection)." },
+              { "name": "severity", "type": "scalar", "datatype": "string", "description": "Incident severity level." }
+            ],
+            "aggregations": [
+              {
+                "name": "anomaly_indicator",
+                "type": "rollup",
+                "formula": "ComputeAnomalyIndicator(severity, incident_date)",
+                "description": "Indicator of anomalous behavior based on incident characteristics."
+              }
+            ]
+          },
+          {
+            "name": "SecurityAudit",
+            "description": "Represents a security audit or assessment of IT systems.",
+            "fields": [
+              { "name": "id", "type": "scalar", "datatype": "string", "primary_key": true, "description": "Unique audit identifier." },
+              { "name": "audit_date", "type": "scalar", "datatype": "datetime", "description": "Date of the audit." },
+              { "name": "description", "type": "scalar", "datatype": "string", "description": "Summary of the audit." },
+              { "name": "results", "type": "scalar", "datatype": "json", "description": "Detailed audit results." }
+            ],
+            "aggregations": [
+              {
+                "name": "audit_score",
+                "type": "rollup",
+                "formula": "ComputeAuditScore(results)",
+                "description": "Score based on audit findings."
+              }
+            ]
+          },
+          {
+            "name": "Patch",
+            "description": "Represents a patch or remediation applied to address a vulnerability.",
+            "fields": [
+              { "name": "id", "type": "scalar", "datatype": "string", "primary_key": true, "description": "Unique patch identifier." },
+              { "name": "vulnerability_id", "type": "lookup", "target_entity": "Vulnerability", "foreign_key": true, "description": "Reference to the vulnerability being patched." },
+              { "name": "patch_date", "type": "scalar", "datatype": "datetime", "description": "Date the patch was applied." },
+              { "name": "description", "type": "scalar", "datatype": "string", "description": "Description of the patch." }
+            ]
+          }
+        ]
+      },
+      "data": {
+        "ThreatModel": [
+          {
+            "id": "threat_001",
+            "name": "Phishing Attack Model",
+            "description": "Model capturing common phishing attack vectors targeting corporate emails.",
+            "asset_scope": "Email servers, Workstations"
+          }
+        ],
+        "Vulnerability": [
+          {
+            "id": "vuln_001",
+            "threat_model_id": "threat_001",
+            "name": "Spear Phishing Vulnerability",
+            "description": "Targeted phishing vulnerability exploiting weak email filtering.",
+            "severity": "High",
+            "CVE_id": "CVE-2024-12345"
+          }
+        ],
+        "ITAsset": [
+          {
+            "id": "asset_001",
+            "name": "Corporate Email Server",
+            "asset_type": "Server",
+            "description": "Handles all incoming and outgoing corporate email traffic."
+          }
+        ],
+        "Incident": [
+          {
+            "id": "incident_001",
+            "it_asset_id": "asset_001",
+            "description": "Multiple phishing emails detected in a short timeframe.",
+            "incident_date": "2025-03-01T14:30:00Z",
+            "type": "Phishing",
+            "severity": "Medium"
+          }
+        ],
+        "SecurityAudit": [
+          {
+            "id": "audit_001",
+            "audit_date": "2025-02-15T10:00:00Z",
+            "description": "Quarterly security audit of email infrastructure.",
+            "results": { "score": 85, "findings": "Minor misconfigurations detected." }
+          }
+        ],
+        "Patch": [
+          {
+            "id": "patch_001",
+            "vulnerability_id": "vuln_001",
+            "patch_date": "2025-03-05T09:00:00Z",
+            "description": "Updated email filtering rules and applied security patch."
+          }
+        ]
+      }
+    },
+    "CMCC_ToEMM_Sociology" : {
+      "id": "CMCC_ToEMM_Sociology",
+      "fullname": "CMCC Complete Sociology and Anthropology ToE Meta-Model",
+      "name": "Sociology & Anthropology ToE Meta-Model",
+      "description": "A unified meta-model capturing social structures, cultural norms, and interaction networks. This model encodes survey data, demographic records, and social network relationships, and enables predictive modeling of social behavior and network dynamics.",
+      "nickname": "sociology",
+      "version": "v1.0",
+      "meta": {
+        "title": "CMCC Complete Sociology & Anthropology ToE Meta-Model",
+        "subtitle": "A Declarative Framework for Modeling Social Dynamics and Cultural Norms",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This meta-model represents social structures, cultural norms, and interaction networks in a syntax‐free, ACID‐compliant environment. By leveraging declarative primitives, it supports community health indexing, social cohesion metrics, and predictive modeling of network dynamics."
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "Community",
+            "description": "Represents a social community or group with shared cultural or demographic characteristics.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique community identifier."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Community name."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Description of the community."
+              },
+              {
+                "name": "demographics",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Key demographic information about the community."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "individuals",
+                "target_entity": "Individual",
+                "type": "one_to_many",
+                "join_condition": "Individual.community_id = this.id",
+                "description": "Members of the community."
+              },
+              {
+                "name": "surveys",
+                "target_entity": "Survey",
+                "type": "one_to_many",
+                "join_condition": "Survey.community_id = this.id",
+                "description": "Surveys conducted within the community."
+              },
+              {
+                "name": "interactions",
+                "target_entity": "SocialInteraction",
+                "type": "one_to_many",
+                "join_condition": "SocialInteraction.community_id = this.id",
+                "description": "Social interactions recorded within the community."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "community_health_index",
+                "type": "rollup",
+                "formula": "ComputeCommunityHealth(individuals, surveys, interactions)",
+                "description": "Aggregate measure of the community's overall well-being."
+              },
+              {
+                "name": "social_cohesion_metric",
+                "type": "rollup",
+                "formula": "ComputeSocialCohesion(individuals, interactions)",
+                "description": "Quantifies the degree of cohesion within the community."
+              }
+            ],
+            "calculated_fields": [
+              {
+                "name": "predictive_behavior_model",
+                "formula": "PredictSocialBehavior(surveys, interactions)",
+                "description": "Model predicting future social behavior trends based on current data."
+              }
+            ]
+          },
+          {
+            "name": "Individual",
+            "description": "Represents a person within a community.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique individual identifier."
+              },
+              {
+                "name": "community_id",
+                "type": "lookup",
+                "target_entity": "Community",
+                "foreign_key": true,
+                "description": "Reference to the community the individual belongs to."
+              },
+              {
+                "name": "name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Individual's name."
+              },
+              {
+                "name": "age",
+                "type": "scalar",
+                "datatype": "integer",
+                "description": "Individual's age."
+              },
+              {
+                "name": "demographic_details",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Additional demographic data."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "cultural_norms",
+                "target_entity": "CulturalNorm",
+                "type": "many_to_many",
+                "join_condition": "CulturalNorm.adherent_ids CONTAINS this.id",
+                "description": "Cultural norms that the individual adheres to."
+              },
+              {
+                "name": "social_interactions",
+                "target_entity": "SocialInteraction",
+                "type": "one_to_many",
+                "join_condition": "(SocialInteraction.individual1_id = this.id OR SocialInteraction.individual2_id = this.id)",
+                "description": "Social interactions involving this individual."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "social_influence_score",
+                "type": "rollup",
+                "formula": "ComputeInfluence(social_interactions)",
+                "description": "Quantitative measure of the individual's influence in the network."
+              }
+            ],
+            "calculated_fields": [
+              {
+                "name": "network_dynamics",
+                "formula": "AnalyzeNetworkDynamics(social_interactions)",
+                "description": "Evaluates the dynamics of the individual's social network."
+              }
+            ]
+          },
+          {
+            "name": "Survey",
+            "description": "Represents a survey conducted within a community.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique survey identifier."
+              },
+              {
+                "name": "community_id",
+                "type": "lookup",
+                "target_entity": "Community",
+                "foreign_key": true,
+                "description": "Reference to the community where the survey was conducted."
+              },
+              {
+                "name": "survey_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date when the survey was administered."
+              },
+              {
+                "name": "responses",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Survey responses stored as JSON."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "participants",
+                "target_entity": "Individual",
+                "type": "many_to_many",
+                "join_condition": "SurveyParticipation.survey_id = this.id",
+                "description": "Individuals who participated in the survey."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "average_response",
+                "type": "rollup",
+                "formula": "AVERAGE(responses)",
+                "description": "Average response score from the survey."
+              },
+              {
+                "name": "trend_analysis",
+                "type": "rollup",
+                "formula": "AnalyzeTrends(responses)",
+                "description": "Trend analysis based on survey responses."
+              }
+            ],
+            "calculated_fields": [
+              {
+                "name": "predictive_model",
+                "formula": "PredictFromSurvey(responses)",
+                "description": "Predicts future social trends based on survey data."
+              }
+            ]
+          },
+          {
+            "name": "CulturalNorm",
+            "description": "Represents a cultural norm or standard within a community.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for the cultural norm."
+              },
+              {
+                "name": "community_id",
+                "type": "lookup",
+                "target_entity": "Community",
+                "foreign_key": true,
+                "description": "Reference to the community to which the norm applies."
+              },
+              {
+                "name": "norm_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the cultural norm."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Detailed description of the norm."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "norm_adherence_index",
+                "type": "rollup",
+                "formula": "ComputeAdherence(cultural_norm_adherents)",
+                "description": "Measures the degree to which community members adhere to the norm."
+              }
+            ],
+            "calculated_fields": []
+          },
+          {
+            "name": "SocialInteraction",
+            "description": "Represents an interaction between two individuals.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique interaction identifier."
+              },
+              {
+                "name": "community_id",
+                "type": "lookup",
+                "target_entity": "Community",
+                "foreign_key": true,
+                "description": "Reference to the community where the interaction took place."
+              },
+              {
+                "name": "individual1_id",
+                "type": "lookup",
+                "target_entity": "Individual",
+                "foreign_key": true,
+                "description": "First participant in the interaction."
+              },
+              {
+                "name": "individual2_id",
+                "type": "lookup",
+                "target_entity": "Individual",
+                "foreign_key": true,
+                "description": "Second participant in the interaction."
+              },
+              {
+                "name": "interaction_type",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Type or category of the interaction."
+              },
+              {
+                "name": "timestamp",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "Time when the interaction occurred."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "interaction_frequency",
+                "type": "rollup",
+                "formula": "COUNT(this)",
+                "description": "Frequency count of this type of interaction."
+              }
+            ],
+            "calculated_fields": [
+              {
+                "name": "dynamic_strength",
+                "formula": "CalculateInteractionStrength(interaction_type, interaction_frequency)",
+                "description": "Evaluates the strength of the relationship based on interaction type and frequency."
+              }
+            ]
+          }
+        ]
+      },
+      "data": {
+        "Community": [
+          {
+            "id": "community_001",
+            "name": "Downtown Residents",
+            "description": "A diverse urban community.",
+            "demographics": { "population": 5000, "median_income": 55000 }
+          }
+        ],
+        "Individual": [
+          {
+            "id": "individual_001",
+            "community_id": "community_001",
+            "name": "Alice Smith",
+            "age": 34,
+            "demographic_details": { "occupation": "Teacher", "education": "Bachelor's" }
+          }
+        ],
+        "Survey": [
+          {
+            "id": "survey_001",
+            "community_id": "community_001",
+            "survey_date": "2025-01-15",
+            "responses": { "Q1": 4, "Q2": 3, "Q3": 5 }
+          }
+        ],
+        "CulturalNorm": [
+          {
+            "id": "norm_001",
+            "community_id": "community_001",
+            "norm_name": "Community Support",
+            "description": "High value placed on mutual aid and support."
+          }
+        ],
+        "SocialInteraction": [
+          {
+            "id": "interaction_001",
+            "community_id": "community_001",
+            "individual1_id": "individual_001",
+            "individual2_id": "individual_002",
+            "interaction_type": "casual_chat",
+            "timestamp": "2025-01-16T14:30:00Z"
+          }
+        ]
+      }
+    }    
   },
   "Research": {
     "Toy_Universes": [
