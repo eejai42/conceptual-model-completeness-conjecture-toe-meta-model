@@ -1,13 +1,7 @@
 # The CMCC Complete Theory-of-Everything Meta Model
 
-<div style="float: right; width: 15rem">
-
-![sdlaf](sdlaf.png)
-
-</div>
-
 ## Overview
-This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an ACID-compliant environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework
+This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an Snapshot-Consistent environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework
 
 ## TL;DR;
 ### The Model
@@ -87,6 +81,31 @@ An extension of the Physics TOE to model celestial bodies, star systems, orbital
 **CMCC Complete Geology oE Meta-Model**
 
 A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.. Read more about the [geology](geology/README.md) CMCC Complete Meta-Model.
+
+### Medicine & Healthcare ToE Meta-Model
+**CMCC Complete Medicine and Healthcare ToE Meta-Model**
+
+A unified model capturing foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.. Read more about the [medicine](medicine/README.md) CMCC Complete Meta-Model.
+
+### Legal Systems & Compliance ToE Meta-Model
+**CMCC Complete Legal Systems & Compliance ToE Meta-Model**
+
+A unified model for legal systems, contracts, statutory frameworks, and regulatory compliance.. Read more about the [legal](legal/README.md) CMCC Complete Meta-Model.
+
+### Climate Science ToE Meta-Model
+**CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model**
+
+A unified model for climate science and environmental modeling, capturing climate variables, ecosystems, pollution sources, and environmental data with built-in predictive and forecast capabilities.. Read more about the [climate](climate/README.md) CMCC Complete Meta-Model.
+
+### Cybersecurity ToE Meta-Model
+**CMCC Complete Cybersecurity ToE Meta-Model**
+
+A unified model for cybersecurity covering threat models, vulnerabilities, IT asset mappings, incident logs, and security audits.. Read more about the [cybersecurity](cybersecurity/README.md) CMCC Complete Meta-Model.
+
+### Sociology & Anthropology ToE Meta-Model
+**CMCC Complete Sociology and Anthropology ToE Meta-Model**
+
+A structured model capturing social structures, cultural norms, and interaction networks using survey data, demographic records, and social network relationships.. Read more about the [sociology](sociology/README.md) CMCC Complete Meta-Model.
 
 
 ## Example: Mathematical Details

@@ -17,7 +17,7 @@ Covers basic and advanced economic entities—agents, markets, goods, transactio
   Affiliations: SSoT.me, EffortlessAPI.com
 
 ### Abstract
-The Economics extension of the CMCC (Conceptual Model Completeness Conjecture) provides a unified, ACID-compliant structure for modeling economic agents, transactions, markets, and policy rules. By leveraging CMCC’s five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda formulas—it captures everything from microeconomic supply-demand dynamics to macroeconomic indicators, bridging them seamlessly with other domains such as mathematics, AI, or even quantum-inspired decision models.
+The Economics extension of the CMCC (Conceptual Model Completeness Conjecture) provides a unified, Snapshot-Consistent structure for modeling economic agents, transactions, markets, and policy rules. By leveraging CMCC’s five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda formulas—it captures everything from microeconomic supply-demand dynamics to macroeconomic indicators, bridging them seamlessly with other domains such as mathematics, AI, or even quantum-inspired decision models.
 
 ### Key Points
 - Encodes agents, markets, and transactions as first-class entities with aggregator-based rules (e.g., equilibrium checks, utility maximization).
@@ -32,7 +32,7 @@ The Economics extension of the CMCC (Conceptual Model Completeness Conjecture) p
 
 ### Narrative
 #### CMCC Economics Extension
-Economics is often a balancing act of micro and macro phenomena, traditionally handled by disparate models or software. By placing everything—agents, utility functions, market clearing conditions—in a single ACID-based schema, we achieve uniformity and cross-model reusability.
+Economics is often a balancing act of micro and macro phenomena, traditionally handled by disparate models or software. By placing everything—agents, utility functions, market clearing conditions—in a single Snapshot-Consistent schema, we achieve uniformity and cross-model reusability.
 This model treats supply-demand curves, monetary rules, and even advanced scenario simulators (like agent-based modeling) as purely declarative aggregator formulas. Agents can reference AI-based lambda functions for decision logic, while the system tracks equilibrium or stability via aggregator constraints. This integration with the broader CMCC environment permits mathematically rigorous yet flexible modeling of economic phenomena, bridging everything from simple supply-demand charts to large-scale global trade simulations.
 
 

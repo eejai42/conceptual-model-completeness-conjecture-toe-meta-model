@@ -1,0 +1,475 @@
+{
+    "id": "CMCC_ToEMM_Climate",    
+    "meta-model": {
+  "id": "CMCC_ToEMM_Climate",
+  "fullname": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+  "name": "Climate Science ToE Meta-Model",
+  "description": "A unified meta-model that captures the foundational elements of climate science and environmental modeling—including climate variables, ecosystems, pollution sources, and environmental measurements—and supports predictive modeling and ecological forecasts using a declarative, Snapshot-Consistent framework.",
+  "nickname": "climate",
+  "version": "v2.0",
+  "meta": {
+    "title": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+    "subtitle": "A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This meta-model represents climate science and environmental systems using five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields—within an Snapshot-Consistent environment. It supports the modeling of climate variables, ecosystems, and pollution sources while enabling predictive climate models and ecological forecasts.",
+    "executive_summary": {
+      "key_points": [
+        "Declarative capture of environmental variables, ecosystems, and pollutant sources.",
+        "Integration of atmospheric, oceanographic, and biodiversity data.",
+        "Built-in support for predictive models and ecological forecasts via in-entity lambdas.",
+        "A unified, syntax-free representation of environmental semantics."
+      ],
+      "implications": [
+        "Enables rapid, no-code adjustments for environmental simulations.",
+        "Improves consistency and integration across diverse environmental datasets.",
+        "Supports scalable predictive modeling for climate and ecological systems."
+      ]
+    }
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "ClimateVariable",
+        "description": "Represents a measured climate variable (e.g., temperature, humidity, CO₂ levels).",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the climate variable."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the climate variable."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Description of what the variable measures."
+          },
+          {
+            "name": "unit",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Unit of measurement (e.g., °C, %, ppm)."
+          },
+          {
+            "name": "current_value",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "The most recent recorded value."
+          },
+          {
+            "name": "measurement_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date of the latest measurement."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "average_value",
+            "type": "rollup",
+            "formula": "AVERAGE(historical_values)",
+            "description": "Average value from historical measurements."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "predict_future_value",
+            "parameters": [],
+            "description": "Generates a predictive forecast for the variable based on historical data.",
+            "formula": "ForecastModel(current_value, measurement_date, historical_values)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "Ecosystem",
+        "description": "Represents an ecosystem or environmental region with its characteristic species and features.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique ecosystem identifier."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the ecosystem."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Description of the ecosystem."
+          },
+          {
+            "name": "region",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Geographic region or location."
+          },
+          {
+            "name": "dominant_species",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List of dominant species in the ecosystem."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "biodiversity_records",
+            "target_entity": "BiodiversityRecord",
+            "type": "one_to_many",
+            "join_condition": "BiodiversityRecord.ecosystem_id = this.id",
+            "description": "Biodiversity records associated with this ecosystem."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "habitat_quality",
+            "type": "rollup",
+            "formula": "AssessHabitatQuality(biodiversity_records)",
+            "description": "Evaluates the quality of the habitat based on biodiversity metrics."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "assess_habitat_health",
+            "parameters": [],
+            "description": "Generates an ecological forecast for the ecosystem.",
+            "formula": "EcologicalForecast(biodiversity_records, environmental_factors)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "PollutionSource",
+        "description": "Represents a source of pollution impacting the environment.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique pollution source identifier."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the pollution source."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Description of the pollution source."
+          },
+          {
+            "name": "pollutant_type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Type of pollutant emitted."
+          },
+          {
+            "name": "emission_rate",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Rate of pollutant emission."
+          },
+          {
+            "name": "location",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Geographic location of the source."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "total_emissions",
+            "type": "rollup",
+            "formula": "SUM(emission_rate)",
+            "description": "Total emissions calculated from multiple readings."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "classify_pollutant",
+            "parameters": [],
+            "description": "Classifies the pollutant based on type and emission characteristics.",
+            "formula": "PollutantClassifier(pollutant_type, emission_rate)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "AtmosphericData",
+        "description": "Represents a set of atmospheric measurements for a climate variable.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the atmospheric data record."
+          },
+          {
+            "name": "variable_id",
+            "type": "lookup",
+            "target_entity": "ClimateVariable",
+            "foreign_key": true,
+            "description": "Reference to the associated climate variable."
+          },
+          {
+            "name": "measurement_value",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Recorded measurement value."
+          },
+          {
+            "name": "measurement_time",
+            "type": "scalar",
+            "datatype": "datetime",
+            "description": "Timestamp of the measurement."
+          },
+          {
+            "name": "location",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Geographic location of the measurement."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "average_atmospheric_value",
+            "type": "rollup",
+            "formula": "AVERAGE(measurement_value)",
+            "description": "Average value over a set of measurements."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "aggregate_atmospheric_data",
+            "parameters": [],
+            "description": "Aggregates multiple measurements to produce a summary statistic.",
+            "formula": "AggregateMeasurements(measurement_value, measurement_time)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "OceanographicMeasurement",
+        "description": "Represents measurements taken from oceanographic sensors.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the oceanographic measurement."
+          },
+          {
+            "name": "variable_id",
+            "type": "lookup",
+            "target_entity": "ClimateVariable",
+            "foreign_key": true,
+            "description": "Reference to the related climate variable (e.g., sea temperature)."
+          },
+          {
+            "name": "measurement_value",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Recorded measurement value."
+          },
+          {
+            "name": "measurement_time",
+            "type": "scalar",
+            "datatype": "datetime",
+            "description": "Timestamp of the measurement."
+          },
+          {
+            "name": "location",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Geographic location of the measurement."
+          },
+          {
+            "name": "depth",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Depth at which the measurement was taken (in meters)."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "average_ocean_value",
+            "type": "rollup",
+            "formula": "AVERAGE(measurement_value)",
+            "description": "Average oceanographic measurement value."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "predict_ocean_trend",
+            "parameters": [],
+            "description": "Forecasts trends in ocean measurements based on historical data.",
+            "formula": "OceanTrendModel(measurement_value, measurement_time)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "BiodiversityRecord",
+        "description": "Represents a record of species observation and population data within an ecosystem.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique biodiversity record identifier."
+          },
+          {
+            "name": "ecosystem_id",
+            "type": "lookup",
+            "target_entity": "Ecosystem",
+            "foreign_key": true,
+            "description": "Reference to the associated ecosystem."
+          },
+          {
+            "name": "species_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the species."
+          },
+          {
+            "name": "population_count",
+            "type": "scalar",
+            "datatype": "integer",
+            "description": "Observed population count."
+          },
+          {
+            "name": "observation_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date of the observation."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "total_species_count",
+            "type": "rollup",
+            "formula": "COUNT(species_name)",
+            "description": "Total number of species recorded in the ecosystem."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "forecast_population_change",
+            "parameters": [],
+            "description": "Predicts future population changes for the species based on historical observations.",
+            "formula": "PopulationForecast(population_count, observation_date)"
+          }
+        ],
+        "constraints": []
+      }
+    ]
+  },
+  "data": {
+    "ClimateVariable": [
+      {
+        "id": "cv_001",
+        "name": "Air Temperature",
+        "description": "Ambient air temperature measured in degrees Celsius.",
+        "unit": "°C",
+        "current_value": 22.5,
+        "measurement_date": "2025-03-10"
+      }
+    ],
+    "Ecosystem": [
+      {
+        "id": "eco_001",
+        "name": "Tropical Rainforest",
+        "description": "A biodiverse tropical rainforest ecosystem.",
+        "region": "Amazon Basin",
+        "dominant_species": [
+          "Jaguar",
+          "Macaw",
+          "Capuchin Monkey"
+        ]
+      }
+    ],
+    "PollutionSource": [
+      {
+        "id": "ps_001",
+        "name": "Industrial Plant A",
+        "description": "A manufacturing facility emitting chemical pollutants.",
+        "pollutant_type": "NOx",
+        "emission_rate": 150,
+        "location": {
+          "lat": -3.4653,
+          "lon": -62.2159
+        }
+      }
+    ],
+    "AtmosphericData": [
+      {
+        "id": "atmo_001",
+        "variable_id": "cv_001",
+        "measurement_value": 22.5,
+        "measurement_time": "2025-03-10T08:00:00Z",
+        "location": {
+          "lat": 0,
+          "lon": 0
+        }
+      }
+    ],
+    "OceanographicMeasurement": [
+      {
+        "id": "ocean_001",
+        "variable_id": "cv_001",
+        "measurement_value": 18.2,
+        "measurement_time": "2025-03-10T09:00:00Z",
+        "location": {
+          "lat": -15,
+          "lon": 120
+        },
+        "depth": 50
+      }
+    ],
+    "BiodiversityRecord": [
+      {
+        "id": "bio_001",
+        "ecosystem_id": "eco_001",
+        "species_name": "Toucan",
+        "population_count": 120,
+        "observation_date": "2025-03-09"
+      }
+    ]
+  }
+}
+}

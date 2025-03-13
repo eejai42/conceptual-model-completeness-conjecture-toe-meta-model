@@ -1,0 +1,396 @@
+{
+    "id": "CMCC_ToEMM_Sociology",    
+    "meta-model": {
+  "id": "CMCC_ToEMM_Sociology",
+  "fullname": "CMCC Complete Sociology and Anthropology ToE Meta-Model",
+  "name": "Sociology & Anthropology ToE Meta-Model",
+  "description": "A unified meta-model capturing social structures, cultural norms, and interaction networks. This model encodes survey data, demographic records, and social network relationships, and enables predictive modeling of social behavior and network dynamics.",
+  "nickname": "sociology",
+  "version": "v1.0",
+  "meta": {
+    "title": "CMCC Complete Sociology & Anthropology ToE Meta-Model",
+    "subtitle": "A Declarative Framework for Modeling Social Dynamics and Cultural Norms",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This meta-model represents social structures, cultural norms, and interaction networks in a syntax‐free, ACID‐compliant environment. By leveraging declarative primitives, it supports community health indexing, social cohesion metrics, and predictive modeling of network dynamics."
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "Community",
+        "description": "Represents a social community or group with shared cultural or demographic characteristics.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique community identifier."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Community name."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Description of the community."
+          },
+          {
+            "name": "demographics",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Key demographic information about the community."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "individuals",
+            "target_entity": "Individual",
+            "type": "one_to_many",
+            "join_condition": "Individual.community_id = this.id",
+            "description": "Members of the community."
+          },
+          {
+            "name": "surveys",
+            "target_entity": "Survey",
+            "type": "one_to_many",
+            "join_condition": "Survey.community_id = this.id",
+            "description": "Surveys conducted within the community."
+          },
+          {
+            "name": "interactions",
+            "target_entity": "SocialInteraction",
+            "type": "one_to_many",
+            "join_condition": "SocialInteraction.community_id = this.id",
+            "description": "Social interactions recorded within the community."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "community_health_index",
+            "type": "rollup",
+            "formula": "ComputeCommunityHealth(individuals, surveys, interactions)",
+            "description": "Aggregate measure of the community's overall well-being."
+          },
+          {
+            "name": "social_cohesion_metric",
+            "type": "rollup",
+            "formula": "ComputeSocialCohesion(individuals, interactions)",
+            "description": "Quantifies the degree of cohesion within the community."
+          }
+        ],
+        "calculated_fields": [
+          {
+            "name": "predictive_behavior_model",
+            "formula": "PredictSocialBehavior(surveys, interactions)",
+            "description": "Model predicting future social behavior trends based on current data."
+          }
+        ]
+      },
+      {
+        "name": "Individual",
+        "description": "Represents a person within a community.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique individual identifier."
+          },
+          {
+            "name": "community_id",
+            "type": "lookup",
+            "target_entity": "Community",
+            "foreign_key": true,
+            "description": "Reference to the community the individual belongs to."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Individual's name."
+          },
+          {
+            "name": "age",
+            "type": "scalar",
+            "datatype": "integer",
+            "description": "Individual's age."
+          },
+          {
+            "name": "demographic_details",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Additional demographic data."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "cultural_norms",
+            "target_entity": "CulturalNorm",
+            "type": "many_to_many",
+            "join_condition": "CulturalNorm.adherent_ids CONTAINS this.id",
+            "description": "Cultural norms that the individual adheres to."
+          },
+          {
+            "name": "social_interactions",
+            "target_entity": "SocialInteraction",
+            "type": "one_to_many",
+            "join_condition": "(SocialInteraction.individual1_id = this.id OR SocialInteraction.individual2_id = this.id)",
+            "description": "Social interactions involving this individual."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "social_influence_score",
+            "type": "rollup",
+            "formula": "ComputeInfluence(social_interactions)",
+            "description": "Quantitative measure of the individual's influence in the network."
+          }
+        ],
+        "calculated_fields": [
+          {
+            "name": "network_dynamics",
+            "formula": "AnalyzeNetworkDynamics(social_interactions)",
+            "description": "Evaluates the dynamics of the individual's social network."
+          }
+        ]
+      },
+      {
+        "name": "Survey",
+        "description": "Represents a survey conducted within a community.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique survey identifier."
+          },
+          {
+            "name": "community_id",
+            "type": "lookup",
+            "target_entity": "Community",
+            "foreign_key": true,
+            "description": "Reference to the community where the survey was conducted."
+          },
+          {
+            "name": "survey_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date when the survey was administered."
+          },
+          {
+            "name": "responses",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Survey responses stored as JSON."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "participants",
+            "target_entity": "Individual",
+            "type": "many_to_many",
+            "join_condition": "SurveyParticipation.survey_id = this.id",
+            "description": "Individuals who participated in the survey."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "average_response",
+            "type": "rollup",
+            "formula": "AVERAGE(responses)",
+            "description": "Average response score from the survey."
+          },
+          {
+            "name": "trend_analysis",
+            "type": "rollup",
+            "formula": "AnalyzeTrends(responses)",
+            "description": "Trend analysis based on survey responses."
+          }
+        ],
+        "calculated_fields": [
+          {
+            "name": "predictive_model",
+            "formula": "PredictFromSurvey(responses)",
+            "description": "Predicts future social trends based on survey data."
+          }
+        ]
+      },
+      {
+        "name": "CulturalNorm",
+        "description": "Represents a cultural norm or standard within a community.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the cultural norm."
+          },
+          {
+            "name": "community_id",
+            "type": "lookup",
+            "target_entity": "Community",
+            "foreign_key": true,
+            "description": "Reference to the community to which the norm applies."
+          },
+          {
+            "name": "norm_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the cultural norm."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Detailed description of the norm."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "norm_adherence_index",
+            "type": "rollup",
+            "formula": "ComputeAdherence(cultural_norm_adherents)",
+            "description": "Measures the degree to which community members adhere to the norm."
+          }
+        ],
+        "calculated_fields": []
+      },
+      {
+        "name": "SocialInteraction",
+        "description": "Represents an interaction between two individuals.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique interaction identifier."
+          },
+          {
+            "name": "community_id",
+            "type": "lookup",
+            "target_entity": "Community",
+            "foreign_key": true,
+            "description": "Reference to the community where the interaction took place."
+          },
+          {
+            "name": "individual1_id",
+            "type": "lookup",
+            "target_entity": "Individual",
+            "foreign_key": true,
+            "description": "First participant in the interaction."
+          },
+          {
+            "name": "individual2_id",
+            "type": "lookup",
+            "target_entity": "Individual",
+            "foreign_key": true,
+            "description": "Second participant in the interaction."
+          },
+          {
+            "name": "interaction_type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Type or category of the interaction."
+          },
+          {
+            "name": "timestamp",
+            "type": "scalar",
+            "datatype": "datetime",
+            "description": "Time when the interaction occurred."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "interaction_frequency",
+            "type": "rollup",
+            "formula": "COUNT(this)",
+            "description": "Frequency count of this type of interaction."
+          }
+        ],
+        "calculated_fields": [
+          {
+            "name": "dynamic_strength",
+            "formula": "CalculateInteractionStrength(interaction_type, interaction_frequency)",
+            "description": "Evaluates the strength of the relationship based on interaction type and frequency."
+          }
+        ]
+      }
+    ]
+  },
+  "data": {
+    "Community": [
+      {
+        "id": "community_001",
+        "name": "Downtown Residents",
+        "description": "A diverse urban community.",
+        "demographics": {
+          "population": 5000,
+          "median_income": 55000
+        }
+      }
+    ],
+    "Individual": [
+      {
+        "id": "individual_001",
+        "community_id": "community_001",
+        "name": "Alice Smith",
+        "age": 34,
+        "demographic_details": {
+          "occupation": "Teacher",
+          "education": "Bachelor's"
+        }
+      }
+    ],
+    "Survey": [
+      {
+        "id": "survey_001",
+        "community_id": "community_001",
+        "survey_date": "2025-01-15",
+        "responses": {
+          "Q1": 4,
+          "Q2": 3,
+          "Q3": 5
+        }
+      }
+    ],
+    "CulturalNorm": [
+      {
+        "id": "norm_001",
+        "community_id": "community_001",
+        "norm_name": "Community Support",
+        "description": "High value placed on mutual aid and support."
+      }
+    ],
+    "SocialInteraction": [
+      {
+        "id": "interaction_001",
+        "community_id": "community_001",
+        "individual1_id": "individual_001",
+        "individual2_id": "individual_002",
+        "interaction_type": "casual_chat",
+        "timestamp": "2025-01-16T14:30:00Z"
+      }
+    ]
+  }
+}
+}

@@ -1,0 +1,608 @@
+{
+    "id": "CMCC_ToEMM_Medicine",    
+    "meta-model": {
+  "id": "CMCC_ToEMM_Medicine",
+  "fullname": "CMCC Complete Medicine and Healthcare ToE Meta-Model",
+  "name": "Medicine & Healthcare ToE Meta-Model",
+  "description": "A unified meta-model capturing the foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.",
+  "nickname": "medicine",
+  "version": "v2.0",
+  "meta": {
+    "title": "CMCC Complete Medicine & Healthcare ToE Meta-Model",
+    "subtitle": "A Declarative Framework for Modeling Medical Data and Healthcare Processes",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This meta-model provides a syntax‐free, declarative representation for medicine and healthcare systems. It encodes patient records, conditions, symptoms, treatment plans, clinical trial data, lab results, and vital signs using the five fundamental primitives: Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields.",
+    "executive_summary": {
+      "key_points": [
+        "Enables a syntax‐free representation of medical and healthcare data.",
+        "Unifies patient records, clinical analytics, and treatment workflows within an Snapshot-Consistent environment.",
+        "Facilitates risk assessment and predictive modeling via declarative calculated fields.",
+        "Bridges clinical, laboratory, and treatment data for comprehensive healthcare management."
+      ],
+      "implications": [
+        "Reduces redundancy and semantic drift in healthcare systems.",
+        "Supports rapid, no-code customization and integration across platforms.",
+        "Improves decision support through transparent and unified analytics."
+      ]
+    }
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "Patient",
+        "description": "Represents a patient in the healthcare system.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique patient identifier."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Patient's full name."
+          },
+          {
+            "name": "date_of_birth",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Patient's date of birth."
+          },
+          {
+            "name": "gender",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Patient's gender."
+          },
+          {
+            "name": "contact_information",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Patient's contact details."
+          },
+          {
+            "name": "medical_history",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Historical medical information."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "conditions",
+            "target_entity": "Condition",
+            "type": "one_to_many",
+            "join_condition": "Condition.patient_id = this.id",
+            "description": "Medical conditions diagnosed for the patient."
+          },
+          {
+            "name": "treatment_plans",
+            "target_entity": "TreatmentPlan",
+            "type": "one_to_many",
+            "join_condition": "TreatmentPlan.patient_id = this.id",
+            "description": "Treatment plans prescribed for the patient."
+          },
+          {
+            "name": "lab_results",
+            "target_entity": "LabResult",
+            "type": "one_to_many",
+            "join_condition": "LabResult.patient_id = this.id",
+            "description": "Lab test results for the patient."
+          },
+          {
+            "name": "vital_signs",
+            "target_entity": "VitalSign",
+            "type": "one_to_many",
+            "join_condition": "VitalSign.patient_id = this.id",
+            "description": "Vital sign measurements."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "age",
+            "type": "rollup",
+            "formula": "ComputeAge(date_of_birth)",
+            "description": "Calculates the patient's current age."
+          },
+          {
+            "name": "number_of_conditions",
+            "type": "rollup",
+            "formula": "COUNT(conditions)",
+            "description": "Counts the number of diagnosed conditions."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "risk_assessment",
+            "parameters": [],
+            "description": "Evaluates overall health risk based on conditions, lab results, and vital signs.",
+            "formula": "ComputeRisk(conditions, lab_results, vital_signs)"
+          }
+        ],
+        "constraints": [
+          {
+            "name": "valid_date_of_birth",
+            "formula": "date_of_birth < CURRENT_DATE",
+            "error_message": "Date of birth must be in the past."
+          }
+        ]
+      },
+      {
+        "name": "Condition",
+        "description": "Represents a diagnosed medical condition for a patient.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the condition."
+          },
+          {
+            "name": "patient_id",
+            "type": "lookup",
+            "target_entity": "Patient",
+            "foreign_key": true,
+            "description": "Reference to the patient."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the condition."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Detailed description of the condition."
+          },
+          {
+            "name": "diagnosis_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date when the condition was diagnosed."
+          },
+          {
+            "name": "severity",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Severity level (e.g., mild, moderate, severe)."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "symptoms",
+            "target_entity": "Symptom",
+            "type": "one_to_many",
+            "join_condition": "Symptom.condition_id = this.id",
+            "description": "Symptoms associated with the condition."
+          },
+          {
+            "name": "treatment_plans",
+            "target_entity": "TreatmentPlan",
+            "type": "one_to_many",
+            "join_condition": "TreatmentPlan.condition_id = this.id",
+            "description": "Treatment plans addressing the condition."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "duration_since_diagnosis",
+            "type": "rollup",
+            "formula": "ComputeDuration(diagnosis_date, CURRENT_DATE)",
+            "description": "Time elapsed since diagnosis."
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "Symptom",
+        "description": "Represents a symptom experienced by a patient, linked to a condition.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique symptom identifier."
+          },
+          {
+            "name": "condition_id",
+            "type": "lookup",
+            "target_entity": "Condition",
+            "foreign_key": true,
+            "description": "Reference to the associated condition."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the symptom."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Description of the symptom."
+          },
+          {
+            "name": "onset_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date when the symptom began."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "TreatmentPlan",
+        "description": "Represents a treatment plan prescribed for a specific condition.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique treatment plan identifier."
+          },
+          {
+            "name": "patient_id",
+            "type": "lookup",
+            "target_entity": "Patient",
+            "foreign_key": true,
+            "description": "Reference to the patient."
+          },
+          {
+            "name": "condition_id",
+            "type": "lookup",
+            "target_entity": "Condition",
+            "foreign_key": true,
+            "description": "Reference to the condition being treated."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Details of the treatment plan."
+          },
+          {
+            "name": "start_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Treatment start date."
+          },
+          {
+            "name": "end_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Treatment end date, if applicable."
+          },
+          {
+            "name": "medications",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List of medications and dosages."
+          },
+          {
+            "name": "procedures",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Medical procedures involved in the treatment."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "treatment_duration",
+            "type": "rollup",
+            "formula": "ComputeDuration(start_date, end_date)",
+            "description": "Calculates the duration of the treatment plan."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "update_plan",
+            "parameters": [
+              "new_details"
+            ],
+            "description": "Updates treatment plan details with new information.",
+            "formula": "Merge(this, new_details)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "ClinicalTrial",
+        "description": "Represents a clinical trial study for testing medical interventions.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique clinical trial identifier."
+          },
+          {
+            "name": "trial_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the clinical trial."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Detailed description of the trial."
+          },
+          {
+            "name": "start_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Trial start date."
+          },
+          {
+            "name": "end_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Trial end date."
+          },
+          {
+            "name": "phase",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Trial phase (e.g., Phase I, II, III, IV)."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "enrolled_patients",
+            "target_entity": "Patient",
+            "type": "many_to_many",
+            "join_condition": "Enrollment.trial_id = this.id",
+            "description": "Patients enrolled in this trial."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "number_of_patients",
+            "type": "rollup",
+            "formula": "COUNT(enrolled_patients)",
+            "description": "Counts the number of enrolled patients."
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "LabResult",
+        "description": "Represents a laboratory test result for a patient.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique lab result identifier."
+          },
+          {
+            "name": "patient_id",
+            "type": "lookup",
+            "target_entity": "Patient",
+            "foreign_key": true,
+            "description": "Reference to the patient."
+          },
+          {
+            "name": "test_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the lab test."
+          },
+          {
+            "name": "result_value",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Numeric value of the test result."
+          },
+          {
+            "name": "unit",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Unit of measurement."
+          },
+          {
+            "name": "test_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date when the test was conducted."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "average_result",
+            "type": "rollup",
+            "formula": "AVERAGE(result_value)",
+            "description": "Average value of the test result."
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "VitalSign",
+        "description": "Represents a vital sign measurement for a patient.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique vital sign identifier."
+          },
+          {
+            "name": "patient_id",
+            "type": "lookup",
+            "target_entity": "Patient",
+            "foreign_key": true,
+            "description": "Reference to the patient."
+          },
+          {
+            "name": "type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Type of vital sign (e.g., blood pressure, heart rate)."
+          },
+          {
+            "name": "value",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "Measured value."
+          },
+          {
+            "name": "unit",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Unit of measurement."
+          },
+          {
+            "name": "measurement_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date of the measurement."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "average_vital",
+            "type": "rollup",
+            "formula": "AVERAGE(value)",
+            "description": "Average measurement value for the vital sign."
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      }
+    ],
+    "lambdas": [
+      {
+        "name": "overall_health_risk",
+        "parameters": [
+          "patient_id"
+        ],
+        "description": "Calculates an overall health risk score for a given patient by aggregating conditions, lab results, and vital signs.",
+        "formula": "ComputeOverallRisk(Patient(patient_id).conditions, Patient(patient_id).lab_results, Patient(patient_id).vital_signs)"
+      },
+      {
+        "name": "predictive_outcome",
+        "parameters": [
+          "patient_id"
+        ],
+        "description": "Predicts patient outcomes based on current conditions, treatment plans, and historical data.",
+        "formula": "RunPredictiveModel(Patient(patient_id).medical_history, Patient(patient_id).treatment_plans)"
+      }
+    ]
+  },
+  "data": {
+    "Patient": [
+      {
+        "id": "patient_001",
+        "name": "John Doe",
+        "date_of_birth": "1980-05-15",
+        "gender": "Male",
+        "contact_information": {
+          "email": "john@example.com",
+          "phone": "555-1234"
+        },
+        "medical_history": {
+          "notes": "No significant past illnesses."
+        }
+      }
+    ],
+    "Condition": [
+      {
+        "id": "condition_001",
+        "patient_id": "patient_001",
+        "name": "Hypertension",
+        "description": "Elevated blood pressure",
+        "diagnosis_date": "2010-09-01",
+        "severity": "Moderate"
+      }
+    ],
+    "Symptom": [
+      {
+        "id": "symptom_001",
+        "condition_id": "condition_001",
+        "name": "Headache",
+        "description": "Frequent headaches reported",
+        "onset_date": "2023-01-10"
+      }
+    ],
+    "TreatmentPlan": [
+      {
+        "id": "treatment_001",
+        "patient_id": "patient_001",
+        "condition_id": "condition_001",
+        "description": "Lifestyle modifications and medication",
+        "start_date": "2023-02-01",
+        "end_date": "2023-08-01",
+        "medications": [
+          {
+            "name": "Lisinopril",
+            "dosage": "10mg"
+          }
+        ],
+        "procedures": []
+      }
+    ],
+    "ClinicalTrial": [
+      {
+        "id": "trial_001",
+        "trial_name": "Hypertension Drug Study",
+        "description": "A clinical trial for testing a new hypertension medication.",
+        "start_date": "2024-01-01",
+        "end_date": "2024-12-31",
+        "phase": "Phase III"
+      }
+    ],
+    "LabResult": [
+      {
+        "id": "lab_001",
+        "patient_id": "patient_001",
+        "test_name": "Cholesterol",
+        "result_value": 180,
+        "unit": "mg/dL",
+        "test_date": "2023-03-15"
+      }
+    ],
+    "VitalSign": [
+      {
+        "id": "vital_001",
+        "patient_id": "patient_001",
+        "type": "Blood Pressure",
+        "value": 130,
+        "unit": "mmHg",
+        "measurement_date": "2023-03-15"
+      }
+    ]
+  }
+}
+}

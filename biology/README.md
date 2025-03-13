@@ -18,7 +18,7 @@
   Affiliations: SSoT.me, EffortlessAPI.com
 
 ### Abstract
-This Biology extension of CMCC (Conceptual Model Completeness Conjecture) applies the same ACID-based, Turing-complete framework to model biological entities from genes and proteins up to complex organisms and ecosystems. By leveraging aggregator-based logic and lookups, we encode metabolic pathways, regulatory networks, and evolutionary processes in a syntax-free, declarative manner, seamlessly connecting to underlying chemistry or physics data.
+This Biology extension of CMCC (Conceptual Model Completeness Conjecture) applies the same Snapshot-Consistent, Turing-complete framework to model biological entities from genes and proteins up to complex organisms and ecosystems. By leveraging aggregator-based logic and lookups, we encode metabolic pathways, regulatory networks, and evolutionary processes in a syntax-free, declarative manner, seamlessly connecting to underlying chemistry or physics data.
 
 ### Key Points
 - Encodes fundamental biological structures—genes, proteins, metabolic pathways—using aggregator formulas for function annotations, expression levels, and more.
@@ -29,7 +29,7 @@ This Biology extension of CMCC (Conceptual Model Completeness Conjecture) applie
 ### Implications
 - Facilitates an end-to-end representation of biology that directly ties into the same data environment as quantum or chemical processes.
 - Reduces complexity by removing domain-specific code: aggregator-based formulas store all rules about gene regulation, protein-ligand interactions, etc.
-- Encourages advanced cross-domain modeling—like bridging AI-based gene expression predictions or physics-based protein folding simulations—through a single ACID-compliant structure.
+- Encourages advanced cross-domain modeling—like bridging AI-based gene expression predictions or physics-based protein folding simulations—through a single Snapshot-Consistent structure.
 
 ### Narrative
 #### CMCC Biology Extension

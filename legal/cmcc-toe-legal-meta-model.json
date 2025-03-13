@@ -1,0 +1,512 @@
+{
+    "id": "CMCC_ToEMM_Legal",    
+    "meta-model": {
+  "id": "CMCC_ToEMM_Legal",
+  "fullname": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+  "name": "Legal Systems & Compliance ToE Meta-Model",
+  "description": "A unified meta-model providing a syntax-free, declarative representation of legal systems and compliance frameworks. It integrates contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies to support automated compliance checking and risk assessment.",
+  "nickname": "legal",
+  "version": "v2.0",
+  "meta": {
+    "title": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+    "subtitle": "A Declarative Framework for Modeling Legal Documents, Regulations, and Compliance",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This meta-model provides a declarative, syntax-free framework for legal systems and compliance. It encodes contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies using the five primitives: Schema, Data, Lookups, Aggregations, and Calculated Fields.",
+    "executive_summary": {
+      "key_points": [
+        "Enables a syntax‐free representation of legal and compliance data.",
+        "Integrates contracts, statutes, case law, and audit trails into a unified model.",
+        "Facilitates automated contract interpretation and compliance scoring.",
+        "Supports risk assessments and dynamic policy enforcement."
+      ],
+      "implications": [
+        "Reduces ambiguity and improves consistency in legal documentation.",
+        "Streamlines compliance reporting and regulatory monitoring.",
+        "Enables automated analysis and trend reporting for regulatory risk."
+      ]
+    }
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "Contract",
+        "description": "Represents a legally binding contract between parties.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the contract."
+          },
+          {
+            "name": "contract_title",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Title of the contract."
+          },
+          {
+            "name": "contract_body",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Full text of the contract."
+          },
+          {
+            "name": "effective_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Effective date of the contract."
+          },
+          {
+            "name": "expiry_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Expiry date of the contract, if applicable."
+          },
+          {
+            "name": "involved_parties",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "List of parties involved in the contract."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "jurisdiction",
+            "target_entity": "Jurisdiction",
+            "type": "lookup",
+            "foreign_key": true,
+            "description": "Jurisdiction governing the contract."
+          },
+          {
+            "name": "regulations",
+            "target_entity": "Regulation",
+            "type": "many_to_many",
+            "join_condition": "ContractRegulation.contract_id = this.id",
+            "description": "Applicable regulations referenced by the contract."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "risk_assessment",
+            "type": "rollup",
+            "formula": "AssessContractRisk(contract_body)",
+            "description": "Calculates a risk score based on the contract content."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "interpret_contract",
+            "parameters": [],
+            "description": "Automatically interprets key clauses in the contract.",
+            "formula": "ExtractKeyClauses(contract_body)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "LegalFramework",
+        "description": "Represents a structured legal framework or system, such as statutes and regulatory structures.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the legal framework."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the legal framework."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Detailed description of the legal framework."
+          },
+          {
+            "name": "framework_type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Type of framework (e.g., statutory, case-based)."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "jurisdictions",
+            "target_entity": "Jurisdiction",
+            "type": "many_to_many",
+            "join_condition": "FrameworkJurisdiction.framework_id = this.id",
+            "description": "Jurisdictions covered by this framework."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "compliance_metric",
+            "type": "rollup",
+            "formula": "AggregateCompliance(this.id)",
+            "description": "Aggregates compliance metrics within the framework."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "interpret_framework",
+            "parameters": [],
+            "description": "Automatically interprets the legal framework details.",
+            "formula": "ParseFrameworkDetails(description)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "Regulation",
+        "description": "Represents a specific regulation or statutory requirement.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the regulation."
+          },
+          {
+            "name": "regulation_title",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Title of the regulation."
+          },
+          {
+            "name": "regulation_text",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Full text of the regulation."
+          },
+          {
+            "name": "enactment_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date when the regulation was enacted."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "jurisdiction",
+            "target_entity": "Jurisdiction",
+            "type": "lookup",
+            "foreign_key": true,
+            "description": "Jurisdiction applicable to the regulation."
+          },
+          {
+            "name": "legal_framework",
+            "target_entity": "LegalFramework",
+            "type": "lookup",
+            "foreign_key": false,
+            "description": "The legal framework under which this regulation is enacted."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "compliance_scoring",
+            "type": "rollup",
+            "formula": "ComputeRegulationCompliance(regulation_text)",
+            "description": "Computes a compliance score based on the regulation text."
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "Jurisdiction",
+        "description": "Represents a legal jurisdiction, such as a country, state, or region.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the jurisdiction."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the jurisdiction."
+          },
+          {
+            "name": "country",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Country or region of the jurisdiction."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Description of the jurisdiction."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "regulation_count",
+            "type": "rollup",
+            "formula": "COUNT(Regulation where Regulation.jurisdiction = this.id)",
+            "description": "Counts the number of regulations applicable to this jurisdiction."
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "CaseLaw",
+        "description": "Represents a legal case or precedent that informs regulatory interpretation.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the case."
+          },
+          {
+            "name": "case_title",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Title of the legal case."
+          },
+          {
+            "name": "summary",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Summary of the case details."
+          },
+          {
+            "name": "decision_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date when the case was decided."
+          },
+          {
+            "name": "citation",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Legal citation for the case."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "precedent_regulations",
+            "target_entity": "Regulation",
+            "type": "many_to_many",
+            "join_condition": "CaseLawRegulation.case_id = this.id",
+            "description": "Regulations referenced as precedents in the case."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "precedent_count",
+            "type": "rollup",
+            "formula": "COUNT(precedent_regulations)",
+            "description": "Counts the number of precedent regulations referenced in the case."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "interpret_case",
+            "parameters": [],
+            "description": "Interprets key legal principles from the case summary.",
+            "formula": "ExtractLegalPrinciples(summary)"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "AuditTrail",
+        "description": "Represents an audit record for tracking compliance actions and changes in legal documents.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique identifier for the audit record."
+          },
+          {
+            "name": "related_entity_id",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Identifier for the related legal entity (e.g., Contract or Regulation)."
+          },
+          {
+            "name": "action",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Action performed (e.g., create, update, delete)."
+          },
+          {
+            "name": "timestamp",
+            "type": "scalar",
+            "datatype": "datetime",
+            "description": "Time of the action."
+          },
+          {
+            "name": "details",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Additional details about the action."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "audit_count",
+            "type": "rollup",
+            "formula": "COUNT(this)",
+            "description": "Counts the number of audit entries."
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "OrganizationalPolicy",
+        "description": "Represents an internal policy or guideline within an organization.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique policy identifier."
+          },
+          {
+            "name": "policy_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the policy."
+          },
+          {
+            "name": "policy_text",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Full text of the policy."
+          },
+          {
+            "name": "effective_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date when the policy becomes effective."
+          },
+          {
+            "name": "review_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Scheduled review date for the policy."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "compliance_trend",
+            "type": "rollup",
+            "formula": "AnalyzePolicyComplianceTrends(policy_text)",
+            "description": "Analyzes trends in policy compliance."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "check_compliance",
+            "parameters": [],
+            "description": "Automatically checks if the policy meets compliance standards.",
+            "formula": "EvaluatePolicyCompliance(policy_text)"
+          }
+        ],
+        "constraints": []
+      }
+    ]
+  },
+  "data": {
+    "Contract": [
+      {
+        "id": "contract_001",
+        "contract_title": "Service Agreement",
+        "contract_body": "This agreement outlines the service terms between Company A and Company B...",
+        "effective_date": "2023-01-01",
+        "expiry_date": "2024-01-01",
+        "involved_parties": {
+          "party1": "Company A",
+          "party2": "Company B"
+        }
+      }
+    ],
+    "LegalFramework": [
+      {
+        "id": "framework_001",
+        "name": "US Federal Regulations",
+        "description": "A framework encompassing federal laws and regulations in the United States.",
+        "framework_type": "Statutory"
+      }
+    ],
+    "Regulation": [
+      {
+        "id": "reg_001",
+        "regulation_title": "GDPR Compliance Regulation",
+        "regulation_text": "Text of GDPR compliance regulation...",
+        "enactment_date": "2018-05-25",
+        "jurisdiction": "jurisdiction_001"
+      }
+    ],
+    "Jurisdiction": [
+      {
+        "id": "jurisdiction_001",
+        "name": "European Union",
+        "country": "EU",
+        "description": "The jurisdiction covering European Union member states."
+      }
+    ],
+    "CaseLaw": [
+      {
+        "id": "caselaw_001",
+        "case_title": "Smith vs. DataCorp",
+        "summary": "A landmark case on data privacy and contractual obligations.",
+        "decision_date": "2020-07-15",
+        "citation": "2020 EU Case 123",
+        "precedent_regulations": [
+          "reg_001"
+        ]
+      }
+    ],
+    "AuditTrail": [
+      {
+        "id": "audit_001",
+        "related_entity_id": "contract_001",
+        "action": "Update",
+        "timestamp": "2023-06-01T10:00:00Z",
+        "details": "Updated contract terms regarding liability."
+      }
+    ],
+    "OrganizationalPolicy": [
+      {
+        "id": "policy_001",
+        "policy_name": "Data Security Policy",
+        "policy_text": "This policy outlines the data security requirements for all departments...",
+        "effective_date": "2022-01-01",
+        "review_date": "2023-01-01"
+      }
+    ]
+  }
+}
+}

@@ -22,7 +22,7 @@
       }
     ],
     "date": "March 2025",
-    "abstract": "This Chemistry extension broadens the CMCC (Conceptual Model Completeness Conjecture) approach to cover atomic, molecular, and reaction-level concepts. Building on the existing ACID-based schema that unifies math and physics, this domain model encodes all chemical structures—like atoms, bonds, molecules, solutions, and reactions—via five fundamental primitives (S, D, L, A, F). The resulting framework allows cross-domain reasoning (such as quantum-level wavefunctions or reaction kinetics) in a unified, syntax-free data structure.",
+    "abstract": "This Chemistry extension broadens the CMCC (Conceptual Model Completeness Conjecture) approach to cover atomic, molecular, and reaction-level concepts. Building on the existing Snapshot-Consistent schema that unifies math and physics, this domain model encodes all chemical structures—like atoms, bonds, molecules, solutions, and reactions—via five fundamental primitives (S, D, L, A, F). The resulting framework allows cross-domain reasoning (such as quantum-level wavefunctions or reaction kinetics) in a unified, syntax-free data structure.",
     "executive_summary": {
       "key_points": [
         "Introduces detailed entities for atoms, bonds, molecules, and reactions within the broader CMCC environment.",
@@ -40,7 +40,7 @@
           "title": "CMCC Chemistry Extension",
           "content": [
             "Chemistry often requires bridging multiple scales: quantum mechanical interactions, molecular geometry, reaction kinetics, and thermodynamics. In a standard approach, each scale might be handled by separate tools and data formats, leading to fragmentation and repeated redefinition of core concepts.",
-            "By contrast, the CMCC Chemistry Model encodes these layers in a single, self-describing set of tables, references, and formulas—every concept is data-driven. 'Atoms' link to fundamental 'Particle' definitions, 'Molecules' aggregate atoms (and optionally wavefunctions), while 'Reactions' track stoichiometry, thermodynamic estimates, and kinetic data. The system handles partial or complete references to quantum states for advanced calculations, but remains fully consistent with the overarching ACID-based design that anchors the entire CMCC framework.",
+            "By contrast, the CMCC Chemistry Model encodes these layers in a single, self-describing set of tables, references, and formulas—every concept is data-driven. 'Atoms' link to fundamental 'Particle' definitions, 'Molecules' aggregate atoms (and optionally wavefunctions), while 'Reactions' track stoichiometry, thermodynamic estimates, and kinetic data. The system handles partial or complete references to quantum states for advanced calculations, but remains fully consistent with the overarching Snapshot-Consistent design that anchors the entire CMCC framework.",
             "Whether you're investigating ring strain, measuring reaction feasibility, or bridging into the biology domain, the same five fundamental primitives apply—Schema, Data, Lookups, Aggregations, and Lambda fields—ensuring minimal friction in cross-domain expansions and maximum clarity in capturing complex chemical phenomena."
           ]
         }

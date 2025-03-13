@@ -17,7 +17,7 @@ Models core AI/ML artifacts: neural nets, training data, inference events, etc.
   Affiliations: SSoT.me, EffortlessAPI.com
 
 ### Abstract
-This AI-focused extension of the CMCC environment structures machine learning models, training datasets, neural network topologies, and inference rules as first-class records in an ACID-based schema. By unifying them under the same aggregator-driven approach that powers math, physics, biology, and more, it paves the way for integrated knowledge representation, advanced analytics, and cross-domain synergy—from real-time model training to quantum-inspired or biologically motivated neural nets.
+This AI-focused extension of the CMCC environment structures machine learning models, training datasets, neural network topologies, and inference rules as first-class records in an Snapshot-Consistent schema. By unifying them under the same aggregator-driven approach that powers math, physics, biology, and more, it paves the way for integrated knowledge representation, advanced analytics, and cross-domain synergy—from real-time model training to quantum-inspired or biologically motivated neural nets.
 
 ### Key Points
 - Captures machine learning model definitions (e.g., neural network layers) as aggregator formulas, referencing training sets and hyperparameters.
@@ -27,7 +27,7 @@ This AI-focused extension of the CMCC environment structures machine learning mo
 
 ### Implications
 - Promotes synergy among AI, mathematics, physics, etc. (e.g., referencing linear algebra from the math domain to define neural operations).
-- Reduces friction in data pipelines: AI is stored as data, not black-box code, ensuring all logic is introspectable, modifiable, and ACID-compliant.
+- Reduces friction in data pipelines: AI is stored as data, not black-box code, ensuring all logic is introspectable, modifiable, and Snapshot-Consistent.
 - Increases reproducibility: aggregator formulas track how model updates occur, while constraints can enforce fairness or stability requirements.
 
 ### Narrative

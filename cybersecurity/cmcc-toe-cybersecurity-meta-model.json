@@ -1,0 +1,387 @@
+{
+    "id": "CMCC_ToEMM_Cybersecurity",    
+    "meta-model": {
+  "id": "CMCC_ToEMM_Cybersecurity",
+  "fullname": "CMCC Complete Cybersecurity ToE Meta-Model",
+  "name": "Cybersecurity ToE Meta-Model",
+  "description": "A unified meta-model capturing cybersecurity aspects including threat models, vulnerabilities, IT asset mappings, incident logs, security audits, and patches, using a declarative, Snapshot-Consistent approach.",
+  "nickname": "cybersecurity",
+  "version": "v2.0",
+  "meta": {
+    "title": "CMCC Complete Cybersecurity ToE Meta-Model",
+    "subtitle": "A Declarative Framework for Cybersecurity Data and Rule Management",
+    "authors": [
+      {
+        "name": "EJ Alexandra",
+        "contact": "start@anabstractlevel.com",
+        "affiliations": [
+          "SSoT.me",
+          "EffortlessAPI.com"
+        ]
+      }
+    ],
+    "date": "March 2025",
+    "abstract": "This meta-model enables a syntax‐free declarative representation of cybersecurity systems. It captures threat models, vulnerabilities, IT asset mappings, incident logs, security audits, and patches. Key computed fields include risk prioritization scoring and anomaly detection indicators.",
+    "executive_summary": {
+      "key_points": [
+        "Represents cybersecurity data using five primitives: Schema, Data, Lookups, Aggregations, and Calculated Fields.",
+        "Integrates threat models, vulnerabilities, and IT asset mapping with incident and audit data.",
+        "Provides computed risk scores and anomaly indicators to support dynamic security assessments."
+      ],
+      "implications": [
+        "Facilitates rapid, consistent security analysis across heterogeneous IT environments.",
+        "Reduces complexity and semantic drift via Snapshot-Consistent, syntax‐free models.",
+        "Enables automated risk prioritization and real-time anomaly detection."
+      ]
+    }
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "ThreatModel",
+        "description": "Represents a conceptual model of potential threats against IT assets.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique threat model identifier."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the threat model."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Detailed description of the threat scenario."
+          },
+          {
+            "name": "asset_scope",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Scope of IT assets covered."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "vulnerabilities",
+            "target_entity": "Vulnerability",
+            "type": "one_to_many",
+            "join_condition": "Vulnerability.threat_model_id = this.id",
+            "description": "List of vulnerabilities associated with this threat model."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "vulnerability_count",
+            "type": "rollup",
+            "formula": "COUNT(vulnerabilities)",
+            "description": "Counts the number of associated vulnerabilities."
+          }
+        ]
+      },
+      {
+        "name": "Vulnerability",
+        "description": "Represents a vulnerability or weakness in an IT asset.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique vulnerability identifier."
+          },
+          {
+            "name": "threat_model_id",
+            "type": "lookup",
+            "target_entity": "ThreatModel",
+            "foreign_key": true,
+            "description": "Reference to the threat model."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Vulnerability name."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Details about the vulnerability."
+          },
+          {
+            "name": "severity",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Severity level (e.g., low, medium, high)."
+          },
+          {
+            "name": "CVE_id",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Common Vulnerabilities and Exposures (CVE) identifier."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "patches",
+            "target_entity": "Patch",
+            "type": "one_to_many",
+            "join_condition": "Patch.vulnerability_id = this.id",
+            "description": "Patches addressing this vulnerability."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "vulnerability_score",
+            "type": "rollup",
+            "formula": "ComputeVulnScore(severity)",
+            "description": "Calculated risk score based on severity."
+          }
+        ]
+      },
+      {
+        "name": "ITAsset",
+        "description": "Represents an IT asset such as servers, endpoints, or network devices.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique IT asset identifier."
+          },
+          {
+            "name": "name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the IT asset."
+          },
+          {
+            "name": "asset_type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Type of asset (e.g., server, router)."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Detailed description of the asset."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "vulnerabilities",
+            "target_entity": "Vulnerability",
+            "type": "one_to_many",
+            "join_condition": "Vulnerability.it_asset_id = this.id",
+            "description": "Vulnerabilities affecting the asset."
+          },
+          {
+            "name": "incidents",
+            "target_entity": "Incident",
+            "type": "one_to_many",
+            "join_condition": "Incident.it_asset_id = this.id",
+            "description": "Security incidents associated with the asset."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "risk_score",
+            "type": "rollup",
+            "formula": "ComputeAssetRisk(vulnerabilities, incidents)",
+            "description": "Calculated overall risk score for the asset."
+          }
+        ]
+      },
+      {
+        "name": "Incident",
+        "description": "Represents a recorded security incident or intrusion detection event.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique incident identifier."
+          },
+          {
+            "name": "it_asset_id",
+            "type": "lookup",
+            "target_entity": "ITAsset",
+            "foreign_key": true,
+            "description": "Reference to the affected IT asset."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Description of the incident."
+          },
+          {
+            "name": "incident_date",
+            "type": "scalar",
+            "datatype": "datetime",
+            "description": "Date and time of the incident."
+          },
+          {
+            "name": "type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Type of incident (e.g., intrusion, malware detection)."
+          },
+          {
+            "name": "severity",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Incident severity level."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "anomaly_indicator",
+            "type": "rollup",
+            "formula": "ComputeAnomalyIndicator(severity, incident_date)",
+            "description": "Indicator of anomalous behavior based on incident characteristics."
+          }
+        ]
+      },
+      {
+        "name": "SecurityAudit",
+        "description": "Represents a security audit or assessment of IT systems.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique audit identifier."
+          },
+          {
+            "name": "audit_date",
+            "type": "scalar",
+            "datatype": "datetime",
+            "description": "Date of the audit."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Summary of the audit."
+          },
+          {
+            "name": "results",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Detailed audit results."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "audit_score",
+            "type": "rollup",
+            "formula": "ComputeAuditScore(results)",
+            "description": "Score based on audit findings."
+          }
+        ]
+      },
+      {
+        "name": "Patch",
+        "description": "Represents a patch or remediation applied to address a vulnerability.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique patch identifier."
+          },
+          {
+            "name": "vulnerability_id",
+            "type": "lookup",
+            "target_entity": "Vulnerability",
+            "foreign_key": true,
+            "description": "Reference to the vulnerability being patched."
+          },
+          {
+            "name": "patch_date",
+            "type": "scalar",
+            "datatype": "datetime",
+            "description": "Date the patch was applied."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Description of the patch."
+          }
+        ]
+      }
+    ]
+  },
+  "data": {
+    "ThreatModel": [
+      {
+        "id": "threat_001",
+        "name": "Phishing Attack Model",
+        "description": "Model capturing common phishing attack vectors targeting corporate emails.",
+        "asset_scope": "Email servers, Workstations"
+      }
+    ],
+    "Vulnerability": [
+      {
+        "id": "vuln_001",
+        "threat_model_id": "threat_001",
+        "name": "Spear Phishing Vulnerability",
+        "description": "Targeted phishing vulnerability exploiting weak email filtering.",
+        "severity": "High",
+        "CVE_id": "CVE-2024-12345"
+      }
+    ],
+    "ITAsset": [
+      {
+        "id": "asset_001",
+        "name": "Corporate Email Server",
+        "asset_type": "Server",
+        "description": "Handles all incoming and outgoing corporate email traffic."
+      }
+    ],
+    "Incident": [
+      {
+        "id": "incident_001",
+        "it_asset_id": "asset_001",
+        "description": "Multiple phishing emails detected in a short timeframe.",
+        "incident_date": "2025-03-01T14:30:00Z",
+        "type": "Phishing",
+        "severity": "Medium"
+      }
+    ],
+    "SecurityAudit": [
+      {
+        "id": "audit_001",
+        "audit_date": "2025-02-15T10:00:00Z",
+        "description": "Quarterly security audit of email infrastructure.",
+        "results": {
+          "score": 85,
+          "findings": "Minor misconfigurations detected."
+        }
+      }
+    ],
+    "Patch": [
+      {
+        "id": "patch_001",
+        "vulnerability_id": "vuln_001",
+        "patch_date": "2025-03-05T09:00:00Z",
+        "description": "Updated email filtering rules and applied security patch."
+      }
+    ]
+  }
+}
+}

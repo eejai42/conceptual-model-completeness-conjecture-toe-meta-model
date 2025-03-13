@@ -18,7 +18,7 @@ Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.
   Affiliations: SSoT.me, EffortlessAPI.com
 
 ### Abstract
-This CMCC Astronomy extension provides an ACID-based schema to model celestial objects (stars, planets, galaxies) and large-scale cosmic structures, bridging them with the fundamental physics in the CMCC framework. Celestial orbits, gravitational fields, and cosmic evolution snapshots are captured as aggregator-based data references, making it straightforward to combine classical or relativistic physics with observational data sets for unified astrophysical analyses.
+This CMCC Astronomy extension provides an Snapshot-Consistent schema to model celestial objects (stars, planets, galaxies) and large-scale cosmic structures, bridging them with the fundamental physics in the CMCC framework. Celestial orbits, gravitational fields, and cosmic evolution snapshots are captured as aggregator-based data references, making it straightforward to combine classical or relativistic physics with observational data sets for unified astrophysical analyses.
 
 ### Key Points
 - Represents stars, planets, galaxies, or dark matter halos as data-driven entities with aggregator checks for orbital parameters, luminosities, etc.
@@ -34,7 +34,7 @@ This CMCC Astronomy extension provides an ACID-based schema to model celestial o
 ### Narrative
 #### CMCC Astronomy Extension
 Astronomy involves massive data sets and diverse theoretical frameworks—from orbital mechanics to the large-scale structure of the universe. Conventional approaches require specialized software for each domain (e.g., star catalogs, cosmological simulations).
-By placing these concepts in the CMCC framework, we encode stars, exoplanets, black hole metrics, or cosmic evolution data via aggregator fields and lookups. Newtonian or relativistic equations become constraints or aggregator formulas, while observational records integrate into the same ACID-based environment. This unified approach simplifies cross-checking cosmic data with quantum or classical models, fosters reusability of aggregator logic, and ensures that large-scale cosmic phenomena can be trivially combined with micro-scale physics or complex multi-observer contexts.
+By placing these concepts in the CMCC framework, we encode stars, exoplanets, black hole metrics, or cosmic evolution data via aggregator fields and lookups. Newtonian or relativistic equations become constraints or aggregator formulas, while observational records integrate into the same Snapshot-Consistent environment. This unified approach simplifies cross-checking cosmic data with quantum or classical models, fosters reusability of aggregator logic, and ensures that large-scale cosmic phenomena can be trivially combined with micro-scale physics or complex multi-observer contexts.
 
 
 ---

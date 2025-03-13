@@ -22,13 +22,13 @@
       }
     ],
     "date": "March 2025",
-    "abstract": "This Geology extension of the CMCC (Conceptual Model Completeness Conjecture) encodes geological structures and processes—minerals, rock layers, tectonic plates—into a unified, ACID-based schema. By leveraging the same core primitives (Schema, Data, Lookups, Aggregations, Lambdas), it provides a purely declarative framework for representing everything from mineral compositions and formation data to large-scale tectonic dynamics, tightly integrating with CMCC Physics and Chemistry for cross-domain geological modeling.",
+    "abstract": "This Geology extension of the CMCC (Conceptual Model Completeness Conjecture) encodes geological structures and processes—minerals, rock layers, tectonic plates—into a unified, Snapshot-Consistent schema. By leveraging the same core primitives (Schema, Data, Lookups, Aggregations, Lambdas), it provides a purely declarative framework for representing everything from mineral compositions and formation data to large-scale tectonic dynamics, tightly integrating with CMCC Physics and Chemistry for cross-domain geological modeling.",
     "executive_summary": {
       "key_points": [
         "Formalizes geological entities (e.g., mineral records, rock formations, tectonic plates) through aggregator-based logic and constraints.",
         "Bridges physical and chemical processes—like metamorphism or weathering—to the broader CMCC environment, allowing cross-domain synergy.",
         "Remains Turing-complete: advanced geological simulations (e.g., plate tectonic evolution or geochemical cycle modeling) can be expressed declaratively.",
-        "Stores field data, measurement logs, and interpretive rules in a single ACID-compliant data substrate, eliminating specialized external scripts."
+        "Stores field data, measurement logs, and interpretive rules in a single Snapshot-Consistent data substrate, eliminating specialized external scripts."
       ],
       "implications": [
         "Simplifies geoscience data pipelines by unifying references to chemical composition, historical climate data, or seismic observations in one schema.",
