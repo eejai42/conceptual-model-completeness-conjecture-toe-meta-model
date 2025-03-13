@@ -1,4 +1,4 @@
-# 
+# CMCC Complete Biology ToE Meta-Model.
 
 
 
@@ -8,7 +8,7 @@
 
 ## Metadata
 
-**Title**: CMCC Complete Biology ToE Meta-Model  
+**Title**: 
 **Subtitle**: A Unified Declarative Schema for Genes, Proteins, and Cellular Systems  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Biology
@@ -20,7 +20,7 @@
 ### Abstract
 This Biology extension of CMCC (Conceptual Model Completeness Conjecture) applies the same Snapshot-Consistent, Turing-complete framework to model biological entities from genes and proteins up to complex organisms and ecosystems. By leveraging aggregator-based logic and lookups, we encode metabolic pathways, regulatory networks, and evolutionary processes in a syntax-free, declarative manner, seamlessly connecting to underlying chemistry or physics data.
 
-![ entity diagram](biology.png)
+![CMCC Complete Biology ToE Meta-Model entity diagram](biology.png)
 
 ### Key Points
 - Encodes fundamental biological structures—genes, proteins, metabolic pathways—using aggregator formulas for function annotations, expression levels, and more.

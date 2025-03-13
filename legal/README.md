@@ -1,11 +1,11 @@
-# Legal Systems & Compliance ToE Meta-Model
+# Legal Systems & Compliance ToE Meta-Model.
 
 A unified meta-model providing a syntax-free, declarative representation of legal systems and compliance frameworks. It integrates contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies to support automated compliance checking and risk assessment.
 
 
 ## Metadata
 
-**Title**: CMCC Complete Legal Systems & Compliance ToE Meta-Model  
+**Title**: 
 **Subtitle**: A Declarative Framework for Modeling Legal Documents, Regulations, and Compliance  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Legal

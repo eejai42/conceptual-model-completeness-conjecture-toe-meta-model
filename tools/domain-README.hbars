@@ -1,5 +1,5 @@
 {{#with meta-model}}
-# {{name}}
+# {{name}}.
 
 {{description}}
 
@@ -12,7 +12,7 @@
 
 ## Metadata
 
-**Title**: {{meta.title}}  
+**Title**: 
 **Subtitle**: {{meta.subtitle}}  
 **Date**: {{meta.date}}
 **Domain Identifier**: {{../id}}
