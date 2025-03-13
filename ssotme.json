@@ -191,6 +191,16 @@
       "Name": "JsonHbarsTransform",
       "RelativePath": "/research",
       "CommandLine": "json-hbars-transform -i ..\\SSoT\\papers.json -i README.hbars -o README.md"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/research/baseball",
+      "CommandLine": "json-hbars-transform -i .\\baseball-meta-model.json -i ..\\..\\tools\\domain-README.hbars"
     }
   ]
 }
