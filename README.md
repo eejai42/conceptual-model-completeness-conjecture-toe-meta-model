@@ -1,11 +1,5 @@
 # The CMCC Complete Theory-of-Everything Meta Model
 
-<div style="float: right; width: 15rem">
-
-![sdlaf](sdlaf.png)
-
-</div>
-
 ## Overview
 This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an Snapshot-Consistent environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework
 
@@ -113,6 +107,13 @@ A unified model for cybersecurity covering threat models, vulnerabilities, IT as
 
 A structured model capturing social structures, cultural norms, and interaction networks using survey data, demographic records, and social network relationships.. Read more about the [sociology](sociology/README.md) CMCC Complete Meta-Model.
 
+
+
+<div style="float: right; width: 15rem">
+
+![sdlaf](sdlaf.png)
+
+</div>
 
 ## Example: Mathematical Details
 

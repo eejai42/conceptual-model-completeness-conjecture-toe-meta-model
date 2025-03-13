@@ -1,6 +1,6 @@
 # CMCC Complete Mathematics TOE Meta Model
 
-A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single ACID-compliant, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.
+A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single Snapshot-Consistent, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.
 
 
 ## Metadata
@@ -15,7 +15,9 @@ A unified meta-model capturing foundational mathematics (sets, elements, functio
   Affiliations: SSoT.me, EffortlessAPI.com
 
 ### Abstract
-The Mathematics extension of the CMCC (Conceptual Model Completeness Conjecture) systematically represents abstract mathematical concepts—sets, elements, functions, propositions, equations, algebraic structures—under a single ACID-based schema. Using five foundational primitives (S, D, L, A, F), it captures axioms, proofs, and domain relationships (e.g., group axioms, ring axioms, function surjectivity) in a purely declarative format, enabling cross-domain synergy with physics, chemistry, and beyond.
+The Mathematics extension of the CMCC (Conceptual Model Completeness Conjecture) systematically represents abstract mathematical concepts—sets, elements, functions, propositions, equations, algebraic structures—under a single Snapshot-Consistent schema. Using five foundational primitives (S, D, L, A, F), it captures axioms, proofs, and domain relationships (e.g., group axioms, ring axioms, function surjectivity) in a purely declarative format, enabling cross-domain synergy with physics, chemistry, and beyond.
+
+![CMCC Complete Mathematics TOE Meta Model entity diagram](math.png)
 
 ### Key Points
 - Models foundational mathematics (sets, elements, structures, proofs) declaratively, through aggregator formulas and constraints.
@@ -31,11 +33,10 @@ The Mathematics extension of the CMCC (Conceptual Model Completeness Conjecture)
 ### Narrative
 #### CMCC Mathematics Extension
 Mathematics is famously broad, encompassing everything from the basics of set theory and arithmetic to higher structures like rings, fields, categories, and beyond. Traditional approaches involve specialized notations, proof assistants, or programming languages, often siloed from one another.
-In contrast, the CMCC Mathematics Model encodes these concepts within a single, self-describing schema. Each 'Set,' 'Element,' or 'Proposition' is a record in an ACID-compliant datastore, with domain logic (axioms, aggregator checks for commutativity or associativity, etc.) expressed as formulas. Proofs become derivation steps, re-usable by other theorems or even other domain models (like the CMCC Physics or Chemistry models).
+In contrast, the CMCC Mathematics Model encodes these concepts within a single, self-describing schema. Each 'Set,' 'Element,' or 'Proposition' is a record in an Snapshot-Consistent datastore, with domain logic (axioms, aggregator checks for commutativity or associativity, etc.) expressed as formulas. Proofs become derivation steps, re-usable by other theorems or even other domain models (like the CMCC Physics or Chemistry models).
 By remaining purely declarative, this approach decouples syntax from semantics. Whether capturing something simple like the geometry of triangles or something advanced like category theory, the math extension inherits the same fundamental building blocks (S, D, L, A, F) that drive the entire CMCC framework. This ensures the utmost consistency, reusability, and cross-domain synergy in your knowledge representation.
 
-![logo](math.png)
-  
+
 ---
 
 # Schema Overview

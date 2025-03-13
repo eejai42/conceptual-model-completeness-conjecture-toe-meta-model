@@ -8,6 +8,7 @@
     "CMCC_ToEMM_Math"
   ],
   "version": "v2.0",
+  "nickname": "astronomy",
   "meta": {
     "title": "CMCC Complete Astronomy ToE Meta-Model",
     "subtitle": "Declarative Data Structures for Celestial Bodies, Cosmic Dynamics, and Observational Records",

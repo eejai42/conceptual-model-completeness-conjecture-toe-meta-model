@@ -20,6 +20,8 @@ Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.
 ### Abstract
 This CMCC Astronomy extension provides an Snapshot-Consistent schema to model celestial objects (stars, planets, galaxies) and large-scale cosmic structures, bridging them with the fundamental physics in the CMCC framework. Celestial orbits, gravitational fields, and cosmic evolution snapshots are captured as aggregator-based data references, making it straightforward to combine classical or relativistic physics with observational data sets for unified astrophysical analyses.
 
+![All-In-One CMCC Astronomy Model entity diagram](astronomy.png)
+
 ### Key Points
 - Represents stars, planets, galaxies, or dark matter halos as data-driven entities with aggregator checks for orbital parameters, luminosities, etc.
 - Supports multi-scale cosmic evolution logs (e.g., redshift-based snapshots), referencing the same aggregator logic used in CMCC Physics.

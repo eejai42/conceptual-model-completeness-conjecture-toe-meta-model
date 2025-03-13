@@ -20,6 +20,8 @@
 ### Abstract
 This Biology extension of CMCC (Conceptual Model Completeness Conjecture) applies the same Snapshot-Consistent, Turing-complete framework to model biological entities from genes and proteins up to complex organisms and ecosystems. By leveraging aggregator-based logic and lookups, we encode metabolic pathways, regulatory networks, and evolutionary processes in a syntax-free, declarative manner, seamlessly connecting to underlying chemistry or physics data.
 
+![ entity diagram](biology.png)
+
 ### Key Points
 - Encodes fundamental biological structures—genes, proteins, metabolic pathways—using aggregator formulas for function annotations, expression levels, and more.
 - Unifies data from molecular scale (genetics, protein folding) to higher-level processes (homeostasis, cellular automata).

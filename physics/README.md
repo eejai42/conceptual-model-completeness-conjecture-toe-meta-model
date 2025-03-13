@@ -2,12 +2,11 @@
 
 A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.
 
-![logo](physics.png)
 
 ## Metadata
 
 **Title**: CMCC Complete Physics ToE Meta-Model  
-**Subtitle**: A Comprehensive ACID-Based Data Architecture for Classical, Quantum, and Relativistic Theories  
+**Subtitle**: A Comprehensive Snapshot-Consistent Data Architecture for Classical, Quantum, and Relativistic Theories  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Physics
 
@@ -16,7 +15,9 @@ A unified data+rule schema capturing classical mechanics, quantum wavefunctions,
   Affiliations: SSoT.me, EffortlessAPI.com
 
 ### Abstract
-This Physics extension of the CMCC (Conceptual Model Completeness Conjecture) unifies classical mechanics, quantum wavefunctions, relativistic effects, and multiway branching under one coherent, ACID-compliant schema. By leveraging the same five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda formulas—it provides a purely declarative framework capable of modeling everything from basic Newtonian systems to Many-Worlds quantum branching events, seamlessly integrating with the broader CMCC environment.
+This Physics extension of the CMCC (Conceptual Model Completeness Conjecture) unifies classical mechanics, quantum wavefunctions, relativistic effects, and multiway branching under one coherent, Snapshot-Consistent schema. By leveraging the same five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda formulas—it provides a purely declarative framework capable of modeling everything from basic Newtonian systems to Many-Worlds quantum branching events, seamlessly integrating with the broader CMCC environment.
+
+![All-In-One CMCC Physics Model entity diagram](physics.png)
 
 ### Key Points
 - Captures both classical and quantum physics entities (particles, wavefunctions, measurement events) within the same structural model.
@@ -32,7 +33,7 @@ This Physics extension of the CMCC (Conceptual Model Completeness Conjecture) un
 ### Narrative
 #### CMCC Physics Extension
 Traditional physics modeling often separates each domain—classical mechanics, quantum mechanics, relativity—into bespoke toolchains and file formats. This isolation complicates integrated analyses, such as bridging quantum wavefunctions with large-scale relativistic frames or observer-based paradoxes.
-The CMCC Physics Model solves this by encoding all relevant physics concepts—like quantum states, measurements, observer frames, cosmic structures, or classical bodies—in the same ACID-compliant environment. Observables, wavefunction amplitudes, gauge fields, and branching structures appear as aggregator-driven records, decoupled from any one programming or simulation language. Even advanced, multi-observer paradox scenarios are captured via relationships and aggregator constraints.
+The CMCC Physics Model solves this by encoding all relevant physics concepts—like quantum states, measurements, observer frames, cosmic structures, or classical bodies—in the same Snapshot-Consistent environment. Observables, wavefunction amplitudes, gauge fields, and branching structures appear as aggregator-driven records, decoupled from any one programming or simulation language. Even advanced, multi-observer paradox scenarios are captured via relationships and aggregator constraints.
 This data-first approach, shared across the entire CMCC ecosystem, encourages cross-domain synergy. For instance, a single aggregator can check both quantum entanglement measures and classical gravitational parameters in the same query. The result is a single coherent data architecture that scales smoothly from fundamental quantum processes up to cosmic evolution, all while remaining Turing-complete and interpretation-agnostic.
 
 

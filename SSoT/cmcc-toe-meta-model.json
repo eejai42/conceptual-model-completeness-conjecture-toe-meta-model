@@ -173,7 +173,8 @@
     "CMCC_ToEMM_Math": {
       "name": "CMCC Complete Mathematics TOE Meta Model",
       "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single Snapshot-Consistent, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
-      "version": "v2.05",
+      "version": "v2.05",      
+      "nickname": "math",
       "meta": {
         "title": "CMCC Complete Mathematics ToE Meta-Model",
         "subtitle": "A Unified Declarative Framework for Abstract Structures, Axioms, and Proofs",
@@ -1810,6 +1811,7 @@
       "name": "All-In-One CMCC Physics Model",
       "description": "A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.",
       "version": "v2.19",
+      "nickname": "physics",
       "meta": {
         "title": "CMCC Complete Physics ToE Meta-Model",
         "subtitle": "A Comprehensive Snapshot-Consistent Data Architecture for Classical, Quantum, and Relativistic Theories",
@@ -5904,6 +5906,7 @@
       "description": "A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.",
       "depends_on": ["CMCC_ToEMM_Math", "CMCC_ToEMM_Physics"],
       "version": "v2.3",
+      "nickname": "chemistry",
       "meta": {
         "title": "CMCC Complete Chemistry ToE Meta-Model",
         "subtitle": "A Declarative Structural Approach to Chemical Entities and Reactions",
@@ -6727,6 +6730,7 @@
         "CMCC_ToEMM_Physics"
       ],
       "version": "v2.0",
+      "nickname": "biology",
       "meta": {
         "title": "CMCC Complete Biology ToE Meta-Model",
         "subtitle": "A Unified Declarative Schema for Genes, Proteins, and Cellular Systems",
@@ -7222,6 +7226,7 @@
       "description": "Covers basic and advanced economic entities—agents, markets, goods, transactions, supply-demand constraints, utility/budget, macro indicators, policies, plus a top-level scenario aggregator. Each entity is designed so it can be executed with no extra sidecar logic: all rules are captured using Schema (S), Data (D), Lookups (L), Aggregations (A), and Calculated Fields (F).",
       "depends_on": ["CMCC_ToEMM_Math"],
       "version": "v2.4",
+      "nickname": "economics",
       "meta": {
         "title": "CMCC Complete Economics ToE Meta-Model",
         "subtitle": "A Declarative Framework for Agents, Markets, and Economic Dynamics",
@@ -8734,6 +8739,7 @@
         "CMCC_ToEMM_Chemistry"
       ],
       "version": "v2.1",
+      "nickname": "geology",
       "meta": {
         "title": "CMCC Complete Geology ToE Meta-Model",
         "subtitle": "A Declarative Data Architecture for Minerals, Rock Formations, and Tectonic Processes",
@@ -9535,6 +9541,7 @@
       "description": "Models core AI/ML artifacts: neural nets, training data, inference events, etc.",
       "depends_on": ["CMCC_ToEMM_Math"],
       "version": "v2.0",
+      "nickname": "ai",
       "meta": {
         "title": "CMCC Complete Artificial Intelligence ToE Meta-Model",
         "subtitle": "A Cross-Domain Declarative Framework for Machine Learning, Neural Networks, and Inference Engines",
@@ -9849,6 +9856,7 @@
       "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
       "depends_on": ["CMCC_ToEMM_Physics", "CMCC_ToEMM_Math"],
       "version": "v2.0",
+      "nickname": "astronomy",
       "meta": {
         "title": "CMCC Complete Astronomy ToE Meta-Model",
         "subtitle": "Declarative Data Structures for Celestial Bodies, Cosmic Dynamics, and Observational Records",

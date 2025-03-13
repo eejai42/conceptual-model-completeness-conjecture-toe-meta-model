@@ -19,6 +19,8 @@ Covers basic and advanced economic entities—agents, markets, goods, transactio
 ### Abstract
 The Economics extension of the CMCC (Conceptual Model Completeness Conjecture) provides a unified, Snapshot-Consistent structure for modeling economic agents, transactions, markets, and policy rules. By leveraging CMCC’s five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda formulas—it captures everything from microeconomic supply-demand dynamics to macroeconomic indicators, bridging them seamlessly with other domains such as mathematics, AI, or even quantum-inspired decision models.
 
+![All-In-One CMCC Economics Model entity diagram](economics.png)
+
 ### Key Points
 - Encodes agents, markets, and transactions as first-class entities with aggregator-based rules (e.g., equilibrium checks, utility maximization).
 - Integrates advanced domain logic—like monetary policies or auction mechanisms—purely as declarative data references.

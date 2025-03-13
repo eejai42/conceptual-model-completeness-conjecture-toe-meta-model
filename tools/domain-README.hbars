@@ -26,6 +26,8 @@
 ### Abstract
 {{meta.abstract}}
 
+![{{name}} entity diagram]({{nickname}}.png)
+
 ### Key Points
 {{#each meta.executive_summary.key_points}}
 - {{this}}

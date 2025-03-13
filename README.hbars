@@ -1,12 +1,6 @@
 [[FileSetFile/RelativePath[/README.md]]]
 # {{title}}
 
-<div style="float: right; width: 15rem">
-
-![sdlaf](sdlaf.png)
-
-</div>
-
 ## Overview
 {{description}}
 
@@ -56,6 +50,13 @@ Below is a list of TOE models included in this repository. Click on any domain t
 {{description}}. Read more about the [{{nickname}}]({{nickname}}/README.md) CMCC Complete Meta-Model.
 
 {{/each}}
+
+
+<div style="float: right; width: 15rem">
+
+![sdlaf](sdlaf.png)
+
+</div>
 
 ## Example: Mathematical Details
 

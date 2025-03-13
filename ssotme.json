@@ -119,6 +119,61 @@
     },
     {
       "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/medicine",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-medicine-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "TranspilerGroup": "medicine"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/climate",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-climate-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "TranspilerGroup": "climate"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/cybersecurity",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-cybersecurity-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "TranspilerGroup": "cybersecurity"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/sociology",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-sociology-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "TranspilerGroup": "sociology"
+    },
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/legal",
+      "CommandLine": "json-hbars-transform -i ./cmcc-toe-legal-meta-model.json -i ../tools/domain-README.hbars -o ./README.md",
+      "TranspilerGroup": "legal"
+    },
+    {
+      "MatchedTranspiler": {
         "Name": "AirtableToJson",
         "Description": "Export an Airtable Base as json"
       },

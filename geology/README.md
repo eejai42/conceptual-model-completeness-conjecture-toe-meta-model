@@ -20,6 +20,8 @@ Extends Physics and Chemistry to handle minerals, rock formations, tectonic plat
 ### Abstract
 This Geology extension of the CMCC (Conceptual Model Completeness Conjecture) encodes geological structures and processes—minerals, rock layers, tectonic plates—into a unified, Snapshot-Consistent schema. By leveraging the same core primitives (Schema, Data, Lookups, Aggregations, Lambdas), it provides a purely declarative framework for representing everything from mineral compositions and formation data to large-scale tectonic dynamics, tightly integrating with CMCC Physics and Chemistry for cross-domain geological modeling.
 
+![All-In-One CMCC Geology Model entity diagram](geology.png)
+
 ### Key Points
 - Formalizes geological entities (e.g., mineral records, rock formations, tectonic plates) through aggregator-based logic and constraints.
 - Bridges physical and chemical processes—like metamorphism or weathering—to the broader CMCC environment, allowing cross-domain synergy.
