@@ -22,8 +22,8 @@ the declarative semantics for any conceptual model.
 {{DescriptionForExperts}}
 {{/if}}
 
-{{#if PaperPdf.url}}
-**Download {{Type}} PDF:** [{{PaperPdf.filename}}]({{PaperPdf.url}})
+{{#if PaperPdf.filename}}
+**Download {{Type}} PDF:** [{{PaperPdf.filename}}](https://effortlessapi.com/rulebook/{{PaperPdf.filename}})
 {{/if}}
 
 **View Online:** [{{Url}}]({{Url}})

@@ -15,7 +15,7 @@ BRCC simplifies business rule management by eliminating the ripple effect of cha
 **Domain Experts:**  
 BRCC posits that any finite business rule can be decomposed using five declarative primitives in an ACID-compliant environment, decoupling design-time semantics from runtime execution.
 
-**Download Orignal Paper PDF:** [BRCC_The_Business_Rule_Completeness_Conjecture.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/OF5PIHRjrGWp2fCOqep2Yg/71xa6385mctxS8Gt085UgWGYb_1FiH0pe4P2TPtNI76m757xRGKh5bC5xPb8lyjXANdZuu9TvdJcBWznf0bo-klWCcaMTkMpWxGPMkQWAn_oPof_7ISy8sFMnVlES11vhznvC1ONCdcFFmzQq7AwRUjBvA_C7OYeDeXGtfcmdhxm_K4CENchAS3Zs8oag87Cz-ZuPLy2heVd_SmmbMVaXw/ELbEs6WFJqAkcACFCLcM1_6X3CfdJ4KbTogMwaNoPNw)
+**Download Orignal Paper PDF:** [BRCC_The_Business_Rule_Completeness_Conjecture.pdf](https://effortlessapi.com/rulebook/BRCC_The_Business_Rule_Completeness_Conjecture.pdf)
 
 **View Online:** [https://zenodo.org/records/14735965](https://zenodo.org/records/14735965)
 **BRCC Status:** Published  
@@ -31,7 +31,7 @@ BRCC’s proof shows that its framework can handle any business rule, making it 
 **Domain Experts:**  
 This paper provides a theoretical proof sketch demonstrating that BRCC’s five primitives are Turing-complete, capable of encoding any computable business rule.
 
-**Download Orignal Paper PDF:** [BRCC-3page-QED-MathematicalProof.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/8yNIw4EiYJGLkX2Vh2Z_ig/B3a5OGAWO8ytmzo9V0zu89rCXvkHvTx5TLhZvhiququfRlPAgqtmrkF_L4bHfhzLwyt7PC7rtv4U8js_Fn6FtCczuvVRLvkzS7Rtme0Sw-D5Q6i1f6Wp1aDvdhRMcaqbN3Gh7flfY3_6zB4AFVAgVerfjLmrItaof-PVZyhSSxFFtfhmNEqP-C0Ez5J43oVZ/DQDJ9jcgMpHq16W1jINOv653-DX33-Cz9JKXHtf9IUA)
+**Download Orignal Paper PDF:** [BRCC-3page-QED-MathematicalProof.pdf](https://effortlessapi.com/rulebook/BRCC-3page-QED-MathematicalProof.pdf)
 
 **View Online:** [https://zenodo.org/records/14759299](https://zenodo.org/records/14759299)
 **BRCC-Proof Status:** Published  
@@ -47,7 +47,7 @@ CMCC offers a universal framework for modeling complex systems, ensuring consist
 **Domain Experts:**  
 CMCC asserts that any conceptual model can be captured using five primitives (Schema, Data, Lookups, Aggregations, Calculated Fields) within an ACID-compliant environment.
 
-**Download CMCC PDF:** [_CMCC_The Conceptual Model Completeness Conjecture (CMCC) as a Universal Computational Framework.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/l0PVIRPQuPkfUIsnSs5ZZA/6Xa2xIDmSLJ7l-2FmmoA1gs9odoyiX1L9jxNPDyQ0tK2zn6IGws4rv-pRC9TaDyKmpZ7CdpfqFpnDsXAfgomNgRSmvUWJXZLZqbgWie3XSQOXDwdAkOs08yom-nfCSykYEh16qz1APXnwPlUXGriXLjJRMaAMCh7Fl_ejD8D77gS8DNAeqWRqNzo_qTI3czZtJUnbzerrDTzvkRFFm3wqqSLmLLJHlyM4M8l-zetpTM2nv2KEfU--LORziAA_Mwk/UvpCFp37nipckGSrxOcsCLYfearb7GBF0ocWds_dclY)
+**Download CMCC PDF:** [_CMCC_The Conceptual Model Completeness Conjecture (CMCC) as a Universal Computational Framework.pdf](https://effortlessapi.com/rulebook/_CMCC_The Conceptual Model Completeness Conjecture (CMCC) as a Universal Computational Framework.pdf)
 
 **View Online:** [https://zenodo.org/records/14760293](https://zenodo.org/records/14760293)
 **CMCC Status:** Published  
@@ -63,7 +63,7 @@ CMCC/BRCC frameworks are robust but still face inherent logical constraints, ens
 **Domain Experts:**  
 This paper formalizes Gödel’s Incompleteness Theorem within CMCC/BRCC, showing that even declarative systems inherit fundamental logical limitations.
 
-**Download CMCC+Domain PDF:** [PAPER_Godel's Incompleteness Theorum Proof.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/8GKp61Q4unlhrbTreKRzpg/QiC2ZoD550Nvui_i9wKGJ55plfHiEIU0LuOJf-W738bGCFBPwGQSXGDqYLUWFoEHtc5PuIxM38F3hI8hTGqz9V_Kgeil2dCMlq6yYu-o9s8iXSDsLENxvmaIlbVqNHzsgXJAJlrO_DtD7ULuWm_m0L3cUQUbK0WKoEYQFRrNnNvM9eelEWzUeZnhZyD2rSDStBpFhO46fFIunsiwNFQwYg/nfsGdDBDQrfqY3bVj939yn_y8lB2RKYjN72cHDL2Gn4)
+**Download CMCC+Domain PDF:** [PAPER_Godel's Incompleteness Theorum Proof.pdf](https://effortlessapi.com/rulebook/PAPER_Godel's Incompleteness Theorum Proof.pdf)
 
 **View Online:** [https://zenodo.org/records/14767367](https://zenodo.org/records/14767367)
 **CMCC-Godel Status:** Published  
@@ -78,7 +78,7 @@ CMCC/BRCC helps resolve paradoxes by treating them as data modeling issues, ensu
 **Domain Experts:**  
 This paper reframes paradoxes as data integrity problems, using CMCC/BRCC to model self-reference and inconsistencies as database constraints.
 
-**Download CMCC+Domain PDF:** [PAPER A Database-Theoretic Approach to Self-Reference Causality and Gödels Incompleteness.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/XNR5cK1RAYqEnTeg5V6xcQ/6dlMapBqXVAZP25hKPf9mLtksFWEBaDAGASg2nx1NXOlffNvtmkdQoCXhZWLeKYhGIFXADYRn8LLouTnwCC8SETuXu3ZQ9ZmXLG37ZWJeLuKISYIy1Kg8vcCebj90locG7P1JQz-oYubc5uRXA1z-5KyuXuNx_M7MYNNtVsASjhhV6K2aXq2xVHpSPuOrNJUVVuOHOhL59xesLfTBUpossys1HGjSEB7Cai_bfz4Jwctc_x6IIlYoUw7oUoHzbCX/kcirHscQVJDbA4aPy3oWrvyYPbWZ3K7Pe-lsyegj42Y)
+**Download CMCC+Domain PDF:** [PAPER A Database-Theoretic Approach to Self-Reference Causality and Gödels Incompleteness.pdf](https://effortlessapi.com/rulebook/PAPER A Database-Theoretic Approach to Self-Reference Causality and Gödels Incompleteness.pdf)
 
 **View Online:** [https://zenodo.org/records/14776024](https://zenodo.org/records/14776024)
 **CMCC-Paradoxes Status:** Published  
@@ -93,7 +93,7 @@ Q-CMCC provides a conceptual framework for integrating quantum concepts into cla
 **Domain Experts:**  
 Q-CMCC extends CMCC to model quantum behaviors declaratively, focusing on design-time rulebooks without simulating quantum mechanics.
 
-**Download CMCC+Domain PDF:** [PAPER Q-CMCC.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/NLgZShP4pxqdksT7KNScQw/FTx9KurNTN21RQbsRmCHQSkiEZoT3lM3wZLNejBAPN3v37WHY3HOt12BeeDnq7Uun7X5GDM887SfQ278zUuwD3jo1ZiL6oKcFljEJPmbxOydGfXwYRTnFjEiI44RvDmiIzQCKKLIDfAgBE0Rp1oghWv8Q5HhcGB12lNATF7VCYM/FbQ30KGeu3sBsbWLRAvbh1J68L73U4JgGKz8w4flS4Q)
+**Download CMCC+Domain PDF:** [PAPER Q-CMCC.pdf](https://effortlessapi.com/rulebook/PAPER Q-CMCC.pdf)
 
 **View Online:** [https://zenodo.org/records/14776430](https://zenodo.org/records/14776430)
 **Q-CMCC Status:** Published  
@@ -108,7 +108,7 @@ CMCC simplifies graph comparison and alignment, making it easier to manage compl
 **Domain Experts:**  
 This paper revisits the Graph Isomorphism Problem using CMCC, offering a declarative approach to graph alignment and semantic matching.
 
-**Download CMCC+Domain PDF:** [PAPER CMCC-Driven Graph Isomorphism_.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/InWm_G6Cps7G7vYeqjqyYg/FJCZ5JRdt6deVGb1uxMdzk6Sxm-kd-EWrWpYZJWsKcYzcDNipPSlmmJKfuXYyHgCPf8mBgucBWtNyYlgM7t5Tf6n3dsJ0GA32tY79IanI2NfJdxkD0R1IwE32PFPl2zgwtBEdbjvTIWpSZL5dRDjwL_w3K9-cxHbpy6Kx4KrNtmZLiJoq7etgvsgVSqU0N2t/XLXtG_Hl-SxUjoJXo1Kv0RUmbQ23FbRhTw8zkCQuOiE)
+**Download CMCC+Domain PDF:** [PAPER CMCC-Driven Graph Isomorphism_.pdf](https://effortlessapi.com/rulebook/PAPER CMCC-Driven Graph Isomorphism_.pdf)
 
 **View Online:** [https://zenodo.org/uploads/14776619](https://zenodo.org/uploads/14776619)
 **CMCC-Graphs Status:** Published  
@@ -123,7 +123,7 @@ CMCC offers a structured way to model advanced mathematical concepts, aiding res
 **Domain Experts:**  
 This paper explores how CMCC can model complex mathematical structures, providing a declarative framework for open questions in model theory.
 
-**Download CMCC+Domain PDF:** [PAPER_ CMCC-Model Theory_ Zilber’s Pseudo-Exponential Fields and the Real Exponential Field.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/zKAroaQP8Dbt6vC4eDrdUQ/ao3bQTcuDSDKVqXJpU4iHWJzYyyH9MIpSyn7o9FGt6qovzcwbMFmtkQoq-alZxopX5Q5FY_fiKdDidIZ7liXosFILqRujHYOlV6TmsbYY2mcIxjwlMA_Wo0P4O_hbit71EpPCxSHekjon2bF1ippKTyIK4EmQrJMkQTagHq-8NoE6zKvfTWOCq7Lj3kvAVJ0t9tDCoyGtEzmRyk_KChBVl7Q_ju94QYafSwRKaZrCZ_tmTIxhhSGl5qfVF-locbB/KaCzUk1ADsC8mZYn_UOzUk52cBNNG3gLsgwUfck7XyA)
+**Download CMCC+Domain PDF:** [PAPER_ CMCC-Model Theory_ Zilber’s Pseudo-Exponential Fields and the Real Exponential Field.pdf](https://effortlessapi.com/rulebook/PAPER_ CMCC-Model Theory_ Zilber’s Pseudo-Exponential Fields and the Real Exponential Field.pdf)
 
 **View Online:** [https://zenodo.org/records/14777134](https://zenodo.org/records/14777134)
 **CMCC-ModelTheory Status:** Published  
@@ -139,7 +139,7 @@ CMCC simplifies hardware development by allowing changes to be managed through a
 **Domain Experts:**  
 This paper demonstrates how CMCC enables hardware evolution without code rewriting, using a single rulebook to govern hardware definitions and protocols.
 
-**Download CMCC+Domain PDF:** [PAPER_CMCC_ Enabling Code-Free Evolution in the NDB Hardware Family.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/RYhiRGVyhFuQSzTd6s-owQ/w_ZX9OIl74TiNxEHkXpqoMJfO6nqydCKjOrVXf9tioealaKwh-XqI0mVmo2Lx8UADF1d-yK-yazh7aQKiiFnGOx7ppjjUreADtuaWGAGrDPfczPBeIZMm98VlvNDjgGyk6Ohp_BLH1KyFpbrDJ1dYCaFUn2Xd-a5uVsUpt2Babk6WGgCPL3aswCgCaDnSY4mAP97376khnnPmuqNLHE_-cQxP4cZ4Ix_3--X9Zd0API/irzniAs0jFfQgFoNVw6iGQZ-VhRmjkRZPmdjdKq01M4)
+**Download CMCC+Domain PDF:** [PAPER_CMCC_ Enabling Code-Free Evolution in the NDB Hardware Family.pdf](https://effortlessapi.com/rulebook/PAPER_CMCC_ Enabling Code-Free Evolution in the NDB Hardware Family.pdf)
 
 **View Online:** [https://zenodo.org/uploads/14792650](https://zenodo.org/uploads/14792650)
 **CMCC-NDBHardwareFamily Status:** Published  
@@ -162,7 +162,7 @@ This paper demonstrates how CMCC enables hardware evolution without code rewriti
 
 
 
-**Download CMCC+Domain PDF:** [PAPER_ Halting, Computability and CMCC_ Halting, and the Limits of Logical Systems.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/4goiTrRb_rSk0nkkq1_7sQ/pC72gFUNds82k6-zbOSp49dOkYitbEZHvEnZKqaJUnH_JxFQHbfSZA8dnGT_E0eMMtFZsTVQpoPDt4JoYpwiMMRfZnnaSZjclIOM_OKBerPgG0h3Q1HINdpxyTr0iAKxNfoP4QbqZu9WAnP5AaoOKxWiSxlv2oKOVmBJx4VNq4tmUVkJcVUrJWlKaevuaRYiIDMa2EXSXHzoAq6WorZ-cU8rEUrSohmq8jKUd1IjhHo/9FfpDX0vlWH7OG6UeQBNL0JOmMSRzC8WWYg-o3tlpVY)
+**Download CMCC+Domain PDF:** [PAPER_ Halting, Computability and CMCC_ Halting, and the Limits of Logical Systems.pdf](https://effortlessapi.com/rulebook/PAPER_ Halting, Computability and CMCC_ Halting, and the Limits of Logical Systems.pdf)
 
 **View Online:** []()
 **CMCC-GOL Status:** In progress  
@@ -189,7 +189,7 @@ CMCC-GAI ensures AI systems are reliable and trustworthy, making them suitable f
 **Domain Experts:**  
 CMCC-GAI introduces a knowledge firewall to ensure AI outputs are grounded in a formalized, auditable knowledge base, eliminating hallucinations.
 
-**Download CMCC+Domain PDF:** [PAPER_The CMCC-Gated AI Architecture (CMCC-GAI)_.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/HtmsUgV7sJf5VN62Q4x9Zg/uTeI35CWyRhOK7cXWtRmqDgnlpCz_8L4Tgxb5hwQ0nwCNUbmZOqqSvqUWosT4P_IpzSy5vxkwOSpZ1Bul_37osfb-sWksSuGa5lXlPSTEJfjo7AGalWuOAi7fn7bogDeg-VuxBNrumEwyA8BtvxgNV3YP6g1l9bNorXQefZ5GRz6i5tlqp3Nk3c3z9tfRKXv2vF2A-NJslKJzSs0BBtJUg/5bfeLacoa8VkLhFVABqEbm0Ff_DXQJDRwvProhl7e8w)
+**Download CMCC+Domain PDF:** [PAPER_The CMCC-Gated AI Architecture (CMCC-GAI)_.pdf](https://effortlessapi.com/rulebook/PAPER_The CMCC-Gated AI Architecture (CMCC-GAI)_.pdf)
 
 **View Online:** [https://zenodo.org/records/14798982](https://zenodo.org/records/14798982)
 **CMCC-GAI Status:** Published  
@@ -205,7 +205,7 @@ CMCC provides a practical framework for modeling complex systems, bridging the g
 **Domain Experts:**  
 This paper aligns MUSE’s binary architecture with Wheeler’s “It from Bit” hypothesis, formalizing CMCC as a framework for modeling reality through declarative primitives.
 
-**Download CMCC PDF:** [PAPER_MUSE to CMCC_ A 20-Year Empirical Validation of Wheeler’s 'It from Bit' Hypothesis.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/Wb816yLymAAHEs3M4r3uyw/D5M5x9C1P7vvFDU1nBvy0T7WvCr7hZffejgP-xVs7p0n7uROMpgYKxF55VEK-UwroIGKDxVmPSEHwL7ngAFBlb9C50yQRK38-punq5GgOLBG60kiixVA--ytbxtKCrMEImOefOHafJtxHOkmHprTX6v60rMHufFqIM-d7_Q3V979MhNYyD4baEYeEkgjB4ICpmRMADi7V1H2QTfbzO42MDbmLEfDYrui95YT6Bd4OUHh58Os6ZMnDDixrUSFRHbF/9gGyUXoMRmRAEvosJBOj-hcBqxK7YplaAZibFKooUHM)
+**Download CMCC PDF:** [PAPER_MUSE to CMCC_ A 20-Year Empirical Validation of Wheeler’s 'It from Bit' Hypothesis.pdf](https://effortlessapi.com/rulebook/PAPER_MUSE to CMCC_ A 20-Year Empirical Validation of Wheeler’s 'It from Bit' Hypothesis.pdf)
 
 **View Online:** [https://zenodo.org/records/14804332](https://zenodo.org/records/14804332)
 **CMCC-MUSE Status:** Published  
@@ -375,7 +375,7 @@ References	20
 Acknowledgments	20
 
 
-**Download CMCC PDF:** [PAPER_Triangleness in an ACID Datastore.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/p1T1TbyI2N37fkHiOhEsdA/1P5aPQ2y2I6HKuUfTvodEDFyltSQnwvNPcNCUtHEkYmFme4zW5u3jeXOv-fKdNbN-d7B6jS5g-fNLx9CYwl7cEtUyxoFabaYqU6PCtUJbMS0grehiLtKlepmH7_gVIblKQejWXVA1Rz0p3FMFvFxCQbjndE-fb5h1DnVdfbHBcpCOPbrTLqUCM4VFwB2KOAd/b8jqjxHfYCtDmWQXt_yfSBvpi28AYeMaj1EfsiOduK0)
+**Download CMCC PDF:** [PAPER_Triangleness in an ACID Datastore.pdf](https://effortlessapi.com/rulebook/PAPER_Triangleness in an ACID Datastore.pdf)
 
 **View Online:** [https://zenodo.org/records/14836305](https://zenodo.org/records/14836305)
 **CMCC-M3A Status:** Published  
@@ -393,7 +393,7 @@ By introducing a third semiotic category—beyond Saussure’s (1916) signifier 
 **Domain Experts:**  
 The Conceptual Model Completeness Conjecture (CMCC) posits that any finite, computable concept—including linguistic meaning—can be fully captured using five declarative primitives: Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F), all within an ACID-compliant datastore. When applied to language, this principle yields the Linguistic Completeness Conjecture (LCC), asserting that semantics can be represented independently of linguistic syntax. CMCC-based conceptual models act as universal “mirrors” of meaning—hyperdimensional structures reflecting conceptual reality—rather than relying on one-dimensional strings of symbols. Crucially, this does not eliminate human language for communication or documentation; instead, it decouples stored knowledge from syntax-laden text.
 
-**Download CMCC+Domain PDF:** [PAPER_ The Linguistic Completeness Conjecture (LCC)_ From Syntax-Bound Semantics to Universal Declarative Mirrors.pdf](https://v5.airtableusercontent.com/v3/u/39/39/1741860000000/jqzVI55Z_8Jl7QJmaCiZkA/AC8_B5rabKhFgGG8YCJ53dJsmrjcAJeZPISq8n40qmbAXw_1CASmK8Fbd9VI34A5oudPYF-vlrBa3Eh4RbQBT7Z4z44IKWobpzFxO0d0yPbYYlnftx9iLrz0RW7rb2gcflNzHSqO_u1IaGQtyW05gsscMVdn6DewwsBYzhlhGYqkb-YsFL0_tP4YVsZNlpwWk0TSJJEmSXfFuujaIIjSRBkE_HA1mJO1ju41OA0B4vjVUJy04oOyVo8OBC_xEauFbvxQxJJlN9QBZ5Xxv4LnxA/Pvq0Ay33vfvOe-tLQeD23ThKY4y3b7kDps1fcyauCUs)
+**Download CMCC+Domain PDF:** [PAPER_ The Linguistic Completeness Conjecture (LCC)_ From Syntax-Bound Semantics to Universal Declarative Mirrors.pdf](https://effortlessapi.com/rulebook/PAPER_ The Linguistic Completeness Conjecture (LCC)_ From Syntax-Bound Semantics to Universal Declarative Mirrors.pdf)
 
 **View Online:** [https://zenodo.org/records/14942925](https://zenodo.org/records/14942925)
 **CMCC-LCC Status:** Published  
