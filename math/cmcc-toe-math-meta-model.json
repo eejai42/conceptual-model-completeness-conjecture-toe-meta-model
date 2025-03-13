@@ -1,12 +1,12 @@
 {
     "id": "CMCC_ToEMM_Math",    
     "meta-model": {
-  "name": "CMCC Complete Mathematics TOE Meta Model",
+  "name": "Mathematics TOE Meta Model",
   "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single Snapshot-Consistent, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
   "version": "v2.05",
   "nickname": "math",
   "meta": {
-    "title": "CMCC Complete Mathematics ToE Meta-Model",
+    "title": "Mathematics ToE Meta-Model",
     "subtitle": "A Unified Declarative Framework for Abstract Structures, Axioms, and Proofs",
     "authors": [
       {

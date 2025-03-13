@@ -1,12 +1,8 @@
-# CMCC Complete Mathematics TOE Meta Model
+# Mathematics ToE Meta-Model
+## A Unified Declarative Framework for Abstract Structures, Axioms, and Proofs
 
 A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single Snapshot-Consistent, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.
 
-
-## Metadata
-
-**Title**: CMCC Complete Mathematics ToE Meta-Model  
-**Subtitle**: A Unified Declarative Framework for Abstract Structures, Axioms, and Proofs  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Math
 
@@ -17,7 +13,8 @@ A unified meta-model capturing foundational mathematics (sets, elements, functio
 ### Abstract
 The Mathematics extension of the CMCC (Conceptual Model Completeness Conjecture) systematically represents abstract mathematical concepts—sets, elements, functions, propositions, equations, algebraic structures—under a single Snapshot-Consistent schema. Using five foundational primitives (S, D, L, A, F), it captures axioms, proofs, and domain relationships (e.g., group axioms, ring axioms, function surjectivity) in a purely declarative format, enabling cross-domain synergy with physics, chemistry, and beyond.
 
-![CMCC Complete Mathematics TOE Meta Model entity diagram](math.png)
+![Mathematics ToE Meta-Model Entity Diagram](math.png)
+
 
 ### Key Points
 - Models foundational mathematics (sets, elements, structures, proofs) declaratively, through aggregator formulas and constraints.

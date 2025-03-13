@@ -2,13 +2,13 @@
     "id": "CMCC_ToEMM_Climate",    
     "meta-model": {
   "id": "CMCC_ToEMM_Climate",
-  "fullname": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+  "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
   "name": "Climate Science ToE Meta-Model",
   "description": "A unified meta-model that captures the foundational elements of climate science and environmental modeling—including climate variables, ecosystems, pollution sources, and environmental measurements—and supports predictive modeling and ecological forecasts using a declarative, Snapshot-Consistent framework.",
   "nickname": "climate",
   "version": "v2.0",
   "meta": {
-    "title": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+    "title": "Climate Science and Environmental Modeling ToE Meta-Model",
     "subtitle": "A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts",
     "authors": [
       {

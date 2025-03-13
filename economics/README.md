@@ -1,14 +1,8 @@
-# All-In-One CMCC Economics Model
+# Economics ToE Meta-Model
+## A Declarative Framework for Agents, Markets, and Economic Dynamics
 
 Covers basic and advanced economic entities—agents, markets, goods, transactions, supply-demand constraints, utility/budget, macro indicators, policies, plus a top-level scenario aggregator. Each entity is designed so it can be executed with no extra sidecar logic: all rules are captured using Schema (S), Data (D), Lookups (L), Aggregations (A), and Calculated Fields (F).
 
-## Depends On:
-- CMCC_ToEMM_Math
-
-## Metadata
-
-**Title**: CMCC Complete Economics ToE Meta-Model  
-**Subtitle**: A Declarative Framework for Agents, Markets, and Economic Dynamics  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Economics
 
@@ -19,7 +13,10 @@ Covers basic and advanced economic entities—agents, markets, goods, transactio
 ### Abstract
 The Economics extension of the CMCC (Conceptual Model Completeness Conjecture) provides a unified, Snapshot-Consistent structure for modeling economic agents, transactions, markets, and policy rules. By leveraging CMCC’s five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda formulas—it captures everything from microeconomic supply-demand dynamics to macroeconomic indicators, bridging them seamlessly with other domains such as mathematics, AI, or even quantum-inspired decision models.
 
-![All-In-One CMCC Economics Model entity diagram](economics.png)
+![Economics ToE Meta-Model Entity Diagram](economics.png)
+#### Depends On:
+- CMCC_ToEMM_Math
+
 
 ### Key Points
 - Encodes agents, markets, and transactions as first-class entities with aggregator-based rules (e.g., equilibrium checks, utility maximization).

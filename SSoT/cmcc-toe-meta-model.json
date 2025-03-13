@@ -1,6 +1,6 @@
 {
-  "title": "The CMCC Complete Theory-of-Everything Meta Model",
-  "description": "This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an Snapshot-Consistent environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework",
+  "title": "The Theory-of-Everything Meta Model",
+  "description": "This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an Snapshot-Consistent environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework",
   "meta": {
     "title": "The Conceptual Model Completeness Conjecture (CMCC)",
     "subtitle": "A Universal Declarative Computational Framework",
@@ -78,91 +78,91 @@
     "CMCC_ToEMM_Domain_List": [
       {
         "id": "CMCC_ToEMM_Math",
-        "fullname": "CMCC Complete Mathematics ToE Meta-Model",
+        "fullname": "Mathematics ToE Meta-Model",
         "name": "Mathematics CMCC Meta-Model",
         "description": "A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.",
         "nickname": "math"
       },
       {
         "id": "CMCC_ToEMM_Physics",
-        "fullname": "CMCC Complete Physics ToE Meta-Model",
+        "fullname": "Physics ToE Meta-Model",
         "name": "Physics ToE Meta-Model",
         "description": "A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.",
         "nickname": "physics"
       },
       {
         "id": "CMCC_ToEMM_Chemistry",
-        "fullname": "CMCC Complete Chemistry ToE Meta-Model",
+        "fullname": "Chemistry ToE Meta-Model",
         "name": "Chemistry ToE Meta-Model",
         "description": "Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.",
         "nickname": "chemistry"
       },
       {
         "id": "CMCC_ToEMM_Biology",
-        "fullname": "CMCC Complete Biology ToE Meta-Model",
+        "fullname": "Biology ToE Meta-Model",
         "name": "Biology ToE Meta-Model",
         "description": "Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.",
         "nickname": "biology"
       },
       {
         "id": "CMCC_ToEMM_AI",
-        "fullname": "CMCC Complete Artificial Intelligence ToE Meta-Model",
+        "fullname": "Artificial Intelligence ToE Meta-Model",
         "name": "Artificial Intelligence ToE Meta-Model",
         "description": "Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.",
         "nickname": "ai"
       },
       {
         "id": "CMCC_ToEMM_Economics",
-        "fullname": "CMCC Complete Economics ToE Meta-Model",
+        "fullname": "Economics ToE Meta-Model",
         "name": "Economics ToE Meta-Model",
         "description": "A computational model for economic agents, markets, transactions, and supply-demand constraints.",
         "nickname": "economics"
       },
       {
         "id": "CMCC_ToEMM_Astronomy",
-        "fullname": "CMCC Complete Astronomy ToE Meta-Model",
+        "fullname": "Astronomy ToE Meta-Model",
         "name": "Astronomy ToE Meta-Model",
         "description": "An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.",
         "nickname": "astronomy"
       },
       {
         "id": "CMCC_ToEMM_Geology",
-        "fullname": "CMCC Complete Geology oE Meta-Model",
+        "fullname": "Geology oE Meta-Model",
         "name": "Geology",
         "description": "A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.",
         "nickname": "geology"
       },
       {
         "id": "CMCC_ToEMM_Medicine",
-        "fullname": "CMCC Complete Medicine and Healthcare ToE Meta-Model",
+        "fullname": "Medicine and Healthcare ToE Meta-Model",
         "name": "Medicine & Healthcare ToE Meta-Model",
         "description": "A unified model capturing foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.",
         "nickname": "medicine"
       },
       {
         "id": "CMCC_ToEMM_Legal",
-        "fullname": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+        "fullname": "Legal Systems & Compliance ToE Meta-Model",
         "name": "Legal Systems & Compliance ToE Meta-Model",
         "description": "A unified model for legal systems, contracts, statutory frameworks, and regulatory compliance.",
         "nickname": "legal"
       },
       {
         "id": "CMCC_ToEMM_Climate",
-        "fullname": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+        "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
         "name": "Climate Science ToE Meta-Model",
         "description": "A unified model for climate science and environmental modeling, capturing climate variables, ecosystems, pollution sources, and environmental data with built-in predictive and forecast capabilities.",
         "nickname": "climate"
       },
       {
         "id": "CMCC_ToEMM_Cybersecurity",
-        "fullname": "CMCC Complete Cybersecurity ToE Meta-Model",
+        "fullname": "Cybersecurity ToE Meta-Model",
         "name": "Cybersecurity ToE Meta-Model",
         "description": "A unified model for cybersecurity covering threat models, vulnerabilities, IT asset mappings, incident logs, and security audits.",
         "nickname": "cybersecurity"
       },
       {
         "id": "CMCC_ToEMM_Sociology",
-        "fullname": "CMCC Complete Sociology and Anthropology ToE Meta-Model",
+        "fullname": "Sociology and Anthropology ToE Meta-Model",
         "name": "Sociology & Anthropology ToE Meta-Model",
         "description": "A structured model capturing social structures, cultural norms, and interaction networks using survey data, demographic records, and social network relationships.",
         "nickname": "sociology"
@@ -171,12 +171,12 @@
   },
   "CMCC_ToEMM_Domains": {
     "CMCC_ToEMM_Math": {
-      "name": "CMCC Complete Mathematics TOE Meta Model",
+      "name": "Mathematics TOE Meta Model",
       "description": "A unified meta-model capturing foundational mathematics (sets, elements, functions, algebraic structures, category theory, propositions, equations, etc.) in a single Snapshot-Consistent, declarative structure. All domain logic—like group axioms, function composition, theorem proofs—are expressed using lookups, aggregations, lambdas, and constraints.",
       "version": "v2.05",      
       "nickname": "math",
       "meta": {
-        "title": "CMCC Complete Mathematics ToE Meta-Model",
+        "title": "Mathematics ToE Meta-Model",
         "subtitle": "A Unified Declarative Framework for Abstract Structures, Axioms, and Proofs",
         "authors": [
           {
@@ -1813,7 +1813,7 @@
       "version": "v2.19",
       "nickname": "physics",
       "meta": {
-        "title": "CMCC Complete Physics ToE Meta-Model",
+        "title": "Physics ToE Meta-Model",
         "subtitle": "A Comprehensive Snapshot-Consistent Data Architecture for Classical, Quantum, and Relativistic Theories",
         "authors": [
           {
@@ -5908,7 +5908,7 @@
       "version": "v2.3",
       "nickname": "chemistry",
       "meta": {
-        "title": "CMCC Complete Chemistry ToE Meta-Model",
+        "title": "Chemistry ToE Meta-Model",
         "subtitle": "A Declarative Structural Approach to Chemical Entities and Reactions",
         "authors": [
           {
@@ -6732,7 +6732,7 @@
       "version": "v2.0",
       "nickname": "biology",
       "meta": {
-        "title": "CMCC Complete Biology ToE Meta-Model",
+        "title": "Biology ToE Meta-Model",
         "subtitle": "A Unified Declarative Schema for Genes, Proteins, and Cellular Systems",
         "authors": [
           {
@@ -7228,7 +7228,7 @@
       "version": "v2.4",
       "nickname": "economics",
       "meta": {
-        "title": "CMCC Complete Economics ToE Meta-Model",
+        "title": "Economics ToE Meta-Model",
         "subtitle": "A Declarative Framework for Agents, Markets, and Economic Dynamics",
         "authors": [
           {
@@ -8741,7 +8741,7 @@
       "version": "v2.1",
       "nickname": "geology",
       "meta": {
-        "title": "CMCC Complete Geology ToE Meta-Model",
+        "title": "Geology ToE Meta-Model",
         "subtitle": "A Declarative Data Architecture for Minerals, Rock Formations, and Tectonic Processes",
         "authors": [
           {
@@ -9543,7 +9543,7 @@
       "version": "v2.0",
       "nickname": "ai",
       "meta": {
-        "title": "CMCC Complete Artificial Intelligence ToE Meta-Model",
+        "title": "Artificial Intelligence ToE Meta-Model",
         "subtitle": "A Cross-Domain Declarative Framework for Machine Learning, Neural Networks, and Inference Engines",
         "authors": [
           {
@@ -9858,7 +9858,7 @@
       "version": "v2.0",
       "nickname": "astronomy",
       "meta": {
-        "title": "CMCC Complete Astronomy ToE Meta-Model",
+        "title": "Astronomy ToE Meta-Model",
         "subtitle": "Declarative Data Structures for Celestial Bodies, Cosmic Dynamics, and Observational Records",
         "authors": [
           {
@@ -10148,13 +10148,13 @@
     },
     "CMCC_ToEMM_Medicine" : {
       "id": "CMCC_ToEMM_Medicine",
-      "fullname": "CMCC Complete Medicine and Healthcare ToE Meta-Model",
+      "fullname": "Medicine and Healthcare ToE Meta-Model",
       "name": "Medicine & Healthcare ToE Meta-Model",
       "description": "A unified meta-model capturing the foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.",
       "nickname": "medicine",
       "version": "v2.0",
       "meta": {
-        "title": "CMCC Complete Medicine & Healthcare ToE Meta-Model",
+        "title": "Medicine & Healthcare ToE Meta-Model",
         "subtitle": "A Declarative Framework for Modeling Medical Data and Healthcare Processes",
         "authors": [
           {
@@ -10737,13 +10737,13 @@
     },
     "CMCC_ToEMM_Legal" : {
       "id": "CMCC_ToEMM_Legal",
-      "fullname": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+      "fullname": "Legal Systems & Compliance ToE Meta-Model",
       "name": "Legal Systems & Compliance ToE Meta-Model",
       "description": "A unified meta-model providing a syntax-free, declarative representation of legal systems and compliance frameworks. It integrates contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies to support automated compliance checking and risk assessment.",
       "nickname": "legal",
       "version": "v2.0",
       "meta": {
-        "title": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+        "title": "Legal Systems & Compliance ToE Meta-Model",
         "subtitle": "A Declarative Framework for Modeling Legal Documents, Regulations, and Compliance",
         "authors": [
           {
@@ -11241,13 +11241,13 @@
     },
     "CMCC_ToEMM_Climate": {
       "id": "CMCC_ToEMM_Climate",
-      "fullname": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+      "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
       "name": "Climate Science ToE Meta-Model",
       "description": "A unified meta-model that captures the foundational elements of climate science and environmental modeling—including climate variables, ecosystems, pollution sources, and environmental measurements—and supports predictive modeling and ecological forecasts using a declarative, Snapshot-Consistent framework.",
       "nickname": "climate",
       "version": "v2.0",
       "meta": {
-        "title": "CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model",
+        "title": "Climate Science and Environmental Modeling ToE Meta-Model",
         "subtitle": "A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts",
         "authors": [
           {
@@ -11700,13 +11700,13 @@
     },
     "CMCC_ToEMM_Cybersecurity": {
       "id": "CMCC_ToEMM_Cybersecurity",
-      "fullname": "CMCC Complete Cybersecurity ToE Meta-Model",
+      "fullname": "Cybersecurity ToE Meta-Model",
       "name": "Cybersecurity ToE Meta-Model",
       "description": "A unified meta-model capturing cybersecurity aspects including threat models, vulnerabilities, IT asset mappings, incident logs, security audits, and patches, using a declarative, Snapshot-Consistent approach.",
       "nickname": "cybersecurity",
       "version": "v2.0",
       "meta": {
-        "title": "CMCC Complete Cybersecurity ToE Meta-Model",
+        "title": "Cybersecurity ToE Meta-Model",
         "subtitle": "A Declarative Framework for Cybersecurity Data and Rule Management",
         "authors": [
           {
@@ -11932,13 +11932,13 @@
     },
     "CMCC_ToEMM_Sociology" : {
       "id": "CMCC_ToEMM_Sociology",
-      "fullname": "CMCC Complete Sociology and Anthropology ToE Meta-Model",
+      "fullname": "Sociology and Anthropology ToE Meta-Model",
       "name": "Sociology & Anthropology ToE Meta-Model",
       "description": "A unified meta-model capturing social structures, cultural norms, and interaction networks. This model encodes survey data, demographic records, and social network relationships, and enables predictive modeling of social behavior and network dynamics.",
       "nickname": "sociology",
-      "version": "v1.0",
+      "version": "v2.2",
       "meta": {
-        "title": "CMCC Complete Sociology & Anthropology ToE Meta-Model",
+        "title": "Sociology & Anthropology ToE Meta-Model",
         "subtitle": "A Declarative Framework for Modeling Social Dynamics and Cultural Norms",
         "authors": [
           {
@@ -12020,6 +12020,30 @@
                 "type": "rollup",
                 "formula": "ComputeSocialCohesion(individuals, interactions)",
                 "description": "Quantifies the degree of cohesion within the community."
+              },
+              {
+                "name": "cross_community_interaction_score",
+                "type": "rollup",
+                "formula": "ComputeCrossCommunityInteractionScore(interactions, individuals)",
+                "description": "Evaluates the frequency and intensity of interactions between this community and other communities."
+              },
+              {
+                "name": "cohesion_between_communities",
+                "type": "rollup",
+                "formula": "ComputeInterCommunityCohesion(id, ???)",
+                "description": "Measures synergy or collaborative engagement between this community and neighboring communities."
+              },
+              {
+                "name": "community_leadership_index",
+                "type": "rollup",
+                "formula": "ComputeLeadershipIndex(individuals)",
+                "description": "Assesses the presence and impact of recognized leaders within the community."
+              },
+              {
+                "name": "generational_shift_index",
+                "type": "rollup",
+                "formula": "ComputeGenerationalShift(individuals, demographics)",
+                "description": "Tracks how the age distribution changes over time within the community."
               }
             ],
             "calculated_fields": [
@@ -12089,6 +12113,24 @@
                 "type": "rollup",
                 "formula": "ComputeInfluence(social_interactions)",
                 "description": "Quantitative measure of the individual's influence in the network."
+              },
+              {
+                "name": "inter_community_mobility",
+                "type": "rollup",
+                "formula": "ComputeInterCommunityMobility(id)",
+                "description": "Quantifies how many times the individual has changed community affiliation."
+              },
+              {
+                "name": "network_brokerage_score",
+                "type": "rollup",
+                "formula": "ComputeNetworkBrokerage(social_interactions)",
+                "description": "Measures the individual's role as a bridge or broker in the social network."
+              },
+              {
+                "name": "individual_cultural_alignment_score",
+                "type": "rollup",
+                "formula": "ComputeCulturalAlignmentScore(cultural_norms)",
+                "description": "Assesses the individual's level of alignment with prevailing cultural norms."
               }
             ],
             "calculated_fields": [
@@ -12096,6 +12138,11 @@
                 "name": "network_dynamics",
                 "formula": "AnalyzeNetworkDynamics(social_interactions)",
                 "description": "Evaluates the dynamics of the individual's social network."
+              },
+              {
+                "name": "life_stage_classification",
+                "formula": "ClassifyLifeStage(age)",
+                "description": "Categorizes the individual's life stage based on age (e.g. youth, adult, senior)."
               }
             ]
           },
@@ -12151,6 +12198,18 @@
                 "type": "rollup",
                 "formula": "AnalyzeTrends(responses)",
                 "description": "Trend analysis based on survey responses."
+              },
+              {
+                "name": "survey_response_over_time",
+                "type": "rollup",
+                "formula": "ComputeResponseTrendOverTime(id, responses, survey_date)",
+                "description": "Tracks how response patterns evolve across successive survey administrations."
+              },
+              {
+                "name": "survey_participant_diversity_index",
+                "type": "rollup",
+                "formula": "ComputeParticipantDiversity(participants)",
+                "description": "Measures the demographic diversity of survey participants."
               }
             ],
             "calculated_fields": [
@@ -12199,6 +12258,24 @@
                 "type": "rollup",
                 "formula": "ComputeAdherence(cultural_norm_adherents)",
                 "description": "Measures the degree to which community members adhere to the norm."
+              },
+              {
+                "name": "norm_influence_spread",
+                "type": "rollup",
+                "formula": "ComputeNormSpread(adherent_ids)",
+                "description": "Calculates the rate at which this norm is adopted across individuals and communities."
+              },
+              {
+                "name": "cultural_norm_convergence",
+                "type": "rollup",
+                "formula": "ComputeNormConvergence(this.id, ???)",
+                "description": "Assesses how this norm overlaps or converges with other norms within or across communities."
+              },
+              {
+                "name": "cross_norm_interaction_effects",
+                "type": "rollup",
+                "formula": "AssessCrossNormEffects(this.id, ???)",
+                "description": "Evaluates synergistic or conflicting effects between this norm and other norms in the community."
               }
             ],
             "calculated_fields": []
@@ -12255,6 +12332,18 @@
                 "type": "rollup",
                 "formula": "COUNT(this)",
                 "description": "Frequency count of this type of interaction."
+              },
+              {
+                "name": "most_active_interaction_type",
+                "type": "rollup",
+                "formula": "FindMostFrequentInteractionType(community_id)",
+                "description": "Identifies the most commonly occurring interaction type within this social interaction set."
+              },
+              {
+                "name": "interaction_time_series_trend",
+                "type": "rollup",
+                "formula": "AnalyzeInteractionTrend(timestamp, interaction_type)",
+                "description": "Examines how interaction frequency and types change over chronological intervals."
               }
             ],
             "calculated_fields": [
@@ -12262,6 +12351,240 @@
                 "name": "dynamic_strength",
                 "formula": "CalculateInteractionStrength(interaction_type, interaction_frequency)",
                 "description": "Evaluates the strength of the relationship based on interaction type and frequency."
+              }
+            ]
+          },
+          {
+            "name": "Family",
+            "description": "Represents a family unit within or across communities, capturing immediate or extended kinship ties.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique family identifier."
+              },
+              {
+                "name": "family_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the family or the primary surname associated with it."
+              },
+              {
+                "name": "community_id",
+                "type": "lookup",
+                "target_entity": "Community",
+                "foreign_key": true,
+                "description": "Reference to the primary community this family is associated with."
+              },
+              {
+                "name": "family_structure",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "JSON describing the internal structure (e.g., nuclear, extended) and notable relationships."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "members",
+                "target_entity": "Individual",
+                "type": "many_to_many",
+                "join_condition": "FamilyMembership.family_id = this.id",
+                "description": "All individuals belonging to this family."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "family_cohesion_metric",
+                "type": "rollup",
+                "formula": "ComputeFamilyCohesion(members)",
+                "description": "Quantifies how cohesive and interdependent the family unit is."
+              },
+              {
+                "name": "family_size_trend",
+                "type": "rollup",
+                "formula": "ComputeFamilySizeTrend(members, ???)",
+                "description": "Analyzes how family membership size evolves over time."
+              },
+              {
+                "name": "family_intergenerational_support_score",
+                "type": "rollup",
+                "formula": "ComputeIntergenerationalSupport(members, ???)",
+                "description": "Measures the level of support exchanged across multiple generations within the family."
+              },
+              {
+                "name": "predictive_family_expansion",
+                "type": "rollup",
+                "formula": "PredictFamilyExpansion(members, ???)",
+                "description": "Forecasts the likelihood of new members joining or existing members leaving the family unit."
+              }
+            ],
+            "calculated_fields": [
+              {
+                "name": "family_lifecycle_stage",
+                "formula": "DeriveLifecycleStage(members, family_structure)",
+                "description": "Identifies whether the family is in an early, expanding, or mature lifecycle stage based on membership and structure."
+              }
+            ]
+          },
+          {
+            "name": "Organization",
+            "description": "Represents a formal organization, institution, or collective operating within or across communities.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique organization identifier."
+              },
+              {
+                "name": "organization_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the organization."
+              },
+              {
+                "name": "organization_type",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Type of organization (e.g., nonprofit, business, government)."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "High-level overview of the organization’s purpose or function."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "associated_communities",
+                "target_entity": "Community",
+                "type": "many_to_many",
+                "join_condition": "OrganizationCommunity.organization_id = this.id",
+                "description": "Communities in which this organization operates or has membership."
+              },
+              {
+                "name": "members",
+                "target_entity": "Individual",
+                "type": "many_to_many",
+                "join_condition": "OrganizationMembership.organization_id = this.id",
+                "description": "Individuals affiliated with the organization."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "organizational_influence",
+                "type": "rollup",
+                "formula": "ComputeOrganizationalInfluence(members, associated_communities)",
+                "description": "Assesses how influential the organization is based on its size and reach."
+              },
+              {
+                "name": "org_cross_community_overlap",
+                "type": "rollup",
+                "formula": "ComputeCrossCommunityOverlap(associated_communities)",
+                "description": "Indicates the extent to which the organization spans multiple communities."
+              },
+              {
+                "name": "event_sponsorship_impact",
+                "type": "rollup",
+                "formula": "AssessSponsorshipImpact(this.id, ???)",
+                "description": "Evaluates the organization's influence or visibility gained through sponsoring social events."
+              },
+              {
+                "name": "organization_collaboration_density",
+                "type": "rollup",
+                "formula": "ComputeCollaborationDensity(members, ???)",
+                "description": "Measures the depth and breadth of collaborations or partnerships with other organizations."
+              }
+            ],
+            "calculated_fields": [
+              {
+                "name": "organizational_growth_forecast",
+                "formula": "PredictOrgGrowth(organizational_influence, members)",
+                "description": "Predicts the organization’s potential growth or decline in membership and impact."
+              }
+            ]
+          },
+          {
+            "name": "SocialEvent",
+            "description": "Represents a significant event (e.g., gathering, protest, celebration) that occurs within or across communities.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique event identifier."
+              },
+              {
+                "name": "event_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name or title of the event."
+              },
+              {
+                "name": "community_id",
+                "type": "lookup",
+                "target_entity": "Community",
+                "foreign_key": true,
+                "description": "Primary community where the event is based."
+              },
+              {
+                "name": "event_date",
+                "type": "scalar",
+                "datatype": "date",
+                "description": "Date of the event."
+              },
+              {
+                "name": "location",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Location or venue where the event takes place."
+              },
+              {
+                "name": "details",
+                "type": "scalar",
+                "datatype": "json",
+                "description": "Additional structured data describing the event (agenda, expected turnout, organizers, etc.)."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "attendees",
+                "target_entity": "Individual",
+                "type": "many_to_many",
+                "join_condition": "EventAttendance.event_id = this.id",
+                "description": "Individuals who attend or participate in the event."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "event_participation_level",
+                "type": "rollup",
+                "formula": "COUNT(attendees)",
+                "description": "Number of attendees or participants in the event."
+              },
+              {
+                "name": "social_event_recurrence_prediction",
+                "type": "rollup",
+                "formula": "PredictEventRecurrence(event_name, event_date)",
+                "description": "Estimates the probability that a similar event will occur in the future based on historical patterns."
+              },
+              {
+                "name": "event_community_engagement_index",
+                "type": "rollup",
+                "formula": "ComputeEngagementIndex(attendees, community_id)",
+                "description": "Quantifies the level of engagement and participation from the community in this event."
+              }
+            ],
+            "calculated_fields": [
+              {
+                "name": "social_impact_assessment",
+                "formula": "AssessEventImpact(attendees, community_id)",
+                "description": "Evaluates the social implications of the event for the community (and potentially beyond)."
               }
             ]
           }
@@ -12273,7 +12596,10 @@
             "id": "community_001",
             "name": "Downtown Residents",
             "description": "A diverse urban community.",
-            "demographics": { "population": 5000, "median_income": 55000 }
+            "demographics": {
+              "population": 5000,
+              "median_income": 55000
+            }
           }
         ],
         "Individual": [
@@ -12282,7 +12608,20 @@
             "community_id": "community_001",
             "name": "Alice Smith",
             "age": 34,
-            "demographic_details": { "occupation": "Teacher", "education": "Bachelor's" }
+            "demographic_details": {
+              "occupation": "Teacher",
+              "education": "Bachelor's"
+            }
+          },
+          {
+            "id": "individual_002",
+            "community_id": "community_001",
+            "name": "Bob Johnson",
+            "age": 40,
+            "demographic_details": {
+              "occupation": "Engineer",
+              "education": "Master's"
+            }
           }
         ],
         "Survey": [
@@ -12290,7 +12629,11 @@
             "id": "survey_001",
             "community_id": "community_001",
             "survey_date": "2025-01-15",
-            "responses": { "Q1": 4, "Q2": 3, "Q3": 5 }
+            "responses": {
+              "Q1": 4,
+              "Q2": 3,
+              "Q3": 5
+            }
           }
         ],
         "CulturalNorm": [
@@ -12310,9 +12653,45 @@
             "interaction_type": "casual_chat",
             "timestamp": "2025-01-16T14:30:00Z"
           }
+        ],
+        "Family": [
+          {
+            "id": "family_001",
+            "family_name": "Smith",
+            "community_id": "community_001",
+            "family_structure": {
+              "type": "nuclear",
+              "members": [
+                "individual_001",
+                "individual_002"
+              ]
+            }
+          }
+        ],
+        "Organization": [
+          {
+            "id": "org_001",
+            "organization_name": "Downtown Volunteer Group",
+            "organization_type": "nonprofit",
+            "description": "A local volunteer-run organization dedicated to community services."
+          }
+        ],
+        "SocialEvent": [
+          {
+            "id": "event_001",
+            "event_name": "Community Clean-Up",
+            "community_id": "community_001",
+            "event_date": "2025-02-01",
+            "location": "City Park",
+            "details": {
+              "sponsor": "org_001",
+              "expected_turnout": 50
+            }
+          }
         ]
       }
-    }    
+    }
+    
   },
   "Research": {
     "Toy_Universes": [

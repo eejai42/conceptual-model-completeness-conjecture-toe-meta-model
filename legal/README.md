@@ -1,12 +1,8 @@
-# Legal Systems & Compliance ToE Meta-Model.
+# Legal Systems & Compliance ToE Meta-Model
+## A Declarative Framework for Modeling Legal Documents, Regulations, and Compliance
 
 A unified meta-model providing a syntax-free, declarative representation of legal systems and compliance frameworks. It integrates contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies to support automated compliance checking and risk assessment.
 
-
-## Metadata
-
-**Title**: 
-**Subtitle**: A Declarative Framework for Modeling Legal Documents, Regulations, and Compliance  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Legal
 
@@ -17,7 +13,8 @@ A unified meta-model providing a syntax-free, declarative representation of lega
 ### Abstract
 This meta-model provides a declarative, syntax-free framework for legal systems and compliance. It encodes contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies using the five primitives: Schema, Data, Lookups, Aggregations, and Calculated Fields.
 
-![Legal Systems & Compliance ToE Meta-Model entity diagram](legal.png)
+![Legal Systems & Compliance ToE Meta-Model Entity Diagram](legal.png)
+
 
 ### Key Points
 - Enables a syntax‐free representation of legal and compliance data.

@@ -2,13 +2,13 @@
     "id": "CMCC_ToEMM_Legal",    
     "meta-model": {
   "id": "CMCC_ToEMM_Legal",
-  "fullname": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+  "fullname": "Legal Systems & Compliance ToE Meta-Model",
   "name": "Legal Systems & Compliance ToE Meta-Model",
   "description": "A unified meta-model providing a syntax-free, declarative representation of legal systems and compliance frameworks. It integrates contracts, legal frameworks, regulations, jurisdictions, case law, audit trails, and organizational policies to support automated compliance checking and risk assessment.",
   "nickname": "legal",
   "version": "v2.0",
   "meta": {
-    "title": "CMCC Complete Legal Systems & Compliance ToE Meta-Model",
+    "title": "Legal Systems & Compliance ToE Meta-Model",
     "subtitle": "A Declarative Framework for Modeling Legal Documents, Regulations, and Compliance",
     "authors": [
       {

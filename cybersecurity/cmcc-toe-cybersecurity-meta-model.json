@@ -2,13 +2,13 @@
     "id": "CMCC_ToEMM_Cybersecurity",    
     "meta-model": {
   "id": "CMCC_ToEMM_Cybersecurity",
-  "fullname": "CMCC Complete Cybersecurity ToE Meta-Model",
+  "fullname": "Cybersecurity ToE Meta-Model",
   "name": "Cybersecurity ToE Meta-Model",
   "description": "A unified meta-model capturing cybersecurity aspects including threat models, vulnerabilities, IT asset mappings, incident logs, security audits, and patches, using a declarative, Snapshot-Consistent approach.",
   "nickname": "cybersecurity",
   "version": "v2.0",
   "meta": {
-    "title": "CMCC Complete Cybersecurity ToE Meta-Model",
+    "title": "Cybersecurity ToE Meta-Model",
     "subtitle": "A Declarative Framework for Cybersecurity Data and Rule Management",
     "authors": [
       {

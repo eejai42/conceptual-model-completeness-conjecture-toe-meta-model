@@ -1,12 +1,8 @@
-# Climate Science ToE Meta-Model
+# Climate Science and Environmental Modeling ToE Meta-Model
+## A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts
 
 A unified meta-model that captures the foundational elements of climate science and environmental modeling—including climate variables, ecosystems, pollution sources, and environmental measurements—and supports predictive modeling and ecological forecasts using a declarative, Snapshot-Consistent framework.
 
-
-## Metadata
-
-**Title**: CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model  
-**Subtitle**: A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Climate
 
@@ -17,7 +13,8 @@ A unified meta-model that captures the foundational elements of climate science 
 ### Abstract
 This meta-model represents climate science and environmental systems using five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields—within an Snapshot-Consistent environment. It supports the modeling of climate variables, ecosystems, and pollution sources while enabling predictive climate models and ecological forecasts.
 
-![Climate Science ToE Meta-Model entity diagram](climate.png)
+![Climate Science and Environmental Modeling ToE Meta-Model Entity Diagram](climate.png)
+
 
 ### Key Points
 - Declarative capture of environmental variables, ecosystems, and pollutant sources.

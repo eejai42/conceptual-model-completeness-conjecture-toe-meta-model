@@ -10,7 +10,7 @@
   "version": "v2.1",
   "nickname": "geology",
   "meta": {
-    "title": "CMCC Complete Geology ToE Meta-Model",
+    "title": "Geology ToE Meta-Model",
     "subtitle": "A Declarative Data Architecture for Minerals, Rock Formations, and Tectonic Processes",
     "authors": [
       {

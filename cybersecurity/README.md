@@ -1,12 +1,8 @@
 # Cybersecurity ToE Meta-Model
+## A Declarative Framework for Cybersecurity Data and Rule Management
 
 A unified meta-model capturing cybersecurity aspects including threat models, vulnerabilities, IT asset mappings, incident logs, security audits, and patches, using a declarative, Snapshot-Consistent approach.
 
-
-## Metadata
-
-**Title**: CMCC Complete Cybersecurity ToE Meta-Model  
-**Subtitle**: A Declarative Framework for Cybersecurity Data and Rule Management  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Cybersecurity
 
@@ -17,7 +13,8 @@ A unified meta-model capturing cybersecurity aspects including threat models, vu
 ### Abstract
 This meta-model enables a syntax‐free declarative representation of cybersecurity systems. It captures threat models, vulnerabilities, IT asset mappings, incident logs, security audits, and patches. Key computed fields include risk prioritization scoring and anomaly detection indicators.
 
-![Cybersecurity ToE Meta-Model entity diagram](cybersecurity.png)
+![Cybersecurity ToE Meta-Model Entity Diagram](cybersecurity.png)
+
 
 ### Key Points
 - Represents cybersecurity data using five primitives: Schema, Data, Lookups, Aggregations, and Calculated Fields.

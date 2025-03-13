@@ -1,12 +1,8 @@
-# All-In-One CMCC Physics Model
+# Physics ToE Meta-Model
+## A Comprehensive Snapshot-Consistent Data Architecture for Classical, Quantum, and Relativistic Theories
 
 A unified data+rule schema capturing classical mechanics, quantum wavefunctions, gauge fields, density matrices, multiway branching, black holes, spin-statistics, etc. Aggregators/lambdas are fully declarative and can reference each other in any order.
 
-
-## Metadata
-
-**Title**: CMCC Complete Physics ToE Meta-Model  
-**Subtitle**: A Comprehensive Snapshot-Consistent Data Architecture for Classical, Quantum, and Relativistic Theories  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Physics
 
@@ -17,7 +13,8 @@ A unified data+rule schema capturing classical mechanics, quantum wavefunctions,
 ### Abstract
 This Physics extension of the CMCC (Conceptual Model Completeness Conjecture) unifies classical mechanics, quantum wavefunctions, relativistic effects, and multiway branching under one coherent, Snapshot-Consistent schema. By leveraging the same five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda formulas—it provides a purely declarative framework capable of modeling everything from basic Newtonian systems to Many-Worlds quantum branching events, seamlessly integrating with the broader CMCC environment.
 
-![All-In-One CMCC Physics Model entity diagram](physics.png)
+![Physics ToE Meta-Model Entity Diagram](physics.png)
+
 
 ### Key Points
 - Captures both classical and quantum physics entities (particles, wavefunctions, measurement events) within the same structural model.

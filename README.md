@@ -1,7 +1,7 @@
-# The CMCC Complete Theory-of-Everything Meta Model
+# The Theory-of-Everything Meta Model
 
 ## Overview
-This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common CMCC Complete model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an Snapshot-Consistent environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework
+This repo contains a self describing model for Math, Physics, Chemistry, Biology, Astronomy, Geology, AI Knowledge Management, Economics and more. These are all unified under one common model, a conjecture that posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within an Snapshot-Consistent environment. Demonstrating Turing-completeness and aligning with Wolfram’s multiway systems, CMCC provides a universal substrate for modeling domains ranging from physics and biology to business rules and beyond. This paper formalizes CMCC’s theoretical foundations, presents diverse cross-domain examples, and outlines future directions for building a unified computational framework
 
 ## TL;DR;
 ### The Model
@@ -43,67 +43,67 @@ For a full list of thepapers, please see the [CMCC Research](/research/README.md
 Below is a list of TOE models included in this repository. Click on any domain to read its detailed meta-model documentation:
 
 ### Mathematics CMCC Meta-Model
-**CMCC Complete Mathematics ToE Meta-Model**
+**Mathematics ToE Meta-Model**
 
 A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.. Read more about the [math](math/README.md) CMCC Complete Meta-Model.
 
 ### Physics ToE Meta-Model
-**CMCC Complete Physics ToE Meta-Model**
+**Physics ToE Meta-Model**
 
 A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.. Read more about the [physics](physics/README.md) CMCC Complete Meta-Model.
 
 ### Chemistry ToE Meta-Model
-**CMCC Complete Chemistry ToE Meta-Model**
+**Chemistry ToE Meta-Model**
 
 Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.. Read more about the [chemistry](chemistry/README.md) CMCC Complete Meta-Model.
 
 ### Biology ToE Meta-Model
-**CMCC Complete Biology ToE Meta-Model**
+**Biology ToE Meta-Model**
 
 Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.. Read more about the [biology](biology/README.md) CMCC Complete Meta-Model.
 
 ### Artificial Intelligence ToE Meta-Model
-**CMCC Complete Artificial Intelligence ToE Meta-Model**
+**Artificial Intelligence ToE Meta-Model**
 
 Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.. Read more about the [ai](ai/README.md) CMCC Complete Meta-Model.
 
 ### Economics ToE Meta-Model
-**CMCC Complete Economics ToE Meta-Model**
+**Economics ToE Meta-Model**
 
 A computational model for economic agents, markets, transactions, and supply-demand constraints.. Read more about the [economics](economics/README.md) CMCC Complete Meta-Model.
 
 ### Astronomy ToE Meta-Model
-**CMCC Complete Astronomy ToE Meta-Model**
+**Astronomy ToE Meta-Model**
 
 An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.. Read more about the [astronomy](astronomy/README.md) CMCC Complete Meta-Model.
 
 ### Geology
-**CMCC Complete Geology oE Meta-Model**
+**Geology oE Meta-Model**
 
 A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.. Read more about the [geology](geology/README.md) CMCC Complete Meta-Model.
 
 ### Medicine & Healthcare ToE Meta-Model
-**CMCC Complete Medicine and Healthcare ToE Meta-Model**
+**Medicine and Healthcare ToE Meta-Model**
 
 A unified model capturing foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.. Read more about the [medicine](medicine/README.md) CMCC Complete Meta-Model.
 
 ### Legal Systems & Compliance ToE Meta-Model
-**CMCC Complete Legal Systems & Compliance ToE Meta-Model**
+**Legal Systems & Compliance ToE Meta-Model**
 
 A unified model for legal systems, contracts, statutory frameworks, and regulatory compliance.. Read more about the [legal](legal/README.md) CMCC Complete Meta-Model.
 
 ### Climate Science ToE Meta-Model
-**CMCC Complete Climate Science and Environmental Modeling ToE Meta-Model**
+**Climate Science and Environmental Modeling ToE Meta-Model**
 
 A unified model for climate science and environmental modeling, capturing climate variables, ecosystems, pollution sources, and environmental data with built-in predictive and forecast capabilities.. Read more about the [climate](climate/README.md) CMCC Complete Meta-Model.
 
 ### Cybersecurity ToE Meta-Model
-**CMCC Complete Cybersecurity ToE Meta-Model**
+**Cybersecurity ToE Meta-Model**
 
 A unified model for cybersecurity covering threat models, vulnerabilities, IT asset mappings, incident logs, and security audits.. Read more about the [cybersecurity](cybersecurity/README.md) CMCC Complete Meta-Model.
 
 ### Sociology & Anthropology ToE Meta-Model
-**CMCC Complete Sociology and Anthropology ToE Meta-Model**
+**Sociology and Anthropology ToE Meta-Model**
 
 A structured model capturing social structures, cultural norms, and interaction networks using survey data, demographic records, and social network relationships.. Read more about the [sociology](sociology/README.md) CMCC Complete Meta-Model.
 

@@ -1,12 +1,8 @@
 # Medicine & Healthcare ToE Meta-Model
+## A Declarative Framework for Modeling Medical Data and Healthcare Processes
 
 A unified meta-model capturing the foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.
 
-
-## Metadata
-
-**Title**: CMCC Complete Medicine & Healthcare ToE Meta-Model  
-**Subtitle**: A Declarative Framework for Modeling Medical Data and Healthcare Processes  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Medicine
 
@@ -17,7 +13,8 @@ A unified meta-model capturing the foundational aspects of medicine and healthca
 ### Abstract
 This meta-model provides a syntax‐free, declarative representation for medicine and healthcare systems. It encodes patient records, conditions, symptoms, treatment plans, clinical trial data, lab results, and vital signs using the five fundamental primitives: Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields.
 
-![Medicine & Healthcare ToE Meta-Model entity diagram](medicine.png)
+![Medicine & Healthcare ToE Meta-Model Entity Diagram](medicine.png)
+
 
 ### Key Points
 - Enables a syntax‐free representation of medical and healthcare data.

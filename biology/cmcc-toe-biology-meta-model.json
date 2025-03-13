@@ -5,11 +5,10 @@
     "CMCC_ToEMM_Chemistry",
     "CMCC_ToEMM_Physics"
   ],
-    "name": "CMCC Complete Biology ToE Meta-Model",
   "version": "v2.0",
   "nickname": "biology",
   "meta": {
-    "title": "CMCC Complete Biology ToE Meta-Model",
+    "title": "Biology ToE Meta-Model",
     "subtitle": "A Unified Declarative Schema for Genes, Proteins, and Cellular Systems",
     "authors": [
       {

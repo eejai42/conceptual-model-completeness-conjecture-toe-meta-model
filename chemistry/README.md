@@ -1,15 +1,8 @@
-# All-In-One CMCC Chemistry Model
+# Chemistry ToE Meta-Model
+## A Declarative Structural Approach to Chemical Entities and Reactions
 
 A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.
 
-## Depends On:
-- CMCC_ToEMM_Math
-- CMCC_ToEMM_Physics
-
-## Metadata
-
-**Title**: CMCC Complete Chemistry ToE Meta-Model  
-**Subtitle**: A Declarative Structural Approach to Chemical Entities and Reactions  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Chemistry
 
@@ -20,7 +13,11 @@ A schema extending the PhysicsTOE with atoms, molecules, bonds, reactions, etc.
 ### Abstract
 This Chemistry extension broadens the CMCC (Conceptual Model Completeness Conjecture) approach to cover atomic, molecular, and reaction-level concepts. Building on the existing Snapshot-Consistent schema that unifies math and physics, this domain model encodes all chemical structures—like atoms, bonds, molecules, solutions, and reactions—via five fundamental primitives (S, D, L, A, F). The resulting framework allows cross-domain reasoning (such as quantum-level wavefunctions or reaction kinetics) in a unified, syntax-free data structure.
 
-![All-In-One CMCC Chemistry Model entity diagram](chemistry.png)
+![Chemistry ToE Meta-Model Entity Diagram](chemistry.png)
+#### Depends On:
+- CMCC_ToEMM_Math
+- CMCC_ToEMM_Physics
+
 
 ### Key Points
 - Introduces detailed entities for atoms, bonds, molecules, and reactions within the broader CMCC environment.

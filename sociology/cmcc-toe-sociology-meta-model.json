@@ -2,13 +2,13 @@
     "id": "CMCC_ToEMM_Sociology",    
     "meta-model": {
   "id": "CMCC_ToEMM_Sociology",
-  "fullname": "CMCC Complete Sociology and Anthropology ToE Meta-Model",
+  "fullname": "Sociology and Anthropology ToE Meta-Model",
   "name": "Sociology & Anthropology ToE Meta-Model",
   "description": "A unified meta-model capturing social structures, cultural norms, and interaction networks. This model encodes survey data, demographic records, and social network relationships, and enables predictive modeling of social behavior and network dynamics.",
   "nickname": "sociology",
-  "version": "v1.0",
+  "version": "v2.2",
   "meta": {
-    "title": "CMCC Complete Sociology & Anthropology ToE Meta-Model",
+    "title": "Sociology & Anthropology ToE Meta-Model",
     "subtitle": "A Declarative Framework for Modeling Social Dynamics and Cultural Norms",
     "authors": [
       {
@@ -90,6 +90,30 @@
             "type": "rollup",
             "formula": "ComputeSocialCohesion(individuals, interactions)",
             "description": "Quantifies the degree of cohesion within the community."
+          },
+          {
+            "name": "cross_community_interaction_score",
+            "type": "rollup",
+            "formula": "ComputeCrossCommunityInteractionScore(interactions, individuals)",
+            "description": "Evaluates the frequency and intensity of interactions between this community and other communities."
+          },
+          {
+            "name": "cohesion_between_communities",
+            "type": "rollup",
+            "formula": "ComputeInterCommunityCohesion(id, ???)",
+            "description": "Measures synergy or collaborative engagement between this community and neighboring communities."
+          },
+          {
+            "name": "community_leadership_index",
+            "type": "rollup",
+            "formula": "ComputeLeadershipIndex(individuals)",
+            "description": "Assesses the presence and impact of recognized leaders within the community."
+          },
+          {
+            "name": "generational_shift_index",
+            "type": "rollup",
+            "formula": "ComputeGenerationalShift(individuals, demographics)",
+            "description": "Tracks how the age distribution changes over time within the community."
           }
         ],
         "calculated_fields": [
@@ -159,6 +183,24 @@
             "type": "rollup",
             "formula": "ComputeInfluence(social_interactions)",
             "description": "Quantitative measure of the individual's influence in the network."
+          },
+          {
+            "name": "inter_community_mobility",
+            "type": "rollup",
+            "formula": "ComputeInterCommunityMobility(id)",
+            "description": "Quantifies how many times the individual has changed community affiliation."
+          },
+          {
+            "name": "network_brokerage_score",
+            "type": "rollup",
+            "formula": "ComputeNetworkBrokerage(social_interactions)",
+            "description": "Measures the individual's role as a bridge or broker in the social network."
+          },
+          {
+            "name": "individual_cultural_alignment_score",
+            "type": "rollup",
+            "formula": "ComputeCulturalAlignmentScore(cultural_norms)",
+            "description": "Assesses the individual's level of alignment with prevailing cultural norms."
           }
         ],
         "calculated_fields": [
@@ -166,6 +208,11 @@
             "name": "network_dynamics",
             "formula": "AnalyzeNetworkDynamics(social_interactions)",
             "description": "Evaluates the dynamics of the individual's social network."
+          },
+          {
+            "name": "life_stage_classification",
+            "formula": "ClassifyLifeStage(age)",
+            "description": "Categorizes the individual's life stage based on age (e.g. youth, adult, senior)."
           }
         ]
       },
@@ -221,6 +268,18 @@
             "type": "rollup",
             "formula": "AnalyzeTrends(responses)",
             "description": "Trend analysis based on survey responses."
+          },
+          {
+            "name": "survey_response_over_time",
+            "type": "rollup",
+            "formula": "ComputeResponseTrendOverTime(id, responses, survey_date)",
+            "description": "Tracks how response patterns evolve across successive survey administrations."
+          },
+          {
+            "name": "survey_participant_diversity_index",
+            "type": "rollup",
+            "formula": "ComputeParticipantDiversity(participants)",
+            "description": "Measures the demographic diversity of survey participants."
           }
         ],
         "calculated_fields": [
@@ -269,6 +328,24 @@
             "type": "rollup",
             "formula": "ComputeAdherence(cultural_norm_adherents)",
             "description": "Measures the degree to which community members adhere to the norm."
+          },
+          {
+            "name": "norm_influence_spread",
+            "type": "rollup",
+            "formula": "ComputeNormSpread(adherent_ids)",
+            "description": "Calculates the rate at which this norm is adopted across individuals and communities."
+          },
+          {
+            "name": "cultural_norm_convergence",
+            "type": "rollup",
+            "formula": "ComputeNormConvergence(this.id, ???)",
+            "description": "Assesses how this norm overlaps or converges with other norms within or across communities."
+          },
+          {
+            "name": "cross_norm_interaction_effects",
+            "type": "rollup",
+            "formula": "AssessCrossNormEffects(this.id, ???)",
+            "description": "Evaluates synergistic or conflicting effects between this norm and other norms in the community."
           }
         ],
         "calculated_fields": []
@@ -325,6 +402,18 @@
             "type": "rollup",
             "formula": "COUNT(this)",
             "description": "Frequency count of this type of interaction."
+          },
+          {
+            "name": "most_active_interaction_type",
+            "type": "rollup",
+            "formula": "FindMostFrequentInteractionType(community_id)",
+            "description": "Identifies the most commonly occurring interaction type within this social interaction set."
+          },
+          {
+            "name": "interaction_time_series_trend",
+            "type": "rollup",
+            "formula": "AnalyzeInteractionTrend(timestamp, interaction_type)",
+            "description": "Examines how interaction frequency and types change over chronological intervals."
           }
         ],
         "calculated_fields": [
@@ -332,6 +421,240 @@
             "name": "dynamic_strength",
             "formula": "CalculateInteractionStrength(interaction_type, interaction_frequency)",
             "description": "Evaluates the strength of the relationship based on interaction type and frequency."
+          }
+        ]
+      },
+      {
+        "name": "Family",
+        "description": "Represents a family unit within or across communities, capturing immediate or extended kinship ties.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique family identifier."
+          },
+          {
+            "name": "family_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the family or the primary surname associated with it."
+          },
+          {
+            "name": "community_id",
+            "type": "lookup",
+            "target_entity": "Community",
+            "foreign_key": true,
+            "description": "Reference to the primary community this family is associated with."
+          },
+          {
+            "name": "family_structure",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "JSON describing the internal structure (e.g., nuclear, extended) and notable relationships."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "members",
+            "target_entity": "Individual",
+            "type": "many_to_many",
+            "join_condition": "FamilyMembership.family_id = this.id",
+            "description": "All individuals belonging to this family."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "family_cohesion_metric",
+            "type": "rollup",
+            "formula": "ComputeFamilyCohesion(members)",
+            "description": "Quantifies how cohesive and interdependent the family unit is."
+          },
+          {
+            "name": "family_size_trend",
+            "type": "rollup",
+            "formula": "ComputeFamilySizeTrend(members, ???)",
+            "description": "Analyzes how family membership size evolves over time."
+          },
+          {
+            "name": "family_intergenerational_support_score",
+            "type": "rollup",
+            "formula": "ComputeIntergenerationalSupport(members, ???)",
+            "description": "Measures the level of support exchanged across multiple generations within the family."
+          },
+          {
+            "name": "predictive_family_expansion",
+            "type": "rollup",
+            "formula": "PredictFamilyExpansion(members, ???)",
+            "description": "Forecasts the likelihood of new members joining or existing members leaving the family unit."
+          }
+        ],
+        "calculated_fields": [
+          {
+            "name": "family_lifecycle_stage",
+            "formula": "DeriveLifecycleStage(members, family_structure)",
+            "description": "Identifies whether the family is in an early, expanding, or mature lifecycle stage based on membership and structure."
+          }
+        ]
+      },
+      {
+        "name": "Organization",
+        "description": "Represents a formal organization, institution, or collective operating within or across communities.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique organization identifier."
+          },
+          {
+            "name": "organization_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name of the organization."
+          },
+          {
+            "name": "organization_type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Type of organization (e.g., nonprofit, business, government)."
+          },
+          {
+            "name": "description",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "High-level overview of the organization’s purpose or function."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "associated_communities",
+            "target_entity": "Community",
+            "type": "many_to_many",
+            "join_condition": "OrganizationCommunity.organization_id = this.id",
+            "description": "Communities in which this organization operates or has membership."
+          },
+          {
+            "name": "members",
+            "target_entity": "Individual",
+            "type": "many_to_many",
+            "join_condition": "OrganizationMembership.organization_id = this.id",
+            "description": "Individuals affiliated with the organization."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "organizational_influence",
+            "type": "rollup",
+            "formula": "ComputeOrganizationalInfluence(members, associated_communities)",
+            "description": "Assesses how influential the organization is based on its size and reach."
+          },
+          {
+            "name": "org_cross_community_overlap",
+            "type": "rollup",
+            "formula": "ComputeCrossCommunityOverlap(associated_communities)",
+            "description": "Indicates the extent to which the organization spans multiple communities."
+          },
+          {
+            "name": "event_sponsorship_impact",
+            "type": "rollup",
+            "formula": "AssessSponsorshipImpact(this.id, ???)",
+            "description": "Evaluates the organization's influence or visibility gained through sponsoring social events."
+          },
+          {
+            "name": "organization_collaboration_density",
+            "type": "rollup",
+            "formula": "ComputeCollaborationDensity(members, ???)",
+            "description": "Measures the depth and breadth of collaborations or partnerships with other organizations."
+          }
+        ],
+        "calculated_fields": [
+          {
+            "name": "organizational_growth_forecast",
+            "formula": "PredictOrgGrowth(organizational_influence, members)",
+            "description": "Predicts the organization’s potential growth or decline in membership and impact."
+          }
+        ]
+      },
+      {
+        "name": "SocialEvent",
+        "description": "Represents a significant event (e.g., gathering, protest, celebration) that occurs within or across communities.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true,
+            "description": "Unique event identifier."
+          },
+          {
+            "name": "event_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Name or title of the event."
+          },
+          {
+            "name": "community_id",
+            "type": "lookup",
+            "target_entity": "Community",
+            "foreign_key": true,
+            "description": "Primary community where the event is based."
+          },
+          {
+            "name": "event_date",
+            "type": "scalar",
+            "datatype": "date",
+            "description": "Date of the event."
+          },
+          {
+            "name": "location",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Location or venue where the event takes place."
+          },
+          {
+            "name": "details",
+            "type": "scalar",
+            "datatype": "json",
+            "description": "Additional structured data describing the event (agenda, expected turnout, organizers, etc.)."
+          }
+        ],
+        "lookups": [
+          {
+            "name": "attendees",
+            "target_entity": "Individual",
+            "type": "many_to_many",
+            "join_condition": "EventAttendance.event_id = this.id",
+            "description": "Individuals who attend or participate in the event."
+          }
+        ],
+        "aggregations": [
+          {
+            "name": "event_participation_level",
+            "type": "rollup",
+            "formula": "COUNT(attendees)",
+            "description": "Number of attendees or participants in the event."
+          },
+          {
+            "name": "social_event_recurrence_prediction",
+            "type": "rollup",
+            "formula": "PredictEventRecurrence(event_name, event_date)",
+            "description": "Estimates the probability that a similar event will occur in the future based on historical patterns."
+          },
+          {
+            "name": "event_community_engagement_index",
+            "type": "rollup",
+            "formula": "ComputeEngagementIndex(attendees, community_id)",
+            "description": "Quantifies the level of engagement and participation from the community in this event."
+          }
+        ],
+        "calculated_fields": [
+          {
+            "name": "social_impact_assessment",
+            "formula": "AssessEventImpact(attendees, community_id)",
+            "description": "Evaluates the social implications of the event for the community (and potentially beyond)."
           }
         ]
       }
@@ -358,6 +681,16 @@
         "demographic_details": {
           "occupation": "Teacher",
           "education": "Bachelor's"
+        }
+      },
+      {
+        "id": "individual_002",
+        "community_id": "community_001",
+        "name": "Bob Johnson",
+        "age": 40,
+        "demographic_details": {
+          "occupation": "Engineer",
+          "education": "Master's"
         }
       }
     ],
@@ -389,6 +722,41 @@
         "individual2_id": "individual_002",
         "interaction_type": "casual_chat",
         "timestamp": "2025-01-16T14:30:00Z"
+      }
+    ],
+    "Family": [
+      {
+        "id": "family_001",
+        "family_name": "Smith",
+        "community_id": "community_001",
+        "family_structure": {
+          "type": "nuclear",
+          "members": [
+            "individual_001",
+            "individual_002"
+          ]
+        }
+      }
+    ],
+    "Organization": [
+      {
+        "id": "org_001",
+        "organization_name": "Downtown Volunteer Group",
+        "organization_type": "nonprofit",
+        "description": "A local volunteer-run organization dedicated to community services."
+      }
+    ],
+    "SocialEvent": [
+      {
+        "id": "event_001",
+        "event_name": "Community Clean-Up",
+        "community_id": "community_001",
+        "event_date": "2025-02-01",
+        "location": "City Park",
+        "details": {
+          "sponsor": "org_001",
+          "expected_turnout": 50
+        }
       }
     ]
   }

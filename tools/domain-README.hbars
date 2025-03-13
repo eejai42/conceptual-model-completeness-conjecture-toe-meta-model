@@ -1,19 +1,10 @@
+[[FileSetFile/RelativePath[README.md:never]]]
 {{#with meta-model}}
-# {{name}}.
+# {{meta.title}}
+## {{meta.subtitle}}
 
 {{description}}
 
-{{#if depends_on}}
-## Depends On:
-{{#each depends_on}}
-- {{this}}
-{{/each}}
-{{/if}}
-
-## Metadata
-
-**Title**: 
-**Subtitle**: {{meta.subtitle}}  
 **Date**: {{meta.date}}
 **Domain Identifier**: {{../id}}
 
@@ -26,7 +17,14 @@
 ### Abstract
 {{meta.abstract}}
 
-![{{name}} entity diagram]({{nickname}}.png)
+![{{meta.title}} Entity Diagram]({{nickname}}.png)
+{{#if depends_on}}
+#### Depends On:
+{{#each depends_on}}
+- {{this}}
+{{/each}}
+{{/if}}
+
 
 ### Key Points
 {{#each meta.executive_summary.key_points}}

@@ -2,13 +2,13 @@
     "id": "CMCC_ToEMM_Medicine",    
     "meta-model": {
   "id": "CMCC_ToEMM_Medicine",
-  "fullname": "CMCC Complete Medicine and Healthcare ToE Meta-Model",
+  "fullname": "Medicine and Healthcare ToE Meta-Model",
   "name": "Medicine & Healthcare ToE Meta-Model",
   "description": "A unified meta-model capturing the foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and healthcare analytics.",
   "nickname": "medicine",
   "version": "v2.0",
   "meta": {
-    "title": "CMCC Complete Medicine & Healthcare ToE Meta-Model",
+    "title": "Medicine & Healthcare ToE Meta-Model",
     "subtitle": "A Declarative Framework for Modeling Medical Data and Healthcare Processes",
     "authors": [
       {

@@ -1,15 +1,8 @@
-# All-In-One CMCC Astronomy Model
+# Astronomy ToE Meta-Model
+## Declarative Data Structures for Celestial Bodies, Cosmic Dynamics, and Observational Records
 
 Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.
 
-## Depends On:
-- CMCC_ToEMM_Physics
-- CMCC_ToEMM_Math
-
-## Metadata
-
-**Title**: CMCC Complete Astronomy ToE Meta-Model  
-**Subtitle**: Declarative Data Structures for Celestial Bodies, Cosmic Dynamics, and Observational Records  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Astronomy
 
@@ -20,7 +13,11 @@ Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.
 ### Abstract
 This CMCC Astronomy extension provides an Snapshot-Consistent schema to model celestial objects (stars, planets, galaxies) and large-scale cosmic structures, bridging them with the fundamental physics in the CMCC framework. Celestial orbits, gravitational fields, and cosmic evolution snapshots are captured as aggregator-based data references, making it straightforward to combine classical or relativistic physics with observational data sets for unified astrophysical analyses.
 
-![All-In-One CMCC Astronomy Model entity diagram](astronomy.png)
+![Astronomy ToE Meta-Model Entity Diagram](astronomy.png)
+#### Depends On:
+- CMCC_ToEMM_Physics
+- CMCC_ToEMM_Math
+
 
 ### Key Points
 - Represents stars, planets, galaxies, or dark matter halos as data-driven entities with aggregator checks for orbital parameters, luminosities, etc.

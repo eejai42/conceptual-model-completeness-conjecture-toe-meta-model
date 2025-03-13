@@ -1,15 +1,8 @@
-# All-In-One CMCC Geology Model
+# Geology ToE Meta-Model
+## A Declarative Data Architecture for Minerals, Rock Formations, and Tectonic Processes
 
 Extends Physics and Chemistry to handle minerals, rock formations, tectonic plates, etc.
 
-## Depends On:
-- CMCC_ToEMM_Physics
-- CMCC_ToEMM_Chemistry
-
-## Metadata
-
-**Title**: CMCC Complete Geology ToE Meta-Model  
-**Subtitle**: A Declarative Data Architecture for Minerals, Rock Formations, and Tectonic Processes  
 **Date**: March 2025
 **Domain Identifier**: CMCC_ToEMM_Geology
 
@@ -20,7 +13,11 @@ Extends Physics and Chemistry to handle minerals, rock formations, tectonic plat
 ### Abstract
 This Geology extension of the CMCC (Conceptual Model Completeness Conjecture) encodes geological structures and processes—minerals, rock layers, tectonic plates—into a unified, Snapshot-Consistent schema. By leveraging the same core primitives (Schema, Data, Lookups, Aggregations, Lambdas), it provides a purely declarative framework for representing everything from mineral compositions and formation data to large-scale tectonic dynamics, tightly integrating with CMCC Physics and Chemistry for cross-domain geological modeling.
 
-![All-In-One CMCC Geology Model entity diagram](geology.png)
+![Geology ToE Meta-Model Entity Diagram](geology.png)
+#### Depends On:
+- CMCC_ToEMM_Physics
+- CMCC_ToEMM_Chemistry
+
 
 ### Key Points
 - Formalizes geological entities (e.g., mineral records, rock formations, tectonic plates) through aggregator-based logic and constraints.
