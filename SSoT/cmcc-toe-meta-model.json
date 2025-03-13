@@ -146,10 +146,7 @@
           {
             "name": "EJ Alexandra",
             "contact": "start@anabstractlevel.com",
-            "affiliations": [
-              "SSoT.me",
-              "EffortlessAPI.com"
-            ]
+            "affiliations": ["SSoT.me", "EffortlessAPI.com"]
           }
         ],
         "date": "March 2025",
@@ -478,7 +475,6 @@
               }
             ]
           },
-  
           {
             "name": "Element",
             "description": "An atomic or composite member of a Set. Can reference structured or raw data in 'value'.",
@@ -576,7 +572,6 @@
             "lambdas": [],
             "constraints": []
           },
-  
           {
             "name": "ArithmeticOperator",
             "description": "Represents a standard arithmetic operator (+, -, *, /, ^) with optional domain/codomain. Could also store matrix or group ops.",
@@ -924,7 +919,6 @@
             ],
             "constraints": []
           },
-  
           {
             "name": "AlgebraicStructure",
             "description": "An algebraic or mathematical structure built on a base set, plus operations and relations. E.g. group, ring, field. Aggregators check axioms.",
@@ -1131,7 +1125,6 @@
             ],
             "constraints": []
           },
-  
           {
             "name": "Proposition",
             "description": "A formal statement (lemma, theorem, corollary). We can store its statement, proof steps, dependencies, aggregator to check if proven, etc.",
@@ -1289,7 +1282,6 @@
             ],
             "constraints": []
           },
-  
           {
             "name": "Equation",
             "description": "A symbolic expression representing an equality or functional relationship (polynomial, differential eqn, wave eqn, etc.). Useful in advanced math or cross-domain usage.",
@@ -1331,7 +1323,6 @@
                 "description": "Examines equation_text to see if it’s a polynomial equation in standard variables, e.g. a1*x^n + ... = 0.",
                 "formula": "CheckIfPolynomial(equation_text)"
               }
-      
             ],
             "lookups": [],
             "aggregations": [
@@ -1472,7 +1463,6 @@
             ],
             "constraints": []
           },
-  
           {
             "name": "Category",
             "description": "Captures objects and morphisms in category theory. May store them as references to sets, functions, or other structures. Aggregators check composition closure, identity morphisms, etc.",
@@ -1668,7 +1658,6 @@
           }
         ]
       },
-  
       "data": {
         "Set": [
           {
@@ -1679,10 +1668,7 @@
             "cardinality": "aleph_0",
             "discrete_or_continuous": "discrete",
             "parent_set_id": null,
-            "construction_rule": {
-              "base": 0,
-              "successor": "n -> n+1"
-            }
+            "construction_rule": { "base": 0, "successor": "n -> n+1" }
           },
           {
             "id": "integers",
@@ -1734,10 +1720,7 @@
             "name": "Identity on ℤ",
             "domain_set_id": "integers",
             "codomain_set_id": "integers",
-            "rule": {
-              "type": "identity",
-              "expression": "f(x)=x"
-            }
+            "rule": { "type": "identity", "expression": "f(x)=x" }
           }
         ],
         "AlgebraicStructure": [
@@ -1750,9 +1733,7 @@
               "addition": "op_add_integers",
               "multiplication": "*"
             },
-            "relations": {
-              "equality": "="
-            }
+            "relations": { "equality": "=" }
           }
         ],
         "Proposition": [
@@ -1778,7 +1759,7 @@
           {
             "id": "cat_sets",
             "name": "Category of Sets",
-            "objects": ["naturals","integers","reals"],
+            "objects": ["naturals", "integers", "reals"],
             "morphisms": {
               "f_identity_integers": {
                 "domain": "integers",
@@ -1801,10 +1782,7 @@
           {
             "name": "EJ Alexandra",
             "contact": "start@anabstractlevel.com",
-            "affiliations": [
-              "SSoT.me",
-              "EffortlessAPI.com"
-            ]
+            "affiliations": ["SSoT.me", "EffortlessAPI.com"]
           }
         ],
         "date": "March 2025",
@@ -2604,14 +2582,18 @@
                 "name": "interpretation_name",
                 "type": "scalar",
                 "datatype": "enum",
-                "enum_values": ["Copenhagen","ManyWorlds","RQM"],
+                "enum_values": ["Copenhagen", "ManyWorlds", "RQM"],
                 "description": "Specifies the high-level interpretation: 'Copenhagen', 'ManyWorlds', or 'RQM'."
               },
               {
                 "name": "collapse_behavior",
                 "type": "scalar",
                 "datatype": "enum",
-                "enum_values": ["single_outcome","branch","observer_relative"],
+                "enum_values": [
+                  "single_outcome",
+                  "branch",
+                  "observer_relative"
+                ],
                 "description": "Indicates the measurement outcome handling mode. Must match the chosen interpretation."
               },
               {
@@ -2636,7 +2618,7 @@
                 "name": "observer_hierarchy_model",
                 "type": "scalar",
                 "datatype": "enum",
-                "enum_values": ["flat","hierarchical","unrestricted"],
+                "enum_values": ["flat", "hierarchical", "unrestricted"],
                 "description": "Specifies how nested observers are handled. 'flat' disallows nesting, 'hierarchical' imposes layered structure, 'unrestricted' allows free nesting."
               }
             ],
@@ -5252,7 +5234,7 @@
                 "name": "curvature_classification",
                 "type": "scalar",
                 "datatype": "enum",
-                "enum_values": ["positive","flat","negative","unknown"],
+                "enum_values": ["positive", "flat", "negative", "unknown"],
                 "description": "Derived label: 'flat' if |omega_total-1| < epsilon, else 'positive' or 'negative'."
               }
             ],
@@ -5274,7 +5256,6 @@
               }
             ]
           },
-      
           {
             "name": "GlobalTopologyRecord",
             "description": "Represents global shape/topology hypotheses: finite vs infinite, multiply/simply connected, etc.",
@@ -5290,7 +5271,7 @@
                 "name": "finite_or_infinite",
                 "type": "scalar",
                 "datatype": "enum",
-                "enum_values": ["finite","infinite","unknown"],
+                "enum_values": ["finite", "infinite", "unknown"],
                 "description": "Is space bounded or unbounded? Possibly 'unknown' if not concluded by data."
               },
               {
@@ -5338,7 +5319,6 @@
               }
             ]
           },
-      
           {
             "name": "CosmologyMeasurementRecord",
             "description": "Logs observational data sets (e.g. WMAP, Planck, BOOMERanG) referencing their curvature or topology findings, or constraints on them.",
@@ -5405,9 +5385,7 @@
             "lambdas": []
           }
         ]
-      }
-      
-      ,
+      },
       "data": {
         "PhysicalConstants": [
           {
@@ -5481,10 +5459,7 @@
           {
             "id": "harmonic_potential_1d",
             "potential_name": "1D Harmonic Oscillator",
-            "functional_form": {
-              "expression": "V(x)=0.5*k*x^2",
-              "k": 5.0
-            },
+            "functional_form": { "expression": "V(x)=0.5*k*x^2", "k": 5.0 },
             "equation_id": null,
             "reference_frame_id": "lab_frame",
             "notes": "Simple 1D HO"
@@ -5492,10 +5467,7 @@
           {
             "id": "gravitational_well",
             "potential_name": "Inverse Square Gravity",
-            "functional_form": {
-              "expression": "V(r)=-G*M*m/r",
-              "M": 5.97e24
-            },
+            "functional_form": { "expression": "V(r)=-G*M*m/r", "M": 5.97e24 },
             "equation_id": null,
             "reference_frame_id": "lab_frame",
             "notes": "Earth-like gravity"
@@ -5518,9 +5490,7 @@
           {
             "id": "harmonic_oscillator_H",
             "description": "Quantum 1D HO Hamiltonian",
-            "kinetic_term": {
-              "expression": "p^2/(2*m)"
-            },
+            "kinetic_term": { "expression": "p^2/(2*m)" },
             "kinetic_equation_id": null,
             "potential_id": "harmonic_potential_1d",
             "domain_type": "quantum_operator"
@@ -5528,9 +5498,7 @@
           {
             "id": "classical_gravity_H",
             "description": "Classical gravity Hamiltonian",
-            "kinetic_term": {
-              "expression": "p^2/(2*m)"
-            },
+            "kinetic_term": { "expression": "p^2/(2*m)" },
             "kinetic_equation_id": null,
             "potential_id": "gravitational_well",
             "domain_type": "classical_H"
@@ -5538,9 +5506,7 @@
           {
             "id": "morse_hamiltonian",
             "description": "Quantum Morse oscillator",
-            "kinetic_term": {
-              "expression": "p^2/(2*m)"
-            },
+            "kinetic_term": { "expression": "p^2/(2*m)" },
             "kinetic_equation_id": null,
             "potential_id": "morse_potential",
             "domain_type": "quantum"
@@ -5553,9 +5519,7 @@
             "system_description": "Single electron, 1D harmonic oscillator",
             "dimensionality": 1,
             "num_particles": 1,
-            "spin_states": {
-              "spin_total": 0.5
-            },
+            "spin_states": { "spin_total": 0.5 },
             "wavefunction_symmetry": null,
             "wavefunction_data": {
               "grid_points": [
@@ -5601,9 +5565,7 @@
             "system_description": "Single massive boson, spin=1, 1D domain",
             "dimensionality": 1,
             "num_particles": 1,
-            "spin_states": {
-              "spin_total": 1.0
-            },
+            "spin_states": { "spin_total": 1.0 },
             "wavefunction_symmetry": "symmetric",
             "wavefunction_data": {
               "grid_points": [
@@ -5914,10 +5876,7 @@
           {
             "name": "EJ Alexandra",
             "contact": "start@anabstractlevel.com",
-            "affiliations": [
-              "SSoT.me",
-              "EffortlessAPI.com"
-            ]
+            "affiliations": ["SSoT.me", "EffortlessAPI.com"]
           }
         ],
         "date": "March 2025",
@@ -6065,7 +6024,6 @@
               }
             ]
           },
-
           {
             "name": "Bond",
             "description": "Represents a chemical bond between two atoms (intra-molecular or otherwise).",
@@ -6168,7 +6126,6 @@
               }
             ]
           },
-
           {
             "name": "Molecule",
             "description": "Collection of atoms connected by bonds, plus optional reference to quantum wavefunction.",
@@ -6321,7 +6278,6 @@
               }
             ]
           },
-
           {
             "name": "MoleculeAtomMapping",
             "description": "Bridging table for many-to-many: which atoms belong to which molecule and in what count (for coarse stoichiometric models).",
@@ -6375,7 +6331,6 @@
               }
             ]
           },
-
           {
             "name": "Reaction",
             "description": "A chemical reaction with references to reactants, products, and optional details.",
@@ -6393,11 +6348,7 @@
                 "datatype": "float",
                 "note": "In Joules or eV, etc."
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [
               {
@@ -6510,7 +6461,6 @@
               }
             ]
           },
-
           {
             "name": "ReactionParticipant",
             "description": "Bridging entity for Reaction, specifying which Molecule is a reactant or product.",
@@ -6546,38 +6496,38 @@
               }
             ],
             "lookups": [],
-            "aggregations": [ 
+            "aggregations": [
               {
-              "name": "quantity_needed",
-              "type": "rollup",
-              "formula": "stoichiometric_coefficient * SomeBaseScaleFactor",
-              "description": "Compute how many moles or grams are required given stoichiometry."
-            },
-            {
-              "name": "limiting_reagent_check",
-              "type": "rollup",
-              "formula": "CheckIfLimitingReagent(this.reaction_id, this.molecule_id)",
-              "description": "Flags if this reactant is limiting based on available amounts."
-            },
-            {
-              "name": "stoichiometric_excess",
-              "type": "rollup",
-              "formula": "ComputeStoichiometricExcess( this.molecule_id, this.reaction_id )",
-              "description": "Checks how much of this participant is over the stoichiometric need, referencing what's 'on-hand'."
-            },
-            {
-              "name": "partial_pressure_contribution",
-              "type": "rollup",
-              "formula": "EstimatePartialPressure( this.molecule_id, reaction_id, total_pressure )",
-              "description": "Estimates partial pressure if gas-phase and partial pressures are tracked."
-            },
-            {
-              "name": "per_atom_contribution",
-              "type": "rollup",
-              "formula": "ComputePerAtomReactionShare(this.molecule_id, stoichiometric_coefficient)",
-              "description": "Fraction of total reaction atoms contributed by this participant."
-            }
-          ],
+                "name": "quantity_needed",
+                "type": "rollup",
+                "formula": "stoichiometric_coefficient * SomeBaseScaleFactor",
+                "description": "Compute how many moles or grams are required given stoichiometry."
+              },
+              {
+                "name": "limiting_reagent_check",
+                "type": "rollup",
+                "formula": "CheckIfLimitingReagent(this.reaction_id, this.molecule_id)",
+                "description": "Flags if this reactant is limiting based on available amounts."
+              },
+              {
+                "name": "stoichiometric_excess",
+                "type": "rollup",
+                "formula": "ComputeStoichiometricExcess( this.molecule_id, this.reaction_id )",
+                "description": "Checks how much of this participant is over the stoichiometric need, referencing what's 'on-hand'."
+              },
+              {
+                "name": "partial_pressure_contribution",
+                "type": "rollup",
+                "formula": "EstimatePartialPressure( this.molecule_id, reaction_id, total_pressure )",
+                "description": "Estimates partial pressure if gas-phase and partial pressures are tracked."
+              },
+              {
+                "name": "per_atom_contribution",
+                "type": "rollup",
+                "formula": "ComputePerAtomReactionShare(this.molecule_id, stoichiometric_coefficient)",
+                "description": "Fraction of total reaction atoms contributed by this participant."
+              }
+            ],
             "lambdas": [],
             "constraints": [
               {
@@ -6597,11 +6547,7 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              {
-                "name": "name",
-                "type": "scalar",
-                "datatype": "string"
-              },
+              { "name": "name", "type": "scalar", "datatype": "string" },
               {
                 "name": "solvent_molecule_id",
                 "type": "lookup",
@@ -6690,7 +6636,6 @@
           }
         ]
       },
-
       "data": {
         "Atom": [
           {
@@ -6746,7 +6691,7 @@
         "CMCC_Complete_ToEMM_Chemistry",
         "CMCC_Complete_ToEMM_Physics"
       ],
-      "version":"v2.0",
+      "version": "v2.0",
       "meta": {
         "title": "CMCC Complete Biology ToE Meta-Model",
         "subtitle": "A Unified Declarative Schema for Genes, Proteins, and Cellular Systems",
@@ -6754,10 +6699,7 @@
           {
             "name": "EJ Alexandra",
             "contact": "start@anabstractlevel.com",
-            "affiliations": [
-              "SSoT.me",
-              "EffortlessAPI.com"
-            ]
+            "affiliations": ["SSoT.me", "EffortlessAPI.com"]
           }
         ],
         "date": "March 2025",
@@ -6829,7 +6771,6 @@
               }
             ]
           },
-
           {
             "name": "Protein",
             "description": "A polypeptide chain. Optionally references a Molecule record in chemistry-schema if modeled at that level.",
@@ -6900,7 +6841,6 @@
               }
             ]
           },
-
           {
             "name": "Cell",
             "description": "Basic cellular entity containing genes, proteins, or referencing molecules. Could be prokaryote or eukaryote.",
@@ -6963,7 +6903,6 @@
             ],
             "constraints": []
           },
-
           {
             "name": "CellGeneMapping",
             "description": "Bridging table for which genes exist in which cell, toy model ignoring diploidy, etc.",
@@ -7100,7 +7039,6 @@
               }
             ]
           },
-
           {
             "name": "MetabolicReaction",
             "description": "A biological reaction that references a chemistry Reaction for stoichiometry, plus an enzyme (Protein).",
@@ -7132,11 +7070,7 @@
                 "foreign_key": false,
                 "note": "Which cell it occurs in, if needed"
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [],
             "aggregations": [
@@ -7164,7 +7098,6 @@
           }
         ]
       },
-
       "data": {
         "Gene": [
           {
@@ -7180,7 +7113,6 @@
             "notes": "Human insulin gene (toy partial seq)."
           }
         ],
-
         "Protein": [
           {
             "id": "protein_lacZ",
@@ -7199,7 +7131,6 @@
             "notes": "Human insulin (toy partial)."
           }
         ],
-
         "Cell": [
           {
             "id": "cell_ecoli_1",
@@ -7212,7 +7143,6 @@
             "notes": "Insulin-producing cell"
           }
         ],
-
         "CellGeneMapping": [
           {
             "id": "cg_ecoli_lacZ",
@@ -7227,7 +7157,6 @@
             "copy_number": 2
           }
         ],
-
         "CellProteinMapping": [
           {
             "id": "cp_ecoli_lacZ",
@@ -7242,7 +7171,6 @@
             "abundance": 800
           }
         ],
-
         "MetabolicReaction": [
           {
             "id": "mr_lactose_hydrolysis",
@@ -7257,10 +7185,8 @@
     "CMCC_Complete_ToEMM_Economics": {
       "name": "All-In-One CMCC Economics Model",
       "description": "Covers basic and advanced economic entities—agents, markets, goods, transactions, supply-demand constraints, utility/budget, macro indicators, policies, plus a top-level scenario aggregator. Each entity is designed so it can be executed with no extra sidecar logic: all rules are captured using Schema (S), Data (D), Lookups (L), Aggregations (A), and Calculated Fields (F).",
-      "depends_on": [
-        "CMCC_Complete_ToEMM_Math" 
-      ],
-      "version":"v2.4",
+      "depends_on": ["CMCC_Complete_ToEMM_Math"],
+      "version": "v2.4",
       "meta": {
         "title": "CMCC Complete Economics ToE Meta-Model",
         "subtitle": "A Declarative Framework for Agents, Markets, and Economic Dynamics",
@@ -7268,10 +7194,7 @@
           {
             "name": "EJ Alexandra",
             "contact": "start@anabstractlevel.com",
-            "affiliations": [
-              "SSoT.me",
-              "EffortlessAPI.com"
-            ]
+            "affiliations": ["SSoT.me", "EffortlessAPI.com"]
           }
         ],
         "date": "March 2025",
@@ -7299,7 +7222,6 @@
           ]
         }
       },
-
       "schema": {
         "entities": [
           {
@@ -7506,7 +7428,6 @@
             ],
             "constraints": []
           },
-  
           {
             "name": "EconomicAgent",
             "description": "Represents an individual or organization in the economy. Extended to store scenario links, net worth, and credit lines. All new logic is purely declarative.",
@@ -7714,7 +7635,6 @@
               }
             ]
           },
-  
           {
             "name": "GoodOrService",
             "description": "A discrete product or service that can be traded in markets. This remains mostly unchanged, but with more descriptive metadata.",
@@ -7756,7 +7676,6 @@
             "lambdas": [],
             "constraints": []
           },
-  
           {
             "name": "Market",
             "description": "A marketplace or exchange for one or more goods, referencing scenario and aggregator fields for clearing, supply, demand.",
@@ -7960,7 +7879,6 @@
             ],
             "constraints": []
           },
-  
           {
             "name": "Transaction",
             "description": "Represents a supply or demand action in a specific market by a given agent, with optional taxes or fees. Purely declarative aggregator fields handle net value.",
@@ -8159,7 +8077,6 @@
               }
             ]
           },
-  
           {
             "name": "UtilityFunction",
             "description": "Captures an agent’s preference structure over goods, potentially referencing time discounting. This is purely a design-time definition of 'what' a utility is, separate from the 'how' of actual optimization.",
@@ -8246,7 +8163,6 @@
             ],
             "constraints": []
           },
-  
           {
             "name": "BudgetConstraint",
             "description": "Defines each agent’s or household’s budget limit, referencing possible multiple goods. Checking feasibility is purely declarative.",
@@ -8333,7 +8249,6 @@
               }
             ]
           },
-  
           {
             "name": "MacroIndicator",
             "description": "Captures macro-level statistics (GDP, inflation, unemployment, money supply, etc.) aggregated from micro data. Time-based and scenario-based.",
@@ -8473,7 +8388,6 @@
             ],
             "constraints": []
           },
-  
           {
             "name": "PolicyInstrument",
             "description": "Represents a government or central bank policy instrument (interest rate, tax rate, subsidy, regulation) that can be applied to relevant agents or markets.",
@@ -8627,7 +8541,6 @@
           }
         ]
       },
-  
       "data": {
         "FinancialScenarioRecord": [
           {
@@ -8714,10 +8627,7 @@
             "agent_id": "agent_alice",
             "function_repr": {
               "type": "CobbDouglas",
-              "params": {
-                "alpha": 0.4,
-                "beta": 0.6
-              },
+              "params": { "alpha": 0.4, "beta": 0.6 },
               "formula": "U(x, y) = x^0.4 * y^0.6"
             },
             "description": "Cobb-Douglas utility for 2 goods, ignoring time discount.",
@@ -8781,7 +8691,7 @@
         ]
       }
     },
-    "CMCC_Complete_ToEMM_Geology":{
+    "CMCC_Complete_ToEMM_Geology": {
       "name": "All-In-One CMCC Geology Model",
       "description": "Extends Physics and Chemistry to handle minerals, rock formations, tectonic plates, etc.",
       "depends_on": [
@@ -8796,10 +8706,7 @@
           {
             "name": "EJ Alexandra",
             "contact": "start@anabstractlevel.com",
-            "affiliations": [
-              "SSoT.me",
-              "EffortlessAPI.com"
-            ]
+            "affiliations": ["SSoT.me", "EffortlessAPI.com"]
           }
         ],
         "date": "March 2025",
@@ -8862,11 +8769,7 @@
                 "datatype": "string",
                 "note": "e.g. hexagonal, cubic, tetragonal"
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [],
             "aggregations": [
@@ -8925,11 +8828,7 @@
                 "datatype": "float",
                 "note": "Approx age in million years"
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [
               {
@@ -9027,22 +8926,14 @@
                 "datatype": "string",
                 "primary_key": true
               },
-              {
-                "name": "plate_name",
-                "type": "scalar",
-                "datatype": "string"
-              },
+              { "name": "plate_name", "type": "scalar", "datatype": "string" },
               {
                 "name": "approx_area",
                 "type": "scalar",
                 "datatype": "float",
                 "note": "Area in sq. km or m^2"
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [
               {
@@ -9116,11 +9007,7 @@
                 "datatype": "string",
                 "note": "e.g. high, moderate, low"
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [],
             "aggregations": [
@@ -9303,7 +9190,6 @@
               }
             ]
           },
-    
           {
             "name": "AdvancedGeologyRecord",
             "description": "Integrates data from multiple geology domains (plates, formations, minerals, etc.) to compute advanced cross-cutting inferences.",
@@ -9613,7 +9499,7 @@
       "name": "All-In-One CMCC AI Model",
       "description": "Models core AI/ML artifacts: neural nets, training data, inference events, etc.",
       "depends_on": ["CMCC_Complete_ToEMM_Math"],
-      "version":"v2.0",
+      "version": "v2.0",
       "meta": {
         "title": "CMCC Complete Artificial Intelligence ToE Meta-Model",
         "subtitle": "A Cross-Domain Declarative Framework for Machine Learning, Neural Networks, and Inference Engines",
@@ -9621,10 +9507,7 @@
           {
             "name": "EJ Alexandra",
             "contact": "start@anabstractlevel.com",
-            "affiliations": [
-              "SSoT.me",
-              "EffortlessAPI.com"
-            ]
+            "affiliations": ["SSoT.me", "EffortlessAPI.com"]
           }
         ],
         "date": "March 2025",
@@ -9669,11 +9552,7 @@
                 "type": "scalar",
                 "datatype": "string"
               },
-              {
-                "name": "description",
-                "type": "scalar",
-                "datatype": "string"
-              },
+              { "name": "description", "type": "scalar", "datatype": "string" },
               {
                 "name": "num_samples",
                 "type": "scalar",
@@ -9705,7 +9584,6 @@
               }
             ]
           },
-
           {
             "name": "NeuralNetworkModel",
             "description": "Stores metadata for a trained or untrained neural network model.",
@@ -9775,7 +9653,6 @@
               }
             ]
           },
-
           {
             "name": "InferenceEvent",
             "description": "Represents a single inference/prediction call made to a trained AI model.",
@@ -9827,7 +9704,6 @@
             ],
             "constraints": []
           },
-
           {
             "name": "ReinforcementAgent",
             "description": "Stores an RL agent’s policy and environment references.",
@@ -9852,11 +9728,7 @@
                 "datatype": "string",
                 "note": "Short text about environment (toy)."
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [],
             "aggregations": [
@@ -9882,7 +9754,6 @@
           }
         ]
       },
-
       "data": {
         "TrainingDataset": [
           {
@@ -9937,12 +9808,12 @@
           }
         ]
       }
-    },  
+    },
     "CMCC_Complete_ToEMM_Astronomy": {
       "name": "All-In-One CMCC Astronomy Model",
       "description": "Extends Physics to handle celestial bodies, star systems, orbital dynamics, etc.",
       "depends_on": ["CMCC_Complete_ToEMM_Physics", "CMCC_Complete_ToEMM_Math"],
-      "version":"v2.0",
+      "version": "v2.0",
       "meta": {
         "title": "CMCC Complete Astronomy ToE Meta-Model",
         "subtitle": "Declarative Data Structures for Celestial Bodies, Cosmic Dynamics, and Observational Records",
@@ -9950,10 +9821,7 @@
           {
             "name": "EJ Alexandra",
             "contact": "start@anabstractlevel.com",
-            "affiliations": [
-              "SSoT.me",
-              "EffortlessAPI.com"
-            ]
+            "affiliations": ["SSoT.me", "EffortlessAPI.com"]
           }
         ],
         "date": "March 2025",
@@ -10019,11 +9887,7 @@
                 "foreign_key": false,
                 "note": "If you want to unify with a Particle record from physics."
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [],
             "aggregations": [
@@ -10173,11 +10037,7 @@
                 "datatype": "float",
                 "note": "Crude sum of star masses in the galaxy"
               },
-              {
-                "name": "notes",
-                "type": "scalar",
-                "datatype": "string"
-              }
+              { "name": "notes", "type": "scalar", "datatype": "string" }
             ],
             "lookups": [],
             "aggregations": [],
@@ -11103,10 +10963,7 @@
         "id": "it_from_bit_concrete_attempt_2025",
         "title": "It from bit — a concrete attempt",
         "authors": [
-          {
-            "name": "Alexandre Furtado Neto",
-            "orcid": "0000-0001-9435-6566"
-          }
+          { "name": "Alexandre Furtado Neto", "orcid": "0000-0001-9435-6566" }
         ],
         "year": 2025,
         "institutional_affiliation": "UNESP Alumnus",
@@ -11125,718 +10982,8 @@
           "Self-interference from trace-based memory in the lattice.",
           "Highly deterministic, nonlocal CA supporting a superdeterministic worldview."
         ]
-      },
-      {
-        "id": "thooft_cellular_automaton_qm_2016",
-        "title": "The Cellular Automaton Interpretation of Quantum Mechanics",
-        "authors": [
-          {
-            "name": "Gerard ’t Hooft"
-          }
-        ],
-        "year": 2016,
-        "publisher": "Fundamental Theories of Physics (Springer)",
-        "abstract": "Proposes that quantum mechanics can be interpreted in terms of an underlying deterministic cellular automaton (CA). The wavefunction and Hilbert space formalism emerge as an epistemic tool, while the CA evolves in an ontological state basis. Demonstrates how quantum superposition and entanglement can align with deterministic hidden variables under certain constraints.",
-        "online_links": [
-          {
-            "url": "https://doi.org/10.1007/978-3-319-41285-6",
-            "note": "Publisher reference"
-          }
-        ],
-        "key_claims": [
-          "Replaces standard quantum states with classical CA states ('ontological states').",
-          "Permutation-based evolution recast as unitary operator in Hilbert space.",
-          "Born rule can emerge from global constraints on local CA transitions.",
-          "Challenges no-go theorems by embedding a deeper hidden-variable structure."
-        ],
-        "cmccDomainModel": {
-          "overview": "This is a conceptual CMCC representation of ’t Hooft’s deterministic CA approach to quantum mechanics. Each 'ontological state' in the CA evolves via a permutation operator. Observed quantum states arise as linear combinations of these ontological states, but only as an epistemic layer. The system also suggests that Born’s rule can be derived from constraints on the global measure over CA configurations, and that standard quantum phenomena like entanglement and superposition reflect local updates in the hidden variable CA.",
-          "entities": [
-            {
-              "entityName": "OntologicalState",
-              "description": "A fundamental CA configuration representing a classical hidden-variable arrangement. In ’t Hooft's interpretation, these are real 'bits' of the system, evolving deterministically.",
-              "fields": [
-                {
-                  "fieldName": "state_id",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "primary_key": true,
-                  "description": "Unique ID for each ontological state."
-                },
-                {
-                  "fieldName": "configuration_bits",
-                  "type": "scalar",
-                  "datatype": "json",
-                  "description": "A map or list of bits describing the CA local variables. Potentially includes sub-lattice references."
-                },
-                {
-                  "fieldName": "energy_level",
-                  "type": "scalar",
-                  "datatype": "float",
-                  "description": "Optional notion of classical energy if relevant."
-                },
-                {
-                  "fieldName": "occupied_subsystem",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "description": "If we break the CA into subsystems, identifies which portion (optional)."
-                }
-              ],
-              "lookups": [
-                {
-                  "name": "AllowedTransitions",
-                  "description": "Reference to next permissible states from this ontological state.",
-                  "target_entity": "OntologicalState",
-                  "type": "one_to_many",
-                  "join_condition": "Permutation-based adjacency in state space"
-                }
-              ],
-              "aggregations": [
-                {
-                  "name": "num_transition_paths",
-                  "type": "rollup",
-                  "formula": "COUNT(AllowedTransitions)"
-                }
-              ],
-              "lambdas": [
-                {
-                  "name": "local_update_rule",
-                  "parameters": [],
-                  "formula": "Applies the local CA evolution (bits -> new bits)."
-                }
-              ],
-              "constraints": [
-                {
-                  "name": "single_successor_constraint",
-                  "formula": "Permutation => exactly one next state, exactly one predecessor.",
-                  "error_message": "Each OntologicalState must have exactly one image and one pre-image in a perfect permutation."
-                }
-              ]
-            },
-            {
-              "entityName": "PermutationOperator",
-              "description": "Represents the global CA step function as a permutation over ontological states. Provides the route to interpret the evolution as a unitary operator in Hilbert space.",
-              "fields": [
-                {
-                  "fieldName": "perm_id",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "primary_key": true
-                },
-                {
-                  "fieldName": "domain_size",
-                  "type": "scalar",
-                  "datatype": "int",
-                  "description": "Number of ontological states this operator permutes."
-                },
-                {
-                  "fieldName": "permutation_map",
-                  "type": "scalar",
-                  "datatype": "json",
-                  "description": "Maps each OntologicalState.state_id to its unique successor."
-                },
-                {
-                  "fieldName": "hilbert_equivalent_unitary",
-                  "type": "scalar",
-                  "datatype": "json",
-                  "description": "An optional matrix representation if we diagonalize or embed in a Hilbert space."
-                }
-              ],
-              "lookups": [
-                {
-                  "name": "OntologicalStatesInDomain",
-                  "description": "All states that this operator acts on. Should be the entire set if universal.",
-                  "target_entity": "OntologicalState",
-                  "type": "many_to_many",
-                  "join_condition": "Permutation domain covers the entire state space."
-                }
-              ],
-              "aggregations": [
-                {
-                  "name": "check_bijectivity",
-                  "type": "rollup",
-                  "formula": "Validate that 'permutation_map' is a 1-1 onto function across domain_size states."
-                }
-              ],
-              "lambdas": [
-                {
-                  "name": "apply_permutation",
-                  "parameters": ["state_id"],
-                  "formula": "permutation_map[state_id]"
-                }
-              ],
-              "constraints": [
-                {
-                  "name": "is_bijective",
-                  "formula": "IF check_bijectivity != domain_size THEN error",
-                  "error_message": "PermutationOperator must be bijective over the domain."
-                }
-              ]
-            },
-            {
-              "entityName": "HilbertSpaceMapping",
-              "description": "Epistemic layer: each OntologicalState is assigned a basis vector in Hilbert space. The wavefunction is a superposition of these basis states, but 't Hooft sees it as emergent.",
-              "fields": [
-                {
-                  "fieldName": "mapping_id",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "primary_key": true
-                },
-                {
-                  "fieldName": "basis_label",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "description": "A name for the basis vector set (e.g. |S_i>)"
-                },
-                {
-                  "fieldName": "phase_factor",
-                  "type": "scalar",
-                  "datatype": "float",
-                  "description": "Optional global or local phase factor for each basis vector."
-                },
-                {
-                  "fieldName": "ontological_state_id",
-                  "type": "lookup",
-                  "target_entity": "OntologicalState",
-                  "description": "Points to a classical state that forms one basis vector in the Hilbert space."
-                }
-              ],
-              "lookups": [],
-              "aggregations": [
-                {
-                  "name": "count_mapped_states",
-                  "type": "rollup",
-                  "formula": "COUNT(ontological_state_id)"
-                }
-              ],
-              "lambdas": [
-                {
-                  "name": "to_hilbert_vector",
-                  "parameters": ["ontological_state_id"],
-                  "formula": "Create unit vector with 1 at index(ontological_state_id), 0 else"
-                }
-              ],
-              "constraints": []
-            },
-            {
-              "entityName": "QuantumTemplate",
-              "description": "Represents a 'wavefunction' or 'quantum state' as an epistemic superposition of ontological states. This is 't Hooft’s reading that wavefunctions do not represent reality directly, but a knowledge state.",
-              "fields": [
-                {
-                  "fieldName": "template_id",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "primary_key": true
-                },
-                {
-                  "fieldName": "amplitudes",
-                  "type": "scalar",
-                  "datatype": "json",
-                  "description": "Complex coefficients for each basis vector from HilbertSpaceMapping"
-                },
-                {
-                  "fieldName": "normalization",
-                  "type": "scalar",
-                  "datatype": "float",
-                  "description": "Sum of |amplitudes|^2, used to interpret Born rule"
-                }
-              ],
-              "lookups": [
-                {
-                  "name": "basis",
-                  "description": "List of HilbertSpaceMapping references used in this superposition.",
-                  "target_entity": "HilbertSpaceMapping",
-                  "type": "many_to_many",
-                  "join_condition": "amplitudes keys match the basis_label or ontological_state_id"
-                }
-              ],
-              "aggregations": [
-                {
-                  "name": "calc_probability_distribution",
-                  "type": "rollup",
-                  "formula": "For each state in amplitudes, p_i = |amplitudes[i]|^2"
-                }
-              ],
-              "lambdas": [
-                {
-                  "name": "collapse_projection",
-                  "parameters": ["basis_state"],
-                  "formula": "Projects amplitudes onto basis_state, yields new normalized distribution"
-                },
-                {
-                  "name": "unitary_evolution",
-                  "parameters": ["PermutationOperator_id"],
-                  "formula": "Rewrite each amplitude index -> permutation, or use an associated unitary matrix"
-                }
-              ],
-              "constraints": [
-                {
-                  "name": "normalization_check",
-                  "formula": "IF ABS(normalization - 1) > 1e-9 THEN error",
-                  "error_message": "Wavefunction must be normalized in standard quantum mechanics terms."
-                }
-              ]
-            }
-          ],
-          "lookups": [
-            {
-              "lookupName": "TransitionMap",
-              "description": "Links OntologicalState to its unique next state under a given PermutationOperator.",
-              "lookupDefinition": {
-                "fromEntity": "OntologicalState",
-                "toEntity": "OntologicalState",
-                "relationship": "M:1",
-                "condition": "OntologicalState A -> OntologicalState B if permutation_map[A] = B"
-              }
-            }
-          ],
-          "aggregations": [
-            {
-              "aggregationName": "GlobalPermutationConsistency",
-              "description": "Checks that each OntologicalState is assigned exactly one successor and one predecessor to ensure perfect permutation behavior.",
-              "groupBy": [],
-              "aggregateFunction": "CheckAllStatesHaveOneSuccessorOnePredecessor"
-            }
-          ],
-          "calculatedFields": [
-            {
-              "fieldName": "UnitaryOperatorCorrespondence",
-              "formula": "PermutationOperator => diagonalize => get NxN matrix => adjacency in Hilbert space",
-              "appliesToEntity": "PermutationOperator"
-            },
-            {
-              "fieldName": "EmergentBornRule",
-              "formula": "Summation of measure over CA states => probability amplitude squared under constraints",
-              "appliesToEntity": "QuantumTemplate"
-            }
-          ]
-        },
-        "extendedInferences": {
-          "firstOrderInferences": [
-            "Ontological states evolve deterministically, so each has a unique next state (Permutation).",
-            "Quantum superposition is reinterpreted as an epistemic overlay on these classical states."
-          ],
-          "secondOrderInferences": [
-            "Born rule emerges from counting global measure of states that lead to a particular outcome (coarse graining).",
-            "Entanglement reflects correlated local CA configurations mapped to multiple-particle amplitude structures."
-          ],
-          "thirdOrderInferences": [
-            "Contextuality or no-go theorems can be bypassed by hidden constraints ensuring no local observers detect a violation.",
-            "Relativistic considerations require that the CA updates remain consistent under Lorentz transformations if implemented carefully."
-          ],
-          "beyondThirdOrder": [
-            "Combining general relativity with a discrete CA model, enabling a deeper hidden variable approach that extends to curved spacetimes.",
-            "Large-scale computational experiments might reveal new constraints on the CA architecture, bridging quantum phenomena with emergent classicality."
-          ]
-        },
-        "notesOnImplementation": [
-          "Simulating all states in a large CA might be computationally explosive, but local patterns can be derived systematically.",
-          "The HilbertSpaceMapping can be partial if certain sectors of the CA are never accessed or remain unobservable.",
-          "PermutationOperator is typically updated in discrete time steps; continuous-time quantum mechanics is mirrored by a time-slicing approach."
-        ]
-      },
-      {
-        "id": "zuse_rechnender_raum_1967",
-        "title": "Rechnender Raum (Calculating Space)",
-        "authors": [
-          {
-            "name": "Konrad Zuse"
-          }
-        ],
-        "year": 1967,
-        "abstract": "An early and foundational work hypothesizing that space-time and all physical processes can be understood as computations on a discrete 'cellular' substrate. Zuse speculates that the universe behaves like a universal digital computer, processing information locally in a grid-like structure.",
-        "online_links": [],
-        "key_claims": [
-          "Physical reality as a giant cellular automaton or computational system.",
-          "Space-time as discretized data manipulated by local rules.",
-          "Precursor to digital physics movements (Fredkin, Wolfram, etc.)."
-        ],
-
-        "cmccDomainModel": {
-          "overview": "Zuse posits a discrete lattice—Rechnender Raum—where every cell holds bits describing local physical quantities. Time progresses in discrete steps, with global updates performed by some universal rule. This model can unify all physics if it is universal enough, effectively treating the entire universe as a computing machine. Below is a CMCC representation capturing these ideas, including the discrete lattice, local rule updates, and potential emergent global phenomena.",
-          "entities": [
-            {
-              "entityName": "ZuseCell",
-              "description": "A single cell in Zuse’s discrete space-time. Stores the local 'bits' that define matter/fields at that point in space-time.",
-              "fields": [
-                {
-                  "fieldName": "cell_id",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "primary_key": true,
-                  "description": "Coordinates or index in the Zuse lattice, e.g. 'x,y,z,t'"
-                },
-                {
-                  "fieldName": "local_bits",
-                  "type": "scalar",
-                  "datatype": "json",
-                  "description": "The bitstring or set of discrete variables at this cell. E.g. matter density, field states, etc."
-                },
-                {
-                  "fieldName": "time_step",
-                  "type": "scalar",
-                  "datatype": "int",
-                  "description": "Discrete time index used by the global or local update"
-                },
-                {
-                  "fieldName": "frozen_flag",
-                  "type": "scalar",
-                  "datatype": "boolean",
-                  "description": "Optional: If for some reason the cell does not update (like boundary or special condition)."
-                }
-              ],
-              "lookups": [
-                {
-                  "name": "ZuseNeighbors",
-                  "description": "Links this cell to spatial neighbors in x,y,z (and possibly t). The exact dimension depends on the model version.",
-                  "target_entity": "ZuseCell",
-                  "type": "many_to_many",
-                  "join_condition": "Typically adjacency if sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2) = 1, modded if wrapping occurs."
-                }
-              ],
-              "aggregations": [
-                {
-                  "name": "num_neighbor_cells",
-                  "type": "rollup",
-                  "formula": "COUNT(ZuseNeighbors)"
-                }
-              ],
-              "lambdas": [
-                {
-                  "name": "local_update",
-                  "parameters": [],
-                  "formula": "Applies Zuse’s local rule to (local_bits, neighbor.local_bits) => new local_bits"
-                }
-              ],
-              "constraints": []
-            },
-            {
-              "entityName": "ZuseRule",
-              "description": "Encodes the local update rule for each cell. Zuse envisioned that all physics arises from these local transitions.",
-              "fields": [
-                {
-                  "fieldName": "rule_id",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "primary_key": true
-                },
-                {
-                  "fieldName": "rule_description",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "description": "High-level textual explanation of how local_bits -> next local_bits"
-                },
-                {
-                  "fieldName": "transition_table",
-                  "type": "scalar",
-                  "datatype": "json",
-                  "description": "Maps a (cell’s bits + neighbors’ bits) to new bits. Possibly a large table or param-based formula."
-                },
-                {
-                  "fieldName": "reversibility_flag",
-                  "type": "scalar",
-                  "datatype": "boolean",
-                  "description": "Indicate whether the rule is invertible (optional)."
-                }
-              ],
-              "lookups": [],
-              "aggregations": [],
-              "lambdas": [
-                {
-                  "name": "apply_rule",
-                  "parameters": ["currentBits", "neighborsBits"],
-                  "formula": "Use transition_table to produce new local_bits"
-                }
-              ],
-              "constraints": []
-            },
-            {
-              "entityName": "ZuseUniverse",
-              "description": "Represents the entire computing space. Maintains references to all cells, the dimension size, and the universal rule(s). Allows for global or partial updates each time-step.",
-              "fields": [
-                {
-                  "fieldName": "universe_id",
-                  "type": "scalar",
-                  "datatype": "string",
-                  "primary_key": true
-                },
-                {
-                  "fieldName": "dimension_info",
-                  "type": "scalar",
-                  "datatype": "json",
-                  "description": "Defines Nx×Ny×Nz, boundary conditions, etc."
-                },
-                {
-                  "fieldName": "zuse_rule_id",
-                  "type": "lookup",
-                  "target_entity": "ZuseRule",
-                  "description": "Pointer to the rule that all cells will apply"
-                },
-                {
-                  "fieldName": "current_time",
-                  "type": "scalar",
-                  "datatype": "int",
-                  "description": "Indicates the global time step index"
-                },
-                {
-                  "fieldName": "wrap_boundaries",
-                  "type": "scalar",
-                  "datatype": "boolean",
-                  "description": "If true, implements torus wrap for edges"
-                }
-              ],
-              "lookups": [
-                {
-                  "name": "CellsInUniverse",
-                  "description": "List of cells in the entire Zuse computing space",
-                  "target_entity": "ZuseCell",
-                  "type": "one_to_many",
-                  "join_condition": "ZuseCell belongs to universe_id"
-                }
-              ],
-              "aggregations": [
-                {
-                  "name": "total_information_content",
-                  "type": "rollup",
-                  "formula": "Σ over all CellsInUniverse of LENGTH(local_bits) or BITCOUNT(local_bits)"
-                },
-                {
-                  "name": "active_cells_count",
-                  "type": "rollup",
-                  "formula": "COUNT(CellsInUniverse WHERE frozen_flag=false)"
-                }
-              ],
-              "lambdas": [
-                {
-                  "name": "global_update",
-                  "parameters": [],
-                  "formula": "For each ZuseCell => local_update( cell.local_bits, neighbor.local_bits )"
-                },
-                {
-                  "name": "increment_time",
-                  "parameters": [],
-                  "formula": "current_time = current_time + 1"
-                }
-              ],
-              "constraints": [
-                {
-                  "name": "all_cells_same_rule",
-                  "formula": "ZuseCell must reference this Universe’s zuse_rule_id for consistency",
-                  "error_message": "All cells in the universe must share the same local update rule"
-                }
-              ]
-            }
-          ],
-          "lookups": [
-            {
-              "lookupName": "NextStateMapping",
-              "description": "Optional global adjacency among entire states if we interpret the Universe as a single big configuration. Possibly used for comparing Poincaré cycles, etc.",
-              "lookupDefinition": {
-                "fromEntity": "ZuseUniverse",
-                "toEntity": "ZuseUniverse",
-                "relationship": "M:N",
-                "condition": "One Universe state => next Universe state after global_update"
-              }
-            }
-          ],
-          "aggregations": [
-            {
-              "aggregationName": "EntropyOverUniverse",
-              "description": "Compute a Shannon-like measure of overall complexity in the Universe at a given time.",
-              "groupBy": [],
-              "aggregateFunction": "HashBitPattern(all CellsInUniverse.local_bits)"
-            }
-          ],
-          "calculatedFields": [
-            {
-              "fieldName": "LocalRuleAsFunction",
-              "formula": "Use ZuseRule.transition_table on each ZuseCell in Universe",
-              "appliesToEntity": "ZuseRule"
-            },
-            {
-              "fieldName": "GlobalDeterminismCheck",
-              "formula": "Ensure each Universe state leads to a unique next Universe state => no branching",
-              "appliesToEntity": "ZuseUniverse"
-            }
-          ]
-        },
-
-        "extendedInferences": {
-          "firstOrderInferences": [
-            "Cells store discrete data (bits). Each step, local_bits are updated from neighbor info => no continuum needed.",
-            "Wrap boundary => Universe can be topologically a torus or any boundary conditions Zuse picks."
-          ],
-          "secondOrderInferences": [
-            "Complex phenomena emerge from local rules. Macroscopic 'laws' might be compressed descriptions of these updates.",
-            "Potential for Turing-completeness or universal computation if local rule is powerful enough."
-          ],
-          "thirdOrderInferences": [
-            "If we embed an entire Universe state in a large configuration space, cycles or steady states can appear => Poincaré recurrences.",
-            "Reversible or invertible local updates could unify forward/backward time, bridging to Fredkin/Troffoli reversible logic ideas."
-          ],
-          "beyondThirdOrder": [
-            "Bringing in expansions for quantum-like phenomena or continuum approximations might require new 'Zuse sub-lattice expansions'.",
-            "Could unify 'General Relativity in a discrete lattice' if local updates incorporate curvature or adjacency changes over time."
-          ]
-        },
-
-        "notesOnImplementation": [
-          "Practical direct simulation might be huge for real-world scale. Zuse assumed only local data => parallelizable on real hardware.",
-          "One can refine transition_table to replicate known physical laws (e.g. partial differential equations approximated by local CA).",
-          "Zuse’s approach preceded advanced computational capacity, so many details remain conceptual or high-level."
-        ]
-      },
-      {
-        "id": "fredkin_digital_philosophy_2003",
-        "title": "An Introduction to Digital Philosophy",
-        "authors": [
-          {
-            "name": "Edward Fredkin"
-          }
-        ],
-        "year": 2003,
-        "abstract": "Fredkin describes his 'digital philosophy', positing that the universe operates on discrete computational principles. He explores reversible computing, the possibility of cellular automata as fundamental physics, and the notion of bits as the primitives of reality. This work heavily influenced computational interpretations of physics.",
-        "online_links": [],
-        "key_claims": [
-          "All reality is digital at bottom: bits and local transitions.",
-          "Exploration of reversible gates and 'conservative logic.'",
-          "Bridged conceptual gap between discrete micro-rules and emergent continuum phenomena."
-        ]
-      },
-      {
-        "id": "wolfram_ankos_2002",
-        "title": "A New Kind of Science",
-        "authors": [
-          {
-            "name": "Stephen Wolfram"
-          }
-        ],
-        "year": 2002,
-        "abstract": "Wolfram’s comprehensive treatise on simple programs—especially cellular automata—and their capacity to yield high complexity and universal computation. Argues that many laws of physics may stem from fundamental CA-like rules and that the principle of computational equivalence places natural and computational phenomena on the same footing.",
-        "online_links": [
-          {
-            "url": "https://www.wolframscience.com/nks/",
-            "note": "Online resources"
-          }
-        ],
-        "key_claims": [
-          "Rule 110’s universality as a central example.",
-          "Multiway systems bridging branching evolutions to physics and mathematics.",
-          "Principle of Computational Equivalence: simple rules can match the complexity of nature."
-        ]
-      },
-      {
-        "id": "feynman_simulating_physics_1982",
-        "title": "Simulating Physics with Computers",
-        "authors": [
-          {
-            "name": "Richard P. Feynman"
-          }
-        ],
-        "year": 1982,
-        "abstract": "Feynman contemplates whether classical digital computers can efficiently simulate quantum systems. Presents arguments that led to the field of quantum computing, noting that if nature is fundamentally discrete, certain computations (like factoring or simulating quantum states) might be more naturally performed by a quantum mechanical computer.",
-        "online_links": [],
-        "key_claims": [
-          "Potential mismatch between classical discrete machines and quantum phenomena.",
-          "Seeds the idea of universal quantum simulators as a new computational paradigm.",
-          "Formed basis of subsequent quantum computation theories (Deutsch, et al.)."
-        ]
-      },
-      {
-        "id": "deutsch_universal_qc_1985",
-        "title": "Quantum Theory, the Church–Turing Principle and the Universal Quantum Computer",
-        "authors": [
-          {
-            "name": "David Deutsch"
-          }
-        ],
-        "year": 1985,
-        "abstract": "Deutsch argues that any physically realizable system can be perfectly simulated by a universal quantum computer, extending the Church–Turing principle into quantum territory. Introduces the concept of universal quantum gates, setting the stage for practical quantum computing developments.",
-        "online_links": [],
-        "key_claims": [
-          "All computable laws of physics can be modeled on a universal quantum computer.",
-          "Extends classical Church–Turing principle to quantum domain.",
-          "Formulation of quantum gates as building blocks of universal computation."
-        ]
-      },
-      {
-        "id": "feynman_lectures_vol3_1965",
-        "title": "The Feynman Lectures on Physics, Volume 3: Quantum Mechanics (Chapter 1)",
-        "authors": [
-          {
-            "name": "Richard P. Feynman"
-          },
-          {
-            "name": "Robert B. Leighton"
-          },
-          {
-            "name": "Matthew Sands"
-          }
-        ],
-        "year": 1965,
-        "abstract": "Chapter 1 of Volume 3 discusses the double-slit experiment, the fundamental nature of wave-particle duality, and the superposition principle. Feynman famously calls the double-slit 'the heart of quantum mechanics' and a phenomenon impossible to mimic classically. This prime introduction to self-interference underpins many toy models in discrete physics.",
-        "online_links": [],
-        "key_claims": [
-          "Double-slit experiment reveals key quantum aspects—superposition, interference.",
-          "Wavefunction amplitude approach, with probability from amplitude squared.",
-          "No classical analog can fully replicate the observed interference patterns."
-        ]
-      },
-      {
-        "id": "thooft_deterministic_1988",
-        "title": "Deterministic and Quantum Mechanical Systems",
-        "authors": [
-          {
-            "name": "Gerard ’t Hooft"
-          }
-        ],
-        "year": 1988,
-        "abstract": "An earlier work of ’t Hooft suggesting that quantum phenomena might be derived from deterministic systems with incomplete information. Probes hidden-variable theories, information loss, and emergent quantum states from underlying classical processes.",
-        "online_links": [],
-        "key_claims": [
-          "Information-loss or constraints can yield quantum-like behavior from deterministic laws.",
-          "Revisits hidden-variables in a manner not blocked by standard no-go arguments.",
-          "Blueprint for later elaboration of the Cellular Automaton Interpretation."
-        ]
-      },
-      {
-        "id": "cook_rule110_2004",
-        "title": "Universality in Elementary Cellular Automaton Rule 110",
-        "authors": [
-          {
-            "name": "Matthew Cook"
-          }
-        ],
-        "year": 2004,
-        "abstract": "Cook shows that the 1D elementary CA known as Rule 110 is Turing-complete—i.e., it can emulate any computable process given the right initial conditions. This proof was a significant moment for discrete physics and simplified CA studies, since it demonstrated how minimal local rules can support universal computation.",
-        "online_links": [],
-        "key_claims": [
-          "Rule 110 can simulate a cyclic tag system, achieving Turing-completeness.",
-          "Confirms Wolfram’s speculation that simple CA can host universal computing.",
-          "Implication: discrete local rules can encode arbitrarily complex computations."
-        ]
-      },
-      {
-        "id": "fredkin_toffoli_conservative_logic_1978",
-        "title": "Conservative Logic",
-        "authors": [
-          {
-            "name": "Edward Fredkin"
-          },
-          {
-            "name": "Tommaso Toffoli"
-          }
-        ],
-        "year": 1978,
-        "abstract": "Introduces a physically plausible, reversible computing framework in which 'information mass' is never destroyed. Their 'conservative logic' underpins reversible CA models, bridging digital logic and physical conservation laws. Influential in the development of reversible computing and forward-only (time-symmetric) CA systems.",
-        "online_links": [],
-        "key_claims": [
-          "Logical operations can be done reversibly, preserving information bits.",
-          "Connects digital logic to physical conservation principles, e.g., no net bit annihilation.",
-          "Formed part of the foundation for reversible computing and quantum gates."
-        ]
       }
+
     ]
   }
 }
