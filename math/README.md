@@ -35,7 +35,7 @@ In contrast, the CMCC Mathematics Model encodes these concepts within a single, 
 By remaining purely declarative, this approach decouples syntax from semantics. Whether capturing something simple like the geometry of triangles or something advanced like category theory, the math extension inherits the same fundamental building blocks (S, D, L, A, F) that drive the entire CMCC framework. This ensures the utmost consistency, reusability, and cross-domain synergy in your knowledge representation.
 
 ![logo](math.png)
-
+  
 ---
 
 # Schema Overview

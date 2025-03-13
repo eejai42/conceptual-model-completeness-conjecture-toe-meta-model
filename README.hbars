@@ -1,6 +1,12 @@
 [[FileSetFile/RelativePath[/README.md]]]
 # {{title}}
 
+<div style="float: right; width: 15rem">
+
+![sdlaf](sdlaf.png)
+
+</div>
+
 ## Overview
 {{description}}
 
