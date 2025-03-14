@@ -1,0 +1,735 @@
+{
+    "id": "CMCC_ToEMM_WolframLang",
+    "meta-model": {
+      "name": "Wolfram Language ToE Meta Model",
+      "description": "A purely declarative meta-model of Wolfram Language code structures—Notebooks, Cells, Expressions, Symbols, Definitions, Contexts, and Packages—expressed under CMCC. No imperative instructions for code transformation; everything is derived from aggregator fields, event/fact references, or constraints.",
+      "version": "v1.0",
+      "nickname": "wolframLang",
+      "meta": {
+        "title": "Wolfram Language ToE Meta-Model",
+        "subtitle": "A 100% Declarative Framework for Wolfram Language Code Structures",
+        "date": "March 2025",
+        "abstract": "This extension of the CMCC systematically represents Wolfram Language’s core constructs—Notebooks, Cells, Expressions, Symbols, Definitions, and more—under a single Snapshot-Consistent schema. All domain logic, from symbol creation to cell evaluation tracking, is done via aggregator fields, constraints, or event-based facts. No step-by-step imperative instructions are used.",
+        "executive_summary": {
+          "key_points": [
+            "Models Wolfram Language structural elements—Notebooks, Cells, Expressions, Symbols, Definitions—declaratively with aggregator formulas, event-based facts, and constraints.",
+            "Eliminates the need for any imperative code to manage or mutate language constructs.",
+            "Demonstrates extensibility to advanced code analytics, symbolic transformations, or usage tracking, all driven by purely factual data references.",
+            "Seamlessly fits into the broader CMCC approach, where logic is declared rather than executed step by step."
+          ],
+          "implications": [
+            "Allows a universal environment for capturing Wolfram Language code semantics in a purely fact-based manner.",
+            "Removes the reliance on mutable state transitions—changes in data automatically reflect in aggregator fields (e.g., a new definition for a Symbol immediately updates the Symbol’s definition count).",
+            "Facilitates advanced code analytics—like counting usage of certain symbols, tracking references to external packages, or measuring expression depth—without entangled imperative code."
+          ],
+          "narrative": [
+            {
+              "title": "Purely Declarative Wolfram Language Model",
+              "content": [
+                "In typical code editors, you have to imperatively manipulate cells, definitions, or notebooks. Here, we treat them as factual records, referencing each other via lookups and aggregator fields. For example, a Symbol’s definitions are simply counted by scanning all Definition entities referencing that Symbol—no explicit procedure is needed to 'increase the count'. Any new definition record automatically updates aggregator fields. The entire 'logic of code structure' emerges from the declared data relationships, in line with the CMCC’s goal of no hidden imperative steps."
+              ]
+            }
+          ],
+          "addressing_concerns_preemptively": {
+            "what_not_how": "We describe WHAT a Wolfram Notebook is, or WHAT a Symbol is, not how the runtime engine interprets or evaluates them. This distinction preserves the purely declarative nature of the model.",
+            "time": "Time is another dimension, and it is outside the scope here. If the user wants versioning or time-based changes, those become simply new data or event records.",
+            "rulebook_not_the_runtime": "These schema definitions are akin to a blueprint for code structures. They do not dictate how the Wolfram Kernel physically interprets or executes code; they only specify relationships, constraints, and aggregator fields describing the code in a snapshot-consistent manner.",
+            "scaleability_performance": "If you have tens of thousands of expressions or definitions, the aggregator-based approach can still work at scale, provided the underlying data system can handle the necessary queries or rollups.",
+            "reality_is_the_best_runtime_engine": "In production, the actual Wolfram environment or a bridging system might generate these event/fact records on the fly. The runtime engine (the Wolfram Kernel) can remain a black box so long as the data output is correct.",
+            "bright_red_lines": "Separating WHAT is represented from HOW it’s processed ensures that changes to the model schema remain distinct from changes in code that manipulates these data structures. The same concept underlies the CMCC approach in other domains."
+          }
+        }
+      },
+      "schema": {
+        "entities": [
+  
+          {
+            "name": "Notebook",
+            "description": "A Wolfram Language Notebook—a container holding multiple cells. Purely declarative references to each Cell entity, no imperative commands to add/remove them.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for this notebook."
+              },
+              {
+                "name": "title",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Human-readable title for the notebook."
+              },
+              {
+                "name": "kernelSessionId",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Optional reference to a kernel session in which this notebook is running—conceptual only."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "cells",
+                "target_entity": "Cell",
+                "type": "one_to_many",
+                "join_condition": "Cell.notebookId = this.id",
+                "description": "Collection of cells belonging to this notebook."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "cellCount",
+                "type": "rollup",
+                "description": "Number of cells in this notebook.",
+                "formula": "COUNT(cells)"
+              },
+              {
+                "name": "containsGraphics",
+                "type": "rollup",
+                "description": "True if any cell contains at least one Expression with wolframHead='Graphics' or 'Graphics3D'.",
+                "formula": "EXISTS(cells.expressions WHERE wolframHead IN ['Graphics','Graphics3D'])"
+              },
+              {
+                "name": "containsDynamic",
+                "type": "rollup",
+                "description": "True if any Expression with wolframHead='Dynamic' is found in any cell.",
+                "formula": "EXISTS(cells.expressions WHERE wolframHead='Dynamic')"
+              },
+              {
+                "name": "totalExpressionCount",
+                "type": "rollup",
+                "description": "Sum of all expressions across all cells in this notebook.",
+                "formula": "SUM(cells => expressionCount)"
+              },
+              {
+                "name": "evaluationCount",
+                "type": "rollup",
+                "description": "Number of times cells in this notebook have been evaluated (conceptual aggregator referencing evaluation events).",
+                "formula": "SUM(cells => evaluationCount)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "addCell",
+                "parameters": ["cell_id"],
+                "description": "// DECLARATIVE: Instead of an imperative 'Insert cell', we declare that Cell.notebookId must match this.id.",
+                "formula": "Cell(cell_id).notebookId == this.id"
+              },
+              {
+                "name": "removeCell",
+                "parameters": ["cell_id"],
+                "description": "// DECLARATIVE: Removing means 'Cell.notebookId = null' or referencing a different Notebook. No procedure calls.",
+                "formula": "Cell(cell_id).notebookId == null"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "notebookTitleRequired",
+                "formula": "title != ''",
+                "error_message": "Notebook title cannot be empty."
+              }
+            ]
+          },
+  
+          {
+            "name": "Cell",
+            "description": "A cell in a Wolfram Notebook, referencing an optional list of Expressions. Could be input, output, text, etc. All logic is aggregator-based, no imperative updates.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique cell identifier."
+              },
+              {
+                "name": "notebookId",
+                "type": "lookup",
+                "target_entity": "Notebook",
+                "foreign_key": true,
+                "description": "Which notebook this cell is a part of."
+              },
+              {
+                "name": "cellType",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Cell type, e.g. 'Input','Output','Text','Markdown', etc."
+              },
+              {
+                "name": "style",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Optional style specification for this cell (e.g. 'Title','Subtitle','Code')."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "expressions",
+                "target_entity": "Expression",
+                "type": "one_to_many",
+                "join_condition": "Expression.cellId = this.id",
+                "description": "Expressions that reside in this cell."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "expressionCount",
+                "type": "rollup",
+                "description": "How many expressions appear in this cell.",
+                "formula": "COUNT(expressions)"
+              },
+              {
+                "name": "evaluationCount",
+                "type": "rollup",
+                "description": "How many times this cell has been evaluated. Conceptual aggregator referencing 'EvaluationEvent' or similar.",
+                "formula": "COUNT(EvaluationEvent WHERE EvaluationEvent.cellId=this.id)"
+              },
+              {
+                "name": "containsTextOnly",
+                "type": "rollup",
+                "description": "True if the cell is purely textual (no expressions or a single text Expression).",
+                "formula": "(expressionCount=0) OR (ALL(expressions WHERE wolframHead='String'))"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "evaluateCell",
+                "parameters": [],
+                "description": "// DECLARATIVE: Instead of 'evaluate cell', a new 'EvaluationEvent' entity is created referencing this cell. The aggregator updates automatically.",
+                "formula": "EvaluationEvent(cellId=this.id) => triggers aggregator"
+              },
+              {
+                "name": "addExpression",
+                "parameters": ["expr_id"],
+                "description": "// DECLARATIVE: Instead of imperatively adding an expression, we declare Expression.cellId = this.id.",
+                "formula": "Expression(expr_id).cellId == this.id"
+              }
+            ],
+            "constraints": []
+          },
+  
+          {
+            "name": "Expression",
+            "description": "Represents a symbolic Wolfram Language expression. Tracks its head (e.g., Plus, Times, Graphics), optional textual content, and references.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique identifier for this expression record."
+              },
+              {
+                "name": "cellId",
+                "type": "lookup",
+                "target_entity": "Cell",
+                "foreign_key": true,
+                "description": "Which cell this expression belongs to."
+              },
+              {
+                "name": "wolframHead",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Name of the head of the expression, e.g. 'Plus','List','Graphics','Dynamic','Function', etc."
+              },
+              {
+                "name": "fullFormString",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "A textual representation of the expression's FullForm or an internal serialization."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "subExpressions",
+                "target_entity": "Expression",
+                "type": "one_to_many",
+                "description": "All sub-expressions nested within this expression. Implementation conceptual—could be a separate linking entity."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "subExpressionCount",
+                "type": "rollup",
+                "description": "How many immediate sub-expressions are nested under this expression.",
+                "formula": "COUNT(subExpressions)"
+              },
+              {
+                "name": "referencesSymbols",
+                "type": "rollup",
+                "description": "Set or list of Symbol IDs referenced within this expression, purely aggregator-based from parse data.",
+                "formula": "COLLECT(SymbolReference WHERE SymbolReference.expressionId=this.id => symbolId)"
+              },
+              {
+                "name": "containsPattern",
+                "type": "rollup",
+                "description": "True if wolframHead is something like 'Pattern','Blank','Condition', etc. Implementation conceptual.",
+                "formula": "wolframHead IN ['Pattern','Blank','BlankSequence','Condition']"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "transformExpression",
+                "parameters": ["transformationId"],
+                "description": "// DECLARATIVE: A 'TransformationEvent' entity can exist referencing this expression. No direct imperative mutation.",
+                "formula": "TransformationEvent(expressionId=this.id, transformationId=transformationId)"
+              }
+            ],
+            "constraints": []
+          },
+  
+          {
+            "name": "Symbol",
+            "description": "A named Wolfram Language symbol, living in a specific Context. Can have zero or more definitions (DownValues, UpValues, etc.).",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for this symbol record."
+              },
+              {
+                "name": "symbolName",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "The name of the symbol, excluding context (e.g. 'Plot', 'myFunc')."
+              },
+              {
+                "name": "contextId",
+                "type": "lookup",
+                "target_entity": "Context",
+                "foreign_key": true,
+                "description": "Which context this symbol belongs to (e.g., 'System`', 'Global`', 'MyPackage`')."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "definitions",
+                "target_entity": "Definition",
+                "type": "one_to_many",
+                "join_condition": "Definition.symbolId = this.id",
+                "description": "All Definition records referencing this symbol."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "definitionCount",
+                "type": "rollup",
+                "description": "How many distinct definitions (downvalues, upvalues, etc.) are associated with this symbol.",
+                "formula": "COUNT(definitions)"
+              },
+              {
+                "name": "isSystemSymbol",
+                "type": "rollup",
+                "description": "True if contextId corresponds to 'System`'. Implementation conceptual if context is matched by name or ID.",
+                "formula": "contextId.contextName=='System`'"
+              },
+              {
+                "name": "downValueCount",
+                "type": "rollup",
+                "description": "Number of definitions that are specifically downvalues (e.g., 'f[args_]:=rhs'). Implementation conceptual if stored as Definition.defType='DownValue'.",
+                "formula": "COUNT(definitions WHERE defType='DownValue')"
+              },
+              {
+                "name": "upValueCount",
+                "type": "rollup",
+                "description": "Number of definitions that are specifically upvalues (e.g., 'expr^:=rhs').",
+                "formula": "COUNT(definitions WHERE defType='UpValue')"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "clearDefinitions",
+                "parameters": [],
+                "description": "// DECLARATIVE: Instead of 'Clear[f]', we remove Definition records referencing this symbol. The aggregator updates automatically.",
+                "formula": "Definition(symbolId=this.id) => no longer valid => definitionCount=0"
+              }
+            ],
+            "constraints": [
+              {
+                "name": "symbolNameNotEmpty",
+                "formula": "symbolName != ''",
+                "error_message": "A symbol must have a name."
+              },
+              {
+                "name": "uniqueSymbolNameWithinContext",
+                "formula": "UNIQUE(symbolName, contextId)",
+                "error_message": "Symbol name must be unique within the same context."
+              }
+            ]
+          },
+  
+          {
+            "name": "Definition",
+            "description": "Represents a single Wolfram Language definition for a symbol (e.g. a DownValue, UpValue, SubValue, etc.). Contains the pattern/lhs and rhs representations.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for this definition record."
+              },
+              {
+                "name": "symbolId",
+                "type": "lookup",
+                "target_entity": "Symbol",
+                "foreign_key": true,
+                "description": "Which symbol this definition belongs to."
+              },
+              {
+                "name": "lhsRepresentation",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Textual or FullForm representation of the left-hand side (pattern)."
+              },
+              {
+                "name": "rhsRepresentation",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Textual or FullForm representation of the right-hand side."
+              },
+              {
+                "name": "defType",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Type of definition, e.g. 'DownValue','UpValue','SubValue','FormatValue'."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "usedSymbolsCount",
+                "type": "rollup",
+                "description": "How many other Symbols appear in the rhsRepresentation or condition. Implementation conceptual if references are extracted from parse data.",
+                "formula": "COUNT(SymbolReference WHERE SymbolReference.definitionId=this.id)"
+              },
+              {
+                "name": "containsPatternArguments",
+                "type": "rollup",
+                "description": "True if the lhsRepresentation includes typical pattern constructs (x_, x__, etc.).",
+                "formula": "REGEX_MATCH(lhsRepresentation,'_+')"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "replaceRHS",
+                "parameters": ["newRhs"],
+                "description": "// DECLARATIVE: Instead of 'definition.rhs = newVal', we declare that the definition’s right-hand side representation is newRhs.",
+                "formula": "rhsRepresentation == newRhs"
+              }
+            ],
+            "constraints": []
+          },
+  
+          {
+            "name": "Context",
+            "description": "A Wolfram Language context, such as 'System`', 'Global`', or 'MyPackage`', grouping symbols under a namespace-like structure.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for this context record."
+              },
+              {
+                "name": "contextName",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Full context name, ending with a backtick, e.g. 'System`'."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "symbols",
+                "target_entity": "Symbol",
+                "type": "one_to_many",
+                "join_condition": "Symbol.contextId = this.id",
+                "description": "All symbols that belong to this context."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "symbolCount",
+                "type": "rollup",
+                "description": "Number of symbols in this context.",
+                "formula": "COUNT(symbols)"
+              },
+              {
+                "name": "hasPackage",
+                "type": "rollup",
+                "description": "True if there exists a Package record referencing this context. Implementation conceptual if contexts map to packages.",
+                "formula": "EXISTS(Package WHERE Package.defaultContextId=this.id)"
+              }
+            ],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "contextNameMustEndWithBacktick",
+                "formula": "contextName ENDSWITH '`'",
+                "error_message": "Context name should end with a backtick."
+              }
+            ]
+          },
+  
+          {
+            "name": "Package",
+            "description": "Represents a Wolfram Language package (e.g. .wl or .m file). Contains metadata about exported symbols, associated context, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true,
+                "description": "Unique ID for this package."
+              },
+              {
+                "name": "packageName",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Human-friendly name for the package, e.g. 'MyToolkit'."
+              },
+              {
+                "name": "defaultContextId",
+                "type": "lookup",
+                "target_entity": "Context",
+                "foreign_key": true,
+                "description": "Which context is the default for this package’s definitions."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "exportedSymbols",
+                "target_entity": "Symbol",
+                "type": "many_to_many",
+                "description": "All symbols that are officially exported by this package. Implementation conceptual if there's an export table or multiple contexts."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "symbolExportCount",
+                "type": "rollup",
+                "description": "How many symbols are exported by this package.",
+                "formula": "COUNT(exportedSymbols)"
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "exportSymbol",
+                "parameters": ["symbolId"],
+                "description": "// DECLARATIVE: Instead of 'PackageExport[symbol]', we say Symbol is in the 'exportedSymbols' relationship for this package.",
+                "formula": "Symbol(symbolId).isExportedByPackageId = this.id"
+              }
+            ],
+            "constraints": []
+          }
+  
+        ],
+        "data": {
+          "Notebook": [
+            {
+              "id": "nb_001",
+              "title": "MyExampleNotebook",
+              "kernelSessionId": "session_ABC123"
+            }
+          ],
+          "Cell": [
+            {
+              "id": "cell_001",
+              "notebookId": "nb_001",
+              "cellType": "Input",
+              "style": "Code"
+            }
+          ],
+          "Expression": [
+            {
+              "id": "expr_001",
+              "cellId": "cell_001",
+              "wolframHead": "Plus",
+              "fullFormString": "Plus[x, 1]"
+            }
+          ],
+          "Symbol": [
+            {
+              "id": "sym_001",
+              "symbolName": "myFunc",
+              "contextId": "ctx_Global"
+            }
+          ],
+          "Definition": [
+            {
+              "id": "def_001",
+              "symbolId": "sym_001",
+              "lhsRepresentation": "myFunc[x_]",
+              "rhsRepresentation": "x^2 + 1",
+              "defType": "DownValue"
+            }
+          ],
+          "Context": [
+            {
+              "id": "ctx_System",
+              "contextName": "System`"
+            },
+            {
+              "id": "ctx_Global",
+              "contextName": "Global`"
+            }
+          ],
+          "Package": [
+            {
+              "id": "pkg_Sample",
+              "packageName": "SamplePackage",
+              "defaultContextId": "ctx_Global"
+            }
+          ]
+        }
+      },
+      "root-meta-model": {
+        "title": "The Conceptual Model Completeness Conjecture (CMCC)",
+        "subtitle": "A Universal Declarative Computational Framework",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "January 2025",
+        "abstract": "The Conceptual Model Completeness Conjecture (CMCC) posits that the declarative semantics of any conceptual domain can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within a Snapshot-Consistent environment. This Wolfram Language meta-model demonstrates how code structures can be expressed purely via aggregator fields, constraints, relationships, and event-based logic, with no stepwise imperative instructions.",
+        "executive_summary": {
+          "key_points": [
+            "Removes all imperative 'Set' or 'Clear' steps and replaces them with data-driven or aggregator-driven statements.",
+            "Uses new or existing event entities (EvaluationEvent, Definition, SymbolReference, etc.) to track code structure changes.",
+            "Provides a consistent approach to modeling code logic as facts—like 'Symbol definitions' or 'Notebook cell set'—rather than sequences of instructions."
+          ],
+          "implications": [
+            "Greatly reduces complexity in code management by turning ephemeral states into explicit data and aggregator fields.",
+            "Enhances the ability to unify code analytics (number of evaluations, symbol usage) under a single data model that always reflects the current snapshot."
+          ],
+          "narrative": {
+            "sections": [
+              {
+                "title": "Executive Summary",
+                "content": [
+                  "By shifting from a partially imperative approach—where we do 'SetAttributes' or 'Clear' on the fly—to a purely declarative approach of new or removed data (e.g., Definition records), the model maintains a continuous, easily auditable record of code structure changes. This fosters transparency and reliability, in keeping with the spirit of the CMCC’s fundamental architecture (S, D, L, A, F)."
+                ]
+              }
+            ]
+          }
+        },
+        "CMCC_ToEMM_Domain_List": [
+          {
+            "id": "CMCC_ToEMM_Baseball",
+            "fullname": "Baseball ToE Meta-Model",
+            "name": "Baseball ToE Meta-Model",
+            "description": "A structured model capturing the domain of baseball, including leagues, teams, players, games, innings, at-bats, and stats, in a 100% declarative style.",
+            "nickname": "baseball"
+          },
+          {
+            "id": "CMCC_ToEMM_WolframLang",
+            "fullname": "Wolfram Language ToE Meta-Model",
+            "name": "Wolfram Language ToE Meta-Model",
+            "description": "A structured model capturing Wolfram Language code structures (Notebooks, Cells, Expressions, Symbols, Definitions, etc.) in a purely declarative style.",
+            "nickname": "wolframLang"
+          },
+          {
+            "id": "CMCC_ToEMM_Math",
+            "fullname": "Mathematics ToE Meta-Model",
+            "name": "Mathematics ToE Meta-Model",
+            "description": "A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.",
+            "nickname": "math"
+          },
+          {
+            "id": "CMCC_ToEMM_Physics",
+            "fullname": "Physics ToE Meta-Model",
+            "name": "Physics ToE Meta-Model",
+            "description": "A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.",
+            "nickname": "physics"
+          },
+          {
+            "id": "CMCC_ToEMM_Chemistry",
+            "fullname": "Chemistry ToE Meta-Model",
+            "name": "Chemistry ToE Meta-Model",
+            "description": "Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.",
+            "nickname": "chemistry"
+          },
+          {
+            "id": "CMCC_ToEMM_Biology",
+            "fullname": "Biology ToE Meta-Model",
+            "name": "Biology ToE Meta-Model",
+            "description": "Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.",
+            "nickname": "biology"
+          },
+          {
+            "id": "CMCC_ToEMM_AI",
+            "fullname": "Artificial Intelligence ToE Meta-Model",
+            "name": "Artificial Intelligence ToE Meta-Model",
+            "description": "Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.",
+            "nickname": "ai"
+          },
+          {
+            "id": "CMCC_ToEMM_Economics",
+            "fullname": "Economics ToE Meta-Model",
+            "name": "Economics ToE Meta-Model",
+            "description": "A computational model for economic agents, markets, transactions, and supply-demand constraints.",
+            "nickname": "economics"
+          },
+          {
+            "id": "CMCC_ToEMM_Astronomy",
+            "fullname": "Astronomy ToE Meta-Model",
+            "name": "Astronomy ToE Meta-Model",
+            "description": "An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.",
+            "nickname": "astronomy"
+          },
+          {
+            "id": "CMCC_ToEMM_Geology",
+            "fullname": "Geology oE Meta-Model",
+            "name": "Geology",
+            "description": "A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.",
+            "nickname": "geology"
+          },
+          {
+            "id": "CMCC_ToEMM_Medicine",
+            "fullname": "Medicine and Healthcare ToE Meta-Model",
+            "name": "Medicine & Healthcare ToE Meta-Model",
+            "description": "A unified model capturing foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and analytics.",
+            "nickname": "medicine"
+          },
+          {
+            "id": "CMCC_ToEMM_Legal",
+            "fullname": "Legal Systems & Compliance ToE Meta-Model",
+            "name": "Legal Systems & Compliance ToE Meta-Model",
+            "description": "A unified model for legal systems, contracts, statutory frameworks, and regulatory compliance.",
+            "nickname": "legal"
+          },
+          {
+            "id": "CMCC_ToEMM_Climate",
+            "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
+            "name": "Climate Science ToE Meta-Model",
+            "description": "A unified model for climate science and environmental modeling, capturing climate variables, ecosystems, pollution sources, and environmental data.",
+            "nickname": "climate"
+          },
+          {
+            "id": "CMCC_ToEMM_Cybersecurity",
+            "fullname": "Cybersecurity ToE Meta-Model",
+            "name": "Cybersecurity ToE Meta-Model",
+            "description": "A unified model for cybersecurity covering threat models, vulnerabilities, IT asset mappings, incident logs, and security audits.",
+            "nickname": "cybersecurity"
+          },
+          {
+            "id": "CMCC_ToEMM_Sociology",
+            "fullname": "Sociology and Anthropology ToE Meta-Model",
+            "name": "Sociology & Anthropology ToE Meta-Model",
+            "description": "A structured model capturing social structures, cultural norms, and interaction networks using survey data, demographic records, and social network relationships.",
+            "nickname": "sociology"
+          }
+        ]
+      }
+    }
+  }
+  

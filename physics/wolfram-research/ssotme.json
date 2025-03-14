@@ -1,0 +1,23 @@
+{
+  "ShowHidden": false,
+  "ShowAllFiles": false,
+  "Name": "wolfram-research",
+  "ProjectSettings": [
+    {
+      "Name": "project-name",
+      "Value": "wolfram-research"
+    }
+  ],
+  "ProjectTranspilers": [
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "",
+      "CommandLine": "json-hbars-transform -i .\\SSoT\\wolfram-language-cmcc-meta-model.json -i ..\\..\\tools\\domain-README.hbars"
+    }
+  ]
+}
