@@ -200,7 +200,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "/research/baseball",
-      "CommandLine": "json-hbars-transform -i .\\baseball-meta-model.json -i ..\\..\\tools\\domain-README.hbars"
+      "CommandLine": "json-hbars-transform -i .\\baseball-meta-model.json -i ..\\..\\tools\\json-toemm-to-python-helper.py -i .\\baseball-meta-model.json -o baseball-cmcc-sdk.py"
     }
   ]
 }
