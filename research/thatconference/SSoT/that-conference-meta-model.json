@@ -1,43 +1,41 @@
 {
   "id": "CMCC_ToEMM_Conferencing",
   "meta-model": {
-    "name": "Conference ToE Meta Model",
-    "description": "A unified meta-model capturing the domain of conferences—days, rooms, sessions, speakers, schedules, and real-time event logic—within a purely declarative structure. All domain rules (like session overlap, room capacity, speaker scheduling, or day closures) are expressed using lookups, aggregations, constraints, and event-based facts—no imperative instructions.",
-    "version": "v1.0",
+    "name": "Conference ToE Meta Model (Extended)",
+    "description": "A unified meta-model capturing the domain of conferences—days, rooms, sessions, speakers, schedules, real-time event logic—now extended with 25 new inferences expressed as purely declarative fields, lookups, and aggregator definitions.",
+    "version": "v1.0-extended",
     "nickname": "conferencing",
     "meta": {
-      "title": "Conference ToE Meta-Model",
+      "title": "Conference ToE Meta-Model (Extended)",
       "subtitle": "A 100% Declarative Framework for Multi-day Events",
       "date": "March 2025",
-      "abstract": "This model demonstrates how to manage real-world conferences—sessions, speakers, rooms, sponsors, daily schedules—strictly through declarative definitions. Instead of imperative ‘start session now’ or ‘end session now’ code, we rely on aggregator fields and event records (e.g., SessionStartEvent) that reflect real-time facts about what is happening. Conflicts, availability, capacity, and daily or session-level transitions are derived from data-based constraints and aggregator formulas.",
+      "abstract": "This model extends the original conference schema to illustrate 25 new inferences, each implemented via aggregator fields, constraints, or new event entities. We adhere strictly to the CMCC principle of data-driven domain logic, adding features like day-level check-ins, sponsor policy checks, advanced concurrency detection, and more—still purely declarative.",
       "executive_summary": {
         "key_points": [
-          "Models a conference’s day-to-day operations (room usage, session scheduling, speaker concurrency) as pure aggregator or lookup-based logic.",
-          "Eliminates stepwise imperative procedures (e.g., ‘increment time’ or ‘mark session ended’). All logic is triggered by the presence/absence of event records or derived constraints.",
-          "Supports arbitrary complexity: multi-track agendas, sponsor-driven sessions, daily wrap-ups, or even real-time session expansions can be captured by additional aggregator fields and events.",
-          "Makes it easy to identify conflicts (double-booked rooms, overlapping speaker schedules) simply by referencing the aggregator or constraint outputs."
+          "Maintains a purely declarative logic style for session concurrency, capacity, sponsor, and time-based calculations.",
+          "Introduces new aggregator fields for real-time analysis (peak usage, average durations, overlapping speaker checks).",
+          "Adds a new event entity (AttendeeDayCheckInEvent) for daily presence tracking.",
+          "Demonstrates how to expand the domain model by simply defining new aggregator or constraint logic—no imperative code."
         ],
         "implications": [
-          "Simplifies the code needed to orchestrate an event. The data itself drives all ‘what is happening now’ logic.",
-          "Enables advanced analytics in real-time—when your aggregator fields detect a capacity breach, or a session is auto-flagged as ‘running long,’ no custom code is required.",
-          "Permits high-level additions (keynotes, sponsor sessions, brand new tracks) by simply adding more entities and aggregator fields referencing the same underlying structure."
+          "Enhances real-time data insights without rewriting any procedural code.",
+          "Shows the ease of domain model growth: new rules, new event types, new aggregator fields, all purely data-based."
         ],
         "narrative": [
           {
-            "title": "Purely Declarative Day-to-Day Conference Operations",
+            "title": "Extended Declarative Features",
             "content": [
-              "In this version, we avoid any imperative instructions like ‘if session is finished, set session.status=ENDED.’ Instead, a session’s status is derived from the time window, actual recorded events, or constraints. If the current time is beyond the scheduled end time and no SessionExtensionEvent is present, the aggregator logic sees that the session must be over. That same aggregator logic might also note if a sponsor event forced an extended Q&A, and we can reflect that purely by the presence of a SessionExtendedEvent record.",
-              "All day-to-day tasks—closing out a room at the end of the day, switching from one session to the next, or verifying that a speaker is not double-booked—are performed by constraints, lookups, or aggregator fields referencing the same data. This matches exactly how CMCC prescribes purely declarative domain logic: no step-by-step commands, just ‘statements of truth’ about room capacity, time slots, concurrency, and more."
+              "This extended version of the Conference ToE Meta Model introduces a wide variety of aggregator fields—some measure daily usage (peak capacity, most-attended session), some track advanced speaker or attendee behaviors (overlapping sessions, day-level check-ins). The entire domain remains purely declarative: everything from forced early session endings to sponsor policies is expressed as constraints, aggregator formulas, or event records."
             ]
           }
         ],
         "addressing_concerns_preemptively": {
-          "what_not_how": "We only declare WHAT conditions define a session in progress, or WHAT constraints define room capacity. We do not prescribe HOW the system enforces them or halts an overflow—these details belong to the runtime engine.",
-          "time": "We treat time as another dimension—start/end timestamps exist in data; aggregator fields can determine if a session is ‘live.’",
-          "rulebook_not_the_runtime": "This entire schema is the rulebook; it says WHAT must be true for each entity or relationship (e.g., a speaker can’t speak in two sessions at once). Implementation details belong to whatever system enforces or checks these constraints in real-time.",
-          "scaleability_performance": "No matter how large the conference or how complicated the schedule, the data relationships (and aggregator fields) remain the same conceptual definitions. The runtime engine can implement them however it sees fit.",
-          "reality_is_the_best_runtime_engine": "At an actual conference, events happen in the physical world. We simply capture them as data for aggregator fields and constraints to interpret. Exactly how a check-in app is built or how a kiosk prints name badges does not affect the conceptual model.",
-          "bright_red_lines": "We separate the domain definitions (schema, aggregator fields, constraints) from the runtime. Changing the domain—like adding a new session type or new concurrency rule—doesn’t require rewriting imperative code. It’s just adding or changing facts in the model."
+          "what_not_how": "We continue to specify WHAT must be true in the domain. Implementation details about how to evaluate these aggregator fields remain outside this schema.",
+          "time": "Time logic (e.g., active sessions, day check-in durations) is captured as aggregator formulas referencing CURRENT_TIME. No step-by-step time iteration needed.",
+          "rulebook_not_the_runtime": "The schema remains the rulebook. The runtime or engine enforces or checks these purely declarative rules in real-time.",
+          "scaleability_performance": "Even with additional aggregator fields, the conceptual approach remains: data + aggregator logic. Performance optimization is an implementation detail.",
+          "reality_is_the_best_runtime_engine": "Real attendees and sessions happen in the physical venue; we only capture them as facts. We trust the engine to keep aggregator fields updated in real-time.",
+          "bright_red_lines": "These new aggregator fields and the new event entity do not break the separation of domain definitions from the runtime. No new imperative instructions—just new data facts."
         }
       }
     },
@@ -45,7 +43,7 @@
       "entities": [
         {
           "name": "Conference",
-          "description": "Represents a multi-day event. Tracks overall name, location, included days, sponsor assignments, and high-level aggregator fields (e.g., total sessions).",
+          "description": "Represents a multi-day event. Tracks overall name, location, included days, sponsor assignments, and aggregator fields (e.g., total sessions).",
           "fields": [
             {
               "name": "id",
@@ -119,7 +117,7 @@
             {
               "name": "maxConcurrentSessions",
               "type": "rollup",
-              "description": "The maximum number of sessions that are simultaneously running at any point in time. Implementation conceptual (requires scanning session overlaps).",
+              "description": "The maximum number of sessions that are simultaneously running at any point in time. Implementation conceptual.",
               "formula": "CALCULATE_MAX_OVERLAPPING_SESSIONS(all sessions in this conference)"
             },
             {
@@ -133,13 +131,43 @@
               "type": "rollup",
               "description": "True if all days in the conference are complete.",
               "formula": "NOT EXISTS(ConferenceDay WHERE conferenceId=this.id AND isDayComplete=false)"
+            },
+            {
+              "name": "peakDailyCapacityUsed",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: The maximum of capacityUsed among all days in this conference.",
+              "formula": "MAX(days.capacityUsed)"
+            },
+            {
+              "name": "averageSessionDurationMinutes",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: The average scheduled duration (in minutes) of all sessions in this conference.",
+              "formula": "AVERAGE(Session.sessionDurationMinutes WHERE dayId in days)"
+            },
+            {
+              "name": "conferenceHasKeynotes",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if at least one session is a KEYNOTE.",
+              "formula": "EXISTS(Session WHERE sessionType='KEYNOTE' AND dayId in days)"
+            },
+            {
+              "name": "totalUniqueAttendees",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: Distinct count of attendee IDs across all SessionAttendanceEvents within this conference.",
+              "formula": "COUNT(DISTINCT(SessionAttendanceEvent.attendeeId) WHERE sessionId.dayId.conferenceId = this.id)"
+            },
+            {
+              "name": "isConferenceActiveNow",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if any session isInProgress=true or any day isDayActive=true for this conference.",
+              "formula": "EXISTS(ConferenceDay WHERE conferenceId=this.id AND isDayActive=true)"
             }
           ],
           "lambdas": [
             {
               "name": "closeConference",
               "parameters": [],
-              "description": "// DECLARATIVE: If all days are done, the conference is effectively 'closed'—no imperative update needed, aggregator isConferenceComplete covers it.",
+              "description": "// DECLARATIVE: If all days are done, the conference is effectively 'closed'—covered by aggregator isConferenceComplete.",
               "formula": "IF (isConferenceComplete=true) THEN (Conference.status='CLOSED')"
             }
           ],
@@ -147,7 +175,7 @@
         },
         {
           "name": "ConferenceDay",
-          "description": "Represents a single day in the conference schedule. Tied to date(s), and contains references to sessions, breaks, or special events.",
+          "description": "Represents a single day in the conference schedule. Tied to date(s), references sessions, breaks, or special events.",
           "fields": [
             {
               "name": "id",
@@ -207,7 +235,7 @@
             {
               "name": "isDayActive",
               "type": "rollup",
-              "description": "True if current time is between day start and end, or if any session is still running. Implementation conceptual.",
+              "description": "True if current time is between day start/end or if any session is still running.",
               "formula": "(CURRENT_TIME >= startTime AND CURRENT_TIME <= endTime) OR runningSessionsNow>0"
             },
             {
@@ -219,27 +247,51 @@
             {
               "name": "capacityUsed",
               "type": "rollup",
-              "description": "An approximate aggregator for how many total seats are in use across all simultaneously running sessions. Implementation conceptual (requires sum of sessionAttendeeCount).",
+              "description": "Approx. aggregator for how many total seats are in use across currently running sessions.",
               "formula": "SUM(sessions.sessionAttendeeCount WHERE isInProgress=true)"
             },
             {
               "name": "hasScheduledBreaks",
               "type": "rollup",
-              "description": "Indicates if any session is flagged as a break or meal. Implementation conceptual if sessions have a 'sessionType'.",
+              "description": "Indicates if any session is flagged as a break/meal on this day.",
               "formula": "EXISTS(sessions WHERE sessionType='BREAK' OR sessionType='MEAL')"
+            },
+            {
+              "name": "occupiedRoomCount",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: How many rooms are currently occupied (i.e., have an in-progress session) on this day.",
+              "formula": "COUNT(DISTINCT sessions.roomId WHERE sessions.isInProgress=true)"
+            },
+            {
+              "name": "mostAttendedSession",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: The ID of the session with the highest sessionAttendeeCount on this day. Implementation conceptual if ties exist.",
+              "formula": "FIND_MAX(sessions, sessionAttendeeCount)"
+            },
+            {
+              "name": "dayLongestSession",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: The session with the largest scheduled duration on this day.",
+              "formula": "FIND_MAX(sessions, sessionDurationMinutes)"
+            },
+            {
+              "name": "dayHasSponsorSessions",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if any session on this day has hasSponsorHighlight=true.",
+              "formula": "EXISTS(sessions WHERE hasSponsorHighlight=true)"
             }
           ],
           "lambdas": [
             {
               "name": "startDay",
               "parameters": [],
-              "description": "// DECLARATIVE: Day is considered started if current time >= startTime. No imperative instruction needed.",
+              "description": "// DECLARATIVE: Day is considered started if CURRENT_TIME >= startTime.",
               "formula": "IF (CURRENT_TIME >= this.startTime) THEN (this.isDayActive=true)"
             },
             {
               "name": "endDay",
               "parameters": [],
-              "description": "// DECLARATIVE: Day ends when all sessions are done and current time > endTime. No imperative step—just aggregator isDayComplete.",
+              "description": "// DECLARATIVE: Day ends when all sessions are done and current time > endTime.",
               "formula": "IF (this.isDayComplete=true) THEN (DayStatus='ENDED')"
             }
           ],
@@ -247,7 +299,7 @@
         },
         {
           "name": "Room",
-          "description": "A physical location or room in which sessions can be held. Tracks capacity, A/V requirements, location details, etc.",
+          "description": "A physical location or room for sessions. Tracks capacity, A/V, etc.",
           "fields": [
             {
               "name": "id",
@@ -267,7 +319,7 @@
               "name": "roomName",
               "type": "scalar",
               "datatype": "string",
-              "description": "Name or label for this room (e.g., 'Room 101' or 'Main Hall')."
+              "description": "Name or label for this room (e.g., 'Room 101')."
             },
             {
               "name": "capacity",
@@ -295,21 +347,27 @@
             {
               "name": "totalSessionsInRoom",
               "type": "rollup",
-              "description": "Number of sessions scheduled in this room across all days of the conference.",
+              "description": "Number of sessions scheduled in this room across all days.",
               "formula": "COUNT(sessions)"
             },
             {
               "name": "roomUtilizationRate",
               "type": "rollup",
-              "description": "Calculated ratio of how many hours this room is in use vs. total conference hours. Implementation conceptual.",
+              "description": "Calculated ratio of how many hours this room is in use vs. total conference hours. Conceptual.",
               "formula": "CALCULATE_ROOM_UTILIZATION(this.id)"
+            },
+            {
+              "name": "roomIsCurrentlyOccupied",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if currentSession is in progress (i.e. isInProgress=true).",
+              "formula": "EXISTS(currentSession WHERE isInProgress=true)"
             }
           ],
           "lambdas": [
             {
               "name": "assignSession",
               "parameters": ["sessionId"],
-              "description": "// DECLARATIVE: If a Session references this roomId, it’s assigned. No imperative 'assign' call needed.",
+              "description": "// DECLARATIVE: If a Session references this roomId, it’s assigned.",
               "formula": "Session(sessionId).roomId = this.id"
             }
           ],
@@ -323,7 +381,7 @@
         },
         {
           "name": "Session",
-          "description": "A single talk, workshop, panel, or break event within the conference, assigned to a day and a room, with start/end times and a set of speakers.",
+          "description": "A single talk, workshop, panel, or break event within the conference day/room assignment.",
           "fields": [
             {
               "name": "id",
@@ -382,7 +440,7 @@
               "name": "speakers",
               "target_entity": "Speaker",
               "type": "many_to_many",
-              "description": "Which speaker(s) are leading this session. Usually one or more, depending on type."
+              "description": "Which speaker(s) are leading this session."
             },
             {
               "name": "attendeeEvents",
@@ -396,20 +454,20 @@
             {
               "name": "isInProgress",
               "type": "rollup",
-              "description": "Session is in progress if current time is between start/end and not canceled or forcibly ended.",
+              "description": "Session is in progress if current time is between start/end and not canceled.",
               "formula": "(CURRENT_TIME >= startTime AND CURRENT_TIME < endTime) AND (isCanceled=false)"
             },
             {
               "name": "isCompleted",
               "type": "rollup",
-              "description": "True if current time >= endTime or session was forcibly ended, and not canceled.",
+              "description": "True if current time >= endTime or a SessionEndEvent ended it, and not canceled.",
               "formula": "((CURRENT_TIME >= endTime) OR (EXISTS(SessionEndEvent WHERE sessionId=this.id))) AND (isCanceled=false)"
             },
             {
               "name": "sessionDurationMinutes",
               "type": "rollup",
               "description": "Number of minutes from scheduled start to scheduled end.",
-              "formula": "TIMEDIFF(endTime, startTime) // in minutes"
+              "formula": "TIMEDIFF(endTime, startTime)"
             },
             {
               "name": "sessionAttendeeCount",
@@ -426,33 +484,51 @@
             {
               "name": "hasSponsorHighlight",
               "type": "rollup",
-              "description": "If a sponsor is officially associated with the session. Implementation conceptual—maybe a join table or a sessionType indicating sponsorship.",
+              "description": "If a sponsor is officially associated with the session. Implementation conceptual.",
               "formula": "EXISTS(SponsorSessionAssignment WHERE sessionId=this.id)"
             },
             {
               "name": "minutesOverrun",
               "type": "rollup",
-              "description": "How many minutes the session has run past its scheduled endTime, if still in progress. 0 if not overrunning.",
+              "description": "How many minutes the session has run past its scheduled endTime, if still in progress.",
               "formula": "IF (CURRENT_TIME > endTime AND isInProgress=true) THEN (TIMEDIFF(CURRENT_TIME, endTime)) ELSE 0"
             },
             {
               "name": "isFull",
               "type": "rollup",
-              "description": "True if sessionAttendeeCount >= assigned Room.capacity (i.e., room limit reached).",
+              "description": "True if sessionAttendeeCount >= assigned Room.capacity.",
               "formula": "sessionAttendeeCount >= (SELECT capacity FROM Room WHERE id=roomId)"
+            },
+            {
+              "name": "sessionHasEndedEarly",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if a SessionEndEvent with forcedEndTime < scheduled endTime exists.",
+              "formula": "EXISTS(SessionEndEvent WHERE sessionId=this.id AND forcedEndTime < endTime)"
+            },
+            {
+              "name": "actualEndTime",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: The earliest of endTime or forcedEndTime from SessionEndEvent (if any). Implementation conceptual.",
+              "formula": "IF (EXISTS(SessionEndEvent WHERE sessionId=this.id)) THEN MIN(endTime, SessionEndEvent.forcedEndTime) ELSE endTime"
+            },
+            {
+              "name": "speakersPresentNow",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: Lists speakers if session isInProgress=true. Implementation conceptual.",
+              "formula": "IF (isInProgress=true) THEN (speakers) ELSE []"
             }
           ],
           "lambdas": [
             {
               "name": "cancelSession",
               "parameters": [],
-              "description": "// DECLARATIVE: If a session is canceled, set isCanceled=true. Implementation sets a fact; no imperative step needed beyond storing that fact.",
+              "description": "// DECLARATIVE: Setting isCanceled=true.",
               "formula": "this.isCanceled = true"
             },
             {
               "name": "extendSession",
               "parameters": ["newEndTime"],
-              "description": "// DECLARATIVE: If we want to go longer, the session’s endTime is updated. No step-by-step logic, just a new fact that endTime is different.",
+              "description": "// DECLARATIVE: If we want to go longer, we set a new endTime fact.",
               "formula": "this.endTime = newEndTime"
             }
           ],
@@ -476,7 +552,7 @@
         },
         {
           "name": "Speaker",
-          "description": "An individual presenting at one or more sessions in the conference. Tied to a single conference but can appear in multiple sessions.",
+          "description": "An individual presenting at one or more sessions in the conference.",
           "fields": [
             {
               "name": "id",
@@ -523,7 +599,7 @@
             {
               "name": "sessionsToday",
               "type": "rollup",
-              "description": "Number of sessions the speaker has on the current calendar day, if any. Implementation conceptual (filter by day == today).",
+              "description": "Number of sessions the speaker has on the current calendar day.",
               "formula": "COUNT(sessions WHERE dayId.dayDate = CURRENT_DATE)"
             },
             {
@@ -531,13 +607,31 @@
               "type": "rollup",
               "description": "True if the speaker has at least one session currently in progress.",
               "formula": "EXISTS(sessions WHERE isInProgress=true)"
+            },
+            {
+              "name": "speakerHasOverlappingSessions",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if speaker has any pair of sessions that overlap.",
+              "formula": "CHECK_IF_SPEAKER_HAS_OVERLAPS(this.id)"
+            },
+            {
+              "name": "speakerHasConsecutiveSessions",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if the speaker has sessions back-to-back with insufficient buffer time.",
+              "formula": "CHECK_CONSECUTIVE_SESSIONS_WITH_BUFFER(this.id)"
+            },
+            {
+              "name": "totalSpeakingMinutes",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: Sum of sessionDurationMinutes for all sessions assigned to this speaker.",
+              "formula": "SUM(sessions.sessionDurationMinutes)"
             }
           ],
           "lambdas": [
             {
               "name": "assignToSession",
               "parameters": ["sessionId"],
-              "description": "// DECLARATIVE: If speaker is assigned to a session, we add them to the session’s ‘speakers’ many-to-many. No imperative step needed.",
+              "description": "// DECLARATIVE: Add this speaker to the session’s many-to-many speakers link.",
               "formula": "this.sessions += sessionId"
             }
           ],
@@ -545,7 +639,7 @@
         },
         {
           "name": "Attendee",
-          "description": "Individual attending the conference. (Note: We minimize registration details here—focus is on daily, in-session presence.)",
+          "description": "Individual attending the conference. Minimal registration details, focusing on presence at sessions and days.",
           "fields": [
             {
               "name": "id",
@@ -561,26 +655,52 @@
               "description": "Attendee’s full name."
             }
           ],
-          "lookups": [],
+          "lookups": [
+            {
+              "name": "attendeeDayCheckInRecords",
+              "target_entity": "AttendeeDayCheckInEvent",
+              "type": "one_to_many",
+              "join_condition": "AttendeeDayCheckInEvent.attendeeId = this.id",
+              "description": "// NEW INFERENCE: All day-level check-ins the attendee has performed."
+            }
+          ],
           "aggregations": [
             {
               "name": "currentSessionsJoined",
               "type": "rollup",
-              "description": "All sessions the attendee is currently checked into (and not checked out). Implementation conceptual referencing SessionAttendanceEvent.",
+              "description": "All sessions the attendee is currently checked into (not checked out). Implementation conceptual.",
               "formula": "SessionAttendanceEvent WHERE attendeeId=this.id AND checkOutTime=null => sessionId"
             },
             {
               "name": "isInsideConference",
               "type": "rollup",
-              "description": "Indicates if the attendee is physically on-site (has checked in for the day, for example). Implementation depends on day-level or session-level check-in events.",
+              "description": "Indicates if the attendee is physically on-site (per day-level or session-level check-in). Implementation depends on presence of check-in events.",
               "formula": "EXISTS(AttendeeCheckInEvent WHERE attendeeId=this.id AND checkOutTime=null)"
+            },
+            {
+              "name": "attendeeHasFutureSessions",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if attendee has at least one session with startTime > CURRENT_TIME. Implementation conceptual.",
+              "formula": "EXISTS(SessionAttendanceEvent WHERE attendeeId=this.id AND Session.startTime > CURRENT_TIME)"
+            },
+            {
+              "name": "attendeeTotalAttendanceTime",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: Sum of all attendanceDurationMinutes across this attendee’s SessionAttendanceEvents.",
+              "formula": "SUM(SessionAttendanceEvent.attendanceDurationMinutes WHERE attendeeId=this.id)"
+            },
+            {
+              "name": "attendeeLastSessionAttended",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: The most recent session (by checkIn or checkOut) the attendee has attended.",
+              "formula": "FIND_MOST_RECENT(SessionAttendanceEvent WHERE attendeeId=this.id => sessionId)"
             }
           ],
           "lambdas": [
             {
               "name": "checkIntoSession",
               "parameters": ["sessionId"],
-              "description": "// DECLARATIVE: Checking in means a new SessionAttendanceEvent is created with checkInTime=NOW. No imperative calls to increment a count.",
+              "description": "// DECLARATIVE: Checking in means a new SessionAttendanceEvent with checkInTime=NOW.",
               "formula": "SessionAttendanceEvent(attendeeId=this.id, sessionId=sessionId, checkInTime=NOW, checkOutTime=null)"
             }
           ],
@@ -588,7 +708,7 @@
         },
         {
           "name": "SessionAttendanceEvent",
-          "description": "Fact-based record indicating that a specific attendee joined (checkIn) or left (checkOut) a given session.",
+          "description": "Fact-based record that a specific attendee joined or left a given session.",
           "fields": [
             {
               "name": "id",
@@ -615,13 +735,13 @@
               "name": "checkInTime",
               "type": "scalar",
               "datatype": "datetime",
-              "description": "Timestamp when the attendee arrived. Null if not checked in."
+              "description": "Timestamp when the attendee arrived. Null if not checked in yet."
             },
             {
               "name": "checkOutTime",
               "type": "scalar",
               "datatype": "datetime",
-              "description": "Timestamp when the attendee left. Null if they’re still in session."
+              "description": "Timestamp when the attendee left. Null if still in session."
             }
           ],
           "lookups": [],
@@ -631,13 +751,19 @@
               "type": "rollup",
               "description": "How long the attendee was (or has been) in the session. If checkOutTime is null, partial duration up to now.",
               "formula": "IF (checkOutTime!=null) THEN TIMEDIFF(checkOutTime, checkInTime) ELSE TIMEDIFF(CURRENT_TIME, checkInTime)"
+            },
+            {
+              "name": "isCurrentlyCheckedIn",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if checkOutTime is null and checkInTime != null.",
+              "formula": "(checkInTime != null) AND (checkOutTime = null)"
             }
           ],
           "lambdas": [
             {
               "name": "checkOut",
               "parameters": [],
-              "description": "// DECLARATIVE: Checking out sets checkOutTime=NOW. The aggregator fields do the rest.",
+              "description": "// DECLARATIVE: Checking out sets checkOutTime=NOW.",
               "formula": "this.checkOutTime = NOW"
             }
           ],
@@ -651,7 +777,7 @@
         },
         {
           "name": "Sponsor",
-          "description": "Represents a sponsor (company or organization) for the conference. Minimal day-to-day logic, but relevant for sponsor sessions or booths.",
+          "description": "Represents a sponsor for the conference (e.g., a company or organization).",
           "fields": [
             {
               "name": "id",
@@ -677,7 +803,7 @@
               "name": "sponsorTier",
               "type": "scalar",
               "datatype": "string",
-              "description": "Sponsorship level: e.g., Platinum, Gold, or custom tiers."
+              "description": "Sponsorship level: e.g., Platinum, Gold, etc."
             }
           ],
           "lookups": [],
@@ -685,14 +811,20 @@
             {
               "name": "hasSponsoredSession",
               "type": "rollup",
-              "description": "Indicates if the sponsor is attached to any sessions. Implementation conceptual—would reference a SponsorSessionAssignment entity or similar.",
+              "description": "Indicates if the sponsor is attached to any sessions.",
               "formula": "EXISTS(SponsorSessionAssignment WHERE sponsorId=this.id)"
             },
             {
               "name": "assignedBooth",
               "type": "rollup",
-              "description": "If the sponsor has an allocated booth space. Implementation conceptual—another link entity or data field might define booth assignment.",
+              "description": "If the sponsor has an allocated booth space. Implementation conceptual.",
               "formula": "LOOKUP(BoothAssignment WHERE sponsorId=this.id => boothName)"
+            },
+            {
+              "name": "sponsorHasBoothAssignment",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: True if there's a BoothAssignment record for this sponsor.",
+              "formula": "EXISTS(BoothAssignment WHERE sponsorId=this.id)"
             }
           ],
           "lambdas": [],
@@ -700,7 +832,7 @@
         },
         {
           "name": "SessionEndEvent",
-          "description": "Event-based record that forcibly ends a session early (or triggers the session’s completion aggregator) for any reason. Purely optional usage.",
+          "description": "Event-based record that forcibly ends a session early (or triggers session completion).",
           "fields": [
             {
               "name": "id",
@@ -721,6 +853,12 @@
               "type": "scalar",
               "datatype": "string",
               "description": "Reason for ending: e.g. 'TechnicalIssue','Evacuation','TimeOverrun','SpeakerCancel'."
+            },
+            {
+              "name": "forcedEndTime",
+              "type": "scalar",
+              "datatype": "datetime",
+              "description": "// NEW INFERENCE: Actual time this forced-end event took effect. If earlier than session.endTime, sessionHasEndedEarly is true."
             }
           ],
           "lookups": [],
@@ -730,7 +868,7 @@
         },
         {
           "name": "ConferencePolicy",
-          "description": "Represents adjustable rules or global constraints for a conference: e.g., max session length, break intervals, or quiet hours. Used in aggregator constraints.",
+          "description": "Represents adjustable rules or global constraints for a conference.",
           "fields": [
             {
               "name": "id",
@@ -762,11 +900,18 @@
               "name": "roomChangeBufferMinutes",
               "type": "scalar",
               "datatype": "integer",
-              "description": "Time needed for a speaker to change rooms if they have sessions back-to-back in different rooms."
+              "description": "Time needed for a speaker to change rooms if they have sessions back-to-back."
             }
           ],
           "lookups": [],
-          "aggregations": [],
+          "aggregations": [
+            {
+              "name": "requiresSponsorApprovalForKeynotes",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: If true, any KEYNOTE session must have sponsor sign-off. Implementation conceptual.",
+              "formula": "GET_POLICY_VALUE('requiresSponsorApprovalForKeynotes')"
+            }
+          ],
           "lambdas": [],
           "constraints": [
             {
@@ -778,6 +923,62 @@
               "name": "enforceRoomTurnover",
               "formula": "CHECK_NO_OVERLAP_IN_ROOM_WITHOUT_BUFFER(roomChangeBufferMinutes, minBreakBetweenSessionsMinutes)",
               "error_message": "Sessions in the same room must have at least minBreakBetweenSessionsMinutes gap."
+            }
+          ]
+        },
+        {
+          "name": "AttendeeDayCheckInEvent",
+          "description": "// NEW ENTITY: Tracks an attendee’s day-level presence. Separate from session-level attendance.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for this day-level check-in record."
+            },
+            {
+              "name": "attendeeId",
+              "type": "lookup",
+              "target_entity": "Attendee",
+              "foreign_key": true,
+              "description": "Which attendee is checking in or out for a day."
+            },
+            {
+              "name": "dayId",
+              "type": "lookup",
+              "target_entity": "ConferenceDay",
+              "foreign_key": true,
+              "description": "Which day this check-in event applies to."
+            },
+            {
+              "name": "checkInTime",
+              "type": "scalar",
+              "datatype": "datetime",
+              "description": "When the attendee arrived for the day. Null if not yet arrived."
+            },
+            {
+              "name": "checkOutTime",
+              "type": "scalar",
+              "datatype": "datetime",
+              "description": "When the attendee left for the day. Null if still on-site."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [
+            {
+              "name": "dayCheckInDurationMinutes",
+              "type": "rollup",
+              "description": "// NEW INFERENCE: How long the attendee stayed for that day. Implementation conceptual.",
+              "formula": "IF (checkOutTime!=null) THEN TIMEDIFF(checkOutTime, checkInTime) ELSE TIMEDIFF(CURRENT_TIME, checkInTime)"
+            }
+          ],
+          "lambdas": [],
+          "constraints": [
+            {
+              "name": "mustCheckInBeforeCheckOut",
+              "formula": "(checkOutTime IS NULL) OR (checkOutTime >= checkInTime)",
+              "error_message": "Day checkOutTime cannot precede checkInTime."
             }
           ]
         }
@@ -902,7 +1103,8 @@
             "minBreakBetweenSessionsMinutes": 10,
             "roomChangeBufferMinutes": 5
           }
-        ]
+        ],
+        "AttendeeDayCheckInEvent": []
       }
     },
     "data": {
@@ -964,23 +1166,22 @@
         }
       ],
       "date": "March 2025",
-      "abstract": "Applying the CMCC approach to conferences reveals that day-to-day management—scheduling, room usage, concurrency checks, capacity enforcement—can all be expressed declaratively. Rather than writing code to ‘start’ or ‘end’ a session, or to ‘check capacity’ at runtime, the presence of aggregator fields and constraints ensures the data drives the logic. This approach scales to large multi-track, multi-day conferences with complex sponsor or session requirements.",
+      "abstract": "Applying CMCC to conferences and then extending it with new inferences reveals the ease of purely declarative expansions. All new logic—peak capacity usage, advanced checks on speakers/attendees, or day-level check-ins—is done by aggregator fields, constraints, or new events, never by imperative commands.",
       "executive_summary": {
         "key_points": [
-          "Follows the same purely declarative transformations used in the baseball example—no imperative code to manipulate session states or capacity counters.",
-          "Demonstrates how constraints can detect schedule conflicts or capacity overruns automatically.",
-          "Allows new rules or session types (e.g., sponsor demos, lightning talks) simply by adding more aggregator fields or events referencing the same schema."
+          "Follows a purely declarative expansions principle—no code rewriting needed for new domain logic.",
+          "25 new inferences illustrate typical, real-world expansions (sponsor rules, day check-ins, advanced concurrency checks)."
         ],
         "implications": [
-          "Event management becomes consistent and less error-prone—any violation (like overcapacity, double-booked speaker) is flagged instantly by a failing constraint.",
-          "Facilitates real-time analysis of session concurrency or day progress without custom logic or stepwise updates—just read aggregator fields."
+          "Event management is even more robust, covering daily check-in or forced session ends in real-time through data facts alone.",
+          "Any domain rule or aggregator can be added without changing the fundamental structure."
         ],
         "narrative": {
           "sections": [
             {
-              "title": "Executive Summary",
+              "title": "Extended Model Overview",
               "content": [
-                "By shifting to a fully declarative approach, conference organizers can run large, complicated events without micromanaging state transitions in code. The data store includes day schedules, sessions, speaker assignments, and capacity constraints. Aggregator fields tell us exactly how many people are in a session or if a session is over time. If a sponsor wants to run an ad-hoc session, it’s a matter of inserting new rows or relationships—no rewriting of core scheduling code. This approach is consistent with the CMCC principle: letting the data plus aggregator logic define the truth of the system at any moment."
+                "These 25 new inferences demonstrate how a purely declarative system is easily scaled. By adding new aggregator fields, constraints, and even a new entity (AttendeeDayCheckInEvent), we capture more nuance without resorting to any procedural logic. The domain remains consistent with the CMCC's notion that the data plus aggregator logic define the 'truth' at all times."
               ]
             }
           ]
@@ -998,7 +1199,7 @@
           "id": "CMCC_ToEMM_Conferencing",
           "fullname": "Conference ToE Meta-Model",
           "name": "Conference ToE Meta-Model",
-          "description": "The new structured model capturing the domain of large-scale conferences, focusing on day-to-day session management in a purely declarative style.",
+          "description": "Structured model capturing day-to-day session management in a purely declarative style.",
           "nickname": "conferencing"
         },
         {
