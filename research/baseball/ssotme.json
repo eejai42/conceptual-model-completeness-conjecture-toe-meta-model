@@ -1,0 +1,24 @@
+{
+  "ShowHidden": false,
+  "ShowAllFiles": false,
+  "Name": "baseball",
+  "ProjectSettings": [
+    {
+      "ProjectSettingId": "d6503074-fdbd-46c8-81ca-3008740009ad",
+      "Name": "project-name",
+      "Value": "baseball"
+    }
+  ],
+  "ProjectTranspilers": [
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/",
+      "CommandLine": "-exec \"python ./../../tools/json-toemm-to-python-helper.py -i ./baseball-meta-model.json -o baseball_cmcc_sdk.py\""
+    }
+  ]
+}

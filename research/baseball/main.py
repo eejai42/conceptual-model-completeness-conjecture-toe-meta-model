@@ -22,35 +22,22 @@ This script:
 """
 
 # We import our imaginary baseball CMCC SDK module.
-import baseball_cmcc_sdk
+from baseball_cmcc_sdk import *
 
 def main():
-    # 1) Create a new game
-    game = baseball_cmcc_sdk.Game()
+    game = Game()  # create a Game object
+    firstInning = Inning()
+    firstInning.inningNumber = 1
+    firstInning.gameId = game.id # this should be firstInning.game = game; (which should automatically add the inning to the game.innings.  All of the ids should be transparent.
+    game.innings.add(firstInning)  #if this is what's done, then the innings for the game will already be updated, but the inning will need to have it's "game" pointed back at the main game.
+
+    new_atbat = AtBat(inningHalfId=firstInning.id, batterId=..., pitcherId=...)
+
     
-    # 2) Start the first inning
-    #    We'll assume a method like game.start_inning(1).
-    game.start_inning(1)
-    print("Inning #1 started.")
+    new_atbat.pitches.add(Pitch(pitchResult='SWINGING_STRIKE'))
+    if new_atbat.batterHasStruckOut:
+        print("Batter struck out.")
 
-    # 3) Identify the current batter
-    #    We'll assume game.get_current_batter() returns a Player object.
-    current_batter = game.get_current_batter()
-    print(f"Current batter is: {current_batter.name}")
-
-    # 4) Simulate a strikeout
-    #    We'll assume the Player class has a method .strike_out() or .record_strikeout().
-    current_batter.strike_out()
-    print(f"{current_batter.name} has struck out.")
-
-    # 5) Move on to the next batter
-    #    Possibly a method like game.advance_to_next_batter().
-    game.advance_to_next_batter()
-    next_batter = game.get_current_batter()
-    print(f"Next batter is now: {next_batter.name}")
-
-    # End of demonstration
-    print("End of minimal baseball demonstration.")
 
 if __name__ == "__main__":
     main()

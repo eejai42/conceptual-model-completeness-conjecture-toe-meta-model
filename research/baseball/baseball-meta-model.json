@@ -39,2098 +39,2099 @@
           "bright_red_lines": "Separating out WHAT is true from HOW to make it true at runtime draws a BRIGHT RED LINE about what KIND of change is being made. Additionally, the types of changes that can be made to the model are also separated into two radically different types by another BRIGHT RED LINE. The first type of change is one where the domain is simply being extended. In these cases, the CI/CD pipeline will pick up those changes and they will simply be deployed to the dev/test environment. By contrast, if the domain itself is changed, because changing the schema or rules for a domain is a fundamentally different CATEGORY of change than simply adding another widget to the tens of thousands of widgets that are already in the datastore."
         }
       }
-    }
-  },
-  "schema": {
-    "entities": [
-      {
-        "name": "League",
-        "description": "Represents an organized group of baseball teams playing under the same rule set. Could be MLB, minor leagues, or an amateur league.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the league."
-          },
-          {
-            "name": "leagueName",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "The official or common name of the league."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "teams",
-            "target_entity": "Team",
-            "type": "one_to_many",
-            "join_condition": "Team.league_id = this.id",
-            "description": "Collection of Teams belonging to this league."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "teamCount",
-            "type": "rollup",
-            "formula": "COUNT(teams)",
-            "description": "Number of teams in this league."
-          },
-          {
-            "name": "totalGamesPlayed",
-            "type": "rollup",
-            "description": "Sum of all Games completed by all Teams in the league. Implementation conceptual, scanning each team's 'gamesPlayed'.",
-            "formula": "SUM(teams.gamesPlayed)"
-          },
-          {
-            "name": "bestTeam",
-            "type": "rollup",
-            "description": "The team with the highest win percentage in this league (declarative aggregator).",
-            "formula": "MAXBY(teams, t => t.winPercentage)"
-          },
-          {
-            "name": "worstTeam",
-            "type": "rollup",
-            "description": "The team with the lowest win percentage in this league (declarative aggregator).",
-            "formula": "MINBY(teams, t => t.winPercentage)"
-          },
-          {
-            "name": "averageTeamERA",
-            "type": "rollup",
-            "description": "The average ERA across all teams in this league. Implementation conceptual, could sum or average pitchers’ ERA or overall team ERA.",
-            "formula": "AVG(teams -> eachTeamERA)"
-          },
-          {
-            "name": "totalLeagueHomeRuns",
-            "type": "rollup",
-            "description": "The sum of all home runs hit by players on all teams in this league, purely data-based aggregator.",
-            "formula": "SUM(teams.roster -> careerHomeRuns)"
-          },
-          {
-            "name": "totalLeagueStolenBases",
-            "type": "rollup",
-            "description": "The sum of all stolen bases by players on all teams in this league.",
-            "formula": "SUM(teams.roster -> careerStolenBases)"
-          },
-          {
-            "name": "leagueOPSLeaders",
-            "type": "rollup",
-            "description": "Top 3 players in the league by OPS. Implementation conceptual using all rosters in this league.",
-            "formula": "TOPN(3, teams.roster, p => p.ops)"
-          },
-          {
-            "name": "leagueMinERA",
-            "type": "rollup",
-            "description": "Identifies the single pitcher in the league with the lowest ERA. Implementation conceptual—filters for pitchers only.",
-            "formula": "MINBY(teams.roster where playerIsPitcher=true, p => p.careerERA)"
-          },
-          {
-            "name": "mostCommonBattingHand",
-            "type": "rollup",
-            "description": "Identifies the batting hand (L, R, or S) that is most common among all players in the league's teams.",
-            "formula": "MODE(teams.roster.battingHand)"
-          },
-          {
-            "name": "leagueWalkToStrikeoutRatio",
-            "type": "rollup",
-            "description": "Computes total walks / total strikeouts across all players in the league. Conceptual aggregator.",
-            "formula": "SUM(teams.roster => careerWalks) / SUM(teams.roster => careerStrikeouts)"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "scheduleMatchups",
-            "parameters": [],
-            "description": "// CHANGED (DECLARATIVE): Instead of 'create' schedules, we declare that a 'ScheduledMatchup' entity must exist for each pair of teams. Implementation conceptual.",
-            "formula": "ALL_PAIRINGS(teams) => SHOULD_HAVE_ScheduledMatchup"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "Team",
-        "description": "A baseball team. Belongs to one League, has a roster of Players, and competes in Games.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the team."
-          },
-          {
-            "name": "teamName",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Name or nickname of the team."
-          },
-          {
-            "name": "league_id",
-            "type": "lookup",
-            "target_entity": "League",
-            "foreign_key": true,
-            "description": "Indicates which League this team belongs to."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "roster",
-            "target_entity": "Player",
-            "type": "one_to_many",
-            "join_condition": "Player.team_id = this.id",
-            "description": "All players currently on the team."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "rosterSize",
-            "type": "rollup",
-            "formula": "COUNT(roster)",
-            "description": "Number of players on the team's active roster."
-          },
-          {
-            "name": "gamesPlayed",
-            "type": "rollup",
-            "description": "Number of Games in which this team has participated (data-based aggregator).",
-            "formula": "COUNT(Game where (homeTeamId=this.id OR awayTeamId=this.id))"
-          },
-          {
-            "name": "wins",
-            "type": "rollup",
-            "description": "Count of Games this team has won (pure aggregator, no imperative updates).",
-            "formula": "COUNT(Game where (winnerId=this.id))"
-          },
-          {
-            "name": "losses",
-            "type": "rollup",
-            "description": "Count of Games this team has lost.",
-            "formula": "COUNT(Game where (loserId=this.id))"
-          },
-          {
-            "name": "winPercentage",
-            "type": "rollup",
-            "description": "wins / (wins + losses), if any games played. Null otherwise.",
-            "formula": "IF (gamesPlayed>0) THEN (wins / gamesPlayed) ELSE null"
-          },
-          {
-            "name": "averageTeamBattingAverage",
-            "type": "rollup",
-            "description": "The average batting average among all players on the roster, purely aggregator.",
-            "formula": "AVG(roster.careerBattingAverage)"
-          },
-          {
-            "name": "totalTeamRuns",
-            "type": "rollup",
-            "description": "Total runs scored by this team (across all games). Implementation conceptual.",
-            "formula": "SUM(GameInnings where offense=this.id => runsScored )"
-          },
-          {
-            "name": "totalTeamHomeRuns",
-            "type": "rollup",
-            "description": "Sum of home runs hit by all players on this team.",
-            "formula": "SUM(roster -> careerHomeRuns)"
-          },
-          {
-            "name": "totalTeamStolenBases",
-            "type": "rollup",
-            "description": "Sum of stolen bases by all players on this team.",
-            "formula": "SUM(roster -> careerStolenBases)"
-          },
-          {
-            "name": "averageFieldingPercentage",
-            "type": "rollup",
-            "description": "The team’s overall fielding percentage, averaging all players’ fielding percentages who actively field.",
-            "formula": "AVG(roster -> careerFieldingPercentage )"
-          },
-          {
-            "name": "winningPercentageInStadium",
-            "type": "rollup",
-            "description": "Team’s historical winning percentage in a given stadium—pure aggregator referencing stadium-based game data.",
-            "formula": "WIN_PCT_BY_STADIUM_FUNCTION(this.id)"
-          },
-          {
-            "name": "bestPitcher",
-            "type": "rollup",
-            "description": "Finds the pitcher on this team with the lowest ERA (pure aggregator).",
-            "formula": "MINBY(roster where playerIsPitcher=true, p => p.careerERA)"
-          },
-          {
-            "name": "totalWalks",
-            "type": "rollup",
-            "description": "Sums all walks drawn by players on this team.",
-            "formula": "SUM(roster => careerWalks)"
-          },
-          {
-            "name": "totalHitByPitch",
-            "type": "rollup",
-            "description": "Sums all HBP events for players on this team.",
-            "formula": "SUM(roster => careerHitByPitch)"
-          },
-          {
-            "name": "teamSluggingPct",
-            "type": "rollup",
-            "description": "Overall slugging percentage for the team, computed by summing total bases across all players and dividing by total at-bats.",
-            "formula": "(SUM(roster => totalBases) / SUM(roster => careerAtBats))"
-          },
-          {
-            "name": "homeRunsPerGame",
-            "type": "rollup",
-            "description": "Team’s home runs divided by the total games played, if gamesPlayed>0.",
-            "formula": "IF(gamesPlayed>0) THEN (totalTeamHomeRuns / gamesPlayed) ELSE null"
-          },
-          {
-            "name": "pitcherCount",
-            "type": "rollup",
-            "description": "Number of players on the roster who are pitchers (or have pitched). Implementation conceptual if 'playerIsPitcher' is known.",
-            "formula": "COUNT(roster WHERE playerIsPitcher=true)"
-          },
-          {
-            "name": "shutoutsAchieved",
-            "type": "rollup",
-            "description": "Count how many shutout wins this team has recorded. Conceptual aggregator scanning final games where runsAllowed=0.",
-            "formula": "COUNT(Game WHERE winnerId=this.id AND (IF homeTeamId=this.id THEN runsAway=0 ELSE runsHome=0))"
-          },
-          {
-            "name": "currentWinStreak",
-            "type": "rollup",
-            "description": "How many consecutive games (starting with the most recent) the team has won. Implementation conceptual, purely aggregator-based.",
-            "formula": "CALC_CURRENT_WIN_STREAK(this.id)"
-          },
-          {
-            "name": "pythagWinPct",
-            "type": "rollup",
-            "description": "Estimates winning percentage from runs scored vs. runs allowed (Pythagorean expectation).",
-            "formula": "IF(totalTeamRuns>0 OR runsAllowed>0) THEN (POWER(totalTeamRuns,2)/(POWER(totalTeamRuns,2)+POWER(runsAllowed,2))) ELSE null"
-          },
-          {
-            "name": "teamWalkRate",
-            "type": "rollup",
-            "description": "Walks drawn per plate appearance by the entire team.",
-            "formula": "totalWalks / totalPlateAppearances"
-          },
-          {
-            "name": "teamStrikeoutRate",
-            "type": "rollup",
-            "description": "Team-wide ratio of strikeouts to total plate appearances.",
-            "formula": "(COUNT(AtBat WHERE offenseTeam=this.id AND result='STRIKEOUT')) / totalPlateAppearances"
-          },
-          {
-            "name": "runsAllowed",
-            "type": "rollup",
-            "description": "Total runs allowed by this team across all games (aggregator from the defensive perspective).",
-            "formula": "SUM(GameInnings WHERE defenseTeamId=this.id => runsScored)"
-          },
-          {
-            "name": "hasExceededPitcherRosterLimit",
-            "type": "rollup",
-            "formula": "pitcherCount > 13"
-          },
-          {
-            "name": "currentlyHasDHAvailable",
-            "type": "rollup",
-            "formula": "NOT allDesignatedHittersUsedUp( this.id )"
-          },
-          {
-            "name": "teamErrorCount",
-            "type": "rollup",
-            "formula": "COUNT( ErrorEvent WHERE ErrorEvent.teamId = this.id )"
-          },
-          {
-            "name": "isOverLuxuryTaxCap",
-            "type": "rollup",
-            "formula": "TEAM_PAYROLL( this.id ) > LUXURY_TAX_THRESHOLD"
-          },
-          {
-            "name": "hasActiveChickenDancer",
-            "type": "rollup",
-            "formula": "EXISTS( Player WHERE Player.team_id = this.id AND Player.chickenStanceIndicator = true )"
-          },
+    },
+    "schema": {
+      "entities": [
+        {
+          "name": "League",
+          "description": "Represents an organized group of baseball teams playing under the same rule set. Could be MLB, minor leagues, or an amateur league.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the league."
+            },
+            {
+              "name": "leagueName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "The official or common name of the league."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "teams",
+              "target_entity": "Team",
+              "type": "one_to_many",
+              "join_condition": "Team.league_id = this.id",
+              "description": "Collection of Teams belonging to this league."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "teamCount",
+              "type": "rollup",
+              "formula": "COUNT(teams)",
+              "description": "Number of teams in this league."
+            },
+            {
+              "name": "totalGamesPlayed",
+              "type": "rollup",
+              "description": "Sum of all Games completed by all Teams in the league. Implementation conceptual, scanning each team's 'gamesPlayed'.",
+              "formula": "SUM(teams.gamesPlayed)"
+            },
+            {
+              "name": "bestTeam",
+              "type": "rollup",
+              "description": "The team with the highest win percentage in this league (declarative aggregator).",
+              "formula": "MAXBY(teams, t => t.winPercentage)"
+            },
+            {
+              "name": "worstTeam",
+              "type": "rollup",
+              "description": "The team with the lowest win percentage in this league (declarative aggregator).",
+              "formula": "MINBY(teams, t => t.winPercentage)"
+            },
+            {
+              "name": "averageTeamERA",
+              "type": "rollup",
+              "description": "The average ERA across all teams in this league. Implementation conceptual, could sum or average pitchers’ ERA or overall team ERA.",
+              "formula": "AVG(teams -> eachTeamERA)"
+            },
+            {
+              "name": "totalLeagueHomeRuns",
+              "type": "rollup",
+              "description": "The sum of all home runs hit by players on all teams in this league, purely data-based aggregator.",
+              "formula": "SUM(teams.roster -> careerHomeRuns)"
+            },
+            {
+              "name": "totalLeagueStolenBases",
+              "type": "rollup",
+              "description": "The sum of all stolen bases by players on all teams in this league.",
+              "formula": "SUM(teams.roster -> careerStolenBases)"
+            },
+            {
+              "name": "leagueOPSLeaders",
+              "type": "rollup",
+              "description": "Top 3 players in the league by OPS. Implementation conceptual using all rosters in this league.",
+              "formula": "TOPN(3, teams.roster, p => p.ops)"
+            },
+            {
+              "name": "leagueMinERA",
+              "type": "rollup",
+              "description": "Identifies the single pitcher in the league with the lowest ERA. Implementation conceptual—filters for pitchers only.",
+              "formula": "MINBY(teams.roster where playerIsPitcher=true, p => p.careerERA)"
+            },
+            {
+              "name": "mostCommonBattingHand",
+              "type": "rollup",
+              "description": "Identifies the batting hand (L, R, or S) that is most common among all players in the league's teams.",
+              "formula": "MODE(teams.roster.battingHand)"
+            },
+            {
+              "name": "leagueWalkToStrikeoutRatio",
+              "type": "rollup",
+              "description": "Computes total walks / total strikeouts across all players in the league. Conceptual aggregator.",
+              "formula": "SUM(teams.roster => careerWalks) / SUM(teams.roster => careerStrikeouts)"
+            }
+          ],
+          "lambdas": [
+            {
+              "name": "scheduleMatchups",
+              "parameters": [],
+              "description": "// CHANGED (DECLARATIVE): Instead of 'create' schedules, we declare that a 'ScheduledMatchup' entity must exist for each pair of teams. Implementation conceptual.",
+              "formula": "ALL_PAIRINGS(teams) => SHOULD_HAVE_ScheduledMatchup"
+            }
+          ],
+          "constraints": []
+        },
+        {
+          "name": "Team",
+          "description": "A baseball team. Belongs to one League, has a roster of Players, and competes in Games.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the team."
+            },
+            {
+              "name": "teamName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Name or nickname of the team."
+            },
+            {
+              "name": "league_id",
+              "type": "lookup",
+              "target_entity": "League",
+              "foreign_key": true,
+              "description": "Indicates which League this team belongs to."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "roster",
+              "target_entity": "Player",
+              "type": "one_to_many",
+              "join_condition": "Player.team_id = this.id",
+              "description": "All players currently on the team."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "rosterSize",
+              "type": "rollup",
+              "formula": "COUNT(roster)",
+              "description": "Number of players on the team's active roster."
+            },
+            {
+              "name": "gamesPlayed",
+              "type": "rollup",
+              "description": "Number of Games in which this team has participated (data-based aggregator).",
+              "formula": "COUNT(Game where (homeTeamId=this.id OR awayTeamId=this.id))"
+            },
+            {
+              "name": "wins",
+              "type": "rollup",
+              "description": "Count of Games this team has won (pure aggregator, no imperative updates).",
+              "formula": "COUNT(Game where (winnerId=this.id))"
+            },
+            {
+              "name": "losses",
+              "type": "rollup",
+              "description": "Count of Games this team has lost.",
+              "formula": "COUNT(Game where (loserId=this.id))"
+            },
+            {
+              "name": "winPercentage",
+              "type": "rollup",
+              "description": "wins / (wins + losses), if any games played. Null otherwise.",
+              "formula": "IF (gamesPlayed>0) THEN (wins / gamesPlayed) ELSE null"
+            },
+            {
+              "name": "averageTeamBattingAverage",
+              "type": "rollup",
+              "description": "The average batting average among all players on the roster, purely aggregator.",
+              "formula": "AVG(roster.careerBattingAverage)"
+            },
+            {
+              "name": "totalTeamRuns",
+              "type": "rollup",
+              "description": "Total runs scored by this team (across all games). Implementation conceptual.",
+              "formula": "SUM(GameInnings where offense=this.id => runsScored )"
+            },
+            {
+              "name": "totalTeamHomeRuns",
+              "type": "rollup",
+              "description": "Sum of home runs hit by all players on this team.",
+              "formula": "SUM(roster -> careerHomeRuns)"
+            },
+            {
+              "name": "totalTeamStolenBases",
+              "type": "rollup",
+              "description": "Sum of stolen bases by all players on this team.",
+              "formula": "SUM(roster -> careerStolenBases)"
+            },
+            {
+              "name": "averageFieldingPercentage",
+              "type": "rollup",
+              "description": "The team’s overall fielding percentage, averaging all players’ fielding percentages who actively field.",
+              "formula": "AVG(roster -> careerFieldingPercentage )"
+            },
+            {
+              "name": "winningPercentageInStadium",
+              "type": "rollup",
+              "description": "Team’s historical winning percentage in a given stadium—pure aggregator referencing stadium-based game data.",
+              "formula": "WIN_PCT_BY_STADIUM_FUNCTION(this.id)"
+            },
+            {
+              "name": "bestPitcher",
+              "type": "rollup",
+              "description": "Finds the pitcher on this team with the lowest ERA (pure aggregator).",
+              "formula": "MINBY(roster where playerIsPitcher=true, p => p.careerERA)"
+            },
+            {
+              "name": "totalWalks",
+              "type": "rollup",
+              "description": "Sums all walks drawn by players on this team.",
+              "formula": "SUM(roster => careerWalks)"
+            },
+            {
+              "name": "totalHitByPitch",
+              "type": "rollup",
+              "description": "Sums all HBP events for players on this team.",
+              "formula": "SUM(roster => careerHitByPitch)"
+            },
+            {
+              "name": "teamSluggingPct",
+              "type": "rollup",
+              "description": "Overall slugging percentage for the team, computed by summing total bases across all players and dividing by total at-bats.",
+              "formula": "(SUM(roster => totalBases) / SUM(roster => careerAtBats))"
+            },
+            {
+              "name": "homeRunsPerGame",
+              "type": "rollup",
+              "description": "Team’s home runs divided by the total games played, if gamesPlayed>0.",
+              "formula": "IF(gamesPlayed>0) THEN (totalTeamHomeRuns / gamesPlayed) ELSE null"
+            },
+            {
+              "name": "pitcherCount",
+              "type": "rollup",
+              "description": "Number of players on the roster who are pitchers (or have pitched). Implementation conceptual if 'playerIsPitcher' is known.",
+              "formula": "COUNT(roster WHERE playerIsPitcher=true)"
+            },
+            {
+              "name": "shutoutsAchieved",
+              "type": "rollup",
+              "description": "Count how many shutout wins this team has recorded. Conceptual aggregator scanning final games where runsAllowed=0.",
+              "formula": "COUNT(Game WHERE winnerId=this.id AND (IF homeTeamId=this.id THEN runsAway=0 ELSE runsHome=0))"
+            },
+            {
+              "name": "currentWinStreak",
+              "type": "rollup",
+              "description": "How many consecutive games (starting with the most recent) the team has won. Implementation conceptual, purely aggregator-based.",
+              "formula": "CALC_CURRENT_WIN_STREAK(this.id)"
+            },
+            {
+              "name": "pythagWinPct",
+              "type": "rollup",
+              "description": "Estimates winning percentage from runs scored vs. runs allowed (Pythagorean expectation).",
+              "formula": "IF(totalTeamRuns>0 OR runsAllowed>0) THEN (POWER(totalTeamRuns,2)/(POWER(totalTeamRuns,2)+POWER(runsAllowed,2))) ELSE null"
+            },
+            {
+              "name": "teamWalkRate",
+              "type": "rollup",
+              "description": "Walks drawn per plate appearance by the entire team.",
+              "formula": "totalWalks / totalPlateAppearances"
+            },
+            {
+              "name": "teamStrikeoutRate",
+              "type": "rollup",
+              "description": "Team-wide ratio of strikeouts to total plate appearances.",
+              "formula": "(COUNT(AtBat WHERE offenseTeam=this.id AND result='STRIKEOUT')) / totalPlateAppearances"
+            },
+            {
+              "name": "runsAllowed",
+              "type": "rollup",
+              "description": "Total runs allowed by this team across all games (aggregator from the defensive perspective).",
+              "formula": "SUM(GameInnings WHERE defenseTeamId=this.id => runsScored)"
+            },
+            {
+              "name": "hasExceededPitcherRosterLimit",
+              "type": "rollup",
+              "formula": "pitcherCount > 13"
+            },
+            {
+              "name": "currentlyHasDHAvailable",
+              "type": "rollup",
+              "formula": "NOT allDesignatedHittersUsedUp( this.id )"
+            },
+            {
+              "name": "teamErrorCount",
+              "type": "rollup",
+              "formula": "COUNT( ErrorEvent WHERE ErrorEvent.teamId = this.id )"
+            },
+            {
+              "name": "isOverLuxuryTaxCap",
+              "type": "rollup",
+              "formula": "TEAM_PAYROLL( this.id ) > LUXURY_TAX_THRESHOLD"
+            },
+            {
+              "name": "hasActiveChickenDancer",
+              "type": "rollup",
+              "formula": "EXISTS( Player WHERE Player.team_id = this.id AND Player.chickenStanceIndicator = true )"
+            },
+            {
+              "name": "dhSlotInUse",
+              "type": "rollup",
+              "description": "If the rule set has DH enabled and the team has at least one pitcher, a DH slot may be in use. This aggregator references the team's league's rule set for demonstration.",
+              "formula": "IF (this.league_id.ruleSetId.dhEnabled = true AND pitcherCount > 0) THEN 'DH Slot Active' ELSE 'No DH Slot'"
+            },
+            {
+              "name": "maxRosterSize",
+              "type": "rollup",
+              "description": "Specifies maximum roster size allowed by the rule set. Some leagues limit rosters to fewer players.",
+              "formula": "IF (this.league_id.ruleSetId.ruleSetName='LittleLeague_2025') THEN 14 ELSE 26"
+            },
+            {
+              "name": "extendedRosterAllowed",
+              "type": "rollup",
+              "description": "Indicates if additional players are permitted on the roster temporarily (some leagues allow expanded rosters in certain months).",
+              "formula": "IF (this.league_id.ruleSetId.ruleSetName='September_Expansions') THEN true ELSE false"
+            }
+          ],
+          "lambdas": [
+            {
+              "name": "addPlayerToRoster",
+              "parameters": ["player_id"],
+              "description": "// CHANGED (DECLARATIVE): Instead of 'Set Player.team_id = ...', we state a constraint/fact: 'Player.team_id' should match 'this.id'.",
+              "formula": "Player(team_id=player_id).team_id == this.id"
+            },
+            {
+              "name": "removePlayerFromRoster",
+              "parameters": ["player_id"],
+              "description": "// CHANGED (DECLARATIVE): In a purely declarative sense, removing means 'player.team_id = null' is a valid state. No imperative steps.",
+              "formula": "Player(player_id).team_id == null"
+            }
+          ],
+          "constraints": []
+        },
+        {
+          "name": "Player",
+          "description": "An individual who participates in baseball games, either as a position player, pitcher, or both.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the player."
+            },
+            {
+              "name": "fullName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Player's full name."
+            },
+            {
+              "name": "battingHand",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Indicates 'L', 'R', or 'S' (switch)."
+            },
+            {
+              "name": "throwingHand",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Indicates 'L' or 'R'."
+            },
+            {
+              "name": "team_id",
+              "type": "lookup",
+              "target_entity": "Team",
+              "foreign_key": true,
+              "description": "Which Team this player is currently on, if any."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "defensivePositions",
+              "target_entity": "DefensivePosition",
+              "type": "many_to_many",
+              "description": "All possible defensive positions the player can handle. Implementation: PlayerPosition join table or similar."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "careerAtBats",
+              "type": "rollup",
+              "formula": "COUNT( AtBat where (batterId=this.id) )",
+              "description": "How many official at-bats the player has had across all games."
+            },
+            {
+              "name": "careerHits",
+              "type": "rollup",
+              "description": "How many hits the player has recorded across all at-bats.",
+              "formula": "COUNT( AtBat where (batterId=this.id AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN']) )"
+            },
+            {
+              "name": "careerBattingAverage",
+              "type": "rollup",
+              "description": "(careerHits / careerAtBats). Null if no at-bats.",
+              "formula": "IF (careerAtBats>0) THEN (careerHits / careerAtBats) ELSE null"
+            },
+            {
+              "name": "careerPitchCount",
+              "type": "rollup",
+              "description": "Total number of pitches thrown by this player, if a pitcher.",
+              "formula": "COUNT( Pitch where (pitcherId=this.id) )"
+            },
+            {
+              "name": "careerStrikeoutsPitched",
+              "type": "rollup",
+              "description": "How many strikeouts the player (as pitcher) has recorded.",
+              "formula": "COUNT( AtBat where (pitcherId=this.id AND result='STRIKEOUT') )"
+            },
+            {
+              "name": "careerInningsPitched",
+              "type": "rollup",
+              "description": "Summation of partial innings if the player is a pitcher. Implementation conceptual.",
+              "formula": "AccumulateInningsFromOuts( sum_of_outs_where_pitcherId=this.id )"
+            },
+            {
+              "name": "onBasePercentage",
+              "type": "rollup",
+              "description": "OBP = (H + BB + HBP) / (AB + BB + HBP + SF). Implementation conceptual if advanced data is tracked.",
+              "formula": "IF (plateAppearances>0) THEN ((careerHits + careerWalks + careerHitByPitch) / (careerAtBats + careerWalks + careerHitByPitch + careerSacFlies)) ELSE null"
+            },
+            {
+              "name": "sluggingPercentage",
+              "type": "rollup",
+              "description": "Total bases / at-bats. Implementation conceptual if we track 2B,3B,HR, etc.",
+              "formula": "IF (careerAtBats>0) THEN (sumOfTotalBases / careerAtBats) ELSE null"
+            },
+            {
+              "name": "ops",
+              "type": "rollup",
+              "description": "On-base plus slugging, purely aggregator of the OBP + SLG fields.",
+              "formula": "onBasePercentage + sluggingPercentage"
+            },
+            {
+              "name": "stolenBasePercentage",
+              "type": "rollup",
+              "description": "stolenBases / (stolenBases + caughtStealing). Implementation conceptual if we track that data.",
+              "formula": "IF ((careerStolenBases + careerCaughtStealing) > 0) THEN (careerStolenBases / (careerStolenBases + careerCaughtStealing)) ELSE null"
+            },
+            {
+              "name": "isTwoWayPlayer",
+              "type": "rollup",
+              "description": "Boolean indicating if the player has pitched and also batted as a regular hitter. Implementation conceptual.",
+              "formula": "IF (careerInningsPitched > 0 AND careerAtBats > 0) THEN true ELSE false"
+            },
+            {
+              "name": "careerWalks",
+              "type": "rollup",
+              "description": "Count of times the player reached base via walk (BB).",
+              "formula": "COUNT( AtBat where batterId=this.id AND result='WALK' )"
+            },
+            {
+              "name": "careerHitByPitch",
+              "type": "rollup",
+              "description": "Count of times the player was hit by a pitch (HBP).",
+              "formula": "COUNT( AtBat where batterId=this.id AND result='HIT_BY_PITCH' )"
+            },
+            {
+              "name": "careerSacFlies",
+              "type": "rollup",
+              "description": "Count of official at-bats with a sac fly result.",
+              "formula": "COUNT( AtBat where batterId=this.id AND result='SAC_FLY')"
+            },
+            {
+              "name": "careerDoublePlaysGroundedInto",
+              "type": "rollup",
+              "description": "Number of times the player has grounded into a double play.",
+              "formula": "COUNT( AtBat where batterId=this.id AND result='GROUNDED_INTO_DOUBLE_PLAY')"
+            },
+            {
+              "name": "highestExitVelocity",
+              "type": "rollup",
+              "description": "Max exit velocity recorded for batted balls by this player (across all relevant at-bats).",
+              "formula": "MAX( AtBat where batterId=this.id => exitVelocity )"
+            },
+            {
+              "name": "lowestExitVelocity",
+              "type": "rollup",
+              "description": "Min exit velocity recorded for batted balls by this player.",
+              "formula": "MIN( AtBat where batterId=this.id => exitVelocity )"
+            },
+            {
+              "name": "careerSluggingPct",
+              "type": "rollup",
+              "description": "Slugging percentage across all at-bats in the player's career (total bases / careerAtBats). Implementation conceptual.",
+              "formula": "IF(careerAtBats>0) THEN (SUM_OF_PLAYER_TOTAL_BASES(this.id) / careerAtBats) ELSE null"
+            },
+            {
+              "name": "careerOPS",
+              "type": "rollup",
+              "description": "Career On-base plus slugging for this player: onBasePercentage + careerSluggingPct.",
+              "formula": "onBasePercentage + careerSluggingPct"
+            },
+            {
+              "name": "hitsAbove100ExitVelo",
+              "type": "rollup",
+              "description": "Number of hits where the exit velocity exceeded 100 mph.",
+              "formula": "COUNT( AtBat where batterId=this.id AND exitVelocity>100 AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN'])"
+            },
+            {
+              "name": "outsRecordedAsPitcher",
+              "type": "rollup",
+              "description": "How many outs this player has generated in a pitching role. Implementation conceptual—count OutEvents where pitcherId=this.id.",
+              "formula": "COUNT( OutEvent where (atBatId!=null AND AtBat.pitcherId=this.id) OR (someOtherPitcherOutRef) )"
+            },
+            {
+              "name": "totalBases",
+              "type": "rollup",
+              "description": "Sum of bases the player has earned via hits (1 for single, 2 for double, etc.). Implementation conceptual scanning all hits.",
+              "formula": "SUM( AtBat where batterId=this.id => mapHitToBases(result) )"
+            },
+            {
+              "name": "hasCycleInAnyGame",
+              "type": "rollup",
+              "description": "Indicates whether the player has ever completed a single, double, triple, and home run in the same game.",
+              "formula": "EXISTS(Game WHERE EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='SINGLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='DOUBLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='TRIPLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='HOMERUN']))"
+            },
+            {
+              "name": "longestHitStreak",
+              "type": "rollup",
+              "description": "The maximum consecutive-game hitting streak in the player's career.",
+              "formula": "CALCULATE_MAX_CONSECUTIVE_HIT_GAMES(playerId=this.id)"
+            },
+            {
+              "name": "longestOnBaseStreak",
+              "type": "rollup",
+              "description": "The maximum consecutive-game streak where the player reached base at least once (hit, walk, HBP, etc.).",
+              "formula": "CALCULATE_MAX_CONSECUTIVE_ONBASE_GAMES(playerId=this.id)"
+            },
+            {
+              "name": "careerIso",
+              "type": "rollup",
+              "description": "Isolated Power = slugging percentage - batting average.",
+              "formula": "IF(careerSluggingPct!=null AND careerBattingAverage!=null) THEN (careerSluggingPct - careerBattingAverage) ELSE null"
+            },
+            {
+              "name": "careerDoublePlaysTurned",
+              "type": "rollup",
+              "description": "How many double plays the player has been credited with turning on defense.",
+              "formula": "COUNT(OutEvent WHERE designation='DOUBLE_PLAY' AND fielderId=this.id)"
+            },
+            {
+              "name": "careerTriplePlaysTurned",
+              "type": "rollup",
+              "description": "How many triple plays the player has been credited with turning on defense.",
+              "formula": "COUNT(OutEvent WHERE designation='TRIPLE_PLAY' AND fielderId=this.id)"
+            },
+            {
+              "name": "careerMaxHomeRunDistance",
+              "type": "rollup",
+              "description": "Maximum recorded distance of any home run for this player.",
+              "formula": "MAX(AtBat WHERE batterId=this.id AND result='HOMERUN' => battedBallDistance)"
+            },
+            {
+              "name": "careerGrandSlams",
+              "type": "rollup",
+              "description": "Number of home runs with the bases loaded (4 RBI).",
+              "formula": "COUNT(AtBat WHERE batterId=this.id AND result='HOMERUN' AND baseStateBeforePitch='BASES_LOADED')"
+            },
+            {
+              "name": "careerWalkOffHits",
+              "type": "rollup",
+              "description": "Count of game-ending hits delivered by the player (walk-off singles, doubles, etc.).",
+              "formula": "COUNT(AtBat WHERE batterId=this.id AND result IN ['SINGLE','DOUBLE','TRIPLE','HOMERUN'] AND AtBatEndsGame=true)"
+            },
+            {
+              "name": "careerWOBA",
+              "type": "rollup",
+              "description": "Weighted On-Base Average, using established wOBA coefficients.",
+              "formula": "CALCULATE_WOBA(this.id)"
+            },
+            {
+              "name": "careerWRCPlus",
+              "type": "rollup",
+              "description": "Weighted Runs Created Plus, comparing player to league average = 100.",
+              "formula": "CALCULATE_WRC_PLUS(this.id, LEAGUE_OFFENSIVE_ENVIRONMENT)"
+            },
+            {
+              "name": "careerDefensiveErrors",
+              "type": "rollup",
+              "description": "Number of times the player committed an error (tracked via ErrorEvent).",
+              "formula": "COUNT(ErrorEvent WHERE fielderId=this.id)"
+            },
+            {
+              "name": "careerPlateAppearances",
+              "type": "rollup",
+              "description": "Comprehensive aggregator for all times the player came to bat, including walks, HBP, sacrifices, etc.",
+              "formula": "(careerAtBats + careerWalks + careerHitByPitch + careerSacFlies + careerSacBunts)"
+            },
+            {
+              "name": "careerDefensiveChances",
+              "type": "rollup",
+              "description": "Sum of outs plus errors for which this player was the fielder (defensive opportunities).",
+              "formula": "(COUNT(OutEvent WHERE fielderId=this.id) + careerDefensiveErrors)"
+            },
+            {
+              "name": "careerFieldingPercentage",
+              "type": "rollup",
+              "description": "Fielding percentage = (chances - errors) / chances, if chances > 0.",
+              "formula": "IF(careerDefensiveChances>0) THEN ((careerDefensiveChances - careerDefensiveErrors)/careerDefensiveChances) ELSE null"
+            },
+            {
+              "name": "careerSacBunts",
+              "type": "rollup",
+              "description": "Number of successful sacrifice bunts for the player.",
+              "formula": "COUNT(AtBat WHERE batterId=this.id AND result='SAC_BUNT')"
+            },
+            {
+              "name": "consecutiveGamesPlayedStreak",
+              "type": "rollup",
+              "formula": "CALCULATE_CONSECUTIVE_GAMES_PLAYED( this.id )"
+            },
+            {
+              "name": "chickenStanceIndicator",
+              "type": "rollup",
+              "formula": "EXISTS( WeirdStanceEvent WHERE WeirdStanceEvent.playerId = this.id )"
+            },
+            {
+              "name": "daysSinceLastRest",
+              "type": "rollup",
+              "formula": "CURRENT_DATE - lastRestDate( this.id )"
+            },
+            {
+              "name": "pitchCountLimitReached",
+              "type": "rollup",
+              "description": "Check if this player has reached the max pitch count from the rule set, if any.",
+              "formula": "IF (this.team_id.league_id.ruleSetId.maxPitchCount > 0) THEN (careerPitchCount >= this.team_id.league_id.ruleSetId.maxPitchCount) ELSE false"
+            },
+            {
+              "name": "isEligiblePitcher",
+              "type": "rollup",
+              "description": "If the player has not exceeded pitch count and is a pitcher, they're still eligible to pitch.",
+              "formula": "IF ((careerPitchCount < this.team_id.league_id.ruleSetId.maxPitchCount) AND playerIsPitcher=true) THEN true ELSE false"
+            },
+            {
+              "name": "daysRestRequired",
+              "type": "rollup",
+              "description": "Some youth leagues require rest days if a pitch limit is reached. Implementation conceptual.",
+              "formula": "IF (pitchCountLimitReached = true) THEN CALCULATE_REST_DAYS(careerPitchCount, lastTimePitched) ELSE 0"
+            },
+            {
+              "name": "isTooOldForLeague",
+              "type": "rollup",
+              "description": "Checks if the player is beyond the age limit if the rule set has an overAgeLimit flag. Implementation conceptual.",
+              "formula": "IF (this.team_id.league_id.ruleSetId.overAgeLimit = true AND BIRTHDATE_CHECK(this.id)) THEN true ELSE false"
+            }
+          ],
+          "lambdas": [
+            {
+              "name": "adjustBattingHand",
+              "parameters": ["newHand"],
+              "description": "// CHANGED (DECLARATIVE): Instead of imperative 'Set battingHand=newHand', we declare a constraint that the player's battingHand must match 'newHand'.",
+              "formula": "this.battingHand == newHand"
+            }
+          ],
+          "constraints": []
+        },
+        {
+          "name": "DefensivePosition",
+          "description": "A position on the baseball field, e.g. pitcher (1), catcher (2), shortstop (6), etc.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for the position (often '1','2','3','4','5','6','7','8','9' or 'DH')."
+            },
+            {
+              "name": "positionName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Descriptive name (Pitcher, Catcher, Shortstop, etc.)."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [],
+          "lambdas": [],
+          "constraints": []
+        },
+        {
+          "name": "Game",
+          "description": "Represents a single baseball game between two Teams, split into innings (top & bottom).",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the game."
+            },
+            {
+              "name": "homeTeamId",
+              "type": "lookup",
+              "target_entity": "Team",
+              "foreign_key": false,
+              "description": "Which team is playing at home."
+            },
+            {
+              "name": "awayTeamId",
+              "type": "lookup",
+              "target_entity": "Team",
+              "foreign_key": false,
+              "description": "Which team is visiting."
+            },
+            {
+              "name": "status",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Game status: e.g. 'SCHEDULED','IN_PROGRESS','FINAL'."
+            },
+            {
+              "name": "ruleSetId",
+              "type": "lookup",
+              "target_entity": "RuleSet",
+              "foreign_key": false,
+              "description": "Which set of rules applies to this specific game, referencing the RuleSet entity."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "innings",
+              "target_entity": "Inning",
+              "type": "one_to_many",
+              "join_condition": "Inning.gameId = this.id",
+              "description": "All Inning records associated with this Game."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "currentInningNumber",
+              "type": "rollup",
+              "description": "Highest inningNumber in innings that have started or are in progress.",
+              "formula": "IF innings != null THEN MAX(innings.inningNumber) ELSE null"
+            },
+            {
+              "name": "runsHome",
+              "type": "rollup",
+              "description": "Total runs scored by the home team, summing relevant half-innings for the home offense.",
+              "formula": "SUM( InningHalf.runsScored for all bottomHalves with offensiveTeamId=homeTeamId )"
+            },
+            {
+              "name": "runsAway",
+              "type": "rollup",
+              "description": "Total runs scored by the away team, summing relevant half-innings for the away offense.",
+              "formula": "SUM( InningHalf.runsScored for all topHalves with offensiveTeamId=awayTeamId )"
+            },
+            {
+              "name": "winnerId",
+              "type": "rollup",
+              "description": "If status='FINAL', whichever team has more runs. Null if tie or incomplete.",
+              "formula": "IF (status='FINAL') THEN (IF runsHome>runsAway THEN homeTeamId ELSE IF runsAway>runsHome THEN awayTeamId ELSE null) ELSE null"
+            },
+            {
+              "name": "loserId",
+              "type": "rollup",
+              "description": "Symmetric aggregator to winnerId; identifies losing team if final and not tied.",
+              "formula": "IF status='FINAL' AND runsHome!=runsAway THEN (IF winnerId=homeTeamId THEN awayTeamId ELSE homeTeamId) ELSE null"
+            },
+            {
+              "name": "totalPitchesInGame",
+              "type": "rollup",
+              "description": "Total number of pitches thrown in this game (pure aggregator across all at-bats).",
+              "formula": "COUNT( Pitch where pitch.atBatId.inningHalfId.inningId.gameId=this.id )"
+            },
+            {
+              "name": "hasWalkOffOpportunity",
+              "type": "rollup",
+              "description": "True if it's bottom of 9th+ with the home team trailing/tied so a scoring play could end the game. Implementation conceptual, purely declarative.",
+              "formula": "EVALUATE_WALKOFF_CONDITION(this.id)"
+            },
+            {
+              "name": "attendance",
+              "type": "rollup",
+              "description": "Reference or aggregator for game attendance, e.g., from an external record or data field.",
+              "formula": "LOOKUP_IN(GameAttendanceRecords, gameId=this.id => attendanceValue)"
+            },
+            {
+              "name": "isExtraInnings",
+              "type": "rollup",
+              "description": "Boolean indicating if the game went beyond the 9th inning.",
+              "formula": "MAX(innings.inningNumber) > 9"
+            },
+            {
+              "name": "largestLead",
+              "type": "rollup",
+              "description": "Maximum difference in runs between the two teams at any point in this game.",
+              "formula": "CALCULATE_LARGEST_LEAD(gameId=this.id)"
+            },
+            {
+              "name": "isShutout",
+              "type": "rollup",
+              "description": "True if one team finishes with 0 runs (and the game is FINAL).",
+              "formula": "IF (status='FINAL') THEN ((runsHome==0 AND runsAway>0) OR (runsAway==0 AND runsHome>0)) ELSE false"
+            },
+            {
+              "name": "shutoutTeamId",
+              "type": "rollup",
+              "description": "If the game is a shutout, indicates which team allowed 0 runs. Null if no shutout or tie at 0-0.",
+              "formula": "IF (isShutout=true) THEN (IF runsHome==0 THEN awayTeamId ELSE IF runsAway==0 THEN homeTeamId ELSE null) ELSE null"
+            },
+            {
+              "name": "totalWalksInGame",
+              "type": "rollup",
+              "description": "Count of all at-bats with 'result=WALK' in both halves across all innings for this game.",
+              "formula": "COUNT(AtBat WHERE inningHalfId.inningId.gameId=this.id AND result='WALK')"
+            },
+            {
+              "name": "leadChanges",
+              "type": "rollup",
+              "description": "How many times the lead switched from one team to another during this game.",
+              "formula": "CALCULATE_LEAD_CHANGES(gameId=this.id)"
+            },
+            {
+              "name": "tieCount",
+              "type": "rollup",
+              "description": "How many times the score returned to a tie after first pitch.",
+              "formula": "CALCULATE_TIE_COUNT(gameId=this.id)"
+            },
+            {
+              "name": "isTieGameInProgress",
+              "type": "rollup",
+              "formula": "(status = 'IN_PROGRESS') AND (runsHome = runsAway)"
+            },
+            {
+              "name": "manfredRunnerInEffect",
+              "type": "rollup",
+              "formula": "isExtraInnings = true AND leagueImplementsExtraInningRunnerRule( this.id )"
+            },
+            {
+              "name": "gameSuspendedDueToWeather",
+              "type": "rollup",
+              "formula": "EXISTS( SuspensionEvent WHERE gameId = this.id AND reason = 'WEATHER' )"
+            },
+            {
+              "name": "winningPitcherId",
+              "type": "rollup",
+              "formula": "CALC_WINNING_PITCHER( this.id )"
+            },
+            {
+              "name": "hadCycleAchieved",
+              "type": "rollup",
+              "formula": "EXISTS( BatterCycleEvent WHERE gameId = this.id )"
+            },
+            {
+              "name": "isMercyRuleTriggered",
+              "type": "rollup",
+              "description": "Indicates if a mercy rule is triggered based on the rule set. If mercyRuleEnabled is true and run differential >= 10 after the specified inning threshold.",
+              "formula": "IF (this.ruleSetId.mercyRuleEnabled = true AND currentInningNumber >= this.ruleSetId.mercyRuleInningThreshold AND ABS(runsHome - runsAway) >= 10) THEN true ELSE false"
+            },
+            {
+              "name": "limitedInnings",
+              "type": "rollup",
+              "description": "Specifies how many total innings are played in this rule set. Some youth leagues play only 6 or 7 innings.",
+              "formula": "IF (this.ruleSetId.ruleSetName='LittleLeague_2025') THEN 6 ELSE IF (this.ruleSetId.ruleSetName='HighSchool_2025') THEN 7 ELSE 9"
+            },
+            {
+              "name": "tieAllowed",
+              "type": "rollup",
+              "description": "Whether a tie is allowed in this rule set if the game is not resolved by a certain time or innings limit.",
+              "formula": "IF (this.ruleSetId.ruleSetName='Friendly_Rec_League') THEN true ELSE false"
+            },
+            {
+              "name": "useReplayReview",
+              "type": "rollup",
+              "description": "Whether official replay review is permitted in this rule set.",
+              "formula": "this.ruleSetId.usesReplayReview"
+            },
+            {
+              "name": "timeLimit",
+              "type": "rollup",
+              "description": "Specifies time limit in minutes if enforced. Some youth leagues have a 120 minute limit.",
+              "formula": "IF (this.ruleSetId.ruleSetName='LittleLeague_2025') THEN 120 ELSE null"
+            },
+            {
+              "name": "homeTeamBatsFirst",
+              "type": "rollup",
+              "description": "Some special tournaments might let the home team bat first. Usually false in standard baseball.",
+              "formula": "IF (this.ruleSetId.ruleSetName='SpecialTournament_2025') THEN true ELSE false"
+            },
+            {
+              "name": "skipBottomIfLeading",
+              "type": "rollup",
+              "description": "If true, skip bottom half if the home team is ahead after top of final inning. This is the standard MLB end condition, but some leagues do it differently.",
+              "formula": "IF (this.ruleSetId.ruleSetName='College_2025') THEN true ELSE false"
+            }
+          ],
+          "lambdas": [
+            {
+              "name": "startGame",
+              "parameters": [],
+              "description": "// CHANGED (DECLARATIVE): Instead of setting 'status=IN_PROGRESS', we define a constraint: if the game has begun, status must be 'IN_PROGRESS'.",
+              "formula": "IF (EXISTS(any pitch or any top inning started)) THEN (this.status == 'IN_PROGRESS')"
+            },
+            {
+              "name": "endGame",
+              "parameters": [],
+              "description": "// CHANGED (DECLARATIVE): Instead of setting 'status=FINAL', we define conditions for final. If 9+ innings done, runs differ, status must be 'FINAL'.",
+              "formula": "IF (CONDITIONS_FOR_GAME_COMPLETION) THEN (this.status == 'FINAL')"
+            },
+            {
+              "name": "startInning",
+              "parameters": ["inningNumber"],
+              "description": "// NEW: Declarative approach to 'starting' an inning by creating an Inning record for this game with the given inningNumber.",
+              "formula": "Inning(gameId=this.id, inningNumber=inningNumber) // NEW"
+            }
+          ],
+          "constraints": [
+            {
+              "name": "teamMismatch",
+              "formula": "homeTeamId != awayTeamId",
+              "error_message": "Home and away team cannot be the same."
+            }
+          ]
+        },
+        {
+          "name": "Inning",
+          "description": "A single inning in the game, typically has a top and bottom half unless extras are needed.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for this inning record."
+            },
+            {
+              "name": "gameId",
+              "type": "lookup",
+              "target_entity": "Game",
+              "foreign_key": true,
+              "description": "Which game this inning belongs to."
+            },
+            {
+              "name": "inningNumber",
+              "type": "scalar",
+              "datatype": "integer",
+              "description": "Which inning number (1..9, or extras)."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "top",
+              "target_entity": "InningHalf",
+              "type": "one_to_one",
+              "description": "The top half of this inning, if defined."
+            },
+            {
+              "name": "bottom",
+              "target_entity": "InningHalf",
+              "type": "one_to_one",
+              "description": "The bottom half of this inning, if defined."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "isComplete",
+              "type": "rollup",
+              "description": "True if top and bottom half are both complete, or if there's a walk-off scenario that ends the inning early.",
+              "formula": "top.isComplete AND (bottom==null OR bottom.isComplete)"
+            },
+            {
+              "name": "runsThisInning",
+              "type": "rollup",
+              "description": "Sum of runs in top and bottom half of this inning.",
+              "formula": "(IF top!=null THEN top.runsScored ELSE 0) + (IF bottom!=null THEN bottom.runsScored ELSE 0)"
+            },
+            {
+              "name": "averageExitVelocityInInning",
+              "type": "rollup",
+              "description": "Mean exit velocity of all batted balls (AtBat.exitVelocity) in top+bottom halves of this inning.",
+              "formula": "AVG(AtBat where AtBat.inningHalfId.inningId=this.id => exitVelocity)"
+            },
+            {
+              "name": "totalWalksInInning",
+              "type": "rollup",
+              "description": "Count of at-bats with 'result=WALK' in the top and bottom half of this inning combined.",
+              "formula": "COUNT(AtBat where AtBat.inningHalfId.inningId=this.id AND result='WALK')"
+            },
+            {
+              "name": "isSeventhInningStretch",
+              "type": "rollup",
+              "formula": "inningNumber = 7"
+            },
+            {
+              "name": "balksInInning",
+              "type": "rollup",
+              "formula": "COUNT( BalkEvent WHERE BalkEvent.inningId = this.id )"
+            },
+            {
+              "name": "stealAttemptsInInning",
+              "type": "rollup",
+              "formula": "COUNT( StealAttemptEvent WHERE StealAttemptEvent.inningId = this.id )"
+            },
+            {
+              "name": "runnersAdvancedOnWildPitch",
+              "type": "rollup",
+              "formula": "COUNT( RunnerAdvanceEvent WHERE reason = 'WILD_PITCH' AND inningId = this.id )"
+            },
+            {
+              "name": "largestLeadAtAnyPointThisInning",
+              "type": "rollup",
+              "formula": "MAX( leadDifferentialDuringInning( this.id ) )"
+            }
+          ],
+          "lambdas": [],
+          "constraints": []
+        },
+        {
+          "name": "InningHalf",
+          "description": "Represents either top or bottom portion of an inning, with outs, runs, at-bats, etc. All purely event/aggregator based.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for this half-inning record."
+            },
+            {
+              "name": "halfType",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "TOP or BOTTOM."
+            },
+            {
+              "name": "offensiveTeamId",
+              "type": "lookup",
+              "target_entity": "Team",
+              "foreign_key": false,
+              "description": "Which team is batting."
+            },
+            {
+              "name": "defensiveTeamId",
+              "type": "lookup",
+              "target_entity": "Team",
+              "foreign_key": false,
+              "description": "Which team is in the field."
+            },
+            {
+              "name": "outs",
+              "type": "scalar",
+              "datatype": "integer",
+              "description": "Number of outs recorded so far. // CHANGED (DECLARATIVE) We keep this as a 'field' but treat it as an aggregator from OutEvents."
+            },
+            {
+              "name": "runsScored",
+              "type": "scalar",
+              "datatype": "integer",
+              "description": "Tally of runs in this half-inning. // CHANGED (DECLARATIVE) Treated as aggregator from RunEvents or from sum of AtBat.rbi."
+            },
+            {
+              "name": "isComplete",
+              "type": "scalar",
+              "datatype": "boolean",
+              "description": "True if 3 outs are reached or walk-off ends this half. // CHANGED (DECLARATIVE) We interpret as aggregator or constraint."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "atBats",
+              "target_entity": "AtBat",
+              "type": "one_to_many",
+              "join_condition": "AtBat.inningHalfId = this.id",
+              "description": "All plate appearances in this half-inning."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "battersFaced",
+              "type": "rollup",
+              "description": "Number of batters who came up to the plate (size of atBats).",
+              "formula": "COUNT(atBats)"
+            },
+            {
+              "name": "hitsInHalf",
+              "type": "rollup",
+              "description": "How many hits (1B,2B,3B,HR) occurred in this half.",
+              "formula": "COUNT( AtBat where (inningHalfId=this.id AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN']) )"
+            },
+            {
+              "name": "leftOnBase",
+              "type": "rollup",
+              "description": "How many baserunners remained stranded when the half-inning ended. Implementation conceptual, purely aggregator over base-runner state.",
+              "formula": "CALCULATE_STRANDED_RUNNERS(this.id)"
+            },
+            {
+              "name": "walksInHalf",
+              "type": "rollup",
+              "description": "Count of at-bats with 'result= WALK' in this half-inning.",
+              "formula": "COUNT(AtBat where inningHalfId=this.id AND result='WALK')"
+            },
+            {
+              "name": "hitByPitchInHalf",
+              "type": "rollup",
+              "description": "Count of at-bats with 'result=HIT_BY_PITCH' in this half-inning.",
+              "formula": "COUNT(AtBat where inningHalfId=this.id AND result='HIT_BY_PITCH')"
+            },
+            {
+              "name": "mostPitchesFacedBySingleBatter",
+              "type": "rollup",
+              "description": "The maximum pitch count in any single AtBat within this half-inning.",
+              "formula": "MAX(atBats.pitchCountInAtBat)"
+            },
+            {
+              "name": "hitsWithExitVelocityAbove90",
+              "type": "rollup",
+              "description": "Number of hits in this half-inning that had exitVelocity > 90 mph.",
+              "formula": "COUNT(AtBat where inningHalfId=this.id AND exitVelocity>90 AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN'])"
+            },
+            {
+              "name": "catchersInterferenceCalls",
+              "type": "rollup",
+              "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'CATCHER_INTERFERENCE' )"
+            },
+            {
+              "name": "batterInterferenceCalls",
+              "type": "rollup",
+              "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'BATTER_INTERFERENCE' )"
+            },
+            {
+              "name": "sacrificeBuntsInHalf",
+              "type": "rollup",
+              "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'SAC_BUNT' )"
+            },
+            {
+              "name": "infieldFlyCallsInHalf",
+              "type": "rollup",
+              "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND specialCall = 'INFIELD_FLY' )"
+            },
+            {
+              "name": "mustEndDueToMercyRule",
+              "type": "rollup",
+              "description": "If the game-level aggregator isMercyRuleTriggered is true, this half-inning must end immediately.",
+              "formula": "IF (this.inningId.gameId.isMercyRuleTriggered = true) THEN true ELSE false"
+            },
+            {
+              "name": "stealingAllowed",
+              "type": "rollup",
+              "description": "Indicates if base stealing is allowed. Some youth leagues restrict leads or steals entirely.",
+              "formula": "this.inningId.gameId.ruleSetId.allowLeadingOff"
+            }
+          ],
+          "lambdas": [
+            {
+              "name": "recordOut",
+              "parameters": [],
+              "description": "// CHANGED (DECLARATIVE): Instead of incrementing outs, we define an 'OutEvent' entity. 'outs' aggregator = COUNT(OutEvent where outEvent.inningHalfId=this.id).",
+              "formula": "InningHalf.outs = COUNT(OutEvent where outEvent.inningHalfId=this.id)"
+            },
+            {
+              "name": "scoreRun",
+              "parameters": ["count"],
+              "description": "// CHANGED (DECLARATIVE): Instead of incrementing runs, a 'RunEvent' entity or sum of AtBat.rbi. 'runsScored' aggregator = SUM(RunEvent.runs).",
+              "formula": "InningHalf.runsScored = SUM(RunEvent where runEvent.inningHalfId=this.id => runEvent.runCount)"
+            }
+          ],
+          "constraints": [
+            {
+              "name": "validOutCount",
+              "formula": "outs >= 0 AND outs <= 3",
+              "error_message": "Outs must be between 0 and 3 inclusive."
+            },
+            {
+              "name": "isCompleteWhen3OutsOrWalkoff",
+              "formula": "isComplete == ((outs >= 3) OR (CHECK_WALKOFF_CONDITION(this.id)))",
+              "error_message": "Half-inning completes with 3 outs or a declared walk-off event."
+            }
+          ]
+        },
+        {
+          "name": "AtBat",
+          "description": "A single plate appearance, from the start of the batter's turn to its final result. All logic is aggregator-based, no step-by-step updates.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for this at-bat record."
+            },
+            {
+              "name": "inningHalfId",
+              "type": "lookup",
+              "target_entity": "InningHalf",
+              "foreign_key": true,
+              "description": "Which half-inning this at-bat belongs to."
+            },
+            {
+              "name": "batterId",
+              "type": "lookup",
+              "target_entity": "Player",
+              "foreign_key": false,
+              "description": "Player who is batting."
+            },
+            {
+              "name": "pitcherId",
+              "type": "lookup",
+              "target_entity": "Player",
+              "foreign_key": false,
+              "description": "Player (pitcher) on defense facing the batter."
+            },
+            {
+              "name": "result",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Outcome: e.g. 'SINGLE','DOUBLE','TRIPLE','HOMERUN','WALK','STRIKEOUT','GROUNDOUT','FLYOUT','HIT_BY_PITCH','SAC_FLY','GROUNDED_INTO_DOUBLE_PLAY', etc."
+            },
+            {
+              "name": "rbi",
+              "type": "scalar",
+              "datatype": "integer",
+              "description": "Number of runs batted in on this at-bat (0..4)."
+            },
+            {
+              "name": "exitVelocity",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Measured speed of the batted ball off the bat (mph), if the ball was put in play. Null if not in play."
+            },
+            {
+              "name": "launchAngle",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Angle (in degrees) of the batted ball’s trajectory, if in play."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "pitches",
+              "target_entity": "Pitch",
+              "type": "one_to_many",
+              "join_condition": "Pitch.atBatId = this.id",
+              "description": "All Pitch records thrown in this at-bat."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "pitchCountInAtBat",
+              "type": "rollup",
+              "description": "Number of pitches thrown in this at-bat.",
+              "formula": "COUNT(pitches)"
+            },
+            {
+              "name": "fouls",
+              "type": "rollup",
+              "description": "Number of foul pitches among 'pitches'.",
+              "formula": "COUNT( Pitch where (atBatId=this.id AND pitchResult='FOUL') )"
+            },
+            {
+              "name": "expectedBattingAverage",
+              "type": "rollup",
+              "description": "A sabermetric measure (xBA) based on exit velocity, launch angle, etc. Implementation conceptual, purely aggregator.",
+              "formula": "SABERMETRIC_xBA_FORMULA(this.id)"
+            },
+            {
+              "name": "wasWalk",
+              "type": "rollup",
+              "description": "Boolean aggregator: true if result='WALK'.",
+              "formula": "result == 'WALK'"
+            },
+            {
+              "name": "plateDisciplineIndex",
+              "type": "rollup",
+              "description": "Conceptual measure of a batter's plate discipline for this at-bat, e.g. proportion of 'chases' outside the zone vs. total pitches.",
+              "formula": "CALC_PLATE_DISCIPLINE(atBatId=this.id)"
+            },
+            {
+              "name": "numberOfBalls",
+              "type": "rollup",
+              "description": "Count of pitches in this at-bat where pitchResult='BALL'.",
+              "formula": "COUNT( Pitch where atBatId=this.id AND pitchResult='BALL')"
+            },
 
-          {
-            "name": "dhSlotInUse",
-            "type": "rollup",
-            "description": "If the rule set has DH enabled and the team has at least one pitcher, a DH slot may be in use. This aggregator references the team's league's rule set for demonstration.",
-            "formula": "IF (this.league_id.ruleSetId.dhEnabled = true AND pitcherCount > 0) THEN 'DH Slot Active' ELSE 'No DH Slot'"
-          },
-          {
-            "name": "maxRosterSize",
-            "type": "rollup",
-            "description": "Specifies maximum roster size allowed by the rule set. Some leagues limit rosters to fewer players.",
-            "formula": "IF (this.league_id.ruleSetId.ruleSetName='LittleLeague_2025') THEN 14 ELSE 26"
-          },
-          {
-            "name": "extendedRosterAllowed",
-            "type": "rollup",
-            "description": "Indicates if additional players are permitted on the roster temporarily (some leagues allow expanded rosters in certain months).",
-            "formula": "IF (this.league_id.ruleSetId.ruleSetName='September_Expansions') THEN true ELSE false"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "addPlayerToRoster",
-            "parameters": [
-              "player_id"
-            ],
-            "description": "// CHANGED (DECLARATIVE): Instead of 'Set Player.team_id = ...', we state a constraint/fact: 'Player.team_id' should match 'this.id'.",
-            "formula": "Player(team_id=player_id).team_id == this.id"
-          },
-          {
-            "name": "removePlayerFromRoster",
-            "parameters": [
-              "player_id"
-            ],
-            "description": "// CHANGED (DECLARATIVE): In a purely declarative sense, removing means 'player.team_id = null' is a valid state. No imperative steps.",
-            "formula": "Player(player_id).team_id == null"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "Player",
-        "description": "An individual who participates in baseball games, either as a position player, pitcher, or both.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the player."
-          },
-          {
-            "name": "fullName",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Player's full name."
-          },
-          {
-            "name": "battingHand",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Indicates 'L', 'R', or 'S' (switch)."
-          },
-          {
-            "name": "throwingHand",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Indicates 'L' or 'R'."
-          },
-          {
-            "name": "team_id",
-            "type": "lookup",
-            "target_entity": "Team",
-            "foreign_key": true,
-            "description": "Which Team this player is currently on, if any."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "defensivePositions",
-            "target_entity": "DefensivePosition",
-            "type": "many_to_many",
-            "description": "All possible defensive positions the player can handle. Implementation: PlayerPosition join table or similar."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "careerAtBats",
-            "type": "rollup",
-            "formula": "COUNT( AtBat where (batterId=this.id) )",
-            "description": "How many official at-bats the player has had across all games."
-          },
-          {
-            "name": "careerHits",
-            "type": "rollup",
-            "description": "How many hits the player has recorded across all at-bats.",
-            "formula": "COUNT( AtBat where (batterId=this.id AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN']) )"
-          },
-          {
-            "name": "careerBattingAverage",
-            "type": "rollup",
-            "description": "(careerHits / careerAtBats). Null if no at-bats.",
-            "formula": "IF (careerAtBats>0) THEN (careerHits / careerAtBats) ELSE null"
-          },
-          {
-            "name": "careerPitchCount",
-            "type": "rollup",
-            "description": "Total number of pitches thrown by this player, if a pitcher.",
-            "formula": "COUNT( Pitch where (pitcherId=this.id) )"
-          },
-          {
-            "name": "careerStrikeoutsPitched",
-            "type": "rollup",
-            "description": "How many strikeouts the player (as pitcher) has recorded.",
-            "formula": "COUNT( AtBat where (pitcherId=this.id AND result='STRIKEOUT') )"
-          },
-          {
-            "name": "careerInningsPitched",
-            "type": "rollup",
-            "description": "Summation of partial innings if the player is a pitcher. Implementation conceptual.",
-            "formula": "AccumulateInningsFromOuts( sum_of_outs_where_pitcherId=this.id )"
-          },
-          {
-            "name": "onBasePercentage",
-            "type": "rollup",
-            "description": "OBP = (H + BB + HBP) / (AB + BB + HBP + SF). Implementation conceptual if advanced data is tracked.",
-            "formula": "IF (plateAppearances>0) THEN ((careerHits + careerWalks + careerHitByPitch) / (careerAtBats + careerWalks + careerHitByPitch + careerSacFlies)) ELSE null"
-          },
-          {
-            "name": "sluggingPercentage",
-            "type": "rollup",
-            "description": "Total bases / at-bats. Implementation conceptual if we track 2B,3B,HR, etc.",
-            "formula": "IF (careerAtBats>0) THEN (sumOfTotalBases / careerAtBats) ELSE null"
-          },
-          {
-            "name": "ops",
-            "type": "rollup",
-            "description": "On-base plus slugging, purely aggregator of the OBP + SLG fields.",
-            "formula": "onBasePercentage + sluggingPercentage"
-          },
-          {
-            "name": "stolenBasePercentage",
-            "type": "rollup",
-            "description": "stolenBases / (stolenBases + caughtStealing). Implementation conceptual if we track that data.",
-            "formula": "IF ((careerStolenBases + careerCaughtStealing) > 0) THEN (careerStolenBases / (careerStolenBases + careerCaughtStealing)) ELSE null"
-          },
-          {
-            "name": "isTwoWayPlayer",
-            "type": "rollup",
-            "description": "Boolean indicating if the player has pitched and also batted as a regular hitter. Implementation conceptual.",
-            "formula": "IF (careerInningsPitched > 0 AND careerAtBats > 0) THEN true ELSE false"
-          },
-          {
-            "name": "careerWalks",
-            "type": "rollup",
-            "description": "Count of times the player reached base via walk (BB).",
-            "formula": "COUNT( AtBat where batterId=this.id AND result='WALK' )"
-          },
-          {
-            "name": "careerHitByPitch",
-            "type": "rollup",
-            "description": "Count of times the player was hit by a pitch (HBP).",
-            "formula": "COUNT( AtBat where batterId=this.id AND result='HIT_BY_PITCH' )"
-          },
-          {
-            "name": "careerSacFlies",
-            "type": "rollup",
-            "description": "Count of official at-bats with a sac fly result.",
-            "formula": "COUNT( AtBat where batterId=this.id AND result='SAC_FLY')"
-          },
-          {
-            "name": "careerDoublePlaysGroundedInto",
-            "type": "rollup",
-            "description": "Number of times the player has grounded into a double play.",
-            "formula": "COUNT( AtBat where batterId=this.id AND result='GROUNDED_INTO_DOUBLE_PLAY')"
-          },
-          {
-            "name": "highestExitVelocity",
-            "type": "rollup",
-            "description": "Max exit velocity recorded for batted balls by this player (across all relevant at-bats).",
-            "formula": "MAX( AtBat where batterId=this.id => exitVelocity )"
-          },
-          {
-            "name": "lowestExitVelocity",
-            "type": "rollup",
-            "description": "Min exit velocity recorded for batted balls by this player.",
-            "formula": "MIN( AtBat where batterId=this.id => exitVelocity )"
-          },
-          {
-            "name": "careerSluggingPct",
-            "type": "rollup",
-            "description": "Slugging percentage across all at-bats in the player's career (total bases / careerAtBats). Implementation conceptual.",
-            "formula": "IF(careerAtBats>0) THEN (SUM_OF_PLAYER_TOTAL_BASES(this.id) / careerAtBats) ELSE null"
-          },
-          {
-            "name": "careerOPS",
-            "type": "rollup",
-            "description": "Career On-base plus slugging for this player: onBasePercentage + careerSluggingPct.",
-            "formula": "onBasePercentage + careerSluggingPct"
-          },
-          {
-            "name": "hitsAbove100ExitVelo",
-            "type": "rollup",
-            "description": "Number of hits where the exit velocity exceeded 100 mph.",
-            "formula": "COUNT( AtBat where batterId=this.id AND exitVelocity>100 AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN'])"
-          },
-          {
-            "name": "outsRecordedAsPitcher",
-            "type": "rollup",
-            "description": "How many outs this player has generated in a pitching role. Implementation conceptual—count OutEvents where pitcherId=this.id.",
-            "formula": "COUNT( OutEvent where (atBatId!=null AND AtBat.pitcherId=this.id) OR (someOtherPitcherOutRef) )"
-          },
-          {
-            "name": "totalBases",
-            "type": "rollup",
-            "description": "Sum of bases the player has earned via hits (1 for single, 2 for double, etc.). Implementation conceptual scanning all hits.",
-            "formula": "SUM( AtBat where batterId=this.id => mapHitToBases(result) )"
-          },
-          {
-            "name": "hasCycleInAnyGame",
-            "type": "rollup",
-            "description": "Indicates whether the player has ever completed a single, double, triple, and home run in the same game.",
-            "formula": "EXISTS(Game WHERE EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='SINGLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='DOUBLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='TRIPLE']) AND EXISTS(AtBat[batterId=this.id AND gameId=Game.id AND result='HOMERUN']))"
-          },
-          {
-            "name": "longestHitStreak",
-            "type": "rollup",
-            "description": "The maximum consecutive-game hitting streak in the player's career.",
-            "formula": "CALCULATE_MAX_CONSECUTIVE_HIT_GAMES(playerId=this.id)"
-          },
-          {
-            "name": "longestOnBaseStreak",
-            "type": "rollup",
-            "description": "The maximum consecutive-game streak where the player reached base at least once (hit, walk, HBP, etc.).",
-            "formula": "CALCULATE_MAX_CONSECUTIVE_ONBASE_GAMES(playerId=this.id)"
-          },
-          {
-            "name": "careerIso",
-            "type": "rollup",
-            "description": "Isolated Power = slugging percentage - batting average.",
-            "formula": "IF(careerSluggingPct!=null AND careerBattingAverage!=null) THEN (careerSluggingPct - careerBattingAverage) ELSE null"
-          },
-          {
-            "name": "careerDoublePlaysTurned",
-            "type": "rollup",
-            "description": "How many double plays the player has been credited with turning on defense.",
-            "formula": "COUNT(OutEvent WHERE designation='DOUBLE_PLAY' AND fielderId=this.id)"
-          },
-          {
-            "name": "careerTriplePlaysTurned",
-            "type": "rollup",
-            "description": "How many triple plays the player has been credited with turning on defense.",
-            "formula": "COUNT(OutEvent WHERE designation='TRIPLE_PLAY' AND fielderId=this.id)"
-          },
-          {
-            "name": "careerMaxHomeRunDistance",
-            "type": "rollup",
-            "description": "Maximum recorded distance of any home run for this player.",
-            "formula": "MAX(AtBat WHERE batterId=this.id AND result='HOMERUN' => battedBallDistance)"
-          },
-          {
-            "name": "careerGrandSlams",
-            "type": "rollup",
-            "description": "Number of home runs with the bases loaded (4 RBI).",
-            "formula": "COUNT(AtBat WHERE batterId=this.id AND result='HOMERUN' AND baseStateBeforePitch='BASES_LOADED')"
-          },
-          {
-            "name": "careerWalkOffHits",
-            "type": "rollup",
-            "description": "Count of game-ending hits delivered by the player (walk-off singles, doubles, etc.).",
-            "formula": "COUNT(AtBat WHERE batterId=this.id AND result IN ['SINGLE','DOUBLE','TRIPLE','HOMERUN'] AND AtBatEndsGame=true)"
-          },
-          {
-            "name": "careerWOBA",
-            "type": "rollup",
-            "description": "Weighted On-Base Average, using established wOBA coefficients.",
-            "formula": "CALCULATE_WOBA(this.id)"
-          },
-          {
-            "name": "careerWRCPlus",
-            "type": "rollup",
-            "description": "Weighted Runs Created Plus, comparing player to league average = 100.",
-            "formula": "CALCULATE_WRC_PLUS(this.id, LEAGUE_OFFENSIVE_ENVIRONMENT)"
-          },
-          {
-            "name": "careerDefensiveErrors",
-            "type": "rollup",
-            "description": "Number of times the player committed an error (tracked via ErrorEvent).",
-            "formula": "COUNT(ErrorEvent WHERE fielderId=this.id)"
-          },
-          {
-            "name": "careerPlateAppearances",
-            "type": "rollup",
-            "description": "Comprehensive aggregator for all times the player came to bat, including walks, HBP, sacrifices, etc.",
-            "formula": "(careerAtBats + careerWalks + careerHitByPitch + careerSacFlies + careerSacBunts)"
-          },
-          {
-            "name": "careerDefensiveChances",
-            "type": "rollup",
-            "description": "Sum of outs plus errors for which this player was the fielder (defensive opportunities).",
-            "formula": "(COUNT(OutEvent WHERE fielderId=this.id) + careerDefensiveErrors)"
-          },
-          {
-            "name": "careerFieldingPercentage",
-            "type": "rollup",
-            "description": "Fielding percentage = (chances - errors) / chances, if chances > 0.",
-            "formula": "IF(careerDefensiveChances>0) THEN ((careerDefensiveChances - careerDefensiveErrors)/careerDefensiveChances) ELSE null"
-          },
-          {
-            "name": "careerSacBunts",
-            "type": "rollup",
-            "description": "Number of successful sacrifice bunts for the player.",
-            "formula": "COUNT(AtBat WHERE batterId=this.id AND result='SAC_BUNT')"
-          },
-          {
-            "name": "consecutiveGamesPlayedStreak",
-            "type": "rollup",
-            "formula": "CALCULATE_CONSECUTIVE_GAMES_PLAYED( this.id )"
-          },
-          {
-            "name": "chickenStanceIndicator",
-            "type": "rollup",
-            "formula": "EXISTS( WeirdStanceEvent WHERE WeirdStanceEvent.playerId = this.id )"
-          },
-          {
-            "name": "daysSinceLastRest",
-            "type": "rollup",
-            "formula": "CURRENT_DATE - lastRestDate( this.id )"
-          },
-
-          {
-            "name": "pitchCountLimitReached",
-            "type": "rollup",
-            "description": "Check if this player has reached the max pitch count from the rule set, if any.",
-            "formula": "IF (this.team_id.league_id.ruleSetId.maxPitchCount > 0) THEN (careerPitchCount >= this.team_id.league_id.ruleSetId.maxPitchCount) ELSE false"
-          },
-          {
-            "name": "isEligiblePitcher",
-            "type": "rollup",
-            "description": "If the player has not exceeded pitch count and is a pitcher, they're still eligible to pitch.",
-            "formula": "IF ((careerPitchCount < this.team_id.league_id.ruleSetId.maxPitchCount) AND playerIsPitcher=true) THEN true ELSE false"
-          },
-          {
-            "name": "daysRestRequired",
-            "type": "rollup",
-            "description": "Some youth leagues require rest days if a pitch limit is reached. Implementation conceptual.",
-            "formula": "IF (pitchCountLimitReached = true) THEN CALCULATE_REST_DAYS(careerPitchCount, lastTimePitched) ELSE 0"
-          },
-          {
-            "name": "isTooOldForLeague",
-            "type": "rollup",
-            "description": "Checks if the player is beyond the age limit if the rule set has an overAgeLimit flag. Implementation conceptual.",
-            "formula": "IF (this.team_id.league_id.ruleSetId.overAgeLimit = true AND BIRTHDATE_CHECK(this.id)) THEN true ELSE false"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "adjustBattingHand",
-            "parameters": [
-              "newHand"
-            ],
-            "description": "// CHANGED (DECLARATIVE): Instead of imperative 'Set battingHand=newHand', we declare a constraint that the player's battingHand must match 'newHand'.",
-            "formula": "this.battingHand == newHand"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "DefensivePosition",
-        "description": "A position on the baseball field, e.g. pitcher (1), catcher (2), shortstop (6), etc.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ID for the position (often '1','2','3','4','5','6','7','8','9' or 'DH')."
-          },
-          {
-            "name": "positionName",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Descriptive name (Pitcher, Catcher, Shortstop, etc.)."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "Game",
-        "description": "Represents a single baseball game between two Teams, split into innings (top & bottom).",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the game."
-          },
-          {
-            "name": "homeTeamId",
-            "type": "lookup",
-            "target_entity": "Team",
-            "foreign_key": false,
-            "description": "Which team is playing at home."
-          },
-          {
-            "name": "awayTeamId",
-            "type": "lookup",
-            "target_entity": "Team",
-            "foreign_key": false,
-            "description": "Which team is visiting."
-          },
-          {
-            "name": "status",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Game status: e.g. 'SCHEDULED','IN_PROGRESS','FINAL'."
-          },
-          {
-            "name": "ruleSetId",
-            "type": "lookup",
-            "target_entity": "RuleSet",
-            "foreign_key": false,
-            "description": "Which set of rules applies to this specific game, referencing the RuleSet entity."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "innings",
-            "target_entity": "Inning",
-            "type": "one_to_many",
-            "join_condition": "Inning.gameId = this.id",
-            "description": "All Inning records associated with this Game."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "currentInningNumber",
-            "type": "rollup",
-            "description": "Highest inningNumber in innings that have started or are in progress.",
-            "formula": "IF innings != null THEN MAX(innings.inningNumber) ELSE null"
-          },
-          {
-            "name": "runsHome",
-            "type": "rollup",
-            "description": "Total runs scored by the home team, summing relevant half-innings for the home offense.",
-            "formula": "SUM( InningHalf.runsScored for all bottomHalves with offensiveTeamId=homeTeamId )"
-          },
-          {
-            "name": "runsAway",
-            "type": "rollup",
-            "description": "Total runs scored by the away team, summing relevant half-innings for the away offense.",
-            "formula": "SUM( InningHalf.runsScored for all topHalves with offensiveTeamId=awayTeamId )"
-          },
-          {
-            "name": "winnerId",
-            "type": "rollup",
-            "description": "If status='FINAL', whichever team has more runs. Null if tie or incomplete.",
-            "formula": "IF (status='FINAL') THEN (IF runsHome>runsAway THEN homeTeamId ELSE IF runsAway>runsHome THEN awayTeamId ELSE null) ELSE null"
-          },
-          {
-            "name": "loserId",
-            "type": "rollup",
-            "description": "Symmetric aggregator to winnerId; identifies losing team if final and not tied.",
-            "formula": "IF status='FINAL' AND runsHome!=runsAway THEN (IF winnerId=homeTeamId THEN awayTeamId ELSE homeTeamId) ELSE null"
-          },
-          {
-            "name": "totalPitchesInGame",
-            "type": "rollup",
-            "description": "Total number of pitches thrown in this game (pure aggregator across all at-bats).",
-            "formula": "COUNT( Pitch where pitch.atBatId.inningHalfId.inningId.gameId=this.id )"
-          },
-          {
-            "name": "hasWalkOffOpportunity",
-            "type": "rollup",
-            "description": "True if it's bottom of 9th+ with the home team trailing/tied so a scoring play could end the game. Implementation conceptual, purely declarative.",
-            "formula": "EVALUATE_WALKOFF_CONDITION(this.id)"
-          },
-          {
-            "name": "attendance",
-            "type": "rollup",
-            "description": "Reference or aggregator for game attendance, e.g., from an external record or data field.",
-            "formula": "LOOKUP_IN(GameAttendanceRecords, gameId=this.id => attendanceValue)"
-          },
-          {
-            "name": "isExtraInnings",
-            "type": "rollup",
-            "description": "Boolean indicating if the game went beyond the 9th inning.",
-            "formula": "MAX(innings.inningNumber) > 9"
-          },
-          {
-            "name": "largestLead",
-            "type": "rollup",
-            "description": "Maximum difference in runs between the two teams at any point in this game.",
-            "formula": "CALCULATE_LARGEST_LEAD(gameId=this.id)"
-          },
-          {
-            "name": "isShutout",
-            "type": "rollup",
-            "description": "True if one team finishes with 0 runs (and the game is FINAL).",
-            "formula": "IF (status='FINAL') THEN ((runsHome==0 AND runsAway>0) OR (runsAway==0 AND runsHome>0)) ELSE false"
-          },
-          {
-            "name": "shutoutTeamId",
-            "type": "rollup",
-            "description": "If the game is a shutout, indicates which team allowed 0 runs. Null if no shutout or tie at 0-0.",
-            "formula": "IF (isShutout=true) THEN (IF runsHome==0 THEN awayTeamId ELSE IF runsAway==0 THEN homeTeamId ELSE null) ELSE null"
-          },
-          {
-            "name": "totalWalksInGame",
-            "type": "rollup",
-            "description": "Count of all at-bats with 'result=WALK' in both halves across all innings for this game.",
-            "formula": "COUNT(AtBat WHERE inningHalfId.inningId.gameId=this.id AND result='WALK')"
-          },
-          {
-            "name": "leadChanges",
-            "type": "rollup",
-            "description": "How many times the lead switched from one team to another during this game.",
-            "formula": "CALCULATE_LEAD_CHANGES(gameId=this.id)"
-          },
-          {
-            "name": "tieCount",
-            "type": "rollup",
-            "description": "How many times the score returned to a tie after first pitch.",
-            "formula": "CALCULATE_TIE_COUNT(gameId=this.id)"
-          },
-          {
-            "name": "isTieGameInProgress",
-            "type": "rollup",
-            "formula": "(status = 'IN_PROGRESS') AND (runsHome = runsAway)"
-          },
-          {
-            "name": "manfredRunnerInEffect",
-            "type": "rollup",
-            "formula": "isExtraInnings = true AND leagueImplementsExtraInningRunnerRule( this.id )"
-          },
-          {
-            "name": "gameSuspendedDueToWeather",
-            "type": "rollup",
-            "formula": "EXISTS( SuspensionEvent WHERE gameId = this.id AND reason = 'WEATHER' )"
-          },
-          {
-            "name": "winningPitcherId",
-            "type": "rollup",
-            "formula": "CALC_WINNING_PITCHER( this.id )"
-          },
-          {
-            "name": "hadCycleAchieved",
-            "type": "rollup",
-            "formula": "EXISTS( BatterCycleEvent WHERE gameId = this.id )"
-          },
-
-          {
-            "name": "isMercyRuleTriggered",
-            "type": "rollup",
-            "description": "Indicates if a mercy rule is triggered based on the rule set. If mercyRuleEnabled is true and run differential >= 10 after the specified inning threshold.",
-            "formula": "IF (this.ruleSetId.mercyRuleEnabled = true AND currentInningNumber >= this.ruleSetId.mercyRuleInningThreshold AND ABS(runsHome - runsAway) >= 10) THEN true ELSE false"
-          },
-          {
-            "name": "limitedInnings",
-            "type": "rollup",
-            "description": "Specifies how many total innings are played in this rule set. Some youth leagues play only 6 or 7 innings.",
-            "formula": "IF (this.ruleSetId.ruleSetName='LittleLeague_2025') THEN 6 ELSE IF (this.ruleSetId.ruleSetName='HighSchool_2025') THEN 7 ELSE 9"
-          },
-          {
-            "name": "tieAllowed",
-            "type": "rollup",
-            "description": "Whether a tie is allowed in this rule set if the game is not resolved by a certain time or innings limit.",
-            "formula": "IF (this.ruleSetId.ruleSetName='Friendly_Rec_League') THEN true ELSE false"
-          },
-          {
-            "name": "useReplayReview",
-            "type": "rollup",
-            "description": "Whether official replay review is permitted in this rule set.",
-            "formula": "this.ruleSetId.usesReplayReview"
-          },
-          {
-            "name": "timeLimit",
-            "type": "rollup",
-            "description": "Specifies time limit in minutes if enforced. Some youth leagues have a 120 minute limit.",
-            "formula": "IF (this.ruleSetId.ruleSetName='LittleLeague_2025') THEN 120 ELSE null"
-          },
-          {
-            "name": "homeTeamBatsFirst",
-            "type": "rollup",
-            "description": "Some special tournaments might let the home team bat first. Usually false in standard baseball.",
-            "formula": "IF (this.ruleSetId.ruleSetName='SpecialTournament_2025') THEN true ELSE false"
-          },
-          {
-            "name": "skipBottomIfLeading",
-            "type": "rollup",
-            "description": "If true, skip bottom half if the home team is ahead after top of final inning. This is the standard MLB end condition, but some leagues do it differently.",
-            "formula": "IF (this.ruleSetId.ruleSetName='College_2025') THEN true ELSE false"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "startGame",
-            "parameters": [],
-            "description": "// CHANGED (DECLARATIVE): Instead of setting 'status=IN_PROGRESS', we define a constraint: if the game has begun, status must be 'IN_PROGRESS'.",
-            "formula": "IF (EXISTS(any pitch or any top inning started)) THEN (this.status == 'IN_PROGRESS')"
-          },
-          {
-            "name": "endGame",
-            "parameters": [],
-            "description": "// CHANGED (DECLARATIVE): Instead of setting 'status=FINAL', we define conditions for final. If 9+ innings done, runs differ, status must be 'FINAL'.",
-            "formula": "IF (CONDITIONS_FOR_GAME_COMPLETION) THEN (this.status == 'FINAL')"
-          }
-        ],
-        "constraints": [
-          {
-            "name": "teamMismatch",
-            "formula": "homeTeamId != awayTeamId",
-            "error_message": "Home and away team cannot be the same."
-          }
-        ]
-      },
-      {
-        "name": "Inning",
-        "description": "A single inning in the game, typically has a top and bottom half unless extras are needed.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ID for this inning record."
-          },
-          {
-            "name": "gameId",
-            "type": "lookup",
-            "target_entity": "Game",
-            "foreign_key": true,
-            "description": "Which game this inning belongs to."
-          },
-          {
-            "name": "inningNumber",
-            "type": "scalar",
-            "datatype": "integer",
-            "description": "Which inning number (1..9, or extras)."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "top",
-            "target_entity": "InningHalf",
-            "type": "one_to_one",
-            "description": "The top half of this inning, if defined."
-          },
-          {
-            "name": "bottom",
-            "target_entity": "InningHalf",
-            "type": "one_to_one",
-            "description": "The bottom half of this inning, if defined."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "isComplete",
-            "type": "rollup",
-            "description": "True if top and bottom half are both complete, or if there's a walk-off scenario that ends the inning early.",
-            "formula": "top.isComplete AND (bottom==null OR bottom.isComplete)"
-          },
-          {
-            "name": "runsThisInning",
-            "type": "rollup",
-            "description": "Sum of runs in top and bottom half of this inning.",
-            "formula": "(IF top!=null THEN top.runsScored ELSE 0) + (IF bottom!=null THEN bottom.runsScored ELSE 0)"
-          },
-          {
-            "name": "averageExitVelocityInInning",
-            "type": "rollup",
-            "description": "Mean exit velocity of all batted balls (AtBat.exitVelocity) in top+bottom halves of this inning.",
-            "formula": "AVG(AtBat where AtBat.inningHalfId.inningId=this.id => exitVelocity)"
-          },
-          {
-            "name": "totalWalksInInning",
-            "type": "rollup",
-            "description": "Count of at-bats with 'result=WALK' in the top and bottom half of this inning combined.",
-            "formula": "COUNT(AtBat where AtBat.inningHalfId.inningId=this.id AND result='WALK')"
-          },
-          {
-            "name": "isSeventhInningStretch",
-            "type": "rollup",
-            "formula": "inningNumber = 7"
-          },
-          {
-            "name": "balksInInning",
-            "type": "rollup",
-            "formula": "COUNT( BalkEvent WHERE BalkEvent.inningId = this.id )"
-          },
-          {
-            "name": "stealAttemptsInInning",
-            "type": "rollup",
-            "formula": "COUNT( StealAttemptEvent WHERE StealAttemptEvent.inningId = this.id )"
-          },
-          {
-            "name": "runnersAdvancedOnWildPitch",
-            "type": "rollup",
-            "formula": "COUNT( RunnerAdvanceEvent WHERE reason = 'WILD_PITCH' AND inningId = this.id )"
-          },
-          {
-            "name": "largestLeadAtAnyPointThisInning",
-            "type": "rollup",
-            "formula": "MAX( leadDifferentialDuringInning( this.id ) )"
-          }
-        ],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "InningHalf",
-        "description": "Represents either top or bottom portion of an inning, with outs, runs, at-bats, etc. All purely event/aggregator based.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ID for this half-inning record."
-          },
-          {
-            "name": "halfType",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "TOP or BOTTOM."
-          },
-          {
-            "name": "offensiveTeamId",
-            "type": "lookup",
-            "target_entity": "Team",
-            "foreign_key": false,
-            "description": "Which team is batting."
-          },
-          {
-            "name": "defensiveTeamId",
-            "type": "lookup",
-            "target_entity": "Team",
-            "foreign_key": false,
-            "description": "Which team is in the field."
-          },
-          {
-            "name": "outs",
-            "type": "scalar",
-            "datatype": "integer",
-            "description": "Number of outs recorded so far. // CHANGED (DECLARATIVE) We keep this as a 'field' but treat it as an aggregator from OutEvents."
-          },
-          {
-            "name": "runsScored",
-            "type": "scalar",
-            "datatype": "integer",
-            "description": "Tally of runs in this half-inning. // CHANGED (DECLARATIVE) Treated as aggregator from RunEvents or from sum of AtBat.rbi."
-          },
-          {
-            "name": "isComplete",
-            "type": "scalar",
-            "datatype": "boolean",
-            "description": "True if 3 outs are reached or walk-off ends this half. // CHANGED (DECLARATIVE) We interpret as aggregator or constraint."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "atBats",
-            "target_entity": "AtBat",
-            "type": "one_to_many",
-            "join_condition": "AtBat.inningHalfId = this.id",
-            "description": "All plate appearances in this half-inning."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "battersFaced",
-            "type": "rollup",
-            "description": "Number of batters who came up to the plate (size of atBats).",
-            "formula": "COUNT(atBats)"
-          },
-          {
-            "name": "hitsInHalf",
-            "type": "rollup",
-            "description": "How many hits (1B,2B,3B,HR) occurred in this half.",
-            "formula": "COUNT( AtBat where (inningHalfId=this.id AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN']) )"
-          },
-          {
-            "name": "leftOnBase",
-            "type": "rollup",
-            "description": "How many baserunners remained stranded when the half-inning ended. Implementation conceptual, purely aggregator over base-runner state.",
-            "formula": "CALCULATE_STRANDED_RUNNERS(this.id)"
-          },
-          {
-            "name": "walksInHalf",
-            "type": "rollup",
-            "description": "Count of at-bats with 'result= WALK' in this half-inning.",
-            "formula": "COUNT(AtBat where inningHalfId=this.id AND result='WALK')"
-          },
-          {
-            "name": "hitByPitchInHalf",
-            "type": "rollup",
-            "description": "Count of at-bats with 'result=HIT_BY_PITCH' in this half-inning.",
-            "formula": "COUNT(AtBat where inningHalfId=this.id AND result='HIT_BY_PITCH')"
-          },
-          {
-            "name": "mostPitchesFacedBySingleBatter",
-            "type": "rollup",
-            "description": "The maximum pitch count in any single AtBat within this half-inning.",
-            "formula": "MAX(atBats.pitchCountInAtBat)"
-          },
-          {
-            "name": "hitsWithExitVelocityAbove90",
-            "type": "rollup",
-            "description": "Number of hits in this half-inning that had exitVelocity > 90 mph.",
-            "formula": "COUNT(AtBat where inningHalfId=this.id AND exitVelocity>90 AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN'])"
-          },
-          {
-            "name": "catchersInterferenceCalls",
-            "type": "rollup",
-            "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'CATCHER_INTERFERENCE' )"
-          },
-          {
-            "name": "batterInterferenceCalls",
-            "type": "rollup",
-            "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'BATTER_INTERFERENCE' )"
-          },
-          {
-            "name": "sacrificeBuntsInHalf",
-            "type": "rollup",
-            "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'SAC_BUNT' )"
-          },
-          {
-            "name": "infieldFlyCallsInHalf",
-            "type": "rollup",
-            "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND specialCall = 'INFIELD_FLY' )"
-          },
-
-          {
-            "name": "mustEndDueToMercyRule",
-            "type": "rollup",
-            "description": "If the game-level aggregator isMercyRuleTriggered is true, this half-inning must end immediately.",
-            "formula": "IF (this.inningId.gameId.isMercyRuleTriggered = true) THEN true ELSE false"
-          },
-          {
-            "name": "stealingAllowed",
-            "type": "rollup",
-            "description": "Indicates if base stealing is allowed. Some youth leagues restrict leads or steals entirely.",
-            "formula": "this.inningId.gameId.ruleSetId.allowLeadingOff"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "recordOut",
-            "parameters": [],
-            "description": "// CHANGED (DECLARATIVE): Instead of incrementing outs, we define an 'OutEvent' entity. 'outs' aggregator = COUNT(OutEvent).",
-            "formula": "InningHalf.outs = COUNT(OutEvent where outEvent.inningHalfId=this.id)"
-          },
-          {
-            "name": "scoreRun",
-            "parameters": [
-              "count"
-            ],
-            "description": "// CHANGED (DECLARATIVE): Instead of incrementing runs, a 'RunEvent' entity or sum of AtBat.rbi. 'runsScored' aggregator = SUM(RunEvent.runs).",
-            "formula": "InningHalf.runsScored = SUM(RunEvent where runEvent.inningHalfId=this.id => runEvent.runCount)"
-          }
-        ],
-        "constraints": [
-          {
-            "name": "validOutCount",
-            "formula": "outs >= 0 AND outs <= 3",
-            "error_message": "Outs must be between 0 and 3 inclusive."
-          },
-          {
-            "name": "isCompleteWhen3OutsOrWalkoff",
-            "formula": "isComplete == ((outs >= 3) OR (CHECK_WALKOFF_CONDITION(this.id)))",
-            "error_message": "Half-inning completes with 3 outs or a declared walk-off event."
-          }
-        ]
-      },
-      {
-        "name": "AtBat",
-        "description": "A single plate appearance, from the start of the batter's turn to its final result. All logic is aggregator-based, no step-by-step updates.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ID for this at-bat record."
-          },
-          {
-            "name": "inningHalfId",
-            "type": "lookup",
-            "target_entity": "InningHalf",
-            "foreign_key": true,
-            "description": "Which half-inning this at-bat belongs to."
-          },
-          {
-            "name": "batterId",
-            "type": "lookup",
-            "target_entity": "Player",
-            "foreign_key": false,
-            "description": "Player who is batting."
-          },
-          {
-            "name": "pitcherId",
-            "type": "lookup",
-            "target_entity": "Player",
-            "foreign_key": false,
-            "description": "Player (pitcher) on defense facing the batter."
-          },
-          {
-            "name": "result",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Outcome: e.g. 'SINGLE','DOUBLE','TRIPLE','HOMERUN','WALK','STRIKEOUT','GROUNDOUT','FLYOUT','HIT_BY_PITCH','SAC_FLY','GROUNDED_INTO_DOUBLE_PLAY', etc."
-          },
-          {
-            "name": "rbi",
-            "type": "scalar",
-            "datatype": "integer",
-            "description": "Number of runs batted in on this at-bat (0..4)."
-          },
-          {
-            "name": "exitVelocity",
-            "type": "scalar",
-            "datatype": "number",
-            "description": "Measured speed of the batted ball off the bat (mph), if the ball was put in play. Null if not in play."
-          },
-          {
-            "name": "launchAngle",
-            "type": "scalar",
-            "datatype": "number",
-            "description": "Angle (in degrees) of the batted ball’s trajectory, if in play."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "pitches",
-            "target_entity": "Pitch",
-            "type": "one_to_many",
-            "join_condition": "Pitch.atBatId = this.id",
-            "description": "All Pitch records thrown in this at-bat."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "pitchCountInAtBat",
-            "type": "rollup",
-            "description": "Number of pitches thrown in this at-bat.",
-            "formula": "COUNT(pitches)"
-          },
-          {
-            "name": "fouls",
-            "type": "rollup",
-            "description": "Number of foul pitches among 'pitches'.",
-            "formula": "COUNT( Pitch where (atBatId=this.id AND pitchResult='FOUL') )"
-          },
-          {
-            "name": "expectedBattingAverage",
-            "type": "rollup",
-            "description": "A sabermetric measure (xBA) based on exit velocity, launch angle, etc. Implementation conceptual, purely aggregator.",
-            "formula": "SABERMETRIC_xBA_FORMULA(this.id)"
-          },
-          {
-            "name": "wasWalk",
-            "type": "rollup",
-            "description": "Boolean aggregator: true if result='WALK'.",
-            "formula": "result == 'WALK'"
-          },
-          {
-            "name": "plateDisciplineIndex",
-            "type": "rollup",
-            "description": "Conceptual measure of a batter's plate discipline for this at-bat, e.g. proportion of 'chases' outside the zone vs. total pitches.",
-            "formula": "CALC_PLATE_DISCIPLINE(atBatId=this.id)"
-          },
-          {
-            "name": "numberOfBalls",
-            "type": "rollup",
-            "description": "Count of pitches in this at-bat where pitchResult='BALL'.",
-            "formula": "COUNT( Pitch where atBatId=this.id AND pitchResult='BALL')"
-          },
-
-          {
-            "name": "leadingOffAllowed",
-            "type": "rollup",
-            "description": "References if leading off is permitted in this rule set. Affects stolen base attempts or pickoffs.",
-            "formula": "this.inningHalfId.inningId.gameId.ruleSetId.allowLeadingOff"
-          },
-          {
-            "name": "maximumFoulBalls",
-            "type": "rollup",
-            "description": "Some specialized youth leagues limit the total number of foul balls after 2 strikes. Implementation conceptual.",
-            "formula": "IF (this.inningHalfId.inningId.gameId.ruleSetId.ruleSetName='Youth_NoFoulUnlimited') THEN 2 ELSE 999"
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "addPitch",
-            "parameters": [
-              "pitchData"
-            ],
-            "description": "// CHANGED (DECLARATIVE): Instead of 'INSERT' pitch, we declare that all pitch entities referencing this atBatId belong to 'pitches'.",
-            "formula": "Pitch.atBatId == this.id => belongs to 'pitches' collection"
-          },
-          {
-            "name": "finalizeAtBat",
-            "parameters": [],
-            "description": "// CHANGED (DECLARATIVE): No step to 'lock in' result. We have a constraint: AtBat is complete if 'result' is one of the final states. No imperative update needed.",
-            "formula": "AtBatIsComplete(this.id) == (this.result != null)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "Pitch",
-        "description": "Represents a single pitch thrown in an at-bat. Tracks velocity, location, outcome, etc., with no imperative instructions.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ID for this pitch record."
-          },
-          {
-            "name": "atBatId",
-            "type": "lookup",
-            "target_entity": "AtBat",
-            "foreign_key": true,
-            "description": "Which at-bat this pitch belongs to."
-          },
-          {
-            "name": "pitchResult",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "One of 'BALL','CALLED_STRIKE','SWINGING_STRIKE','FOUL','IN_PLAY','HIT_BY_PITCH', etc."
-          },
-          {
-            "name": "pitchVelocity",
-            "type": "scalar",
-            "datatype": "number",
-            "description": "Speed of the pitch, typically in mph or km/h."
-          },
-          {
-            "name": "pitchSpinRate",
-            "type": "scalar",
-            "datatype": "number",
-            "description": "Spin rate of the pitch in revolutions per minute (rpm)."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "isStrike",
-            "type": "rollup",
-            "description": "Boolean aggregator: true if pitchResult is CALLED_STRIKE or SWINGING_STRIKE.",
-            "formula": "pitchResult IN ['CALLED_STRIKE','SWINGING_STRIKE']"
-          },
-          {
-            "name": "isQualityPitch",
-            "type": "rollup",
-            "description": "True if pitchVelocity > 95 and pitchSpinRate > 2200, purely an example threshold-based aggregator.",
-            "formula": "pitchVelocity>95 AND pitchSpinRate>2200"
-          },
-          {
-            "name": "adjustedSpinRate",
-            "type": "rollup",
-            "description": "Derived spin rate that might account for velocity or environmental factors. Implementation conceptual.",
-            "formula": "pitchSpinRate * ADJUSTMENT_FACTOR(pitchVelocity)"
-          },
-          {
-            "name": "isWildPitch",
-            "type": "rollup",
-            "formula": "pitchResult = 'WILD_PITCH'"
-          }
-        ],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "Statistic",
-        "description": "Generic or specialized statistical measures referencing a Player, Team, or entire league. Could store advanced sabermetrics or simpler metrics.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ID for this stat record."
-          },
-          {
-            "name": "entityType",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Indicates whether this stat applies to 'Player','Team','League'."
-          },
-          {
-            "name": "entityId",
-            "type": "lookup",
-            "target_entity": "*",
-            "foreign_key": false,
-            "description": "ID of the specific entity (player/team/league) to which the stat belongs. Implementation conceptual."
-          },
-          {
-            "name": "statName",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "E.g. 'OPS','ERA','WAR','fieldingPercentage'."
-          },
-          {
-            "name": "statValue",
-            "type": "scalar",
-            "datatype": "number",
-            "description": "Numeric result of the stat calculation."
-          },
-          {
-            "name": "season",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Optional label for which season or time period this stat references."
-          },
-          {
-            "name": "lastUpdated",
-            "type": "scalar",
-            "datatype": "datetime",
-            "description": "Timestamp indicating when this stat was last updated."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "Stadium",
-        "description": "Represents a ballpark or stadium where games are played. Purely declarative references to capacity, location, etc.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ID for this stadium."
-          },
-          {
-            "name": "stadiumName",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "The official or common name of the stadium."
-          },
-          {
-            "name": "capacity",
-            "type": "scalar",
-            "datatype": "integer",
-            "description": "Maximum seating capacity of the stadium."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "gamesPlayedInStadium",
-            "type": "rollup",
-            "description": "Number of games that have taken place in this stadium. Implementation conceptual, would require a link from Game to Stadium.",
-            "formula": "COUNT(Game where Game.stadiumId = this.id)"
-          },
-          {
-            "name": "averageAttendance",
-            "type": "rollup",
-            "description": "Average attendance across all games played here. Implementation conceptual.",
-            "formula": "AVG(GameAttendanceRecords where stadiumId=this.id)"
-          },
-          {
-            "name": "mostRunsInSingleGame",
-            "type": "rollup",
-            "description": "Maximum total runs (home + away) for any game played in this stadium.",
-            "formula": "MAX( Game where stadiumId=this.id => (runsHome + runsAway) )"
-          },
-          {
-            "name": "averageHRPerGame",
-            "type": "rollup",
-            "description": "Average number of home runs per game in this stadium. Implementation conceptual if we track HR data by stadium.",
-            "formula": "AVG(Game => totalHRsInGame) WHERE stadiumId=this.id"
-          },
-          {
-            "name": "daysSinceLastGame",
-            "type": "rollup",
-            "description": "Time (in days) since the most recent game played here. Implementation conceptual—compares current date to the MAX(gameDate).",
-            "formula": "CURRENT_DATE - MAX(Game where stadiumId=this.id => gameDate)"
-          }
-        ],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "OutEvent",
-        "description": "// NEW: Fact-based approach for recording outs. Each OutEvent references which half-inning or at-bat triggered the out. Eliminates imperative increments.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique out event record."
-          },
-          {
-            "name": "inningHalfId",
-            "type": "lookup",
-            "target_entity": "InningHalf",
-            "foreign_key": true,
-            "description": "Which half-inning this out belongs to."
-          },
-          {
-            "name": "atBatId",
-            "type": "lookup",
-            "target_entity": "AtBat",
-            "foreign_key": true,
-            "description": "Optional reference to which at-bat caused the out. Could be null if it's a pickoff or baserunning out."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": [],
-        "constraints": [],
-        "fields_additional": [
-          {
-            "name": "outType",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Describes how the out occurred (flyout, groundout, strikeout, etc.)."
-          }
-        ]
-      },
-      {
-        "name": "RunEvent",
-        "description": "// NEW: Fact-based approach for runs. Each RunEvent references which half-inning or at-bat triggered a run, ensuring no imperative 'scoreRun()'.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique run event record."
-          },
-          {
-            "name": "inningHalfId",
-            "type": "lookup",
-            "target_entity": "InningHalf",
-            "foreign_key": true,
-            "description": "Which half-inning this run belongs to."
-          },
-          {
-            "name": "atBatId",
-            "type": "lookup",
-            "target_entity": "AtBat",
-            "foreign_key": true,
-            "description": "Optional reference to the at-bat that batted in the run. Could be null if it’s a wild pitch, error, etc."
-          },
-          {
-            "name": "runCount",
-            "type": "scalar",
-            "datatype": "integer",
-            "description": "How many runs scored on this event (often 1, but could be more if multiple runners score simultaneously)."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": [],
-        "constraints": [],
-        "fields_additional": [
-          {
-            "name": "runScorerIds",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "List or array of the player IDs who actually crossed home plate in this run event. Implementation conceptual."
-          }
-        ]
-      },
-      {
-        "name": "Season",
-        "description": "// NEW ENTITY: Represents a baseball season, with a start/end date, name, etc.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the season."
-          },
-          {
-            "name": "seasonName",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Label for the season (e.g. '2025 MLB Season')."
-          },
-          {
-            "name": "startDate",
-            "type": "scalar",
-            "datatype": "date",
-            "description": "Official start date of this season."
-          },
-          {
-            "name": "endDate",
-            "type": "scalar",
-            "datatype": "date",
-            "description": "Official end date of this season."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "seasonGames",
-            "target_entity": "Game",
-            "type": "one_to_many",
-            "join_condition": "Game.seasonId = this.id",
-            "description": "All games referencing this season."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "gamesInSeason",
-            "type": "rollup",
-            "description": "Counts how many games are in this season (pure aggregator).",
-            "formula": "COUNT(seasonGames)"
-          }
-        ],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "SeasonTeamStats",
-        "description": "// NEW ENTITY: Ties a Team to a particular Season, storing aggregated seasonal stats, e.g. winning streaks, etc.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for this SeasonTeamStats record."
-          },
-          {
-            "name": "seasonId",
-            "type": "lookup",
-            "target_entity": "Season",
-            "foreign_key": true,
-            "description": "Which season this record belongs to."
-          },
-          {
-            "name": "teamId",
-            "type": "lookup",
-            "target_entity": "Team",
-            "foreign_key": true,
-            "description": "Which team is being tracked."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "teamWinningStreak",
-            "type": "rollup",
-            "description": "Longest consecutive wins streak for the team during this season. Implementation conceptual.",
-            "formula": "CALCULATE_MAX_WIN_STREAK(teamId, seasonId)"
-          },
-          {
-            "name": "runDifferential",
-            "type": "rollup",
-            "description": "Runs scored minus runs allowed by a team in a given season.",
-            "formula": "(SUM(Game[seasonId=this.seasonId AND (homeTeamId=this.teamId OR awayTeamId=this.teamId) => runsScoredByTeam]) - SUM(Game[seasonId=this.seasonId AND (homeTeamId=this.teamId OR awayTeamId=this.teamId) => runsAllowedByTeam]))"
-          }
-        ],
-        "lambdas": [],
-        "constraints": []
-      },
-      {
-        "name": "RuleSet",
-        "description": "Represents a set of rule variations in baseball. E.g. MLB_2025, LittleLeague_2025, etc.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ID for this ruleset."
-          },
-          {
-            "name": "ruleSetName",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Descriptive name for the rule set (e.g. 'MLB_2025' or 'LittleLeague_2025')."
-          },
-          {
-            "name": "dhEnabled",
-            "type": "scalar",
-            "datatype": "boolean",
-            "description": "Whether a designated hitter is allowed in this ruleset."
-          },
-          {
-            "name": "mercyRuleEnabled",
-            "type": "scalar",
-            "datatype": "boolean",
-            "description": "Whether a run-differential mercy rule is enforced."
-          },
-          {
-            "name": "mercyRuleInningThreshold",
-            "type": "scalar",
-            "datatype": "integer",
-            "description": "Inning after which the mercy rule can be triggered, e.g. 5."
-          },
-          {
-            "name": "pitchDistance",
-            "type": "scalar",
-            "datatype": "number",
-            "description": "Distance from pitcher's mound to home plate in feet."
-          },
-          {
-            "name": "basePathDistance",
-            "type": "scalar",
-            "datatype": "number",
-            "description": "Distance between bases in feet."
-          },
-          {
-            "name": "maxPitchCount",
-            "type": "scalar",
-            "datatype": "integer",
-            "description": "If >0, indicates a pitch limit for pitchers (common in youth leagues)."
-          },
-          {
-            "name": "extraInningRunnerRuleEnabled",
-            "type": "scalar",
-            "datatype": "boolean",
-            "description": "Whether the 'Manfred runner' in extra innings is used."
-          },
-          {
-            "name": "overAgeLimit",
-            "type": "scalar",
-            "datatype": "boolean",
-            "description": "Indicates if there is an age limit or classification in effect."
-          },
-          {
-            "name": "usesReplayReview",
-            "type": "scalar",
-            "datatype": "boolean",
-            "description": "Whether official replay review is permitted."
-          },
-          {
-            "name": "allowLeadingOff",
-            "type": "scalar",
-            "datatype": "boolean",
-            "description": "Indicates if baserunners can lead off."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [],
-        "lambdas": [],
-        "constraints": []
-      }
-    ],
-    "data": {
-      "League": [
-        {
-          "id": "league_MLB",
-          "leagueName": "Major League Baseball"
-        }
-      ],
-      "Team": [
-        {
-          "id": "team_NYY",
-          "teamName": "Yankees",
-          "league_id": "league_MLB"
+            {
+              "name": "strikeCount",
+              "type": "rollup",
+              "description": "NEW: The count of pitches that are strikes: CALLED_STRIKE, SWINGING_STRIKE, or FOUL. // NEW",
+              "formula": "COUNT(Pitch where atBatId=this.id AND pitchResult IN ['CALLED_STRIKE','SWINGING_STRIKE','FOUL'])"
+            },
+            {
+              "name": "ballCount",
+              "type": "rollup",
+              "description": "NEW: The count of pitches that are balls. // NEW",
+              "formula": "numberOfBalls"
+            },
+            {
+              "name": "batterHasStruckOut",
+              "type": "rollup",
+              "description": "NEW: True if strikeCount >= 3. // NEW",
+              "formula": "strikeCount >= 3"
+            },
+            {
+              "name": "batterHasWalked",
+              "type": "rollup",
+              "description": "NEW: True if ballCount >= 4. // NEW",
+              "formula": "ballCount >= 4"
+            }
+          ],
+          "lambdas": [
+            {
+              "name": "addPitch",
+              "parameters": ["pitchData"],
+              "description": "// CHANGED (DECLARATIVE): Instead of 'INSERT' pitch, we declare that all pitch entities referencing this atBatId belong to 'pitches'.",
+              "formula": "Pitch.atBatId == this.id => belongs to 'pitches' collection"
+            },
+            {
+              "name": "finalizeAtBat",
+              "parameters": [],
+              "description": "// CHANGED (DECLARATIVE): No step to 'lock in' result. We have a constraint: AtBat is complete if 'result' is one of the final states. No imperative update needed.",
+              "formula": "AtBatIsComplete(this.id) == (this.result != null)"
+            }
+          ],
+          "constraints": []
         },
         {
-          "id": "team_BOS",
-          "teamName": "Red Sox",
-          "league_id": "league_MLB"
-        }
-      ],
-      "Player": [
-        {
-          "id": "player_101",
-          "fullName": "John Pitcher",
-          "battingHand": "R",
-          "throwingHand": "R",
-          "team_id": "team_NYY"
+          "name": "Pitch",
+          "description": "Represents a single pitch thrown in an at-bat. Tracks velocity, location, outcome, etc., with no imperative instructions.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for this pitch record."
+            },
+            {
+              "name": "atBatId",
+              "type": "lookup",
+              "target_entity": "AtBat",
+              "foreign_key": true,
+              "description": "Which at-bat this pitch belongs to."
+            },
+            {
+              "name": "pitchResult",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "One of 'BALL','CALLED_STRIKE','SWINGING_STRIKE','FOUL','IN_PLAY','HIT_BY_PITCH', etc."
+            },
+            {
+              "name": "pitchVelocity",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Speed of the pitch, typically in mph or km/h."
+            },
+            {
+              "name": "pitchSpinRate",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Spin rate of the pitch in revolutions per minute (rpm)."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [
+            {
+              "name": "isStrike",
+              "type": "rollup",
+              "description": "Boolean aggregator: true if pitchResult is CALLED_STRIKE or SWINGING_STRIKE.",
+              "formula": "pitchResult IN ['CALLED_STRIKE','SWINGING_STRIKE']"
+            },
+            {
+              "name": "isQualityPitch",
+              "type": "rollup",
+              "description": "True if pitchVelocity > 95 and pitchSpinRate > 2200, purely an example threshold-based aggregator.",
+              "formula": "pitchVelocity>95 AND pitchSpinRate>2200"
+            },
+            {
+              "name": "adjustedSpinRate",
+              "type": "rollup",
+              "description": "Derived spin rate that might account for velocity or environmental factors. Implementation conceptual.",
+              "formula": "pitchSpinRate * ADJUSTMENT_FACTOR(pitchVelocity)"
+            },
+            {
+              "name": "isWildPitch",
+              "type": "rollup",
+              "formula": "pitchResult = 'WILD_PITCH'"
+            }
+          ],
+          "lambdas": [],
+          "constraints": []
         },
         {
-          "id": "player_102",
-          "fullName": "Mike Slugger",
-          "battingHand": "L",
-          "throwingHand": "R",
-          "team_id": "team_BOS"
-        }
-      ],
-      "DefensivePosition": [
-        {
-          "id": "1",
-          "positionName": "Pitcher"
+          "name": "Statistic",
+          "description": "Generic or specialized statistical measures referencing a Player, Team, or entire league. Could store advanced sabermetrics or simpler metrics.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for this stat record."
+            },
+            {
+              "name": "entityType",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Indicates whether this stat applies to 'Player','Team','League'."
+            },
+            {
+              "name": "entityId",
+              "type": "lookup",
+              "target_entity": "*",
+              "foreign_key": false,
+              "description": "ID of the specific entity (player/team/league) to which the stat belongs. Implementation conceptual."
+            },
+            {
+              "name": "statName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "E.g. 'OPS','ERA','WAR','fieldingPercentage'."
+            },
+            {
+              "name": "statValue",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Numeric result of the stat calculation."
+            },
+            {
+              "name": "season",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Optional label for which season or time period this stat references."
+            },
+            {
+              "name": "lastUpdated",
+              "type": "scalar",
+              "datatype": "datetime",
+              "description": "Timestamp indicating when this stat was last updated."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [],
+          "lambdas": [],
+          "constraints": []
         },
         {
-          "id": "2",
-          "positionName": "Catcher"
+          "name": "Stadium",
+          "description": "Represents a ballpark or stadium where games are played. Purely declarative references to capacity, location, etc.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for this stadium."
+            },
+            {
+              "name": "stadiumName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "The official or common name of the stadium."
+            },
+            {
+              "name": "capacity",
+              "type": "scalar",
+              "datatype": "integer",
+              "description": "Maximum seating capacity of the stadium."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [
+            {
+              "name": "gamesPlayedInStadium",
+              "type": "rollup",
+              "description": "Number of games that have taken place in this stadium. Implementation conceptual, would require a link from Game to Stadium.",
+              "formula": "COUNT(Game where Game.stadiumId = this.id)"
+            },
+            {
+              "name": "averageAttendance",
+              "type": "rollup",
+              "description": "Average attendance across all games played here. Implementation conceptual.",
+              "formula": "AVG(GameAttendanceRecords where stadiumId=this.id)"
+            },
+            {
+              "name": "mostRunsInSingleGame",
+              "type": "rollup",
+              "description": "Maximum total runs (home + away) for any game played in this stadium.",
+              "formula": "MAX( Game where stadiumId=this.id => (runsHome + runsAway) )"
+            },
+            {
+              "name": "averageHRPerGame",
+              "type": "rollup",
+              "description": "Average number of home runs per game in this stadium. Implementation conceptual if we track HR data by stadium.",
+              "formula": "AVG(Game => totalHRsInGame) WHERE stadiumId=this.id"
+            },
+            {
+              "name": "daysSinceLastGame",
+              "type": "rollup",
+              "description": "Time (in days) since the most recent game played here. Implementation conceptual—compares current date to the MAX(gameDate).",
+              "formula": "CURRENT_DATE - MAX(Game where stadiumId=this.id => gameDate)"
+            }
+          ],
+          "lambdas": [],
+          "constraints": []
         },
         {
-          "id": "6",
-          "positionName": "Shortstop"
+          "name": "OutEvent",
+          "description": "// NEW: Fact-based approach for recording outs. Each OutEvent references which half-inning or at-bat triggered the out. Eliminates imperative increments.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique out event record."
+            },
+            {
+              "name": "inningHalfId",
+              "type": "lookup",
+              "target_entity": "InningHalf",
+              "foreign_key": true,
+              "description": "Which half-inning this out belongs to."
+            },
+            {
+              "name": "atBatId",
+              "type": "lookup",
+              "target_entity": "AtBat",
+              "foreign_key": true,
+              "description": "Optional reference to which at-bat caused the out. Could be null if it's a pickoff or baserunning out."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [],
+          "lambdas": [],
+          "constraints": [],
+          "fields_additional": [
+            {
+              "name": "outType",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Describes how the out occurred (flyout, groundout, strikeout, etc.)."
+            }
+          ]
         },
         {
-          "id": "DH",
-          "positionName": "Designated Hitter"
-        }
-      ],
-      "Game": [
-        {
-          "id": "game_2025_03_13",
-          "homeTeamId": "team_NYY",
-          "awayTeamId": "team_BOS",
-          "status": "SCHEDULED"
-        }
-      ],
-      "Inning": [],
-      "InningHalf": [],
-      "AtBat": [],
-      "Pitch": [],
-      "Statistic": [
-        {
-          "id": "stat_001",
-          "entityType": "Player",
-          "entityId": "player_101",
-          "statName": "ERA",
-          "statValue": 3.45,
-          "season": "2025",
-          "lastUpdated": "2025-03-01T10:00:00Z"
+          "name": "RunEvent",
+          "description": "// NEW: Fact-based approach for runs. Each RunEvent references which half-inning or at-bat triggered a run, ensuring no imperative 'scoreRun()'.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique run event record."
+            },
+            {
+              "name": "inningHalfId",
+              "type": "lookup",
+              "target_entity": "InningHalf",
+              "foreign_key": true,
+              "description": "Which half-inning this run belongs to."
+            },
+            {
+              "name": "atBatId",
+              "type": "lookup",
+              "target_entity": "AtBat",
+              "foreign_key": true,
+              "description": "Optional reference to the at-bat that batted in the run. Could be null if it’s a wild pitch, error, etc."
+            },
+            {
+              "name": "runCount",
+              "type": "scalar",
+              "datatype": "integer",
+              "description": "How many runs scored on this event (often 1, but could be more if multiple runners score simultaneously)."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [],
+          "lambdas": [],
+          "constraints": [],
+          "fields_additional": [
+            {
+              "name": "runScorerIds",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "List or array of the player IDs who actually crossed home plate in this run event. Implementation conceptual."
+            }
+          ]
         },
         {
-          "id": "stat_002",
-          "entityType": "Player",
-          "entityId": "player_102",
-          "statName": "BattingAverage",
-          "statValue": 0.285,
-          "season": "2025",
-          "lastUpdated": "2025-03-02T14:30:00Z"
-        }
-      ],
-      "Stadium": [
+          "name": "Season",
+          "description": "// NEW ENTITY: Represents a baseball season, with a start/end date, name, etc.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for the season."
+            },
+            {
+              "name": "seasonName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Label for the season (e.g. '2025 MLB Season')."
+            },
+            {
+              "name": "startDate",
+              "type": "scalar",
+              "datatype": "date",
+              "description": "Official start date of this season."
+            },
+            {
+              "name": "endDate",
+              "type": "scalar",
+              "datatype": "date",
+              "description": "Official end date of this season."
+            }
+          ],
+          "lookups": [
+            {
+              "name": "seasonGames",
+              "target_entity": "Game",
+              "type": "one_to_many",
+              "join_condition": "Game.seasonId = this.id",
+              "description": "All games referencing this season."
+            }
+          ],
+          "aggregations": [
+            {
+              "name": "gamesInSeason",
+              "type": "rollup",
+              "description": "Counts how many games are in this season (pure aggregator).",
+              "formula": "COUNT(seasonGames)"
+            }
+          ],
+          "lambdas": [],
+          "constraints": []
+        },
         {
-          "id": "stadium_001",
-          "stadiumName": "Yankee Stadium",
-          "capacity": 50000
-        }
-      ],
-      "OutEvent": [],
-      "RunEvent": [],
-      "Season": [
+          "name": "SeasonTeamStats",
+          "description": "// NEW ENTITY: Ties a Team to a particular Season, storing aggregated seasonal stats, e.g. winning streaks, etc.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique identifier for this SeasonTeamStats record."
+            },
+            {
+              "name": "seasonId",
+              "type": "lookup",
+              "target_entity": "Season",
+              "foreign_key": true,
+              "description": "Which season this record belongs to."
+            },
+            {
+              "name": "teamId",
+              "type": "lookup",
+              "target_entity": "Team",
+              "foreign_key": true,
+              "description": "Which team is being tracked."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [
+            {
+              "name": "teamWinningStreak",
+              "type": "rollup",
+              "description": "Longest consecutive wins streak for the team during this season. Implementation conceptual.",
+              "formula": "CALCULATE_MAX_WIN_STREAK(teamId, seasonId)"
+            },
+            {
+              "name": "runDifferential",
+              "type": "rollup",
+              "description": "Runs scored minus runs allowed by a team in a given season.",
+              "formula": "(SUM(Game[seasonId=this.seasonId AND (homeTeamId=this.teamId OR awayTeamId=this.teamId) => runsScoredByTeam]) - SUM(Game[seasonId=this.seasonId AND (homeTeamId=this.teamId OR awayTeamId=this.teamId) => runsAllowedByTeam]))"
+            }
+          ],
+          "lambdas": [],
+          "constraints": []
+        },
         {
-          "id": "season_2025",
-          "seasonName": "2025 MLB Regular Season",
-          "startDate": "2025-03-15",
-          "endDate": "2025-10-01"
+          "name": "RuleSet",
+          "description": "Represents a set of rule variations in baseball. E.g. MLB_2025, LittleLeague_2025, etc.",
+          "fields": [
+            {
+              "name": "id",
+              "type": "scalar",
+              "datatype": "string",
+              "primary_key": true,
+              "description": "Unique ID for this ruleset."
+            },
+            {
+              "name": "ruleSetName",
+              "type": "scalar",
+              "datatype": "string",
+              "description": "Descriptive name for the rule set (e.g. 'MLB_2025' or 'LittleLeague_2025')."
+            },
+            {
+              "name": "dhEnabled",
+              "type": "scalar",
+              "datatype": "boolean",
+              "description": "Whether a designated hitter is allowed in this ruleset."
+            },
+            {
+              "name": "mercyRuleEnabled",
+              "type": "scalar",
+              "datatype": "boolean",
+              "description": "Whether a run-differential mercy rule is enforced."
+            },
+            {
+              "name": "mercyRuleInningThreshold",
+              "type": "scalar",
+              "datatype": "integer",
+              "description": "Inning after which the mercy rule can be triggered, e.g. 5."
+            },
+            {
+              "name": "pitchDistance",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Distance from pitcher's mound to home plate in feet."
+            },
+            {
+              "name": "basePathDistance",
+              "type": "scalar",
+              "datatype": "number",
+              "description": "Distance between bases in feet."
+            },
+            {
+              "name": "maxPitchCount",
+              "type": "scalar",
+              "datatype": "integer",
+              "description": "If >0, indicates a pitch limit for pitchers (common in youth leagues)."
+            },
+            {
+              "name": "extraInningRunnerRuleEnabled",
+              "type": "scalar",
+              "datatype": "boolean",
+              "description": "Whether the 'Manfred runner' in extra innings is used."
+            },
+            {
+              "name": "overAgeLimit",
+              "type": "scalar",
+              "datatype": "boolean",
+              "description": "Indicates if there is an age limit or classification in effect."
+            },
+            {
+              "name": "usesReplayReview",
+              "type": "scalar",
+              "datatype": "boolean",
+              "description": "Whether official replay review is permitted."
+            },
+            {
+              "name": "allowLeadingOff",
+              "type": "scalar",
+              "datatype": "boolean",
+              "description": "Indicates if baserunners can lead off."
+            }
+          ],
+          "lookups": [],
+          "aggregations": [],
+          "lambdas": [],
+          "constraints": []
         }
       ],
-      "SeasonTeamStats": []
-    }
-  },
-  "data": {
-    "sampleTeams": [
-      {
-        "id": "TEAM1",
-        "teamName": "The Cluckers",
-        "pitcherCount": 14
-      },
-      {
-        "id": "TEAM2",
-        "teamName": "The Gravity Defiers",
-        "pitcherCount": 12
-      }
-    ],
-    "sampleGames": [
-      {
-        "id": "GAME1",
-        "homeTeamId": "TEAM1",
-        "awayTeamId": "TEAM2",
-        "status": "IN_PROGRESS",
-        "runsHome": 2,
-        "runsAway": 2
-      },
-      {
-        "id": "GAME2",
-        "homeTeamId": "TEAM2",
-        "awayTeamId": "TEAM1",
-        "status": "FINAL",
-        "runsHome": 5,
-        "runsAway": 4
-      }
-    ],
-    "sampleInnings": [
-      {
-        "id": "INNING1",
-        "gameId": "GAME1",
-        "inningNumber": 7
-      },
-      {
-        "id": "INNING2",
-        "gameId": "GAME2",
-        "inningNumber": 3
-      }
-    ],
-    "sampleInningHalves": [
-      {
-        "id": "IH_TOP7",
-        "halfType": "TOP",
-        "offensiveTeamId": "TEAM2",
-        "defensiveTeamId": "TEAM1",
-        "outs": 2,
-        "runsScored": 1,
-        "isComplete": false
-      },
-      {
-        "id": "IH_BOT7",
-        "halfType": "BOTTOM",
-        "offensiveTeamId": "TEAM1",
-        "defensiveTeamId": "TEAM2",
-        "outs": 3,
-        "runsScored": 0,
-        "isComplete": true
-      }
-    ],
-    "samplePlayers": [
-      {
-        "id": "PLAYER1",
-        "fullName": "Henrietta Peckerson",
-        "team_id": "TEAM1"
-      },
-      {
-        "id": "PLAYER2",
-        "fullName": "Joe Slugger",
-        "team_id": "TEAM2"
-      }
-    ],
-    "samplePitches": [
-      {
-        "id": "PITCH1",
-        "atBatId": "AB1",
-        "pitchResult": "WILD_PITCH"
-      },
-      {
-        "id": "PITCH2",
-        "atBatId": "AB1",
-        "pitchResult": "BALL"
-      }
-    ]
-  },
-  "root-meta-model": {
-    "title": "The Conceptual Model Completeness Conjecture (CMCC)",
-    "subtitle": "A Universal Declarative Computational Framework",
-    "authors": [
-      {
-        "name": "EJ Alexandra",
-        "contact": "start@anabstractlevel.com",
-        "affiliations": [
-          "SSoT.me",
-          "EffortlessAPI.com"
-        ]
-      }
-    ],
-    "date": "January 2025",
-    "abstract": "The Conceptual Model Completeness Conjecture (CMCC) posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within a Snapshot-Consistent environment. This updated baseball model exemplifies how all domain logic can be expressed purely as constraints, aggregator fields, or relationships, removing all imperative steps.",
-    "executive_summary": {
-      "key_points": [
-        "Demonstrates how to remove imperative step-by-step logic and convert it to data-driven or aggregator-driven facts.",
-        "Proves the feasibility of purely declarative baseball rules, from runs to outs to final game states.",
-        "Illustrates how new entities like OutEvent and RunEvent can remove the need for explicit 'recordOut()' or 'scoreRun()' calls."
-      ],
-      "implications": [
-        "Potential unification of domain modeling under a purely fact-based approach, cutting out mutable, stepwise logic.",
-        "Data changes automatically reflect in aggregator fields, ensuring consistency at all times with no update commands.",
-        "Enables advanced simulation, analytics, or knowledge-graph queries in any environment supporting declarative rule evaluation."
-      ],
-      "narrative": {
-        "sections": [
+      "data": {
+        "League": [
           {
-            "title": "Executive Summary",
-            "content": [
-              "The pivot from partial-imperative to purely declarative removes the last bits of 'if-then-do-something' logic. All game states—outs, runs, or game completion—are determined by the presence of event records and aggregator formulas. We introduced entities like OutEvent and RunEvent for outs and runs, so that at any time, the system can see 'outs=3' or 'runs>opponentRuns' and derive that an inning/game is finished. No imperative instruction is needed to 'increment' or 'set' these values; they follow naturally from the underlying event data.",
-              "This approach underscores the power of the CMCC framework (S, D, L, A, F). The domain structure is expressed via the schema (S), actual values or events appear in the data (D), references or relationships are lookups (L), aggregator fields (A) compute rollups or derived states, and lambda fields (F) can define purely functional or constraint-based logic. The entire baseball domain logic emerges from these relationships—no custom code is required to orchestrate state transitions."
-            ]
+            "id": "league_MLB",
+            "leagueName": "Major League Baseball"
           }
-        ]
+        ],
+        "Team": [
+          {
+            "id": "team_NYY",
+            "teamName": "Yankees",
+            "league_id": "league_MLB"
+          },
+          {
+            "id": "team_BOS",
+            "teamName": "Red Sox",
+            "league_id": "league_MLB"
+          }
+        ],
+        "Player": [
+          {
+            "id": "player_101",
+            "fullName": "John Pitcher",
+            "battingHand": "R",
+            "throwingHand": "R",
+            "team_id": "team_NYY"
+          },
+          {
+            "id": "player_102",
+            "fullName": "Mike Slugger",
+            "battingHand": "L",
+            "throwingHand": "R",
+            "team_id": "team_BOS"
+          }
+        ],
+        "DefensivePosition": [
+          {
+            "id": "1",
+            "positionName": "Pitcher"
+          },
+          {
+            "id": "2",
+            "positionName": "Catcher"
+          },
+          {
+            "id": "6",
+            "positionName": "Shortstop"
+          },
+          {
+            "id": "DH",
+            "positionName": "Designated Hitter"
+          }
+        ],
+        "Game": [
+          {
+            "id": "game_2025_03_13",
+            "homeTeamId": "team_NYY",
+            "awayTeamId": "team_BOS",
+            "status": "SCHEDULED"
+          }
+        ],
+        "Inning": [],
+        "InningHalf": [],
+        "AtBat": [],
+        "Pitch": [],
+        "Statistic": [
+          {
+            "id": "stat_001",
+            "entityType": "Player",
+            "entityId": "player_101",
+            "statName": "ERA",
+            "statValue": 3.45,
+            "season": "2025",
+            "lastUpdated": "2025-03-01T10:00:00Z"
+          },
+          {
+            "id": "stat_002",
+            "entityType": "Player",
+            "entityId": "player_102",
+            "statName": "BattingAverage",
+            "statValue": 0.285,
+            "season": "2025",
+            "lastUpdated": "2025-03-02T14:30:00Z"
+          }
+        ],
+        "Stadium": [
+          {
+            "id": "stadium_001",
+            "stadiumName": "Yankee Stadium",
+            "capacity": 50000
+          }
+        ],
+        "OutEvent": [],
+        "RunEvent": [],
+        "Season": [
+          {
+            "id": "season_2025",
+            "seasonName": "2025 MLB Regular Season",
+            "startDate": "2025-03-15",
+            "endDate": "2025-10-01"
+          }
+        ],
+        "SeasonTeamStats": []
       }
     },
-    "CMCC_ToEMM_Domain_List": [
-      {
-        "id": "CMCC_ToEMM_Baseball",
-        "fullname": "Baseball ToE Meta-Model",
-        "name": "Baseball ToE Meta-Model",
-        "description": "A structured model capturing the domain of baseball, including leagues, teams, players, games, innings, at-bats, and stats, in a 100% declarative style.",
-        "nickname": "baseball"
+    "data": {
+      "sampleTeams": [
+        {
+          "id": "TEAM1",
+          "teamName": "The Cluckers",
+          "pitcherCount": 14
+        },
+        {
+          "id": "TEAM2",
+          "teamName": "The Gravity Defiers",
+          "pitcherCount": 12
+        }
+      ],
+      "sampleGames": [
+        {
+          "id": "GAME1",
+          "homeTeamId": "TEAM1",
+          "awayTeamId": "TEAM2",
+          "status": "IN_PROGRESS",
+          "runsHome": 2,
+          "runsAway": 2
+        },
+        {
+          "id": "GAME2",
+          "homeTeamId": "TEAM2",
+          "awayTeamId": "TEAM1",
+          "status": "FINAL",
+          "runsHome": 5,
+          "runsAway": 4
+        }
+      ],
+      "sampleInnings": [
+        {
+          "id": "INNING1",
+          "gameId": "GAME1",
+          "inningNumber": 7
+        },
+        {
+          "id": "INNING2",
+          "gameId": "GAME2",
+          "inningNumber": 3
+        }
+      ],
+      "sampleInningHalves": [
+        {
+          "id": "IH_TOP7",
+          "halfType": "TOP",
+          "offensiveTeamId": "TEAM2",
+          "defensiveTeamId": "TEAM1",
+          "outs": 2,
+          "runsScored": 1,
+          "isComplete": false
+        },
+        {
+          "id": "IH_BOT7",
+          "halfType": "BOTTOM",
+          "offensiveTeamId": "TEAM1",
+          "defensiveTeamId": "TEAM2",
+          "outs": 3,
+          "runsScored": 0,
+          "isComplete": true
+        }
+      ],
+      "samplePlayers": [
+        {
+          "id": "PLAYER1",
+          "fullName": "Henrietta Peckerson",
+          "team_id": "TEAM1"
+        },
+        {
+          "id": "PLAYER2",
+          "fullName": "Joe Slugger",
+          "team_id": "TEAM2"
+        }
+      ],
+      "samplePitches": [
+        {
+          "id": "PITCH1",
+          "atBatId": "AB1",
+          "pitchResult": "WILD_PITCH"
+        },
+        {
+          "id": "PITCH2",
+          "atBatId": "AB1",
+          "pitchResult": "BALL"
+        }
+      ]
+    },
+    "root-meta-model": {
+      "title": "The Conceptual Model Completeness Conjecture (CMCC)",
+      "subtitle": "A Universal Declarative Computational Framework",
+      "authors": [
+        {
+          "name": "EJ Alexandra",
+          "contact": "start@anabstractlevel.com",
+          "affiliations": ["SSoT.me", "EffortlessAPI.com"]
+        }
+      ],
+      "date": "January 2025",
+      "abstract": "The Conceptual Model Completeness Conjecture (CMCC) posits that the declarative semantics of any conceptual model can be captured using five fundamental primitives—Schema (S), Data (D), Lookups (L), Aggregations (A), and Lambda Calculated Fields (F)—within a Snapshot-Consistent environment. This updated baseball model exemplifies how all domain logic can be expressed purely as constraints, aggregator fields, or relationships, removing all imperative steps.",
+      "executive_summary": {
+        "key_points": [
+          "Demonstrates how to remove imperative step-by-step logic and convert it to data-driven or aggregator-driven facts.",
+          "Proves the feasibility of purely declarative baseball rules, from runs to outs to final game states.",
+          "Illustrates how new entities like OutEvent and RunEvent can remove the need for explicit 'recordOut()' or 'scoreRun()' calls."
+        ],
+        "implications": [
+          "Potential unification of domain modeling under a purely fact-based approach, cutting out mutable, stepwise logic.",
+          "Data changes automatically reflect in aggregator fields, ensuring consistency at all times with no update commands.",
+          "Enables advanced simulation, analytics, or knowledge-graph queries in any environment supporting declarative rule evaluation."
+        ],
+        "narrative": {
+          "sections": [
+            {
+              "title": "Executive Summary",
+              "content": [
+                "The pivot from partial-imperative to purely declarative removes the last bits of 'if-then-do-something' logic. All game states—outs, runs, or game completion—are determined by the presence of event records and aggregator formulas. We introduced entities like OutEvent and RunEvent for outs and runs, so that at any time, the system can see 'outs=3' or 'runs>opponentRuns' and derive that an inning/game is finished. No imperative instruction is needed to 'increment' or 'set' these values; they follow naturally from the underlying event data.",
+                "This approach underscores the power of the CMCC framework (S, D, L, A, F). The domain structure is expressed via the schema (S), actual values or events appear in the data (D), references or relationships are lookups (L), aggregator fields (A) compute rollups or derived states, and lambda fields (F) can define purely functional or constraint-based logic. The entire baseball domain logic emerges from these relationships—no custom code is required to orchestrate state transitions."
+              ]
+            }
+          ]
+        }
       },
-      {
-        "id": "CMCC_ToEMM_Math",
-        "fullname": "Mathematics ToE Meta-Model",
-        "name": "Mathematics ToE Meta-Model",
-        "description": "A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.",
-        "nickname": "math"
-      },
-      {
-        "id": "CMCC_ToEMM_Physics",
-        "fullname": "Physics ToE Meta-Model",
-        "name": "Physics ToE Meta-Model",
-        "description": "A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.",
-        "nickname": "physics"
-      },
-      {
-        "id": "CMCC_ToEMM_Chemistry",
-        "fullname": "Chemistry ToE Meta-Model",
-        "name": "Chemistry ToE Meta-Model",
-        "description": "Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.",
-        "nickname": "chemistry"
-      },
-      {
-        "id": "CMCC_ToEMM_Biology",
-        "fullname": "Biology ToE Meta-Model",
-        "name": "Biology ToE Meta-Model",
-        "description": "Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.",
-        "nickname": "biology"
-      },
-      {
-        "id": "CMCC_ToEMM_AI",
-        "fullname": "Artificial Intelligence ToE Meta-Model",
-        "name": "Artificial Intelligence ToE Meta-Model",
-        "description": "Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.",
-        "nickname": "ai"
-      },
-      {
-        "id": "CMCC_ToEMM_Economics",
-        "fullname": "Economics ToE Meta-Model",
-        "name": "Economics ToE Meta-Model",
-        "description": "A computational model for economic agents, markets, transactions, and supply-demand constraints.",
-        "nickname": "economics"
-      },
-      {
-        "id": "CMCC_ToEMM_Astronomy",
-        "fullname": "Astronomy ToE Meta-Model",
-        "name": "Astronomy ToE Meta-Model",
-        "description": "An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.",
-        "nickname": "astronomy"
-      },
-      {
-        "id": "CMCC_ToEMM_Geology",
-        "fullname": "Geology oE Meta-Model",
-        "name": "Geology",
-        "description": "A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.",
-        "nickname": "geology"
-      },
-      {
-        "id": "CMCC_ToEMM_Medicine",
-        "fullname": "Medicine and Healthcare ToE Meta-Model",
-        "name": "Medicine & Healthcare ToE Meta-Model",
-        "description": "A unified model capturing foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and analytics.",
-        "nickname": "medicine"
-      },
-      {
-        "id": "CMCC_ToEMM_Legal",
-        "fullname": "Legal Systems & Compliance ToE Meta-Model",
-        "name": "Legal Systems & Compliance ToE Meta-Model",
-        "description": "A unified model for legal systems, contracts, statutory frameworks, and regulatory compliance.",
-        "nickname": "legal"
-      },
-      {
-        "id": "CMCC_ToEMM_Climate",
-        "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
-        "name": "Climate Science ToE Meta-Model",
-        "description": "A unified model for climate science and environmental modeling, capturing climate variables, ecosystems, pollution sources, and environmental data.",
-        "nickname": "climate"
-      },
-      {
-        "id": "CMCC_ToEMM_Cybersecurity",
-        "fullname": "Cybersecurity ToE Meta-Model",
-        "name": "Cybersecurity ToE Meta-Model",
-        "description": "A unified model for cybersecurity covering threat models, vulnerabilities, IT asset mappings, incident logs, and security audits.",
-        "nickname": "cybersecurity"
-      },
-      {
-        "id": "CMCC_ToEMM_Sociology",
-        "fullname": "Sociology and Anthropology ToE Meta-Model",
-        "name": "Sociology & Anthropology ToE Meta-Model",
-        "description": "A structured model capturing social structures, cultural norms, and interaction networks using survey data, demographic records, and social network relationships.",
-        "nickname": "sociology"
-      }
-    ]
+      "CMCC_ToEMM_Domain_List": [
+        {
+          "id": "CMCC_ToEMM_Baseball",
+          "fullname": "Baseball ToE Meta-Model",
+          "name": "Baseball ToE Meta-Model",
+          "description": "A structured model capturing the domain of baseball, including leagues, teams, players, games, innings, at-bats, and stats, in a 100% declarative style.",
+          "nickname": "baseball"
+        },
+        {
+          "id": "CMCC_ToEMM_Math",
+          "fullname": "Mathematics ToE Meta-Model",
+          "name": "Mathematics ToE Meta-Model",
+          "description": "A structured model covering foundational mathematics, including sets, functions, proofs, structures, and category theory.",
+          "nickname": "math"
+        },
+        {
+          "id": "CMCC_ToEMM_Physics",
+          "fullname": "Physics ToE Meta-Model",
+          "name": "Physics ToE Meta-Model",
+          "description": "A unified model for physics, including classical mechanics, quantum mechanics, gauge fields, wavefunctions, relativity, and black hole dynamics.",
+          "nickname": "physics"
+        },
+        {
+          "id": "CMCC_ToEMM_Chemistry",
+          "fullname": "Chemistry ToE Meta-Model",
+          "name": "Chemistry ToE Meta-Model",
+          "description": "Extends the Physics TOE with atomic structures, molecular interactions, bonds, and chemical reactions.",
+          "nickname": "chemistry"
+        },
+        {
+          "id": "CMCC_ToEMM_Biology",
+          "fullname": "Biology ToE Meta-Model",
+          "name": "Biology ToE Meta-Model",
+          "description": "Bridges Chemistry and Physics TOEs to model biological systems, including genes, proteins, metabolism, and cellular structures.",
+          "nickname": "biology"
+        },
+        {
+          "id": "CMCC_ToEMM_AI",
+          "fullname": "Artificial Intelligence ToE Meta-Model",
+          "name": "Artificial Intelligence ToE Meta-Model",
+          "description": "Encapsulates machine learning, neural networks, training datasets, reinforcement learning, and inference mechanisms.",
+          "nickname": "ai"
+        },
+        {
+          "id": "CMCC_ToEMM_Economics",
+          "fullname": "Economics ToE Meta-Model",
+          "name": "Economics ToE Meta-Model",
+          "description": "A computational model for economic agents, markets, transactions, and supply-demand constraints.",
+          "nickname": "economics"
+        },
+        {
+          "id": "CMCC_ToEMM_Astronomy",
+          "fullname": "Astronomy ToE Meta-Model",
+          "name": "Astronomy ToE Meta-Model",
+          "description": "An extension of the Physics TOE to model celestial bodies, star systems, orbital dynamics, and large-scale cosmic structures.",
+          "nickname": "astronomy"
+        },
+        {
+          "id": "CMCC_ToEMM_Geology",
+          "fullname": "Geology oE Meta-Model",
+          "name": "Geology",
+          "description": "A model integrating physics and chemistry to represent minerals, rock formations, and tectonic processes.",
+          "nickname": "geology"
+        },
+        {
+          "id": "CMCC_ToEMM_Medicine",
+          "fullname": "Medicine and Healthcare ToE Meta-Model",
+          "name": "Medicine & Healthcare ToE Meta-Model",
+          "description": "A unified model capturing foundational aspects of medicine and healthcare, including patient records, clinical trial data, treatment plans, and analytics.",
+          "nickname": "medicine"
+        },
+        {
+          "id": "CMCC_ToEMM_Legal",
+          "fullname": "Legal Systems & Compliance ToE Meta-Model",
+          "name": "Legal Systems & Compliance ToE Meta-Model",
+          "description": "A unified model for legal systems, contracts, statutory frameworks, and regulatory compliance.",
+          "nickname": "legal"
+        },
+        {
+          "id": "CMCC_ToEMM_Climate",
+          "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
+          "name": "Climate Science ToE Meta-Model",
+          "description": "A unified model for climate science and environmental modeling, capturing climate variables, ecosystems, pollution sources, and environmental data.",
+          "nickname": "climate"
+        },
+        {
+          "id": "CMCC_ToEMM_Cybersecurity",
+          "fullname": "Cybersecurity ToE Meta-Model",
+          "name": "Cybersecurity ToE Meta-Model",
+          "description": "A unified model for cybersecurity covering threat models, vulnerabilities, IT asset mappings, incident logs, and security audits.",
+          "nickname": "cybersecurity"
+        },
+        {
+          "id": "CMCC_ToEMM_Sociology",
+          "fullname": "Sociology and Anthropology ToE Meta-Model",
+          "name": "Sociology & Anthropology ToE Meta-Model",
+          "description": "A structured model capturing social structures, cultural norms, and interaction networks using survey data, demographic records, and social network relationships.",
+          "nickname": "sociology"
+        }
+      ]
+    }
   }
 }
