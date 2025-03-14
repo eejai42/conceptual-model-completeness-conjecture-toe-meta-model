@@ -360,6 +360,15 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **careerSacBunts**  
   *Description:* Number of successful sacrifice bunts for the player.  
   *Formula:* `COUNT(AtBat WHERE batterId=this.id AND result='SAC_BUNT')`
+- **consecutiveGamesPlayedStreak**  
+  *Description:*   
+  *Formula:* `CALCULATE_CONSECUTIVE_GAMES_PLAYED( this.id )`
+- **chickenStanceIndicator**  
+  *Description:*   
+  *Formula:* `EXISTS( WeirdStanceEvent WHERE WeirdStanceEvent.playerId = this.id )`
+- **daysSinceLastRest**  
+  *Description:*   
+  *Formula:* `CURRENT_DATE - lastRestDate( this.id )`
 
 ### Lambdas
 - **adjustBattingHand**
@@ -458,6 +467,21 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **tieCount**  
   *Description:* How many times the score returned to a tie after first pitch.  
   *Formula:* `CALCULATE_TIE_COUNT(gameId=this.id)`
+- **isTieGameInProgress**  
+  *Description:*   
+  *Formula:* `(status = 'IN_PROGRESS') AND (runsHome = runsAway)`
+- **manfredRunnerInEffect**  
+  *Description:*   
+  *Formula:* `isExtraInnings = true AND leagueImplementsExtraInningRunnerRule( this.id )`
+- **gameSuspendedDueToWeather**  
+  *Description:*   
+  *Formula:* `EXISTS( SuspensionEvent WHERE gameId = this.id AND reason = 'WEATHER' )`
+- **winningPitcherId**  
+  *Description:*   
+  *Formula:* `CALC_WINNING_PITCHER( this.id )`
+- **hadCycleAchieved**  
+  *Description:*   
+  *Formula:* `EXISTS( BatterCycleEvent WHERE gameId = this.id )`
 
 ### Lambdas
 - **startGame**
@@ -514,6 +538,21 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **totalWalksInInning**  
   *Description:* Count of at-bats with 'result=WALK' in the top and bottom half of this inning combined.  
   *Formula:* `COUNT(AtBat where AtBat.inningHalfId.inningId=this.id AND result='WALK')`
+- **isSeventhInningStretch**  
+  *Description:*   
+  *Formula:* `inningNumber = 7`
+- **balksInInning**  
+  *Description:*   
+  *Formula:* `COUNT( BalkEvent WHERE BalkEvent.inningId = this.id )`
+- **stealAttemptsInInning**  
+  *Description:*   
+  *Formula:* `COUNT( StealAttemptEvent WHERE StealAttemptEvent.inningId = this.id )`
+- **runnersAdvancedOnWildPitch**  
+  *Description:*   
+  *Formula:* `COUNT( RunnerAdvanceEvent WHERE reason = 'WILD_PITCH' AND inningId = this.id )`
+- **largestLeadAtAnyPointThisInning**  
+  *Description:*   
+  *Formula:* `MAX( leadDifferentialDuringInning( this.id ) )`
 
 
 
@@ -575,6 +614,18 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **hitsWithExitVelocityAbove90**  
   *Description:* Number of hits in this half-inning that had exitVelocity > 90 mph.  
   *Formula:* `COUNT(AtBat where inningHalfId=this.id AND exitVelocity>90 AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN'])`
+- **catchersInterferenceCalls**  
+  *Description:*   
+  *Formula:* `COUNT( AtBat WHERE inningHalfId = this.id AND result = 'CATCHER_INTERFERENCE' )`
+- **batterInterferenceCalls**  
+  *Description:*   
+  *Formula:* `COUNT( AtBat WHERE inningHalfId = this.id AND result = 'BATTER_INTERFERENCE' )`
+- **sacrificeBuntsInHalf**  
+  *Description:*   
+  *Formula:* `COUNT( AtBat WHERE inningHalfId = this.id AND result = 'SAC_BUNT' )`
+- **infieldFlyCallsInHalf**  
+  *Description:*   
+  *Formula:* `COUNT( AtBat WHERE inningHalfId = this.id AND specialCall = 'INFIELD_FLY' )`
 
 ### Lambdas
 - **recordOut**
@@ -694,6 +745,9 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **adjustedSpinRate**  
   *Description:* Derived spin rate that might account for velocity or environmental factors. Implementation conceptual.  
   *Formula:* `pitchSpinRate * ADJUSTMENT_FACTOR(pitchVelocity)`
+- **isWildPitch**  
+  *Description:*   
+  *Formula:* `pitchResult = 'WILD_PITCH'`
 
 
 

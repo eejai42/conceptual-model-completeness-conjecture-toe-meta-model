@@ -511,7 +511,6 @@
               "description": "Min exit velocity recorded for batted balls by this player.",
               "formula": "MIN( AtBat where batterId=this.id => exitVelocity )"
             },
-
             {
               "name": "careerSluggingPct",
               "type": "rollup",
@@ -637,6 +636,21 @@
               "type": "rollup",
               "description": "Number of successful sacrifice bunts for the player.",
               "formula": "COUNT(AtBat WHERE batterId=this.id AND result='SAC_BUNT')"
+            },
+            {
+              "name": "consecutiveGamesPlayedStreak",
+              "type": "rollup",
+              "formula": "CALCULATE_CONSECUTIVE_GAMES_PLAYED( this.id )"
+            },
+            {
+              "name": "chickenStanceIndicator",
+              "type": "rollup",
+              "formula": "EXISTS( WeirdStanceEvent WHERE WeirdStanceEvent.playerId = this.id )"
+            },
+            {
+              "name": "daysSinceLastRest",
+              "type": "rollup",
+              "formula": "CURRENT_DATE - lastRestDate( this.id )"
             }
           ],
           "lambdas": [
@@ -804,6 +818,31 @@
               "type": "rollup",
               "description": "How many times the score returned to a tie after first pitch.",
               "formula": "CALCULATE_TIE_COUNT(gameId=this.id)"
+            },
+            {
+              "name": "isTieGameInProgress",
+              "type": "rollup",
+              "formula": "(status = 'IN_PROGRESS') AND (runsHome = runsAway)"
+            },
+            {
+              "name": "manfredRunnerInEffect",
+              "type": "rollup",
+              "formula": "isExtraInnings = true AND leagueImplementsExtraInningRunnerRule( this.id )"
+            },
+            {
+              "name": "gameSuspendedDueToWeather",
+              "type": "rollup",
+              "formula": "EXISTS( SuspensionEvent WHERE gameId = this.id AND reason = 'WEATHER' )"
+            },
+            {
+              "name": "winningPitcherId",
+              "type": "rollup",
+              "formula": "CALC_WINNING_PITCHER( this.id )"
+            },
+            {
+              "name": "hadCycleAchieved",
+              "type": "rollup",
+              "formula": "EXISTS( BatterCycleEvent WHERE gameId = this.id )"
             }
           ],
           "lambdas": [
@@ -892,6 +931,31 @@
               "type": "rollup",
               "description": "Count of at-bats with 'result=WALK' in the top and bottom half of this inning combined.",
               "formula": "COUNT(AtBat where AtBat.inningHalfId.inningId=this.id AND result='WALK')"
+            },
+            {
+              "name": "isSeventhInningStretch",
+              "type": "rollup",
+              "formula": "inningNumber = 7"
+            },
+            {
+              "name": "balksInInning",
+              "type": "rollup",
+              "formula": "COUNT( BalkEvent WHERE BalkEvent.inningId = this.id )"
+            },
+            {
+              "name": "stealAttemptsInInning",
+              "type": "rollup",
+              "formula": "COUNT( StealAttemptEvent WHERE StealAttemptEvent.inningId = this.id )"
+            },
+            {
+              "name": "runnersAdvancedOnWildPitch",
+              "type": "rollup",
+              "formula": "COUNT( RunnerAdvanceEvent WHERE reason = 'WILD_PITCH' AND inningId = this.id )"
+            },
+            {
+              "name": "largestLeadAtAnyPointThisInning",
+              "type": "rollup",
+              "formula": "MAX( leadDifferentialDuringInning( this.id ) )"
             }
           ],
           "lambdas": [],
@@ -999,6 +1063,26 @@
               "type": "rollup",
               "description": "Number of hits in this half-inning that had exitVelocity > 90 mph.",
               "formula": "COUNT(AtBat where inningHalfId=this.id AND exitVelocity>90 AND result in ['SINGLE','DOUBLE','TRIPLE','HOMERUN'])"
+            },
+            {
+              "name": "catchersInterferenceCalls",
+              "type": "rollup",
+              "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'CATCHER_INTERFERENCE' )"
+            },
+            {
+              "name": "batterInterferenceCalls",
+              "type": "rollup",
+              "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'BATTER_INTERFERENCE' )"
+            },
+            {
+              "name": "sacrificeBuntsInHalf",
+              "type": "rollup",
+              "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND result = 'SAC_BUNT' )"
+            },
+            {
+              "name": "infieldFlyCallsInHalf",
+              "type": "rollup",
+              "formula": "COUNT( AtBat WHERE inningHalfId = this.id AND specialCall = 'INFIELD_FLY' )"
             }
           ],
           "lambdas": [
@@ -1206,6 +1290,11 @@
               "type": "rollup",
               "description": "Derived spin rate that might account for velocity or environmental factors. Implementation conceptual.",
               "formula": "pitchSpinRate * ADJUSTMENT_FACTOR(pitchVelocity)"
+            },
+            {
+              "name": "isWildPitch",
+              "type": "rollup",
+              "formula": "pitchResult = 'WILD_PITCH'"
             }
           ],
           "lambdas": [],
@@ -1621,6 +1710,80 @@
           "id": "TEAM2",
           "teamName": "The Gravity Defiers",
           "pitcherCount": 12
+        }
+      ],
+      "sampleGames": [
+        {
+          "id": "GAME1",
+          "homeTeamId": "TEAM1",
+          "awayTeamId": "TEAM2",
+          "status": "IN_PROGRESS",
+          "runsHome": 2,
+          "runsAway": 2
+        },
+        {
+          "id": "GAME2",
+          "homeTeamId": "TEAM2",
+          "awayTeamId": "TEAM1",
+          "status": "FINAL",
+          "runsHome": 5,
+          "runsAway": 4
+        }
+      ],
+      "sampleInnings": [
+        {
+          "id": "INNING1",
+          "gameId": "GAME1",
+          "inningNumber": 7
+        },
+        {
+          "id": "INNING2",
+          "gameId": "GAME2",
+          "inningNumber": 3
+        }
+      ],
+      "sampleInningHalves": [
+        {
+          "id": "IH_TOP7",
+          "halfType": "TOP",
+          "offensiveTeamId": "TEAM2",
+          "defensiveTeamId": "TEAM1",
+          "outs": 2,
+          "runsScored": 1,
+          "isComplete": false
+        },
+        {
+          "id": "IH_BOT7",
+          "halfType": "BOTTOM",
+          "offensiveTeamId": "TEAM1",
+          "defensiveTeamId": "TEAM2",
+          "outs": 3,
+          "runsScored": 0,
+          "isComplete": true
+        }
+      ],
+      "samplePlayers": [
+        {
+          "id": "PLAYER1",
+          "fullName": "Henrietta Peckerson",
+          "team_id": "TEAM1"
+        },
+        {
+          "id": "PLAYER2",
+          "fullName": "Joe Slugger",
+          "team_id": "TEAM2"
+        }
+      ],
+      "samplePitches": [
+        {
+          "id": "PITCH1",
+          "atBatId": "AB1",
+          "pitchResult": "WILD_PITCH"
+        },
+        {
+          "id": "PITCH2",
+          "atBatId": "AB1",
+          "pitchResult": "BALL"
         }
       ]
     },
