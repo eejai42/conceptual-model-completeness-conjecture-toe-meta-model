@@ -1,43 +1,39 @@
 #!/usr/bin/env python3
 
-import json
-import argparse
-import math
-import re
-import textwrap
-import os
 import baseball_cmcc_sdk
 
-"""
-A CLI tool (main.py) that demonstrates using a hypothetical baseball CMCC SDK.
-We assume there's a sibling file named baseball-cmcc-sdk.py that exposes
-classes/functions like 'Game', 'Inning', 'Player' with declarative logic.
-
-This script:
-1) Creates a new game.
-2) Starts the first inning.
-3) Gets the first player at bat.
-4) Simulates a strikeout.
-5) Moves to the next batter.
-"""
-
-# We import our imaginary baseball CMCC SDK module.
-from baseball_cmcc_sdk import *
-
 def main():
-    game = Game()  # create a Game object
-    firstInning = Inning()
-    firstInning.inningNumber = 1
-    firstInning.gameId = game.id # this should be firstInning.game = game; (which should automatically add the inning to the game.innings.  All of the ids should be transparent.
-    game.innings.add(firstInning)  #if this is what's done, then the innings for the game will already be updated, but the inning will need to have it's "game" pointed back at the main game.
+    # 1) Create a new game
+    game = baseball_cmcc_sdk.Game()
+    game.status = "IN_PROGRESS"
 
-    new_atbat = AtBat(inningHalfId=firstInning.id, batterId=..., pitcherId=...)
+    # 2) Create the first inning record
+    first_inning = baseball_cmcc_sdk.Inning(inningNumber=1)
+    # Add it to the game
+    game.innings.add(first_inning)
 
-    
-    new_atbat.pitches.add(Pitch(pitchResult='SWINGING_STRIKE'))
-    if new_atbat.batterHasStruckOut:
-        print("Batter struck out.")
+    # 3) Create an AtBat in that inning
+    atbat = baseball_cmcc_sdk.AtBat(inningHalfId=first_inning.id, batterId="player_101", pitcherId="player_102")
 
+    # 4) Add a few pitches
+    atbat.pitches.add(baseball_cmcc_sdk.Pitch(pitchResult='SWINGING_STRIKE'))
+    # atbat.pitches.add(baseball_cmcc_sdk.Pitch(pitchResult='FOUL'))
+    atbat.pitches.add(baseball_cmcc_sdk.Pitch(pitchResult='SWINGING_STRIKE'))
+
+    # Now let's do our aggregator logic right here in main:
+    # "If the pitchResult is in ['CALLED_STRIKE','SWINGING_STRIKE','FOUL'], it's a strike."
+    # We'll count them up:
+    strike_count = sum(
+        1
+        for pitch in atbat.pitches
+        if pitch.pitchResult in ['CALLED_STRIKE','SWINGING_STRIKE','FOUL']
+    )
+
+    # 5) Check if the batter struck out
+    if strike_count >= 3:
+        print("Batter has struck out!")
+    else:
+        print("Batter is still up.")
 
 if __name__ == "__main__":
     main()
