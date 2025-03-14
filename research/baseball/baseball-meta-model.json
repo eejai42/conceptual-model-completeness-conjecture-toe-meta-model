@@ -147,6 +147,7 @@
           ],
           "constraints": []
         },
+
         {
           "name": "Team",
           "description": "A baseball team. Belongs to one League, has a roster of Players, and competes in Games.",
@@ -380,6 +381,7 @@
           ],
           "constraints": []
         },
+
         {
           "name": "Player",
           "description": "An individual who participates in baseball games, either as a position player, pitcher, or both.",
@@ -704,6 +706,7 @@
           ],
           "constraints": []
         },
+
         {
           "name": "DefensivePosition",
           "description": "A position on the baseball field, e.g. pitcher (1), catcher (2), shortstop (6), etc.",
@@ -727,6 +730,7 @@
           "lambdas": [],
           "constraints": []
         },
+
         {
           "name": "Game",
           "description": "Represents a single baseball game between two Teams, split into innings (top & bottom).",
@@ -962,6 +966,7 @@
             }
           ]
         },
+
         {
           "name": "Inning",
           "description": "A single inning in the game, typically has a top and bottom half unless extras are needed.",
@@ -1055,6 +1060,7 @@
           "lambdas": [],
           "constraints": []
         },
+
         {
           "name": "InningHalf",
           "description": "Represents either top or bottom portion of an inning, with outs, runs, at-bats, etc. All purely event/aggregator based.",
@@ -1217,6 +1223,7 @@
             }
           ]
         },
+
         {
           "name": "AtBat",
           "description": "A single plate appearance, from the start of the batter's turn to its final result. All logic is aggregator-based, no step-by-step updates.",
@@ -1320,29 +1327,28 @@
               "description": "Count of pitches in this at-bat where pitchResult='BALL'.",
               "formula": "COUNT( Pitch where atBatId=this.id AND pitchResult='BALL')"
             },
-
             {
               "name": "strikeCount",
               "type": "rollup",
-              "description": "NEW: The count of pitches that are strikes: CALLED_STRIKE, SWINGING_STRIKE, or FOUL. // NEW",
+              "description": "NEW: The count of pitches that are strikes: CALLED_STRIKE, SWINGING_STRIKE, or FOUL.",
               "formula": "COUNT(Pitch where atBatId=this.id AND pitchResult IN ['CALLED_STRIKE','SWINGING_STRIKE','FOUL'])"
             },
             {
               "name": "ballCount",
               "type": "rollup",
-              "description": "NEW: The count of pitches that are balls. // NEW",
+              "description": "NEW: The count of pitches that are balls.",
               "formula": "numberOfBalls"
             },
             {
               "name": "batterHasStruckOut",
               "type": "rollup",
-              "description": "NEW: True if strikeCount >= 3. // NEW",
+              "description": "NEW: True if strikeCount >= 3.",
               "formula": "strikeCount >= 3"
             },
             {
               "name": "batterHasWalked",
               "type": "rollup",
-              "description": "NEW: True if ballCount >= 4. // NEW",
+              "description": "NEW: True if ballCount >= 4.",
               "formula": "ballCount >= 4"
             }
           ],
@@ -1362,6 +1368,7 @@
           ],
           "constraints": []
         },
+
         {
           "name": "Pitch",
           "description": "Represents a single pitch thrown in an at-bat. Tracks velocity, location, outcome, etc., with no imperative instructions.",
@@ -1404,7 +1411,7 @@
             {
               "name": "isStrike",
               "type": "rollup",
-              "description": "Boolean aggregator: true if pitchResult is CALLED_STRIKE or SWINGING_STRIKE.",
+              "description": "Boolean aggregator: true if pitchResult is CALLED_STRIKE or SWINGING_STRIKE. Implementation conceptual.",
               "formula": "pitchResult IN ['CALLED_STRIKE','SWINGING_STRIKE']"
             },
             {
@@ -1428,6 +1435,7 @@
           "lambdas": [],
           "constraints": []
         },
+
         {
           "name": "Statistic",
           "description": "Generic or specialized statistical measures referencing a Player, Team, or entire league. Could store advanced sabermetrics or simpler metrics.",
@@ -1482,6 +1490,7 @@
           "lambdas": [],
           "constraints": []
         },
+
         {
           "name": "Stadium",
           "description": "Represents a ballpark or stadium where games are played. Purely declarative references to capacity, location, etc.",
@@ -1542,6 +1551,7 @@
           "lambdas": [],
           "constraints": []
         },
+
         {
           "name": "OutEvent",
           "description": "// NEW: Fact-based approach for recording outs. Each OutEvent references which half-inning or at-bat triggered the out. Eliminates imperative increments.",
@@ -1581,6 +1591,7 @@
             }
           ]
         },
+
         {
           "name": "RunEvent",
           "description": "// NEW: Fact-based approach for runs. Each RunEvent references which half-inning or at-bat triggered a run, ensuring no imperative 'scoreRun()'.",
@@ -1626,6 +1637,7 @@
             }
           ]
         },
+
         {
           "name": "Season",
           "description": "// NEW ENTITY: Represents a baseball season, with a start/end date, name, etc.",
@@ -1676,6 +1688,7 @@
           "lambdas": [],
           "constraints": []
         },
+
         {
           "name": "SeasonTeamStats",
           "description": "// NEW ENTITY: Ties a Team to a particular Season, storing aggregated seasonal stats, e.g. winning streaks, etc.",
@@ -1720,6 +1733,7 @@
           "lambdas": [],
           "constraints": []
         },
+
         {
           "name": "RuleSet",
           "description": "Represents a set of rule variations in baseball. E.g. MLB_2025, LittleLeague_2025, etc.",
@@ -2004,7 +2018,10 @@
         {
           "name": "EJ Alexandra",
           "contact": "start@anabstractlevel.com",
-          "affiliations": ["SSoT.me", "EffortlessAPI.com"]
+          "affiliations": [
+            "SSoT.me",
+            "EffortlessAPI.com"
+          ]
         }
       ],
       "date": "January 2025",

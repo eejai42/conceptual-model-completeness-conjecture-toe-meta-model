@@ -8,239 +8,288 @@ import textwrap
 import os
 
 """
-A CLI tool that reads a "rulebook" JSON file describing quantum-walk entities
+A CLI tool that reads a "rulebook" JSON file describing an entity-based meta-model
 and attempts to generate Python class stubs with valid expressions for
-calculated fields, referencing typical quantum-walk building blocks.
+calculated fields (aggregators, constraints, etc.).
 
-NEW FEATURE:
-- Instead of embedding SHIFT, APPLY_BARRIER, EVOLVE, etc. directly, we assume
-  they live in a separate Python module (e.g., 'quantum_walk_blocks.py').
-- This script just generates code that imports those symbols.
-
-We also:
-1) Support both 4-arg and 10-arg EVOLVE calls.
-2) Handle SLICE(...) expressions to produce array slicing code.
-3) Optionally parse 'ABS(...)^2' if still in the JSON.
+IMPROVED:
+- We handle aggregator-like syntax such as IF( cond ) THEN ( expr ) ELSE ( expr ),
+  COUNT(...), SUM(...), AVG(...), and so forth, rewriting them into Pythonic code
+  to avoid raw parser errors or syntax issues.
+- We create 'CollectionWrapper' for one_to_many or many_to_many lookups,
+  matching your final "SDK" style.
 
 Usage:
   python json-toemm-to-python-helper.py -i my-experiment.json -o my-exp-helper.py
 """
 
-# ------------------------------------------------------------------------
-# 0) We're no longer storing big building-block code in BUILDING_BLOCKS.
-#    Instead, we keep references here only for the parser to detect usage.
-# ------------------------------------------------------------------------
+import_statistics = False  # We'll set True if aggregator_to_python sees "AVG(...)".
+
+
 BUILDING_BLOCKS = {
-    # We'll store only empty or minimal placeholders, so the parse_formula
-    # logic sees them as recognized calls. We won't actually inject the code.
     "SHIFT": "",
     "APPLY_BARRIER": "",
     "COLLAPSE_BARRIER": "",
     "GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION": "",
     "EVOLVE": "",
-    # If you have others (MATMUL, etc.), add them similarly
 }
 
-# ------------------------------------------------------------------------
-# 1) Mappings for recognized function calls used in quantum-walk contexts
-# ------------------------------------------------------------------------
-FUNCTION_MAP = {
-    # Basic math
-    "SQRT": (1, 1, "math.sqrt({0})"),
-    "LEN": (1, 1, "len({0})"),
-    "ADD": (2, 2, "({0} + {1})"),
-    "SUBTRACT": (2, 2, "({0} - {1})"),
-    "MULTIPLY": (2, 2, "np.matmul({0}, {1})"),   # for matrix multiply
-    "DIVIDE": (2, 2, "({0} / {1})"),
-    "POWER": (2, 2, "({0} ** {1})"),
-    "FLOOR": (1, 1, "math.floor({0})"),
-    "ABS": (1, 1, "np.abs({0})"),
-    "SUM_OVER": (2, 2, "sum(getattr(item, '{1}') for item in self.{0})"),
-    "MAX_OVER": (2, 2, "max(getattr(item, '{1}') for item in self.{0})"),
-    "EQUAL": (2, 2, "np.allclose({0}, {1})"),
-    "IF": (3, 3, "({1} if {0} else {2})"),
+# We keep some specialized function mappings if we want them, but aggregator parsing
+# is done separately below
+FUNCTION_MAP = {}
 
-    # SHIFT(psi_in, offsets) => SHIFT({0}, {1})
-    "SHIFT": (2, 2, "SHIFT({0}, {1})"),
-    "APPLY_BARRIER": (6, 6, "APPLY_BARRIER({0}, {1}, {2}, {3}, {4}, {5})"),
-    "COLLAPSE_BARRIER": (6, 6, "COLLAPSE_BARRIER({0}, {1}, {2}, {3}, {4}, {5})"),
-    "GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION": (5, 5,
-        "GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION({0}, {1}, {2}, {3}, {4})"
-    ),
-    "CONJUGATE_TRANSPOSE": (1, 1, "{0}.conj().T"),
-    "IDENTITY": (1, 1, "np.eye({0}, dtype=np.complex128)"),
-    # We handle EVOLVE calls ourselves
-    "EVOLVE": (4, 10, ""),
-    # Also handle SLICE ourselves
-    "SLICE": (3, 3, ""),
-
-    # "SUM" -> e.g. SUM(..., axis=-1)
-    "SUM": (1, 2, "np.sum({0}{extra})"),
-    # Possibly more specialized calls
-}
-
-AXIS_SPEC_REGEX = re.compile(r"^axis\\s*=\\s*(.*)$", re.IGNORECASE)
-INDEX_SPEC_REGEX = re.compile(r"^index\\s*=\\s*(.*)$", re.IGNORECASE)
-POWER2_REGEX = re.compile(r"^(.*)\\^2$")
+POWER2_REGEX = re.compile(r"^(.*)\^2$")
 FUNC_CALL_REGEX = re.compile(r"^([A-Z_]+)\((.*)\)$", re.IGNORECASE)
-STRING_LITERAL_RE = re.compile(r"^(['\"])(.*)\1$")  # Captures 'something' or "something"
+STRING_LITERAL_RE = re.compile(r"^(['\"])(.*)\1$")
+CONDITION_RE = re.compile(r"\((.*)\)\s*THEN\s*\((.*)\)\s*ELSE\s*\((.*)\)", re.IGNORECASE)
 
 
-def parse_token(token: str) -> str:
-    token = token.strip()
+def aggregator_to_python(expr: str) -> str:
+    """
+    Attempt to do minimal aggregator-based rewriting:
+      - IF (cond) THEN (val) ELSE (val) => (val if cond else val)
+      - COUNT(...), SUM(...), AVG(...), MINBY(...), MAXBY(...), TOPN(...)
+      - Replace '=' with '==' in many contexts, AND->'and', OR->'or', etc.
+      - "->" => "."
+      - "someCollection WHERE ..." => comprehension if we see COUNT, SUM, etc.
+      - attempt to produce valid Python code
+    """
+    global import_statistics
+    e = expr
 
-    # If it's a string literal like 'Triangle'
-    match = STRING_LITERAL_RE.match(token)
-    if match:
-        return token
+    # 1) rewrite "IF (cond) THEN (a) ELSE (b)"
+    if re.search(r"\bIF\s*\(.*\)\s*THEN\s*\(.*\)\s*ELSE\s*\(.*\)", e, re.IGNORECASE):
+        match = re.search(CONDITION_RE, e)
+        if match:
+            cond_str = match.group(1).strip()
+            then_str = match.group(2).strip()
+            else_str = match.group(3).strip()
+            cond_py = aggregator_to_python(cond_str)
+            then_py = aggregator_to_python(then_str)
+            else_py = aggregator_to_python(else_str)
+            e = f"(({then_py}) if ({cond_py}) else ({else_py}))"
 
-    # If it's numeric
-    if re.match(r"^[0-9.+-]+$", token):
-        return token
+    # 2) Common aggregator patterns:
+    #    COUNT(...), SUM(...), AVG(...), MINBY, MAXBY, TOPN, MODE, EXISTS, etc.
+    # We'll do them with re.sub so we can handle partial syntax
 
-    # Otherwise assume variable => 'self.<variable>'
-    return f"self.{token}"
+    # Regex for COUNT( ... )
+    def handle_count(m):
+        inside = m.group(1).strip()
+        # check if there's "WHERE"
+        if "WHERE" in inside.upper():
+            # e.g. "AtBat WHERE batterId=this.id"
+            parts = re.split(r"(?i)\bwhere\b", inside, 1)
+            coll = parts[0].strip()
+            cond = parts[1].strip()
+            cond_py = aggregator_to_python(cond)
+            coll_py = aggregator_to_python(coll)
+            if "." not in coll_py:
+                coll_py = f"self.{coll_py}"
+            return f"sum(1 for x in {coll_py} if {cond_py})"
+        else:
+            # just COUNT(AtBat) => len(self.AtBat)
+            coll_py = aggregator_to_python(inside)
+            if "." not in coll_py:
+                coll_py = f"self.{coll_py}"
+            return f"len({coll_py})"
+
+    e = re.sub(r"\bCOUNT\s*\(\s*(.*?)\s*\)", handle_count, e, flags=re.IGNORECASE)
+
+    # SUM(...)
+    def handle_sum(m):
+        inside = m.group(1).strip()
+        # "roster => careerHomeRuns" or "roster WHERE cond => field"
+        field = None
+        cond = None
+        coll = inside
+        if "=>" in inside:
+            before, field = inside.split("=>",1)
+            field = field.strip()
+            if "WHERE" in before.upper():
+                bits = re.split(r"(?i)where", before, 1)
+                coll = bits[0].strip()
+                cond = bits[1].strip()
+            else:
+                coll = before.strip()
+        coll_py = aggregator_to_python(coll)
+        if "." not in coll_py:
+            coll_py = f"self.{coll_py}"
+        field_py = aggregator_to_python(field) if field else "x"
+        cond_py = aggregator_to_python(cond) if cond else None
+        if cond_py:
+            return f"sum(x.{field_py} for x in {coll_py} if {cond_py})"
+        else:
+            return f"sum(x.{field_py} for x in {coll_py})"
+
+    e = re.sub(r"\bSUM\s*\(\s*(.*?)\s*\)", handle_sum, e, flags=re.IGNORECASE)
+
+    # AVG(...)
+    def handle_avg(m):
+        global import_statistics
+        import_statistics = True
+        inside = m.group(1).strip()
+        field = None
+        cond = None
+        coll = inside
+        if "=>" in inside:
+            before, field = inside.split("=>",1)
+            field = field.strip()
+            if "WHERE" in before.upper():
+                bits = re.split(r"(?i)where", before, 1)
+                coll = bits[0].strip()
+                cond = bits[1].strip()
+            else:
+                coll = before.strip()
+        coll_py = aggregator_to_python(coll)
+        if "." not in coll_py:
+            coll_py = f"self.{coll_py}"
+        field_py = aggregator_to_python(field) if field else "x"
+        cond_py = aggregator_to_python(cond) if cond else None
+        if cond_py:
+            return f"statistics.mean(x.{field_py} for x in {coll_py} if {cond_py})"
+        else:
+            return f"statistics.mean(x.{field_py} for x in {coll_py})"
+
+    e = re.sub(r"\bAVG\s*\(\s*(.*?)\s*\)", handle_avg, e, flags=re.IGNORECASE)
+
+    # MINBY(...) / MAXBY(...)
+    def handle_minmaxby(m):
+        func = m.group(1).upper()  # MINBY or MAXBY
+        inside = m.group(2).strip()
+        # e.g. "roster where playerIsPitcher=true, p => p.careerERA"
+        cond = None
+        coll = None
+        key_expr = None
+        if "," in inside:
+            left, right = inside.split(",",1)
+            left = left.strip()
+            right = right.strip()
+            # right might be "p => p.careerERA"
+            if "=>" in right:
+                after_arrow = right.split("=>",1)[1].strip()
+                key_expr = aggregator_to_python(after_arrow)
+            # left might have "where"
+            if "WHERE" in left.upper():
+                bits = re.split(r"(?i)where", left, 1)
+                coll = bits[0].strip()
+                cond = bits[1].strip()
+            else:
+                coll = left
+        else:
+            coll = inside
+        coll_py = aggregator_to_python(coll) or "self.someList"
+        if "." not in coll_py:
+            coll_py = f"self.{coll_py}"
+        cond_py = aggregator_to_python(cond) if cond else None
+        if not key_expr:
+            key_expr = "x"
+
+        if func == "MINBY":
+            if cond_py:
+                return f"min((x for x in {coll_py} if {cond_py}), key=lambda x: {key_expr})"
+            else:
+                return f"min({coll_py}, key=lambda x: {key_expr})"
+        else:
+            # MAXBY
+            if cond_py:
+                return f"max((x for x in {coll_py} if {cond_py}), key=lambda x: {key_expr})"
+            else:
+                return f"max({coll_py}, key=lambda x: {key_expr})"
+
+    e = re.sub(r"\b(MINBY|MAXBY)\s*\(\s*(.*?)\s*\)", handle_minmaxby, e, flags=re.IGNORECASE)
+
+    # MODE(...) => statistics.multimode(...)
+    def handle_mode(m):
+        global import_statistics
+        import_statistics = True
+        inside = m.group(1).strip()
+        inside_py = aggregator_to_python(inside)
+        if "." not in inside_py:
+            inside_py = f"self.{inside_py}"
+        return f"statistics.multimode({inside_py})"
+
+    e = re.sub(r"\bMODE\s*\(\s*(.*?)\)", handle_mode, e, flags=re.IGNORECASE)
+
+    # TOPN( 3, coll, p => p.ops )
+    def handle_topn(m):
+        # fix the group indexing => group(1)
+        inside = m.group(1).strip()
+        # e.g. "3, teams.roster, p => p.ops"
+        bits = [x.strip() for x in inside.split(",",2)]
+        if len(bits) < 3:
+            return "# Could not parse TOPN properly"
+        n_str, coll_str, key_str = bits
+        coll_py = aggregator_to_python(coll_str)
+        if "." not in coll_py:
+            coll_py = f"self.{coll_py}"
+        # parse "p => p.ops"
+        if "=>" in key_str:
+            after = key_str.split("=>",1)[1].strip()
+            keyfield = aggregator_to_python(after)
+        else:
+            keyfield = "x"
+
+        return f"sorted({coll_py}, key=lambda x: {keyfield})[:{n_str}]"
+
+    e = re.sub(r"\bTOPN\s*\(\s*(.*?)\)", handle_topn, e, flags=re.IGNORECASE)
+
+    # EXISTS(...)
+    def handle_exists(m):
+        inside = m.group(1).strip()
+        # "Game WHERE something"
+        if "WHERE" in inside.upper():
+            bits = re.split(r"(?i)where", inside, 1)
+            coll = bits[0].strip()
+            cond = bits[1].strip()
+            coll_py = aggregator_to_python(coll)
+            if "." not in coll_py:
+                coll_py = f"self.{coll_py}"
+            cond_py = aggregator_to_python(cond)
+            return f"any(x for x in {coll_py} if {cond_py})"
+        else:
+            # just "Game"
+            coll_py = aggregator_to_python(inside)
+            if "." not in coll_py:
+                coll_py = f"self.{coll_py}"
+            return f"len({coll_py}) > 0"
+
+    e = re.sub(r"\bEXISTS\s*\(\s*(.*?)\)", handle_exists, e, flags=re.IGNORECASE)
+
+    # Replace "->" with "."
+    e = e.replace("->", ".")
+
+    # Replace "AND" => "and", "OR" => "or", single "=", etc.
+    # We'll do a simpler pass of re/ or .replace
+    def replacer_basic(s):
+        s = re.sub(r"\bAND\b", " and ", s, flags=re.IGNORECASE)
+        s = re.sub(r"\bOR\b", " or ", s, flags=re.IGNORECASE)
+        # '=' with strings can be replaced with '==' but we must skip '==' that is already correct
+        # We'll do a naive approach: only if it's something like "==?" do we skip
+        # Actually we did some partial steps earlier. We'll do a final pass to fix "X = Y" => "X == Y"
+        # ignoring "==" or ">=" or "<=" etc. We'll do a small custom re for that:
+        s = re.sub(r"(?<![=!<>])=+(?![=])", "==", s)
+        # Replace '==true' => '== True'
+        # Replace '==false' => '== False'
+        s = re.sub(r"==\s*true\b", "== True", s, flags=re.IGNORECASE)
+        s = re.sub(r"==\s*false\b", "== False", s, flags=re.IGNORECASE)
+        s = re.sub(r"==\s*null\b", "is None", s, flags=re.IGNORECASE)
+        return s
+
+    e = replacer_basic(e)
+
+    return e.strip()
 
 
 def parse_formula(expr, used_blocks_set):
-    """
-    Recursive parser for the formulas. Minimally updated:
-      - Allows EVOLVE with 4 or 10 arguments
-      - Slices via SLICE(psi_in, axis=0, index=detector_row)
-      - aggregator calls skip self. for the first 2 args
-    """
-    expr = expr.strip()
-
-    # 1) exponent ^2 => **2
-    pow_match = POWER2_REGEX.match(expr)
-    if pow_match:
-        sub_expr = pow_match.group(1).strip()
-        parsed_sub = parse_formula(sub_expr, used_blocks_set)
-        return f"({parsed_sub}**2)"
-
-    # 2) function call or single token
-    match = FUNC_CALL_REGEX.match(expr)
-    if not match:
-        # single token
-        return parse_token(expr)
-
-    func_name = match.group(1).upper()
-    args_str = match.group(2).strip()
-    used_blocks_set.add(func_name)
-
-    # parse args
-    args = []
-    current = []
-    depth = 0
-    for char in args_str:
-        if char == "(":
-            depth += 1
-            current.append(char)
-        elif char == ")":
-            depth -= 1
-            current.append(char)
-        elif char == "," and depth == 0:
-            arg_str = "".join(current).strip()
-            if arg_str:
-                args.append(arg_str)
-            current = []
-        else:
-            current.append(char)
-    if current:
-        arg_str = "".join(current).strip()
-        if arg_str:
-            args.append(arg_str)
-
-    aggregator_funcs = {"SUM_OVER", "MAX_OVER"}
-    parsed_args = []
-    if func_name in aggregator_funcs:
-        # skip "self." prefix for the first 2 aggregator args
-        for arg in args:
-            submatch = FUNC_CALL_REGEX.match(arg) or POWER2_REGEX.match(arg)
-            if submatch:
-                parsed_args.append(parse_formula(arg, used_blocks_set))
-            else:
-                # no sub-func => raw or literal
-                lit = STRING_LITERAL_RE.match(arg)
-                if lit:
-                    parsed_args.append(arg)
-                elif re.match(r"^[0-9.+-]+$", arg):
-                    parsed_args.append(arg)
-                else:
-                    parsed_args.append(arg)
-    else:
-        # normal
-        parsed_args = [parse_formula(a, used_blocks_set) for a in args]
-
-    # special-case EVOLVE
-    if func_name == "EVOLVE":
-        # 4-arg or 10-arg
-        narg = len(parsed_args)
-        if narg == 4:
-            return f"EVOLVE({parsed_args[0]}, {parsed_args[1]}, {parsed_args[2]}, {parsed_args[3]})"
-        elif narg == 10:
-            return (
-                f"EVOLVE({parsed_args[0]}, {parsed_args[1]}, {parsed_args[2]}, {parsed_args[3]}, "
-                f"{parsed_args[4]}, {parsed_args[5]}, {parsed_args[6]}, {parsed_args[7]}, "
-                f"{parsed_args[8]}, {parsed_args[9]})"
-            )
-        else:
-            return f"# ERROR: EVOLVE expects 4 or 10 args, got {narg}"
-
-    # special-case SLICE
-    if func_name == "SLICE":
-        if len(parsed_args) != 3:
-            return f"# ERROR: SLICE expects 3 args, got {len(parsed_args)}"
-        arr_name = parsed_args[0]
-        axis_arg = args[1].strip()
-        index_arg = args[2].strip()
-
-        axis_match = AXIS_SPEC_REGEX.match(axis_arg)
-        if not axis_match:
-            return "# ERROR: SLICE second arg must be axis=N"
-        axis_val = axis_match.group(1).strip()
-
-        idx_match = INDEX_SPEC_REGEX.match(index_arg)
-        if not idx_match:
-            return "# ERROR: SLICE third arg must be index=?"
-        idx_val = idx_match.group(1).strip()
-
-        # convert axis_val => int
-        try:
-            axis_i = int(axis_val)
-        except ValueError:
-            return "# ERROR: SLICE axis must be int"
-
-        # convert idx_val => numeric or self.<var>
-        try:
-            float(idx_val)
-            row_str = idx_val
-        except ValueError:
-            row_str = f"self.{idx_val}"
-
-        if axis_i == 0:
-            return f"{arr_name}[{row_str}, :, :]"
-        elif axis_i == 1:
-            return f"{arr_name}[:, {row_str}, :]"
-        elif axis_i == 2:
-            return f"{arr_name}[:, :, {row_str}]"
-        else:
-            return "# ERROR: SLICE axis must be 0,1,2"
-
-    # fallback
-    info = FUNCTION_MAP.get(func_name)
-    if not info:
-        return f"# ERROR: Unknown function {func_name}"
-    min_args, max_args, template = info
-    if not (min_args <= len(parsed_args) <= max_args):
-        return f"# ERROR: {func_name} expects {min_args}..{max_args} args, got {len(parsed_args)}"
-
-    try:
-        return template.format(*parsed_args, extra="")
-    except KeyError as e:
-        return f"# ERROR: Missing key {str(e)} in {func_name} template"
-    except IndexError:
-        return f"# ERROR: mismatch placeholders in {func_name}"
+    # We feed the entire aggregator logic to aggregator_to_python
+    expr_py = aggregator_to_python(expr)
+    # check SHIFT, EVOLVE, etc.
+    if "SHIFT(" in expr_py:
+        used_blocks_set.add("SHIFT")
+    if "EVOLVE(" in expr_py:
+        used_blocks_set.add("EVOLVE")
+    return expr_py
 
 
 def transform_formula(formula_str, used_blocks_set):
@@ -252,45 +301,65 @@ def transform_formula(formula_str, used_blocks_set):
 def generate_class_code(entity, used_blocks_set):
     class_name = entity["name"]
     fields = entity.get("fields", [])
+    lookups = entity.get("lookups", [])
+    aggregations = entity.get("aggregations", [])
 
     code_lines = []
     code_lines.append(f"class {class_name}:")
+    code_lines.append(f'    """Plain data container for {class_name} entities."""')
     code_lines.append("    def __init__(self, **kwargs):")
 
     has_non_calc = False
     for f in fields:
-        if f.get("type") != "calculated":
-            code_lines.append(f"        self.{f['name']} = kwargs.get('{f['name']}')")
+        ftype = f.get("type", "scalar")
+        if ftype not in ("calculated",):
+            fname = f["name"]
+            code_lines.append(f"        self.{fname} = kwargs.get('{fname}')")
             has_non_calc = True
 
     if not has_non_calc:
         code_lines.append("        pass")
 
+    # Build collection for one_to_many or many_to_many
+    for lu in lookups:
+        lu_type = lu.get("type")
+        lu_name = lu.get("name")
+        if lu_type in ("one_to_many", "many_to_many"):
+            code_lines.append("")
+            code_lines.append(f"        self.{lu_name} = CollectionWrapper(self, '{lu_name}')")
+
+    # aggregator fields from "fields" with "type=calculated"
     for f in fields:
         if f.get("type") == "calculated":
             formula = f.get("formula","")
+            desc = f.get("description","")
             pyexpr = transform_formula(formula, used_blocks_set)
             prop_name = f["name"]
-
             code_lines.append("")
             code_lines.append("    @property")
             code_lines.append(f"    def {prop_name}(self):")
-            code_lines.append(f"        \"\"\"")
-            code_lines.append(f"        Original formula: {formula}")
-            code_lines.append("        \"\"\"")
-            if pyexpr.startswith("# ERROR"):
-                code_lines.append(f"        # Parser error for formula: {formula}")
-                code_lines.append("        return None")
-            else:
-                code_lines.append(f"        return {pyexpr}")
+            code_lines.append(f"        \"\"\"{desc}\n        Original formula: {formula}\n        \"\"\"")
+            code_lines.append(f"        return {pyexpr}")
+
+    # aggregator fields from "aggregations"
+    for agg in aggregations:
+        formula = agg.get("formula","")
+        desc = agg.get("description","")
+        name = agg["name"]
+        pyexpr = transform_formula(formula, used_blocks_set)
+
+        code_lines.append("")
+        code_lines.append("    @property")
+        code_lines.append(f"    def {name}(self):")
+        code_lines.append(f"        \"\"\"{desc}\n        Original formula: {formula}\n        \"\"\"")
+        code_lines.append(f"        return {pyexpr}")
 
     return "\n".join(code_lines)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate Python classes from a JSON experiment rulebook. "
-                    "No building-block injection, but references an external module."
+        description="Generate Python classes from a JSON-based meta-model, with aggregator transformations."
     )
     parser.add_argument("-i", "--input", required=True, help="Path to input JSON file.")
     parser.add_argument("-o", "--output", required=True, help="Path to output .py file.")
@@ -299,7 +368,8 @@ def main():
     args = parser.parse_args()
 
     with open(args.input,"r",encoding="utf-8") as f:
-        entities = json.load(f)["meta-model"]["schema"]["entities"]
+        data = json.load(f)
+        entities = data["meta-model"]["schema"]["entities"]
 
     used_blocks = set()
     class_codes = []
@@ -307,33 +377,60 @@ def main():
         code = generate_class_code(e, used_blocks)
         class_codes.append(code)
 
-    # We'll not embed big code blocks, just import from an external module:
-    # e.g. "from quantum_walk_blocks import SHIFT, APPLY_BARRIER, COLLAPSE_BARRIER, EVOLVE, GAUSSIAN_IN_Y_AND_UNIFORM_IN_X_AND_DIRECTION"
-    # We'll build a sorted list from used_blocks that appear in BUILDING_BLOCKS
-    external_imports = []
-    for block_name in sorted(used_blocks):
-        if block_name in BUILDING_BLOCKS:
-            external_imports.append(block_name)
-    # e.g. ["APPLY_BARRIER","COLLAPSE_BARRIER", ...]
-
     output_lines = []
     output_lines.append('"""')
-    output_lines.append("Auto-generated Python code from your quantum-walk rulebook.")
-    output_lines.append("References SHIFT, APPLY_BARRIER, EVOLVE, etc. from an external python file.")
+    output_lines.append("Auto-generated Python code from your domain model.")
+    output_lines.append("Now includes aggregator rewriting and CollectionWrapper for relationships.")
     output_lines.append('"""')
     output_lines.append("import math")
     output_lines.append("import numpy as np")
-    output_lines.append("")
-    if external_imports:
-        # e.g. from quantum_walk_blocks import SHIFT, APPLY_BARRIER
-        # We can let you define the module name if needed:
-        module_name = "quantum_walk_blocks"  # or "physics_blocks", etc.
-        import_list = ", ".join(sorted(external_imports))
-        output_lines.append(f"from {module_name} import {import_list}")
-        output_lines.append("")
 
+    global import_statistics
+    if import_statistics:
+        output_lines.append("import statistics")
+
+    ext_imports = sorted(used_blocks.intersection(BUILDING_BLOCKS.keys()))
+    if ext_imports:
+        module_name = "quantum_walk_blocks"
+        i_list = ", ".join(ext_imports)
+        output_lines.append(f"from {module_name} import {i_list}")
+
+    helper_code = textwrap.dedent("""\
+    import uuid
+
+    # A tiny helper so we can do object.some_collection.add(item).
+    # We'll keep this for convenience. It's purely data structure code—no domain logic here.
+    class CollectionWrapper:
+        def __init__(self, parent_object, attr_name):
+            self.parent_object = parent_object
+            self.attr_name = attr_name
+            if not hasattr(parent_object, '_collections'):
+                parent_object._collections = {}
+            if attr_name not in parent_object._collections:
+                parent_object._collections[attr_name] = []
+
+        def add(self, item):
+            self.parent_object._collections[self.attr_name].append(item)
+
+        def __iter__(self):
+            return iter(self.parent_object._collections[self.attr_name])
+
+        def __len__(self):
+            return len(self.parent_object._collections[self.attr_name])
+
+        def __getitem__(self, index):
+            return self.parent_object._collections[self.attr_name][index]
+
+    def _auto_id():
+        \"\"\"Simple helper to generate an ID if none is provided.\"\"\"
+        return str(uuid.uuid4())
+    """)
+    output_lines.append("")
+    output_lines.append(helper_code)
+    output_lines.append("")
     output_lines.append("# ----- Generated classes below -----")
     output_lines.append("")
+
     for cc in class_codes:
         output_lines.append(cc)
         output_lines.append("")
@@ -342,11 +439,10 @@ def main():
         sample_main_str = textwrap.dedent("""\
         def sample_main():
             \"\"\"
-            Minimal demonstration of how to use the auto-generated classes and building blocks.
-            You must have quantum_walk_blocks.py with SHIFT, EVOLVE, etc.
+            Minimal demonstration of how to use the auto-generated classes.
             \"\"\"
             print("sample_main() not fully implemented. Please fill in your usage.")
-        
+
         if __name__ == "__main__":
             sample_main()
         """)
@@ -358,8 +454,8 @@ def main():
         out_f.write(final_code)
 
     print(f"Generated Python code written to {args.output}")
-    if external_imports:
-        print("Detected usage of building blocks:", ", ".join(sorted(external_imports)))
+    if ext_imports:
+        print("Detected usage of building blocks:", ", ".join(ext_imports))
 
 
 if __name__=="__main__":
