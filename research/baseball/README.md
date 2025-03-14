@@ -190,6 +190,21 @@ In this version, we removed all imperative instructions (e.g., 'increment outs',
 - **runsAllowed**  
   *Description:* Total runs allowed by this team across all games (aggregator from the defensive perspective).  
   *Formula:* `SUM(GameInnings WHERE defenseTeamId=this.id => runsScored)`
+- **hasExceededPitcherRosterLimit**  
+  *Description:*   
+  *Formula:* `pitcherCount > 13`
+- **currentlyHasDHAvailable**  
+  *Description:*   
+  *Formula:* `NOT allDesignatedHittersUsedUp( this.id )`
+- **teamErrorCount**  
+  *Description:*   
+  *Formula:* `COUNT( ErrorEvent WHERE ErrorEvent.teamId = this.id )`
+- **isOverLuxuryTaxCap**  
+  *Description:*   
+  *Formula:* `TEAM_PAYROLL( this.id ) > LUXURY_TAX_THRESHOLD`
+- **hasActiveChickenDancer**  
+  *Description:*   
+  *Formula:* `EXISTS( Player WHERE Player.team_id = this.id AND Player.chickenStanceIndicator = true )`
 
 ### Lambdas
 - **addPlayerToRoster**
