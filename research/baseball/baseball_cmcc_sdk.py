@@ -1,8 +1,7 @@
 import uuid
 
 # A tiny helper so we can do object.some_collection.add(item).
-# In normal Python you'd just use a list and call .append(...).
-# We'll keep this for convenience, but it contains no aggregator logic.
+# We'll keep this for convenience. It's purely data structure code—no domain logic here.
 class CollectionWrapper:
     def __init__(self, parent_object, attr_name):
         self.parent_object = parent_object
@@ -23,6 +22,7 @@ class CollectionWrapper:
 
     def __getitem__(self, index):
         return self.parent_object._collections[self.attr_name][index]
+
 
 def _auto_id():
     """Simple helper to generate an ID if none is provided."""
@@ -62,7 +62,7 @@ class DefensivePosition:
 
 
 class Game:
-    """Plain data container for Game entities. Has a collection for innings."""
+    """Plain data container for Game entities, with an innings collection."""
     def __init__(self, **kwargs):
         self.id = kwargs.get('id') or _auto_id()
         self.homeTeamId = kwargs.get('homeTeamId')
@@ -70,7 +70,6 @@ class Game:
         self.status = kwargs.get('status')
         self.ruleSetId = kwargs.get('ruleSetId')
 
-        # Just storing child objects in a CollectionWrapper if you want 'game.innings.add(inning)'
         self.innings = CollectionWrapper(self, 'innings')
 
 
@@ -93,12 +92,40 @@ class InningHalf:
         self.runsScored = kwargs.get('runsScored')
         self.isComplete = kwargs.get('isComplete')
 
-        # If you want to keep track of atBats in a collection, define it here:
         self.atBats = CollectionWrapper(self, 'atBats')
 
 
+#
+# --------------------------- KEY DECLARATIVE PARTS ---------------------------
+#
+#   We add single-line aggregator properties to Pitch (isStrike, isBall)
+#   and to AtBat (strikeCount, ballCount, batterHasStruckOut, batterHasWalked).
+#   This ensures the main code can read atbat.strikeCount, etc.,
+#   with no step-by-step logic in "main".
+#
+
+class Pitch:
+    """Plain data container for Pitch entities, with aggregator properties for strike/ball."""
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('id') or _auto_id()
+        self.atBatId = kwargs.get('atBatId')
+        self.pitchResult = kwargs.get('pitchResult')
+        self.pitchVelocity = kwargs.get('pitchVelocity')
+        self.pitchSpinRate = kwargs.get('pitchSpinRate')
+
+    @property
+    def isStrike(self):
+        """Aggregator: True if pitchResult is in ['CALLED_STRIKE','SWINGING_STRIKE','FOUL']. Single-line logic."""
+        return self.pitchResult in ('CALLED_STRIKE','SWINGING_STRIKE','FOUL')
+
+    @property
+    def isBall(self):
+        """Aggregator: True if pitchResult is 'BALL'."""
+        return (self.pitchResult == 'BALL')
+
+
 class AtBat:
-    """Plain data container for AtBat entities."""
+    """Plain data container for AtBat entities, with aggregator properties referencing pitches."""
     def __init__(self, **kwargs):
         self.id = kwargs.get('id') or _auto_id()
         self.inningHalfId = kwargs.get('inningHalfId')
@@ -109,17 +136,31 @@ class AtBat:
         self.exitVelocity = kwargs.get('exitVelocity')
         self.launchAngle = kwargs.get('launchAngle')
 
+        # We keep a 'pitches' collection so we can do: atbat.pitches.add(Pitch(...))
         self.pitches = CollectionWrapper(self, 'pitches')
 
+    @property
+    def strikeCount(self):
+        """Aggregator: sum of all pitches that are 'isStrike'."""
+        return sum(1 for p in self.pitches if p.isStrike)
 
-class Pitch:
-    """Plain data container for Pitch entities."""
-    def __init__(self, **kwargs):
-        self.id = kwargs.get('id') or _auto_id()
-        self.atBatId = kwargs.get('atBatId')
-        self.pitchResult = kwargs.get('pitchResult')
-        self.pitchVelocity = kwargs.get('pitchVelocity')
-        self.pitchSpinRate = kwargs.get('pitchSpinRate')
+    @property
+    def ballCount(self):
+        """Aggregator: sum of all pitches that are 'isBall'."""
+        return sum(1 for p in self.pitches if p.isBall)
+
+    @property
+    def batterHasStruckOut(self):
+        """Aggregator: True if strikeCount >= 3."""
+        return (self.strikeCount >= 3)
+
+    @property
+    def batterHasWalked(self):
+        """Aggregator: True if ballCount >= 4."""
+        return (self.ballCount >= 4)
+#
+# ----------------------------------------------------------------------------
+#
 
 
 class Statistic:
@@ -148,7 +189,6 @@ class OutEvent:
         self.id = kwargs.get('id') or _auto_id()
         self.inningHalfId = kwargs.get('inningHalfId')
         self.atBatId = kwargs.get('atBatId')
-        # You can store outType or fielderId here if needed.
 
 
 class RunEvent:

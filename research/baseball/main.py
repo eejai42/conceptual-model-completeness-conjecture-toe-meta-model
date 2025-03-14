@@ -17,23 +17,36 @@ def main():
 
     # 4) Add a few pitches
     atbat.pitches.add(baseball_cmcc_sdk.Pitch(pitchResult='SWINGING_STRIKE'))
-    # atbat.pitches.add(baseball_cmcc_sdk.Pitch(pitchResult='FOUL'))
     atbat.pitches.add(baseball_cmcc_sdk.Pitch(pitchResult='SWINGING_STRIKE'))
 
-    # Now let's do our aggregator logic right here in main:
-    # "If the pitchResult is in ['CALLED_STRIKE','SWINGING_STRIKE','FOUL'], it's a strike."
-    # We'll count them up:
-    strike_count = sum(
-        1
-        for pitch in atbat.pitches
-        if pitch.pitchResult in ['CALLED_STRIKE','SWINGING_STRIKE','FOUL']
-    )
+    # # Now let's do our aggregator logic right here in main:
+    # # "If the pitchResult is in ['CALLED_STRIKE','SWINGING_STRIKE','FOUL'], it's a strike."
+    # # We'll count them up:
+    # strike_count = sum(
+    #     1
+    #     for pitch in atbat.pitches
+    #     if pitch.pitchResult in ['CALLED_STRIKE','SWINGING_STRIKE','FOUL']
+    # )
 
-    # 5) Check if the batter struck out
-    if strike_count >= 3:
+    # # 5) Check if the batter struck out
+    # if strike_count >= 3:
+    #     print("Batter has struck out!")
+    # else:
+    #     print("Batter is still up.")
+
+    # instead....
+
+    if atbat.strikeCount >= 3:
         print("Batter has struck out!")
     else:
-        print("Batter is still up.")
+        print("Batter is still up.") # this is what is expected at this point
+    
+    atbat.pitches.add(baseball_cmcc_sdk.Pitch(pitchResult='SWINGING_STRIKE'))
+    
+    if atbat.strikeCount >= 3: # this is what is expected at this point
+        print("Batter has struck out!")
+    else:
+        print("Batter is still up.") 
 
 if __name__ == "__main__":
     main()
