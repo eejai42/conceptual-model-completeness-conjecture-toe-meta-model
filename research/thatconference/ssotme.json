@@ -1,0 +1,23 @@
+{
+  "ShowHidden": false,
+  "ShowAllFiles": false,
+  "Name": "thatconference",
+  "ProjectSettings": [
+    {
+      "Name": "project-name",
+      "Value": "thatconference"
+    }
+  ],
+  "ProjectTranspilers": [
+    {
+      "MatchedTranspiler": {
+        "Name": "JsonHbarsTransform",
+        "Description": "Json-Hbars-Transform"
+      },
+      "IsSSoTTranspiler": false,
+      "Name": "JsonHbarsTransform",
+      "RelativePath": "/SSoT",
+      "CommandLine": "json-hbars-transform -i .\\that-conference-meta-model.json -i ..\\..\\..\\tools\\domain-README.hbars"
+    }
+  ]
+}
