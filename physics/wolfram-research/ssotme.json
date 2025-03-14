@@ -17,7 +17,7 @@
       "IsSSoTTranspiler": false,
       "Name": "JsonHbarsTransform",
       "RelativePath": "",
-      "CommandLine": "json-hbars-transform -i .\\SSoT\\wolfram-language-cmcc-meta-model.json -i ..\\..\\tools\\domain-README.hbars"
+      "CommandLine": "json-hbars-transform -i ./wolfram-language-cmcc-meta-model.json -i ../../tools/domain-README.hbars"
     }
   ]
 }

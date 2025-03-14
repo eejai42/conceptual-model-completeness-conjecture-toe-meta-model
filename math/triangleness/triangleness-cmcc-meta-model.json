@@ -1,0 +1,156 @@
+{
+    "id": "CMCC_ToEMM_TriangleMinimal",
+    "meta-model": {
+      "name": "Minimal Triangleness Demo",
+      "description": "Demonstration of a polygon model that checks for 3-edge polygons, right angles, etc. using only a tiny set of aggregator formulas.",
+      "version": "v1.0",
+      "nickname": "triangle_demo",
+  
+      "schema": {
+        "entities": [
+          {
+            "name": "Edge",
+            "description": "A simple edge record. (No advanced geometry; just a placeholder.)",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "label",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Optional name or label for the edge."
+              },
+              {
+                "name": "polygon_id",
+                "type": "lookup",
+                "target_entity": "Polygon",
+                "description": "Points back to which polygon this edge belongs."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "Angle",
+            "description": "Represents a single angle (in degrees) belonging to a polygon.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "angle_degrees",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "The angle measure in degrees."
+              },
+              {
+                "name": "polygon_id",
+                "type": "lookup",
+                "target_entity": "Polygon",
+                "description": "Which polygon this angle belongs to."
+              }
+            ],
+            "lookups": [],
+            "aggregations": [],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "Polygon",
+            "description": "A polygon with edges and angles. We’ll check if it’s a triangle, if it has a right angle, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "label",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Optional name for the polygon."
+              }
+            ],
+            "lookups": [
+              {
+                "name": "edges",
+                "target_entity": "Edge",
+                "type": "one_to_many",
+                "join_condition": "Edge.polygon_id = this.id",
+                "description": "All edges that form this polygon."
+              },
+              {
+                "name": "angles",
+                "target_entity": "Angle",
+                "type": "one_to_many",
+                "join_condition": "Angle.polygon_id = this.id",
+                "description": "All angles belonging to this polygon."
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "edge_count",
+                "type": "rollup",
+                "description": "Number of edges in this polygon.",
+                "formula": "COUNT(edges)"
+              },
+              {
+                "name": "angle_count",
+                "type": "rollup",
+                "description": "Number of angles in this polygon.",
+                "formula": "COUNT(angles)"
+              },
+              {
+                "name": "largest_angle",
+                "type": "rollup",
+                "description": "The maximum angle measure among angles.",
+                "formula": "MAX(angles.angle_degrees)"
+              },
+              {
+                "name": "sum_of_angles",
+                "type": "rollup",
+                "description": "Sum of all angle measures in degrees.",
+                "formula": "SUM(angles.angle_degrees)"
+              },
+              {
+                "name": "is_triangle",
+                "type": "rollup",
+                "description": "True if the polygon has exactly 3 edges.",
+                "formula": "EQUAL(edge_count, 3)"
+              },
+              {
+                "name": "has_right_angle",
+                "type": "rollup",
+                "description": "True if any angle == 90.",
+                "formula": "CONTAINS(angles.angle_degrees, 90)"
+              },
+              {
+                "name": "shape_type",
+                "type": "rollup",
+                "description": "Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.",
+                "formula": "IF( EQUAL(edge_count,3), 'Triangle', IF(EQUAL(edge_count,4),'Quadrilateral','Other') )"
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          }
+        ],
+        "data": {
+          "Edge": [],
+          "Angle": [],
+          "Polygon": []
+        }
+      }
+    }
+  }
+  
