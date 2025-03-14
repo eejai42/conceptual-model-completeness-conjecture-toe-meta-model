@@ -1,0 +1,418 @@
+{
+    "JsonWrapper": {
+        "Attributes": {
+            "JsonWrapperId": "int",
+            "id": "string",
+            "meta-model": "meta-model"
+        },
+        "SingularName": "JsonWrapper",
+        "PluralName": "JsonWrappers",
+        "PrimaryKey": "JsonWrapperId"
+    },
+    "meta-model": {
+        "Attributes": {
+            "meta-modelId": "int",
+            "name": "string",
+            "description": "string",
+            "version": "string",
+            "nickname": "string",
+            "meta": "meta",
+            "schema": "schema",
+            "data": "datum",
+            "root-meta-model": "root-meta-model",
+            "JsonWrapperId": "fk"
+        },
+        "SingularName": "meta-model",
+        "PluralName": "meta-models",
+        "PrimaryKey": "meta-modelId"
+    },
+    "meta": {
+        "Attributes": {
+            "metaId": "int",
+            "title": "string",
+            "subtitle": "string",
+            "date": "string",
+            "abstract": "string",
+            "executive_summary": "executive_summary",
+            "meta-modelId": "fk"
+        },
+        "SingularName": "meta",
+        "PluralName": "metas",
+        "PrimaryKey": "metaId"
+    },
+    "executive_summary": {
+        "Attributes": {
+            "executive_summaryId": "int",
+            "key_points": "string[]",
+            "implications": "string[]",
+            "narrative": "narrative[]",
+            "addressing_concerns_preemptively": "addressing_concerns_preemptively",
+            "metaId": "fk",
+            "root-meta-modelId": "fk"
+        },
+        "SingularName": "executive_summary",
+        "PluralName": "executive_summaryes",
+        "PrimaryKey": "executive_summaryId"
+    },
+    "narrative": {
+        "Attributes": {
+            "narrativeId": "int",
+            "title": "string",
+            "content": "string[]",
+            "executive_summaryId": "fk",
+            "sections": "section[]"
+        },
+        "SingularName": "narrative",
+        "PluralName": "narratives",
+        "PrimaryKey": "narrativeId"
+    },
+    "addressing_concerns_preemptively": {
+        "Attributes": {
+            "addressing_concerns_preemptivelyId": "int",
+            "what_not_how": "string",
+            "time": "string",
+            "rulebook_not_the_runtime": "string",
+            "scaleability_performance": "string",
+            "reality_is_the_best_runtime_engine": "string",
+            "bright_red_lines": "string",
+            "executive_summaryId": "fk"
+        },
+        "SingularName": "addressing_concerns_preemptively",
+        "PluralName": "addressing_concerns_preemptivelyes",
+        "PrimaryKey": "addressing_concerns_preemptivelyId"
+    },
+    "schema": {
+        "Attributes": {
+            "schemaId": "int",
+            "entities": "entity[]",
+            "data": "datum",
+            "meta-modelId": "fk"
+        },
+        "SingularName": "schema",
+        "PluralName": "schemas",
+        "PrimaryKey": "schemaId"
+    },
+    "entities": {
+        "Attributes": {
+            "entityId": "int",
+            "name": "string",
+            "description": "string",
+            "fields": "field[]",
+            "lookups": "string[]",
+            "aggregations": "string[]",
+            "lambdas": "string[]",
+            "constraints": "string[]",
+            "schemaId": "fk"
+        },
+        "SingularName": "entity",
+        "PluralName": "entities",
+        "PrimaryKey": "entityId"
+    },
+    "fields": {
+        "Attributes": {
+            "fieldId": "int",
+            "name": "string",
+            "type": "string",
+            "datatype": "string",
+            "primary_key": "bool",
+            "description": "string",
+            "entityId": "fk",
+            "target_entity": "string",
+            "foreign_key": "bool"
+        },
+        "SingularName": "field",
+        "PluralName": "fields",
+        "PrimaryKey": "fieldId"
+    },
+    "lookups": {
+        "Attributes": {
+            "lookupId": "int",
+            "name": "string",
+            "target_entity": "string",
+            "type": "string",
+            "join_condition": "string",
+            "description": "string",
+            "entityId": "fk"
+        },
+        "SingularName": "lookup",
+        "PluralName": "lookups",
+        "PrimaryKey": "lookupId"
+    },
+    "aggregations": {
+        "Attributes": {
+            "aggregationId": "int",
+            "name": "string",
+            "type": "string",
+            "description": "string",
+            "formula": "string",
+            "entityId": "fk"
+        },
+        "SingularName": "aggregation",
+        "PluralName": "aggregations",
+        "PrimaryKey": "aggregationId"
+    },
+    "lambdas": {
+        "Attributes": {
+            "lambdaId": "int",
+            "name": "string",
+            "parameters": "string[]",
+            "description": "string",
+            "formula": "string",
+            "entityId": "fk"
+        },
+        "SingularName": "lambda",
+        "PluralName": "lambdas",
+        "PrimaryKey": "lambdaId"
+    },
+    "constraints": {
+        "Attributes": {
+            "constraintId": "int",
+            "name": "string",
+            "formula": "string",
+            "error_message": "string",
+            "entityId": "fk"
+        },
+        "SingularName": "constraint",
+        "PluralName": "constraints",
+        "PrimaryKey": "constraintId"
+    },
+    "data": {
+        "Attributes": {
+            "datumId": "int",
+            "Conference": "Conference[]",
+            "ConferenceDay": "ConferenceDay[]",
+            "Room": "Room[]",
+            "Session": "Session[]",
+            "Speaker": "Speaker[]",
+            "Attendee": "Attendee[]",
+            "SessionAttendanceEvent": "SessionAttendanceEvent[]",
+            "Sponsor": "Sponsor[]",
+            "SessionEndEvent": "string[]",
+            "ConferencePolicy": "ConferencePolicy[]",
+            "AttendeeDayCheckInEvent": "string[]",
+            "schemaId": "fk",
+            "sampleExtraSessions": "sampleExtraSession[]",
+            "sampleSpeakerAssignments": "sampleSpeakerAssignment[]",
+            "sampleAttendanceActions": "sampleAttendanceAction[]",
+            "meta-modelId": "fk"
+        },
+        "SingularName": "datum",
+        "PluralName": "data",
+        "PrimaryKey": "datumId"
+    },
+    "Conference": {
+        "Attributes": {
+            "ConferenceId": "int",
+            "id": "string",
+            "conferenceName": "string",
+            "location": "string",
+            "datumId": "fk"
+        },
+        "SingularName": "Conference",
+        "PluralName": "Conferences",
+        "PrimaryKey": "ConferenceId"
+    },
+    "ConferenceDay": {
+        "Attributes": {
+            "ConferenceDayId": "int",
+            "id": "string",
+            "conferenceId": "string",
+            "dayDate": "datetime",
+            "startTime": "datetime",
+            "endTime": "datetime",
+            "datumId": "fk"
+        },
+        "SingularName": "ConferenceDay",
+        "PluralName": "ConferenceDays",
+        "PrimaryKey": "ConferenceDayId"
+    },
+    "Room": {
+        "Attributes": {
+            "RoomId": "int",
+            "id": "string",
+            "conferenceId": "string",
+            "roomName": "string",
+            "capacity": "int",
+            "datumId": "fk"
+        },
+        "SingularName": "Room",
+        "PluralName": "Rooms",
+        "PrimaryKey": "RoomId"
+    },
+    "Session": {
+        "Attributes": {
+            "SessionId": "int",
+            "id": "string",
+            "dayId": "string",
+            "roomId": "string",
+            "sessionTitle": "string",
+            "startTime": "datetime",
+            "endTime": "datetime",
+            "sessionType": "string",
+            "isCanceled": "bool",
+            "datumId": "fk"
+        },
+        "SingularName": "Session",
+        "PluralName": "Sessions",
+        "PrimaryKey": "SessionId"
+    },
+    "Speaker": {
+        "Attributes": {
+            "SpeakerId": "int",
+            "id": "string",
+            "conferenceId": "string",
+            "fullName": "string",
+            "bio": "string",
+            "datumId": "fk"
+        },
+        "SingularName": "Speaker",
+        "PluralName": "Speakers",
+        "PrimaryKey": "SpeakerId"
+    },
+    "Attendee": {
+        "Attributes": {
+            "AttendeeId": "int",
+            "id": "string",
+            "fullName": "string",
+            "datumId": "fk"
+        },
+        "SingularName": "Attendee",
+        "PluralName": "Attendees",
+        "PrimaryKey": "AttendeeId"
+    },
+    "SessionAttendanceEvent": {
+        "Attributes": {
+            "SessionAttendanceEventId": "int",
+            "id": "string",
+            "sessionId": "string",
+            "attendeeId": "string",
+            "checkInTime": "datetime",
+            "checkOutTime": "string",
+            "datumId": "fk"
+        },
+        "SingularName": "SessionAttendanceEvent",
+        "PluralName": "SessionAttendanceEvents",
+        "PrimaryKey": "SessionAttendanceEventId"
+    },
+    "Sponsor": {
+        "Attributes": {
+            "SponsorId": "int",
+            "id": "string",
+            "conferenceId": "string",
+            "sponsorName": "string",
+            "sponsorTier": "string",
+            "datumId": "fk"
+        },
+        "SingularName": "Sponsor",
+        "PluralName": "Sponsors",
+        "PrimaryKey": "SponsorId"
+    },
+    "ConferencePolicy": {
+        "Attributes": {
+            "ConferencePolicyId": "int",
+            "id": "string",
+            "conferenceId": "string",
+            "maxSessionLengthMinutes": "int",
+            "minBreakBetweenSessionsMinutes": "int",
+            "roomChangeBufferMinutes": "int",
+            "datumId": "fk"
+        },
+        "SingularName": "ConferencePolicy",
+        "PluralName": "ConferencePolicys",
+        "PrimaryKey": "ConferencePolicyId"
+    },
+    "sampleExtraSessions": {
+        "Attributes": {
+            "sampleExtraSessionId": "int",
+            "id": "string",
+            "dayId": "string",
+            "roomId": "string",
+            "sessionTitle": "string",
+            "startTime": "datetime",
+            "endTime": "datetime",
+            "sessionType": "string",
+            "isCanceled": "bool",
+            "datumId": "fk"
+        },
+        "SingularName": "sampleExtraSession",
+        "PluralName": "sampleExtraSessions",
+        "PrimaryKey": "sampleExtraSessionId"
+    },
+    "sampleSpeakerAssignments": {
+        "Attributes": {
+            "sampleSpeakerAssignmentId": "int",
+            "speakerId": "string",
+            "sessionId": "string",
+            "datumId": "fk"
+        },
+        "SingularName": "sampleSpeakerAssignment",
+        "PluralName": "sampleSpeakerAssignments",
+        "PrimaryKey": "sampleSpeakerAssignmentId"
+    },
+    "sampleAttendanceActions": {
+        "Attributes": {
+            "sampleAttendanceActionId": "int",
+            "id": "string",
+            "sessionId": "string",
+            "attendeeId": "string",
+            "checkInTime": "datetime",
+            "datumId": "fk"
+        },
+        "SingularName": "sampleAttendanceAction",
+        "PluralName": "sampleAttendanceActions",
+        "PrimaryKey": "sampleAttendanceActionId"
+    },
+    "root-meta-model": {
+        "Attributes": {
+            "root-meta-modelId": "int",
+            "title": "string",
+            "subtitle": "string",
+            "authors": "author[]",
+            "date": "string",
+            "abstract": "string",
+            "executive_summary": "executive_summary",
+            "CMCC_ToEMM_Domain_List": "CMCC_ToEMM_Domain_List[]",
+            "meta-modelId": "fk"
+        },
+        "SingularName": "root-meta-model",
+        "PluralName": "root-meta-models",
+        "PrimaryKey": "root-meta-modelId"
+    },
+    "authors": {
+        "Attributes": {
+            "authorId": "int",
+            "name": "string",
+            "contact": "string",
+            "affiliations": "string[]",
+            "root-meta-modelId": "fk"
+        },
+        "SingularName": "author",
+        "PluralName": "authors",
+        "PrimaryKey": "authorId"
+    },
+    "sections": {
+        "Attributes": {
+            "sectionId": "int",
+            "title": "string",
+            "content": "string[]",
+            "narrativeId": "fk"
+        },
+        "SingularName": "section",
+        "PluralName": "sections",
+        "PrimaryKey": "sectionId"
+    },
+    "CMCC_ToEMM_Domain_List": {
+        "Attributes": {
+            "CMCC_ToEMM_Domain_ListId": "int",
+            "id": "string",
+            "fullname": "string",
+            "name": "string",
+            "description": "string",
+            "nickname": "string",
+            "root-meta-modelId": "fk"
+        },
+        "SingularName": "CMCC_ToEMM_Domain_List",
+        "PluralName": "CMCC_ToEMM_Domain_Lists",
+        "PrimaryKey": "CMCC_ToEMM_Domain_ListId"
+    }
+}
