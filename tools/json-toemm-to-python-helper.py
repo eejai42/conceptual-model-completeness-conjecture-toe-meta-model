@@ -23,19 +23,12 @@ BUILDING_BLOCKS = {
 # 1) Mappings for recognized function calls used in aggregator  #
 ################################################################
 
-# We used to define _COUNT, _SUM, etc. inline. Now we'll import them
-# from your 'core_lambda_functions' module where you have COUNT, SUM, ...
-# We also keep placeholders for aggregator calls that are not yet in that module.
-
-# We'll define a check or partial map:
 SUPPORTED_AGG_FUNCS = {
-    "COUNT": "COUNT",  # maps to core_lambda_functions.COUNT
-    "SUM": "SUM",      # maps to core_lambda_functions.SUM
-    "MAX": "MAX",      # maps to core_lambda_functions.MAX
-    "IF": "IF",        # maps to core_lambda_functions.IF
-    # The user’s file defines these. We can add "EQUAL", "CONTAINS" if we want to handle them too
-    # For advanced aggregator calls (AVG, MINBY, TOPN, etc.) we have no real code in core_lambda_functions.py
-    # We'll just generate stubs for them. 
+    "COUNT": "COUNT",
+    "SUM": "SUM",
+    "MAX": "MAX",
+    "IF": "IF",
+    # You can add more here as needed (AVG, MINBY, etc.).
 }
 
 ################################################################
@@ -45,27 +38,17 @@ SUPPORTED_AGG_FUNCS = {
 def aggregator_to_python(expr: str) -> str:
     """
     Transform aggregator expressions into Python code that references
-    real aggregator calls from 'core_lambda_functions' where possible.
+    real aggregator calls from 'core_lambda_functions' where possible,
+    including rewriting one-level-dot references like self.foo.bar
+    into [x.bar for x in self.foo].
     """
-    # Step 1: Basic lexical replacements (AND->and, etc.)
     s = basic_cleanup(expr)
-
-    # Step 2: Detect aggregator function calls: COUNT(...), SUM(...), etc.
-    s = aggregator_calls(s)
-
-    # Step 3: Convert "IF (cond) THEN (val) ELSE (val)" => "IF(cond, val, val)"
+    s = aggregator_calls(s)           # e.g. MAX(...) => MAX(...)
+    s = aggregator_subfield_rewrite(s)  # NEW: rewrite self.foo.bar => [x.bar for x in self.foo]
     s = if_then_else_transform(s)
-
-    # Step 4: Domain-specific fixes
     s = domain_specific_fixes(s)
-
-    # Step 5: Some leftover patterns like "for x in 1" => remove them
     s = remove_for_x_in_1(s)
-
-    # Step 6: Last pass for known function mapping (TEAM_PAYROLL => team_payroll, etc.)
     s = known_function_map(s)
-
-    # Final tidy
     return s.strip()
 
 
@@ -101,9 +84,8 @@ def aggregator_calls(expr: str) -> str:
       COUNT(...) => COUNT(...)
       SUM(...)   => SUM(...)
       MAX(...)   => MAX(...)
-      AVG(...)   => ???
-
-    We'll produce partial stubs for aggregator calls that do not exist yet in core_lambda_functions.
+      AVG(...)   => ...
+    etc.
     """
     s = expr
     # COUNT(...) => COUNT(...)
@@ -111,14 +93,14 @@ def aggregator_calls(expr: str) -> str:
     # SUM(...) => SUM(...)
     s = re.sub(r"\bSUM\s*\(\s*(.*?)\s*\)", r"SUM(\1)", s, flags=re.IGNORECASE)
     # MAX(...) => MAX(...)
-    # We'll do that carefully to avoid messing up "MAXBY(...)" which we'll handle below.
+    # Careful to avoid messing up "MAXBY(...)" (handled below), so we anchor well:
     s = re.sub(r"\bMAX\s*\(\s*(.*?)\)", r"MAX(\1)", s, flags=re.IGNORECASE)
 
-    # We have no real "AVG" in core_lambda_functions. We'll produce "AVG(...)"
+    # AVERAGE(...) or AVG(...) => produce "AVG(...)"
     s = re.sub(r"\bAVERAGE\s*\(\s*(.*?)\)", r"AVG(\1)", s, flags=re.IGNORECASE)
     s = re.sub(r"\bAVG\s*\(\s*(.*?)\)", r"AVG(\1)", s, flags=re.IGNORECASE)
 
-    # The user didn't define MINBY, MAXBY, MODE, etc. We'll produce placeholders
+    # Placeholders for advanced aggregator calls not in core_lambda_functions
     s = re.sub(r"\bMINBY\s*\(\s*(.*?)\)", r"MINBY(\1)", s, flags=re.IGNORECASE)
     s = re.sub(r"\bMAXBY\s*\(\s*(.*?)\)", r"MAXBY(\1)", s, flags=re.IGNORECASE)
     s = re.sub(r"\bMODE\s*\(\s*(.*?)\)", r"MODE(\1)", s, flags=re.IGNORECASE)
@@ -136,13 +118,48 @@ def aggregator_calls(expr: str) -> str:
     return s
 
 
+def aggregator_subfield_rewrite(expr: str) -> str:
+    """
+    **New** function that scans for aggregator calls like:
+        COUNT(self.xyz.whatever)  => COUNT([x.whatever for x in self.xyz])
+    Only if there's exactly one dot after 'self':
+        self.foo           => no rewrite
+        self.foo.bar       => rewrite to [x.bar for x in self.foo]
+        self.foo.bar.baz   => error or skip
+    """
+    pattern = re.compile(
+        r"(COUNT|SUM|MAX|AVG|MINBY|MAXBY|MODE|TOPN|EXISTS)\(\s*(self\.[a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)?)\s*\)",
+        re.IGNORECASE
+    )
+
+    def subfield_replacer(m):
+        agg_func = m.group(1).upper()   # e.g. "MAX"
+        param_expr = m.group(2)        # e.g. "self.angles.angle_degrees"
+
+        parts = param_expr.split(".")   # e.g. ["self","angles","angle_degrees"]
+        if len(parts) == 2:
+            # aggregator(self.something)
+            return f"{agg_func}({param_expr})"
+        elif len(parts) == 3:
+            # aggregator(self.something.somethingElse)
+            coll_name = parts[1]
+            field_name = parts[2]
+            return f"{agg_func}([x.{field_name} for x in self.{coll_name}])"
+        else:
+            # More than one dot after 'self' => produce an error comment or skip rewriting
+            return f"# ERROR multiple-dot references not supported: {m.group(0)}"
+
+    return pattern.sub(subfield_replacer, expr)
+
+
 def if_then_else_transform(expr: str) -> str:
     """
     Replace "IF (cond) THEN (val) ELSE (val)" => "IF(cond, val, val)"
     We'll do repeated passes for nested usage.
     """
     s = expr
-    pattern = re.compile(r"\bIF\s*\((.*?)\)\s*THEN\s*\((.*?)\)\s*ELSE\s*\((.*?)\)", re.IGNORECASE|re.DOTALL)
+    pattern = re.compile(r"\bIF\s*\((.*?)\)\s*THEN\s*\((.*?)\)\s*ELSE\s*\((.*?)\)",
+                         re.IGNORECASE | re.DOTALL)
     while True:
         m = pattern.search(s)
         if not m:
@@ -150,7 +167,6 @@ def if_then_else_transform(expr: str) -> str:
         cond = m.group(1).strip()
         val_then = m.group(2).strip()
         val_else = m.group(3).strip()
-        # Replace with "IF(cond, val_then, val_else)"
         new_expr = f"IF({cond}, {val_then}, {val_else})"
         s = s[:m.start()] + new_expr + s[m.end():]
     return s
@@ -158,24 +174,22 @@ def if_then_else_transform(expr: str) -> str:
 
 def domain_specific_fixes(expr: str) -> str:
     """
-    Additional replacements like "MAX(" => "MAX(", leftover "CALCULATE_SOMETHING" => "calculate_something",
-    "TEAM_PAYROLL(" => "team_payroll(" etc.
+    Additional replacements for domain-specific placeholders, e.g.
+    CALCULATE_FOO(...) => calculate_foo(...), TEAM_PAYROLL(...) => team_payroll(...), etc.
     """
     s = expr
 
-    # Some advanced aggregator placeholders => e.g. "CALCULATE_WOBA(" => "calculate_woba("
+    # "CALCULATE_WOBA(" => "calculate_woba("
     s = re.sub(r"\bCALCULATE_([A-Z0-9_]+)\s*\(", lambda m: f"calculate_{m.group(1).lower()}(", s)
 
-    # e.g. "WIN_PCT_BY_STADIUM_FUNCTION(" => "win_pct_by_stadium_function("
+    # "WIN_PCT_BY_STADIUM_FUNCTION(" => "win_pct_by_stadium_function("
     s = re.sub(r"\bWIN_PCT_BY_STADIUM_FUNCTION\s*\(", "win_pct_by_stadium_function(", s)
 
-    # Example domain calls => "TEAM_PAYROLL(" => "team_payroll("
-    # We'll do a quick dictionary:
     domain_map = {
         "TEAM_PAYROLL": "team_payroll",
-        "LUXURY_TAX_THRESHOLD": "LUXURY_TAX_THRESHOLD",  # maybe a constant
+        "LUXURY_TAX_THRESHOLD": "LUXURY_TAX_THRESHOLD",
         "allDesignatedHittersUsedUp": "all_designated_hitters_used_up",
-        "CHECK_NO_OVERLAP_IN_ROOM_WITHOUT_BUFFER": "check_no_overlap_in_room_without_buffer",  # e.g.
+        "CHECK_NO_OVERLAP_IN_ROOM_WITHOUT_BUFFER": "check_no_overlap_in_room_without_buffer",
     }
     for k,v in domain_map.items():
         s = re.sub(rf"\b{k}\s*\(", f"{v}(", s)
@@ -185,8 +199,8 @@ def domain_specific_fixes(expr: str) -> str:
 
 def remove_for_x_in_1(expr: str) -> str:
     """
-    If aggregator rewriting introduced "for x in 1 for x in self.foo" etc.:
-    We'll do minimal pass.
+    If aggregator rewriting introduced weird artifacts like:
+        "for x in 1 for x in self.foo" => minimal cleanup.
     """
     s = expr
     s = re.sub(r"\sfor\s+\w+\s+in\s+1\s+for\s+\w+\s+in\s+", " for x in ", s)
@@ -195,10 +209,7 @@ def remove_for_x_in_1(expr: str) -> str:
 
 
 def known_function_map(expr: str) -> str:
-    """
-    If leftover references to e.g. "TEAM_PAYROLL( this.id )" or "POWER()", we fix them.
-    Already done above, but let's finalize a pass.
-    """
+    """Optional final pass for leftover references."""
     s = expr
     return s
 
@@ -238,7 +249,6 @@ def generate_class_code(entity, used_blocks_set):
     code_lines.append("    def __init__(self, **kwargs):")
 
     has_non_calc = False
-    # handle normal fields
     for f in fields:
         ftype = f.get("type", "scalar")
         if ftype != "calculated":
@@ -249,7 +259,6 @@ def generate_class_code(entity, used_blocks_set):
     if not has_non_calc:
         code_lines.append("        pass")
 
-    # handle lookups of type one_to_many / many_to_many => define a CollectionWrapper
     code_lines.append("")
     code_lines.append("        # If any 'one_to_many' or 'many_to_many' lookups exist, store them as collection wrappers.")
     for lu in lookups:
@@ -303,7 +312,6 @@ def main():
 
     with open(args.input,"r",encoding="utf-8") as f:
         data = json.load(f)
-        # We'll assume structure: data["meta-model"]["schema"]["entities"]
         entities = data["meta-model"]["schema"]["entities"]
 
     used_blocks = set()
@@ -324,10 +332,10 @@ def main():
     # We assume you have 'core_lambda_functions.py' with COUNT, SUM, MAX, etc.:
     output_lines.append("from core_lambda_functions import COUNT, SUM, MAX, IF, CONTAINS, EQUAL")
 
-    # If SHIFT/EVOLVE were found, we import them from quantum_walk_blocks
+    # If SHIFT/EVOLVE were found, import them:
     ext_imports = sorted(used_blocks.intersection(BUILDING_BLOCKS.keys()))
     if ext_imports:
-        module_name = "quantum_walk_blocks"  # example
+        module_name = "quantum_walk_blocks"  # or whatever your module is called
         i_list = ", ".join(ext_imports)
         output_lines.append(f"from {module_name} import {i_list}")
 
@@ -357,8 +365,7 @@ def main():
         def __getitem__(self, index):
             return self.parent_object._collections[self.attr_name][index]
 
-    # Below are aggregator stubs we haven't yet implemented in core_lambda_functions:
-    # e.g. 'AVG', 'EXISTS', 'MINBY', 'MODE', 'TOPN', 'MAXBY'
+    # Below are aggregator stubs not yet in core_lambda_functions:
     def AVG(collection):
         \"\"\"Placeholder aggregator: real logic not yet implemented.\"\"\"
         # Could do: return sum(collection)/len(collection) if numeric
@@ -379,7 +386,6 @@ def main():
     def TOPN(expr):
         return f\"/* TOPN not implemented: {expr} */\"
     """)
-
     output_lines.append("")
     output_lines.append(aggregator_helpers)
     output_lines.append("")
@@ -390,7 +396,7 @@ def main():
         output_lines.append(cc)
         output_lines.append("")
 
-    # If we want a sample_main
+    # Optional sample_main
     if args.include_sample_main:
         sample_main_str = textwrap.dedent("""\
         def sample_main():

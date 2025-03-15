@@ -95,6 +95,13 @@
                 "type": "one_to_many",
                 "join_condition": "Angle.polygon_id = this.id",
                 "description": "All angles belonging to this polygon."
+              },
+              {
+                "name": "angle_degrees",
+                "target_entity": "this",
+                "type": "one_to_many",
+                "join_condition": "this.angles.angle_degrees",
+                "description": "An array of the angles of a triangle."
               }
             ],
             "aggregations": [
@@ -114,13 +121,13 @@
                 "name": "largest_angle",
                 "type": "rollup",
                 "description": "The maximum angle measure among angles.",
-                "formula": "MAX(this.angles.angle_degrees)"
+                "formula": "MAX(this.angle_degrees)"
               },
               {
                 "name": "sum_of_angles",
                 "type": "rollup",
                 "description": "Sum of all angle measures in degrees.",
-                "formula": "SUM(this.angles.angle_degrees)"
+                "formula": "SUM(this.angle_degrees)"
               },
               {
                 "name": "is_triangle",
@@ -132,7 +139,7 @@
                 "name": "has_right_angle",
                 "type": "rollup",
                 "description": "True if any angle == 90.",
-                "formula": "CONTAINS(this.angles.angle_degrees, 90)"
+                "formula": "CONTAINS(this.angle_degrees, 90)"
               },
               {
                 "name": "shape_type",

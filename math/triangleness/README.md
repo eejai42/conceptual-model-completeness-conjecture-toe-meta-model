@@ -89,6 +89,11 @@ Demonstration of a polygon model that checks for 3-edge polygons, right angles, 
     
   (Join condition: **Angle.polygon_id = this.id**)  
   *Description:* All angles belonging to this polygon.
+- **angle_degrees**  
+  *Target Entity:* this, *Type:* one_to_many  
+    
+  (Join condition: **this.angles.angle_degrees**)  
+  *Description:* An array of the angles of a triangle.
 
 ### Aggregations
 - **edge_count**  
@@ -99,16 +104,16 @@ Demonstration of a polygon model that checks for 3-edge polygons, right angles, 
   *Formula:* `COUNT(this.angles)`
 - **largest_angle**  
   *Description:* The maximum angle measure among angles.  
-  *Formula:* `MAX(this.angles.angle_degrees)`
+  *Formula:* `MAX(this.angle_degrees)`
 - **sum_of_angles**  
   *Description:* Sum of all angle measures in degrees.  
-  *Formula:* `SUM(this.angles.angle_degrees)`
+  *Formula:* `SUM(this.angle_degrees)`
 - **is_triangle**  
   *Description:* True if the polygon has exactly 3 edges.  
   *Formula:* `EQUAL(this.edge_count, 3)`
 - **has_right_angle**  
   *Description:* True if any angle == 90.  
-  *Formula:* `CONTAINS(this.angles.angle_degrees, 90)`
+  *Formula:* `CONTAINS(this.angle_degrees, 90)`
 - **shape_type**  
   *Description:* Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.  
   *Formula:* `IF( EQUAL(this.edge_count,3), '3a', IF(EQUAL(this.edge_count,4),'4a','na') )`
