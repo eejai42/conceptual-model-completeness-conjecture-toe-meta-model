@@ -145,7 +145,7 @@
                 "name": "shape_type",
                 "type": "rollup",
                 "description": "Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.",
-                "formula": "IF( EQUAL(this.edge_count,3), '3a', IF(EQUAL(this.edge_count,4),'4a','na') )"
+                "formula": "IF( EQUAL(this.edge_count,3), 'triangle', IF(EQUAL(this.edge_count,4),'square','polygon') )"
               }
             ],
             "lambdas": [],

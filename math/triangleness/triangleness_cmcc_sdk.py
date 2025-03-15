@@ -128,9 +128,9 @@ class Polygon:
     @property
     def shape_type(self):
         """Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.
-        Original formula: IF( EQUAL(this.edge_count,3), '3a', IF(EQUAL(this.edge_count,4),'4a','na') )
+        Original formula: IF( EQUAL(this.edge_count,3), 'triangle', IF(EQUAL(this.edge_count,4),'square','polygon') )
         """
-        return IF( EQUAL(self.edge_count,3), '3a', IF(EQUAL(self.edge_count,4),'4a','na') )
+        return IF( EQUAL(self.edge_count,3), 'triangle', IF(EQUAL(self.edge_count,4),'square','polygon') )
 
     # Derived properties for 'target_entity': 'this'
     @property

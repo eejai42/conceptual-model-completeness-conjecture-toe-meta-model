@@ -116,7 +116,7 @@ Demonstration of a polygon model that checks for 3-edge polygons, right angles, 
   *Formula:* `CONTAINS(this.angle_degrees, 90)`
 - **shape_type**  
   *Description:* Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.  
-  *Formula:* `IF( EQUAL(this.edge_count,3), '3a', IF(EQUAL(this.edge_count,4),'4a','na') )`
+  *Formula:* `IF( EQUAL(this.edge_count,3), 'triangle', IF(EQUAL(this.edge_count,4),'square','polygon') )`
 
 
 
