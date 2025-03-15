@@ -191,6 +191,6 @@
       "Name": "JsonHbarsTransform",
       "RelativePath": "/research",
       "CommandLine": "json-hbars-transform -i ..\\SSoT\\papers.json -i README.hbars -o README.md"
-    }    
+    }
   ]
 }

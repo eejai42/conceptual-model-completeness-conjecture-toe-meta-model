@@ -93,25 +93,25 @@ Demonstration of a polygon model that checks for 3-edge polygons, right angles, 
 ### Aggregations
 - **edge_count**  
   *Description:* Number of edges in this polygon.  
-  *Formula:* `COUNT(edges)`
+  *Formula:* `COUNT(this.edges)`
 - **angle_count**  
   *Description:* Number of angles in this polygon.  
-  *Formula:* `COUNT(angles)`
+  *Formula:* `COUNT(this.angles)`
 - **largest_angle**  
   *Description:* The maximum angle measure among angles.  
-  *Formula:* `MAX(angles.angle_degrees)`
+  *Formula:* `MAX(this.angles.angle_degrees)`
 - **sum_of_angles**  
   *Description:* Sum of all angle measures in degrees.  
-  *Formula:* `SUM(angles.angle_degrees)`
+  *Formula:* `SUM(this.angles.angle_degrees)`
 - **is_triangle**  
   *Description:* True if the polygon has exactly 3 edges.  
-  *Formula:* `EQUAL(edge_count, 3)`
+  *Formula:* `EQUAL(this.edge_count, 3)`
 - **has_right_angle**  
   *Description:* True if any angle == 90.  
-  *Formula:* `CONTAINS(angles.angle_degrees, 90)`
+  *Formula:* `CONTAINS(this.angles.angle_degrees, 90)`
 - **shape_type**  
   *Description:* Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.  
-  *Formula:* `IF( EQUAL(edge_count,3), 'Triangle', IF(EQUAL(edge_count,4),'Quadrilateral','Other') )`
+  *Formula:* `IF( EQUAL(this.edge_count,3), '3a', IF(EQUAL(this.edge_count,4),'4a','na') )`
 
 
 

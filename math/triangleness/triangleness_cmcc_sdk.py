@@ -87,48 +87,48 @@ class Polygon:
     @property
     def edge_count(self):
         """Number of edges in this polygon.
-        Original formula: COUNT(edges)
+        Original formula: COUNT(this.edges)
         """
         return COUNT(self.edges)
 
     @property
     def angle_count(self):
         """Number of angles in this polygon.
-        Original formula: COUNT(angles)
+        Original formula: COUNT(this.angles)
         """
-        return COUNT(angles)
+        return COUNT(self.angles)
 
     @property
     def largest_angle(self):
         """The maximum angle measure among angles.
-        Original formula: MAX(angles.angle_degrees)
+        Original formula: MAX(this.angles.angle_degrees)
         """
-        return MAX(angles.angle_degrees)
+        return MAX(self.angles.angle_degrees)
 
     @property
     def sum_of_angles(self):
         """Sum of all angle measures in degrees.
-        Original formula: SUM(angles.angle_degrees)
+        Original formula: SUM(this.angles.angle_degrees)
         """
-        return SUM(angles.angle_degrees)
+        return SUM(self.angles.angle_degrees)
 
     @property
     def is_triangle(self):
         """True if the polygon has exactly 3 edges.
-        Original formula: EQUAL(edge_count, 3)
+        Original formula: EQUAL(this.edge_count, 3)
         """
-        return EQUAL(edge_count, 3)
+        return EQUAL(self.edge_count, 3)
 
     @property
     def has_right_angle(self):
         """True if any angle == 90.
-        Original formula: CONTAINS(angles.angle_degrees, 90)
+        Original formula: CONTAINS(this.angles.angle_degrees, 90)
         """
-        return CONTAINS(angles.angle_degrees, 90)
+        return CONTAINS(self.angles.angle_degrees, 90)
 
     @property
     def shape_type(self):
         """Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.
-        Original formula: IF( EQUAL(edge_count,3), 'Triangle', IF(EQUAL(edge_count,4),'Quadrilateral','Other') )
+        Original formula: IF( EQUAL(this.edge_count,3), '3a', IF(EQUAL(this.edge_count,4),'4a','na') )
         """
-        return IF( EQUAL(self.edge_count,3), 'Triangle', IF(EQUAL(self.edge_count,4),'Quadrilateral','Other') )
+        return IF( EQUAL(self.edge_count,3), '3a', IF(EQUAL(self.edge_count,4),'4a','na') )
