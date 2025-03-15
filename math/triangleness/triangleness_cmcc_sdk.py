@@ -82,7 +82,6 @@ class Polygon:
         # If any 'one_to_many' or 'many_to_many' lookups exist, store them as collection wrappers.
         self.edges = CollectionWrapper(self, 'edges')
         self.angles = CollectionWrapper(self, 'angles')
-        self.angle_degrees = CollectionWrapper(self, 'angle_degrees')
 
     @property
     def edge_count(self):
@@ -132,3 +131,9 @@ class Polygon:
         Original formula: IF( EQUAL(this.edge_count,3), '3a', IF(EQUAL(this.edge_count,4),'4a','na') )
         """
         return IF( EQUAL(self.edge_count,3), '3a', IF(EQUAL(self.edge_count,4),'4a','na') )
+
+    # Derived properties for 'target_entity': 'this'
+    @property
+    def angle_degrees(self):
+        """An array of the angles of a triangle."""
+        return [x.angle_degrees for x in self.angles]

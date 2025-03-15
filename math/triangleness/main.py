@@ -7,7 +7,7 @@ def main():
     polygon = Polygon()
     edge1 = Edge()
     angle90 = Angle()
-    angle90.angle_degrees = 90
+    angle90.angle_degrees = 91
     polygon.edges.add(edge1)
     polygon.angles.add(angle90)
     print(polygon.shape_type)

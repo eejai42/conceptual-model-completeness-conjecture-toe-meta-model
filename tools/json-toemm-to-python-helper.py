@@ -44,7 +44,7 @@ def aggregator_to_python(expr: str) -> str:
     """
     s = basic_cleanup(expr)
     s = aggregator_calls(s)           # e.g. MAX(...) => MAX(...)
-    s = aggregator_subfield_rewrite(s)  # NEW: rewrite self.foo.bar => [x.bar for x in self.foo]
+    s = aggregator_subfield_rewrite(s)# rewrite self.foo.bar => [x.bar for x in self.foo]
     s = if_then_else_transform(s)
     s = domain_specific_fixes(s)
     s = remove_for_x_in_1(s)
@@ -63,8 +63,8 @@ def basic_cleanup(expr: str) -> str:
         (r"\btrue\b", "True"),
         (r"\bfalse\b", "False"),
         (r"\bnull\b", "None"),
-        (r"\bthis\.", "self."),
-        (r"\bthis\b", "self"),
+        (r"\bthis\.", "self."),  # 'this.' => 'self.'
+        (r"\bthis\b", "self"),   # standalone 'this' => 'self'
     ]
     for pat, rep in replacements:
         s = re.sub(pat, rep, s, flags=re.IGNORECASE)
@@ -93,7 +93,7 @@ def aggregator_calls(expr: str) -> str:
     # SUM(...) => SUM(...)
     s = re.sub(r"\bSUM\s*\(\s*(.*?)\s*\)", r"SUM(\1)", s, flags=re.IGNORECASE)
     # MAX(...) => MAX(...)
-    # Careful to avoid messing up "MAXBY(...)" (handled below), so we anchor well:
+    # Careful to avoid messing up "MAXBY(...)" (handled below), so we anchor carefully:
     s = re.sub(r"\bMAX\s*\(\s*(.*?)\)", r"MAX(\1)", s, flags=re.IGNORECASE)
 
     # AVERAGE(...) or AVG(...) => produce "AVG(...)"
@@ -120,12 +120,12 @@ def aggregator_calls(expr: str) -> str:
 
 def aggregator_subfield_rewrite(expr: str) -> str:
     """
-    **New** function that scans for aggregator calls like:
+    Scans for aggregator calls like:
         COUNT(self.xyz.whatever)  => COUNT([x.whatever for x in self.xyz])
     Only if there's exactly one dot after 'self':
         self.foo           => no rewrite
         self.foo.bar       => rewrite to [x.bar for x in self.foo]
-        self.foo.bar.baz   => error or skip
+        self.foo.bar.baz   => produce # ERROR multiple-dot references...
     """
     pattern = re.compile(
         r"(COUNT|SUM|MAX|AVG|MINBY|MAXBY|MODE|TOPN|EXISTS)\(\s*(self\.[a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)?)\s*\)",
@@ -134,9 +134,9 @@ def aggregator_subfield_rewrite(expr: str) -> str:
 
     def subfield_replacer(m):
         agg_func = m.group(1).upper()   # e.g. "MAX"
-        param_expr = m.group(2)        # e.g. "self.angles.angle_degrees"
+        param_expr = m.group(2)         # e.g. "self.angles.angle_degrees"
 
-        parts = param_expr.split(".")   # e.g. ["self","angles","angle_degrees"]
+        parts = param_expr.split(".")    # e.g. ["self","angles","angle_degrees"]
         if len(parts) == 2:
             # aggregator(self.something)
             return f"{agg_func}({param_expr})"
@@ -261,11 +261,42 @@ def generate_class_code(entity, used_blocks_set):
 
     code_lines.append("")
     code_lines.append("        # If any 'one_to_many' or 'many_to_many' lookups exist, store them as collection wrappers.")
+
+    # We might collect property methods for "target_entity": "this" in a list,
+    # then append them at the bottom of the class.
+    derived_properties = []
+
     for lu in lookups:
         lu_type = lu.get("type")
         lu_name = lu.get("name")
-        if lu_type in ("one_to_many", "many_to_many"):
-            code_lines.append(f"        self.{lu_name} = CollectionWrapper(self, '{lu_name}')")
+        lu_target = lu.get("target_entity", "")
+        join_cond = lu.get("join_condition", "")
+        lu_desc = lu.get("description", "")
+
+        # If target_entity is NOT "this", do normal one_to_many
+        if lu_target.lower() != "this":
+            if lu_type in ("one_to_many", "many_to_many"):
+                code_lines.append(f"        self.{lu_name} = CollectionWrapper(self, '{lu_name}')")
+        else:
+            # "target_entity": "this" => interpret as "derived property"
+            # e.g. join_condition = "this.angles.angle_degrees"
+            parts = join_cond.split(".")  # e.g. ["this", "angles", "angle_degrees"]
+            if len(parts) == 3 and parts[0].lower() == "this":
+                collection_name = parts[1]
+                field_name = parts[2]
+                # Generate a Python property that returns `[x.field_name for x in self.collection_name]`
+                # We'll store in derived_properties and add them later
+                prop_def = textwrap.dedent(f"""
+                @property
+                def {lu_name}(self):
+                    \"\"\"{lu_desc}\"\"\"
+                    return [x.{field_name} for x in self.{collection_name}]
+                """).strip("\n")
+                derived_properties.append(prop_def)
+            else:
+                # If the join_condition doesn't match "this.foo.bar" pattern, skip or handle differently
+                # We'll just put a comment for now:
+                code_lines.append(f"        # Skipping unusual 'target_entity=this' lookup: {lu_name}, {join_cond}")
 
     # aggregator fields from 'fields' if type=calculated
     for f in fields:
@@ -292,6 +323,14 @@ def generate_class_code(entity, used_blocks_set):
         code_lines.append(f"    def {name}(self):")
         code_lines.append(f"        \"\"\"{desc}\n        Original formula: {formula}\n        \"\"\"")
         code_lines.append(f"        return {pyexpr}")
+
+    # Finally, append any derived properties for "target_entity": "this"
+    if derived_properties:
+        code_lines.append("")
+        code_lines.append("    # Derived properties for 'target_entity': 'this'")
+        for dp in derived_properties:
+            for line in dp.splitlines():
+                code_lines.append("    " + line)
 
     return "\n".join(code_lines)
 
