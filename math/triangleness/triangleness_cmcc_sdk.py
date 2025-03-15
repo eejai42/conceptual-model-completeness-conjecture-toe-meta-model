@@ -80,55 +80,73 @@ class Polygon:
         self.id = kwargs.get('id')
         self.label = kwargs.get('label')
 
-        # If any 'one_to_many' or 'many_to_many' lookups exist, store them as collection wrappers.
         self.edges = CollectionWrapper(self, 'edges')
         self.angles = CollectionWrapper(self, 'angles')
 
     @property
     def edge_count(self):
-        """Number of edges in this polygon.
+        """
+        Number of edges in this polygon.
         Original formula: COUNT(this.edges)
         """
+        # No sub-field here, so we can just do COUNT(self.edges)
         return COUNT(self.edges)
 
     @property
     def angle_count(self):
-        """Number of angles in this polygon.
+        """
+        Number of angles in this polygon.
         Original formula: COUNT(this.angles)
         """
         return COUNT(self.angles)
 
     @property
     def largest_angle(self):
-        """The maximum angle measure among angles.
+        """
+        The maximum angle measure among angles.
         Original formula: MAX(this.angles.angle_degrees)
         """
-        return MAX(self.angles.angle_degrees)
+        # We gather angle_degrees into a list, then call MAX(...) on that list
+        degrees_list = [a.angle_degrees for a in self.angles]
+        return MAX(degrees_list)
 
     @property
     def sum_of_angles(self):
-        """Sum of all angle measures in degrees.
+        """
+        Sum of all angle measures in degrees.
         Original formula: SUM(this.angles.angle_degrees)
         """
-        return SUM(self.angles.angle_degrees)
+        degrees_list = [a.angle_degrees for a in self.angles]
+        return SUM(degrees_list)
 
     @property
     def is_triangle(self):
-        """True if the polygon has exactly 3 edges.
+        """
+        True if the polygon has exactly 3 edges.
         Original formula: EQUAL(this.edge_count, 3)
         """
+        # The generator code ended up with 'EQUAL(this.edge_count, 3)', 
+        # but we can keep the aggregator approach:
         return EQUAL(self.edge_count, 3)
 
     @property
     def has_right_angle(self):
-        """True if any angle == 90.
+        """
+        True if any angle == 90.
         Original formula: CONTAINS(this.angles.angle_degrees, 90)
         """
-        return CONTAINS(self.angles.angle_degrees, 90)
+        degrees_list = [a.angle_degrees for a in self.angles]
+        return CONTAINS(degrees_list, 90)
 
     @property
     def shape_type(self):
-        """Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.
+        """
+        Naive categorization based on edge_count: 3 => triangle, 4 => quadrilateral, else other.
         Original formula: IF( EQUAL(this.edge_count,3), '3a', IF(EQUAL(this.edge_count,4),'4a','na') )
         """
-        return IF( EQUAL(self.edge_count,3), '3a', IF(EQUAL(self.edge_count,4),'4a','na') )
+        return IF(
+            EQUAL(self.edge_count, 3),
+            '3a',
+            IF(EQUAL(self.edge_count, 4), '4a', 'na')
+        )
+        
