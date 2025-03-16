@@ -1,0 +1,145 @@
+{
+  "id": "CMCC_ToEMM_Baseball_Mini",
+  "meta-model": {
+    "name": "Minimal Baseball Model for Inning Outs",
+    "description": "A pared-down, purely declarative model that only tracks Games, Innings, At-Bats, and the notion of a strikeout causing an out. Once an InningHalf accumulates 3 outs (via strikeouts), that half is considered complete, and if both halves are complete, the inning (and possibly the game) is complete.",
+    "version": "v1.0"
+  },
+  "schema": {
+    "entities": [
+      {
+        "name": "Game",
+        "description": "A single baseball game, containing innings.",
+        "fields": [
+          {"name": "id","type": "scalar","datatype": "string","primary_key": true,"description": "Unique identifier for the game."}   ,
+          {"name": "status","type": "scalar","datatype": "string","description": "Game status: e.g. 'SCHEDULED','IN_PROGRESS','FINAL'."}
+        ],
+        "lookups": [
+          {
+            "name"      : "innings"              ,
+            "target_entity" : "Inning"               ,
+            "type"      : "one_to_many"            ,
+            "join_condition": "Inning.gameId = this.id"      ,
+            "description"   : "All Inning records for this Game."
+          }
+        ],
+        "aggregations": [
+          {
+            "name"     : "allInningsComplete"              ,
+            "type"     : "rollup"                    ,
+            "description": "True if every Inning in this game is complete.",
+            "formula"  : "ALL(innings, i => i.isComplete)"
+          },
+          {
+            "name"     : "computedStatus"                                                  ,
+            "type"     : "rollup"                                                      ,
+            "description": "If all innings are complete, the game is 'FINAL'; else 'IN_PROGRESS'. (Purely declarative—no imperative update.)",
+            "formula"  : "IF (allInningsComplete) THEN 'FINAL' ELSE 'IN_PROGRESS'"
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "startGame",
+            "parameters": [],
+            "description": "// Declarative: if any Inning record exists or any AtBat occurs, the game must be 'IN_PROGRESS'.",
+            "formula": "IF (EXISTS(innings)) THEN (this.status == 'IN_PROGRESS')"
+          },
+          {
+            "name": "endGame",
+            "parameters": [],
+            "description": "// Declarative: if all innings are complete, the game must have status='FINAL'.",
+            "formula": "IF (allInningsComplete) THEN (this.status == 'FINAL')"
+          }
+        ],
+        "constraints": []
+      },
+      {
+        "name": "Inning",
+        "description": "An inning in the game, containing a top and bottom half.",
+        "fields": [
+          {"name": "id","type": "scalar","datatype": "string","primary_key": true,"description": "Unique ID for this inning."}         ,
+          {"name": "gameId","type": "lookup","target_entity": "Game","foreign_key": true,"description": "Which game this inning belongs to."},
+          {"name": "inningNumber","type": "scalar","datatype": "integer","description": "Which inning number (e.g. 1..9, or extras)."}
+        ],
+        "lookups": [
+          {"name": "top"   ,"target_entity": "InningHalf","type": "one_to_one","description": "The top half of this inning, if it exists."   },
+          {"name": "bottom","target_entity": "InningHalf","type": "one_to_one","description": "The bottom half of this inning, if it exists."}
+        ],
+        "aggregations": [
+          {
+            "name": "isComplete",
+            "type": "rollup",
+            "description": "True if both halves are complete, or if only one half is needed (walk-off, etc.). Minimal version just checks top & bottom.",
+            "formula": "IF(top!=null AND top.isComplete=true AND bottom!=null AND bottom.isComplete=true) THEN true ELSE false"
+          }
+        ],
+        "lambdas": [],
+        "constraints": []
+      },
+      {
+        "name": "InningHalf",
+        "description": "Either the top or bottom portion of an inning, purely event/aggregator based for outs.",
+        "fields": [
+          {"name": "id","type": "scalar","datatype": "string","primary_key": true,"description": "Unique ID for this half-inning."},
+          {"name": "halfType","type": "scalar","datatype": "string","description": "TOP or BOTTOM."},
+          {
+            "name"     : "isComplete"                               ,
+            "type"     : "scalar"                                 ,
+            "datatype"   : "boolean"                                ,
+            "description": "Whether this half-inning is done—driven by aggregator formula (3 outs)."
+          }
+        ],
+        "lookups": [
+          {
+            "name"      : "atBats"                  ,
+            "target_entity" : "AtBat"                   ,
+            "type"      : "one_to_many"                 ,
+            "join_condition": "AtBat.inningHalfId = this.id"        ,
+            "description"   : "All plate appearances in this half-inning."
+          }
+        ],
+        "aggregations": [
+          {
+            "name"     : "outs"                                                   ,
+            "type"     : "rollup"                                                 ,
+            "description": "Number of outs in this half, purely counting at-bats that ended in a strikeout (in this minimal model).",
+            "formula"  : "COUNT( atBats WHERE atBats.result='STRIKEOUT' )"
+          },
+          {"name": "computedIsComplete","type": "rollup","description": "True if outs >= 3 in this half.","formula": "outs >= 3"}
+        ],
+        "lambdas": [],
+        "constraints": [
+          {
+            "name"     : "forceCompleteAt3Outs"                      ,
+            "formula"    : "isComplete == (outs >= 3)"                   ,
+            "error_message": "Half-inning is considered complete once it accumulates 3 outs."
+          }
+        ]
+      },
+      {
+        "name": "AtBat",
+        "description": "A plate appearance. In this minimal model, we only care if the result is 'STRIKEOUT' or not.",
+        "fields": [
+          {"name": "id","type": "scalar","datatype": "string","primary_key": true,"description": "Unique ID for this at-bat."},
+          {
+            "name": "inningHalfId",
+            "type": "lookup",
+            "target_entity": "InningHalf",
+            "foreign_key": true,
+            "description": "Which half-inning this at-bat belongs to."
+          },
+          {
+            "name"     : "result"                                             ,
+            "type"     : "scalar"                                             ,
+            "datatype"   : "string"                                             ,
+            "description": "Outcome of the at-bat. Minimal version: either 'STRIKEOUT' or anything else (e.g. 'IN_PLAY')."
+          }
+        ],
+        "lookups": [],
+        "aggregations": [],
+        "lambdas": [],
+        "constraints": []
+      }
+    ]
+  }
+}
