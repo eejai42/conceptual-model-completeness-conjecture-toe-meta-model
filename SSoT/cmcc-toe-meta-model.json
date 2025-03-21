@@ -127,6 +127,34 @@
         "nickname": "economics"
       },
       {
+        "id": "CMCC_ToEMM_Finance",
+        "fullname": "Finance ToE Meta-Model",
+        "name": "Finance ToE Meta-Model",
+        "description": "A computational model for financial assets, corporate finance, risk management, capital structure, etc.",
+        "nickname": "finance"
+      },
+      {
+        "id": "CMCC_ToEMM_MergersAndAcquisitions",
+        "fullname": "Mergers & Acquisitions ToE Meta-Model",
+        "name": "Mergers & Acquisitions ToE Meta-Model",
+        "description": "A computational model for M&A deals, synergy analysis, due diligence, purchase agreements, etc.",
+        "nickname": "mna"
+      },
+      {
+        "id": "CMCC_ToEMM_VentureCapital",
+        "fullname": "Venture Capital ToE Meta-Model",
+        "name": "Venture Capital ToE Meta-Model",
+        "description": "A computational model for startup funding, term sheets, cap tables, equity splits, etc.",
+        "nickname": "venturecapital"
+      },
+      {
+        "id": "CMCC_ToEMM_DevOps",
+        "fullname": "DevOps ToE Meta-Model",
+        "name": "DevOps ToE Meta-Model",
+        "description": "A computational model for development operations, CI/CD pipelines, resource usage, etc.",
+        "nickname": "devops"
+      },
+      {
         "id": "CMCC_ToEMM_Astronomy",
         "fullname": "Astronomy ToE Meta-Model",
         "name": "Astronomy ToE Meta-Model",
@@ -8736,6 +8764,1749 @@
             "scenario_id": "scenario_baseline_2025",
             "notes": "Flat 20% income tax",
             "time_active_days": null
+          }
+        ]
+      }
+    },
+    "CMCC_ToEMM_Finance": {
+      "depends_on": [
+        "CMCC_ToEMM_Economics"
+      ],
+      "version": "v2.0",
+      "nickname": "finance",
+      "meta": {
+        "title": "Finance ToE Meta-Model",
+        "subtitle": "A Unified Declarative Schema for Corporate Structures, Securities, and Valuations",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This Finance extension of the CMCC (Conceptual Model Completeness Conjecture) builds on top of Economics with aggregator-based logic to capture corporate structures, financial instruments, valuations, and cash flow statements. All domain rules—from net-present-value discounting to balance-sheet consistency—are expressed in a purely declarative, snapshot-consistent format, cross-linking with macro or policy fields from the Economics model.",
+        "executive_summary": {
+          "key_points": [
+            "Encodes company balance sheets, cash flows, financial instruments (equity, debt, derivatives) using aggregator constraints for net worth, leverage, etc.",
+            "Enables advanced valuations (DCF, comparables) purely via formula fields referencing economics data (interest rates, inflation).",
+            "Provides a consistent approach to transaction logging, merging micro-level corporate events with the macro indicators from CMCC_ToEMM_Economics.",
+            "Allows for flexible cross-domain expansions—like linking M&A, venture capital, or devops cost modeling—under the same snapshot-consistent environment."
+          ],
+          "implications": [
+            "Enables direct synergy between corporate finance data and broader economic policy or market conditions.",
+            "Eliminates domain-specific update code: aggregator fields handle discounting, ratio analysis, and so on automatically.",
+            "Facilitates large-scale compliance or scenario testing—like stress tests or credit analyses—in the same environment."
+          ],
+          "narrative": [
+            {
+              "title": "CMCC Finance Extension",
+              "content": [
+                "Finance typically deals with enterprise-level details—balance sheets, instruments, valuations—while also depending on macro indicators (e.g., interest or inflation rates). This model unifies them in a single data-driven environment, ensuring that any changes in macro data (from CMCC_ToEMM_Economics) automatically update all valuations or ratio computations here in the Finance domain.",
+                "Because everything is purely declarative, new aggregator fields—like advanced risk metrics or updated IFRS/GAAP rules—can be added without rewriting imperative code. This fosters a frictionless integration across multiple sub-fields, e.g. M&A or corporate treasury, all referencing the same universal snapshot."
+              ]
+            }
+          ]
+        }
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "Company",
+            "description": "Represents a corporate entity with basic financial fields (assets, liabilities, equity). Can cross-reference scenario data from Economics.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "company_name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "scenario_id",
+                "type": "lookup",
+                "target_entity": "CMCC_ToEMM_Economics.FinancialScenarioRecord",
+                "foreign_key": false,
+                "description": "Optional cross-reference to an Economics scenario for macro variables."
+              },
+              {
+                "name": "total_assets",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "total_liabilities",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "shareholders_equity",
+                "type": "rollup",
+                "formula": "total_assets - total_liabilities",
+                "description": "Basic formula for equity = assets - liabilities."
+              },
+              {
+                "name": "leverage_ratio",
+                "type": "rollup",
+                "formula": "IF(shareholders_equity>0, total_liabilities / shareholders_equity, null)",
+                "description": "Debt-to-equity ratio."
+              },
+              {
+                "name": "inflation_adjusted_assets",
+                "type": "rollup",
+                "formula": "IF( scenario_id != null AND scenario_id.linked_indicators != null, ( total_assets / (1 + (LOOKUP(scenario_id.linked_indicators WHERE indicator_name='InflationRate').indicator_value / 100)) ), total_assets )",
+                "description": "Adjusts the company's assets by the scenario’s inflation rate, if available."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "apply_economic_shock",
+                "parameters": [
+                  "shock_percentage"
+                ],
+                "formula": "total_assets *= (1 - shock_percentage); total_liabilities *= (1 - 0.5 * shock_percentage)",
+                "description": "Toy function to simulate a partial meltdown in asset values. Liabilities also drop but less proportionally."
+              }
+            ],
+            "constraints": [
+              {
+                "name": "non_negative_assets",
+                "formula": "total_assets >= 0",
+                "error_message": "Company assets cannot be negative."
+              },
+              {
+                "name": "non_negative_liabilities",
+                "formula": "total_liabilities >= 0",
+                "error_message": "Company liabilities cannot be negative."
+              }
+            ]
+          },
+          {
+            "name": "FinancialInstrument",
+            "description": "Represents an equity share class, bond, or derivative referencing a Company. Could store coupon rate, maturity, or other fields.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "instrument_type",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g., 'equity','bond','convertible','derivative'."
+              },
+              {
+                "name": "company_id",
+                "type": "lookup",
+                "target_entity": "Company",
+                "foreign_key": false,
+                "description": "Which company issued this instrument?"
+              },
+              {
+                "name": "face_value",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Nominal or face amount (for bonds, etc.)."
+              },
+              {
+                "name": "coupon_rate",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "If this is a bond, the annual coupon percentage. Else 0 or null."
+              },
+              {
+                "name": "maturity_date",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "If it's a bond or note, when it matures."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "annual_coupon_payment",
+                "type": "rollup",
+                "formula": "face_value * (coupon_rate/100)",
+                "description": "Naive aggregator for annual coupon in currency units."
+              },
+              {
+                "name": "accrued_interest",
+                "type": "rollup",
+                "formula": "ComputeAccruedInterest(face_value, coupon_rate, maturity_date)",
+                "description": "Toy aggregator referencing a function for day-count or yield-based interest."
+              },
+              {
+                "name": "implied_equity_percentage",
+                "type": "rollup",
+                "formula": "IF(instrument_type='equity', face_value / ( company_id.shareholders_equity + 0.0001 ), null)",
+                "description": "Toy fraction of equity if 'equity' type. This is simplistic; real valuations differ."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "redeem_instrument",
+                "parameters": [],
+                "formula": "If instrument_type='bond' => payoff = face_value + accrued_interest; else payoff=0",
+                "description": "Conceptual formula for paying off a bond at maturity."
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "CashFlowRecord",
+            "description": "A discrete cash flow linked to a company or a financial instrument, referencing an amount and date, plus discounting formulas.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "company_id",
+                "type": "lookup",
+                "target_entity": "Company",
+                "foreign_key": false
+              },
+              {
+                "name": "instrument_id",
+                "type": "lookup",
+                "target_entity": "FinancialInstrument",
+                "foreign_key": false
+              },
+              {
+                "name": "amount",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "cashflow_date",
+                "type": "scalar",
+                "datatype": "datetime"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "discounted_value",
+                "type": "rollup",
+                "formula": "IF( company_id.scenario_id != null, ( amount / POW(1 + (LOOKUP(company_id.scenario_id.linked_indicators WHERE indicator_name='InterestRate').indicator_value / 100), YearFraction(NOW(), cashflow_date)) ), amount )",
+                "description": "Discounts this cash flow by the scenario’s 'InterestRate' from Economics. If none, returns raw amount."
+              }
+            ],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "non_negative_amount",
+                "formula": "amount >= 0",
+                "error_message": "Cash flow record cannot have negative amount (toy assumption)."
+              }
+            ]
+          },
+          {
+            "name": "BalanceSheet",
+            "description": "Represents a snapshot of a company's financial position at a given date, often referencing the same fields as Company but more granularly itemized.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "company_id",
+                "type": "lookup",
+                "target_entity": "Company",
+                "foreign_key": false
+              },
+              {
+                "name": "balance_date",
+                "type": "scalar",
+                "datatype": "datetime"
+              },
+              {
+                "name": "cash_and_equivalents",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "property_plant_equipment",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "long_term_debt",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "short_term_liabilities",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "total_assets_bs",
+                "type": "rollup",
+                "formula": "cash_and_equivalents + property_plant_equipment",
+                "description": "Toy aggregator summing major asset categories."
+              },
+              {
+                "name": "total_liabilities_bs",
+                "type": "rollup",
+                "formula": "long_term_debt + short_term_liabilities",
+                "description": "Toy aggregator summing major liability categories."
+              },
+              {
+                "name": "equity_bs",
+                "type": "rollup",
+                "formula": "total_assets_bs - total_liabilities_bs",
+                "description": "Balance sheet's derived equity."
+              },
+              {
+                "name": "consistency_check_vs_company",
+                "type": "rollup",
+                "formula": "IF(company_id != null, (ABS( (company_id.total_assets - total_assets_bs ) + (company_id.total_liabilities - total_liabilities_bs )) < 0.001 ), false)",
+                "description": "Checks if the company’s aggregator-based totals roughly match the itemized balance sheet."
+              }
+            ],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "non_negative_categories",
+                "formula": "(cash_and_equivalents >=0) AND (property_plant_equipment >=0) AND (long_term_debt >=0) AND (short_term_liabilities >=0)",
+                "error_message": "Cannot have negative financial categories in the balance sheet (toy assumption)."
+              }
+            ]
+          }
+        ]
+      },
+      "data": {
+        "Company": [
+          {
+            "id": "company_abc",
+            "company_name": "ABC Corporation",
+            "scenario_id": "scenario_baseline_2025",
+            "total_assets": 500000,
+            "total_liabilities": 300000,
+            "notes": "Mid-sized manufacturing firm"
+          },
+          {
+            "id": "company_xyz",
+            "company_name": "XYZ Tech Inc",
+            "scenario_id": null,
+            "total_assets": 2000000,
+            "total_liabilities": 1200000,
+            "notes": "Fast-growing software company"
+          }
+        ],
+        "FinancialInstrument": [
+          {
+            "id": "bond_abc_2028",
+            "instrument_type": "bond",
+            "company_id": "company_abc",
+            "face_value": 100000,
+            "coupon_rate": 5.0,
+            "maturity_date": "2028-12-31T00:00:00Z",
+            "notes": "5% 5-year bond"
+          },
+          {
+            "id": "equity_xyz_common",
+            "instrument_type": "equity",
+            "company_id": "company_xyz",
+            "face_value": 500000,
+            "coupon_rate": 0,
+            "maturity_date": null,
+            "notes": "Common shares in XYZ Tech Inc"
+          }
+        ],
+        "CashFlowRecord": [
+          {
+            "id": "cf_abc_interest_2025",
+            "company_id": "company_abc",
+            "instrument_id": "bond_abc_2028",
+            "amount": 5000,
+            "cashflow_date": "2025-12-31T00:00:00Z",
+            "notes": "Annual coupon payment for ABC bond"
+          },
+          {
+            "id": "cf_xyz_dividend_2026",
+            "company_id": "company_xyz",
+            "instrument_id": "equity_xyz_common",
+            "amount": 10000,
+            "cashflow_date": "2026-06-30T00:00:00Z",
+            "notes": "Projected dividend from XYZ"
+          }
+        ],
+        "BalanceSheet": [
+          {
+            "id": "bs_abc_2025",
+            "company_id": "company_abc",
+            "balance_date": "2025-12-31T00:00:00Z",
+            "cash_and_equivalents": 100000,
+            "property_plant_equipment": 400000,
+            "long_term_debt": 250000,
+            "short_term_liabilities": 50000,
+            "notes": "Year-end snapshot for ABC"
+          }
+        ]
+      }
+    },
+    "CMCC_ToEMM_MergersAndAcquisitions": {
+      "depends_on": [
+        "CMCC_ToEMM_Finance",
+        "CMCC_ToEMM_Economics"
+      ],
+      "version": "v2.0",
+      "nickname": "mna",
+      "meta": {
+        "title": "Mergers & Acquisitions ToE Meta-Model",
+        "subtitle": "A Declarative Schema for Corporate Deals, Synergy, and Integration",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This M&A extension of CMCC (Conceptual Model Completeness Conjecture) leverages the aggregator-based logic from Finance and Economics to capture the entire lifecycle of mergers, acquisitions, and corporate restructurings. Deals, valuations, synergy projections, and post-merger integration steps are modeled as data plus aggregator fields, ensuring fully snapshot-consistent transitions with no imperative code.",
+        "executive_summary": {
+          "key_points": [
+            "Encodes the M&A process—target identification, deal term sheets, synergy models—via purely declarative aggregator fields.",
+            "Automatically updates synergy or valuations whenever macro data (Economics) or company balance sheets (Finance) change.",
+            "Supports cross-domain expansions: synergy might link to DevOps, biology, or advanced AI cost modeling in a single environment.",
+            "Eliminates disjoint logic for purchase agreements or post-merger ownership: aggregator constraints keep snapshots consistent."
+          ],
+          "implications": [
+            "Minimizes the risk of contradictory data: e.g. synergy claims that don’t match actual financial statements.",
+            "Offers real-time scenario testing: changing interest rates or valuations auto-updates the M&A aggregator fields.",
+            "Enables strategic expansions: partial or complete acquisitions, LBO structures, or cross-border deals linking to macro indicators."
+          ],
+          "narrative": [
+            {
+              "title": "CMCC M&A Extension",
+              "content": [
+                "M&A can be chaotic—negotiations, deal financing, synergy forecasts, compliance, you name it. By translating every step into aggregator fields and references, we unify that chaos under the same snapshot-consistent environment used by Finance and Economics. This ensures synergy projections or purchase prices always tie back to the underlying data from each company’s aggregator-based financials, as well as relevant macro or policy conditions.",
+                "As a result, deals become transparent and maintainable: if interest rates spike or the target’s balance sheet changes, synergy and final valuations recalc automatically, preventing partial or inconsistent states. Integrate with DevOps or advanced AI modules if you want to factor in technical overhead or ML-based synergy predictions in the same environment."
+              ]
+            }
+          ]
+        }
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "MADeal",
+            "description": "Represents a proposed or finalized merger/acquisition transaction, referencing buyer/seller companies.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "deal_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Short label for the deal, e.g. 'Acme acquires BoltCo'."
+              },
+              {
+                "name": "acquirer_company_id",
+                "type": "lookup",
+                "target_entity": "CMCC_ToEMM_Finance.Company",
+                "foreign_key": false
+              },
+              {
+                "name": "target_company_id",
+                "type": "lookup",
+                "target_entity": "CMCC_ToEMM_Finance.Company",
+                "foreign_key": false
+              },
+              {
+                "name": "deal_status",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g. 'proposed','in_progress','closed','terminated'."
+              },
+              {
+                "name": "deal_value",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Headline transaction price. Could reflect equity purchase or enterprise value."
+              },
+              {
+                "name": "transaction_date",
+                "type": "scalar",
+                "datatype": "datetime",
+                "description": "When the deal is expected to close or has closed."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "enterprise_value",
+                "type": "rollup",
+                "formula": "target_company_id.total_assets - target_company_id.total_liabilities + synergy_estimate",
+                "description": "Toy aggregator for EV: assets - liabilities + synergy. In reality, synergy is separate, but we keep it simple."
+              },
+              {
+                "name": "synergy_estimate",
+                "type": "rollup",
+                "formula": "ComputeSynergy(acquirer_company_id, target_company_id)",
+                "description": "Stub aggregator referencing synergy logic, e.g. cost savings or revenue enhancements."
+              },
+              {
+                "name": "price_to_equity_ratio",
+                "type": "rollup",
+                "formula": "IF(target_company_id.shareholders_equity>0, ( deal_value / target_company_id.shareholders_equity ), null)",
+                "description": "Naive aggregator: transaction price / target’s equity, ignoring net debt or synergy."
+              },
+              {
+                "name": "is_leveraged_buyout",
+                "type": "rollup",
+                "formula": "IF( deal_value> (acquirer_company_id.shareholders_equity + acquirer_company_id.total_liabilities ), true, false )",
+                "description": "Toy check if the deal value is bigger than acquirer’s entire capital structure => likely LBO or heavy debt-based."
+              },
+              {
+                "name": "post_merger_equity",
+                "type": "rollup",
+                "formula": "(acquirer_company_id.shareholders_equity + target_company_id.shareholders_equity + synergy_estimate) - new_debt_issued",
+                "description": "Projected new equity after combining both, plus synergy, minus any additional acquisition debt. (Toy model.)"
+              },
+              {
+                "name": "new_debt_issued",
+                "type": "rollup",
+                "formula": "ComputeAcquisitionDebt(acquirer_company_id, deal_value)",
+                "description": "References a function that calculates how much new debt the acquirer must raise. Implementation conceptual."
+              },
+              {
+                "name": "inflation_adjusted_deal_value",
+                "type": "rollup",
+                "formula": "IF( acquirer_company_id.scenario_id != null, deal_value / (1 + (LOOKUP(acquirer_company_id.scenario_id.linked_indicators WHERE indicator_name='InflationRate').indicator_value / 100)), deal_value )",
+                "description": "Adjust the raw purchase price by the scenario’s inflation rate, if available."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "finalize_deal",
+                "parameters": [],
+                "formula": "deal_status='closed'; transaction_date=NOW();",
+                "description": "Transitions the deal to 'closed' state. Conceptual snippet—no code run, purely a data-based formula."
+              },
+              {
+                "name": "abort_deal",
+                "parameters": [],
+                "formula": "deal_status='terminated'",
+                "description": "Sets the deal status to 'terminated'."
+              }
+            ],
+            "constraints": [
+              {
+                "name": "positive_deal_value",
+                "formula": "deal_value >= 0",
+                "error_message": "Deal value cannot be negative."
+              },
+              {
+                "name": "distinct_companies",
+                "formula": "acquirer_company_id != target_company_id",
+                "error_message": "A company cannot acquire itself."
+              }
+            ]
+          },
+          {
+            "name": "TermSheet",
+            "description": "High-level summary of M&A deal terms, e.g. payment method, synergy breakdown, reps & warranties placeholders.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "deal_id",
+                "type": "lookup",
+                "target_entity": "MADeal",
+                "foreign_key": true
+              },
+              {
+                "name": "payment_structure",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g. 'cash','stock','mixed'."
+              },
+              {
+                "name": "stock_exchange_ratio",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "If paying with acquirer shares, how many shares per target share? Null if all-cash."
+              },
+              {
+                "name": "earnout_provisions",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Text or param-based specs for performance-based payouts."
+              },
+              {
+                "name": "representations_and_warranties",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Simplified placeholder for legal text references."
+              },
+              {
+                "name": "termination_clause",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Simplified placeholder describing how/when the deal can be called off."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "cash_portion_estimated",
+                "type": "rollup",
+                "formula": "IF(payment_structure='cash', LOOKUP(deal_id).deal_value, IF(payment_structure='mixed', 0.5 * LOOKUP(deal_id).deal_value, 0))",
+                "description": "Naive aggregator: if it's 'cash' => entire deal_value, if mixed => half, else zero."
+              },
+              {
+                "name": "stock_portion_estimated",
+                "type": "rollup",
+                "formula": "IF(payment_structure='stock', LOOKUP(deal_id).deal_value, IF(payment_structure='mixed', 0.5 * LOOKUP(deal_id).deal_value, 0))",
+                "description": "Naive aggregator: if 'stock' => entire deal_value, if mixed => half, else zero."
+              },
+              {
+                "name": "post_deal_ownership",
+                "type": "rollup",
+                "formula": "ComputePostDealOwnership(deal_id, stock_exchange_ratio)",
+                "description": "Conceptual aggregator to calculate new ownership distribution if paying in stock."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "generate_purchase_agreement",
+                "parameters": [],
+                "formula": "ConstructPurchaseAgreementDraft(this, LOOKUP(deal_id))",
+                "description": "Would create a doc referencing the key terms. Implementation conceptual."
+              }
+            ],
+            "constraints": [
+              {
+                "name": "valid_payment_structure",
+                "formula": "payment_structure IN ['cash','stock','mixed']",
+                "error_message": "Payment structure must be 'cash','stock', or 'mixed'."
+              }
+            ]
+          },
+          {
+            "name": "DueDiligenceRecord",
+            "description": "Tracks the buyer’s diligence findings on the target, referencing any flagged issues, synergy validations, or asset quality checks.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "deal_id",
+                "type": "lookup",
+                "target_entity": "MADeal",
+                "foreign_key": true
+              },
+              {
+                "name": "issue_type",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g. 'financial','legal','technical'."
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "What was found? E.g. 'pending lawsuit', 'old equipment'."
+              },
+              {
+                "name": "risk_level",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Naive enumerations: 'low','medium','high'."
+              },
+              {
+                "name": "resolution_plan",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "How to mitigate or fix the issue."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "overall_dd_risk",
+                "type": "rollup",
+                "formula": "ComputeAggregateDiligenceRisk( deal_id )",
+                "description": "Naive aggregator that scans all issues for a given deal and assigns an overall risk rating."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "escalate_issue",
+                "parameters": [],
+                "formula": "risk_level='high'",
+                "description": "Upgrades an issue to high risk."
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "IntegrationPlan",
+            "description": "Post-merger integration plan with aggregator fields for synergy execution steps, cost or timeline estimates.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "deal_id",
+                "type": "lookup",
+                "target_entity": "MADeal",
+                "foreign_key": true
+              },
+              {
+                "name": "phase",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "e.g. 'Phase1','Phase2','FinalIntegration'."
+              },
+              {
+                "name": "estimated_cost",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "estimated_timeline",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Rough timeline descriptor, e.g. '3 months', 'by Q4'."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "projected_synergy_gain",
+                "type": "rollup",
+                "formula": "ComputeIntegrationSynergyGain(deal_id, phase)",
+                "description": "Partial synergy realized by each integration phase. Implementation conceptual."
+              },
+              {
+                "name": "total_integration_cost",
+                "type": "rollup",
+                "formula": "SUM( FOR ALL records in IntegrationPlan WHERE deal_id=this.deal_id => estimated_cost )",
+                "description": "Sum of all phases’ costs for the same deal."
+              },
+              {
+                "name": "synergy_to_cost_ratio",
+                "type": "rollup",
+                "formula": "IF( projected_synergy_gain>0, ( projected_synergy_gain / estimated_cost ), null)",
+                "description": "How cost-effective this phase is in synergy terms (toy measure)."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "execute_integration_phase",
+                "parameters": [],
+                "formula": "phase='completed'; synergy_to_cost_ratio => finalize synergy. // conceptual placeholder",
+                "description": "Marks an integration phase as done, triggers synergy realization logic. Implementation conceptual."
+              }
+            ],
+            "constraints": [
+              {
+                "name": "non_negative_cost",
+                "formula": "estimated_cost >= 0",
+                "error_message": "Integration cost must be non-negative."
+              }
+            ]
+          }
+        ]
+      },
+      "data": {
+        "MADeal": [
+          {
+            "id": "deal_acme_boltco",
+            "deal_name": "Acme acquires BoltCo",
+            "acquirer_company_id": "company_abc",
+            "target_company_id": "company_xyz",
+            "deal_status": "in_progress",
+            "deal_value": 1500000,
+            "transaction_date": null,
+            "notes": "Negotiations ongoing"
+          }
+        ],
+        "TermSheet": [
+          {
+            "id": "ts_acme_boltco",
+            "deal_id": "deal_acme_boltco",
+            "payment_structure": "mixed",
+            "stock_exchange_ratio": 1.2,
+            "earnout_provisions": "Extra $300k if BoltCo hits $2M revenue in 12 months",
+            "representations_and_warranties": "Standard representations, no known lawsuits beyond normal course.",
+            "termination_clause": "Either party can terminate if not closed by year-end.",
+            "notes": "Draft terms"
+          }
+        ],
+        "DueDiligenceRecord": [
+          {
+            "id": "dd_legal_1",
+            "deal_id": "deal_acme_boltco",
+            "issue_type": "legal",
+            "description": "BoltCo has a pending trademark dispute",
+            "risk_level": "medium",
+            "resolution_plan": "Assess settlement or rename product line",
+            "notes": "Likely non-critical"
+          },
+          {
+            "id": "dd_financial_1",
+            "deal_id": "deal_acme_boltco",
+            "issue_type": "financial",
+            "description": "Receivables not fully collected, some overdue >90 days",
+            "risk_level": "medium",
+            "resolution_plan": "Increase reserve or discount to finalize",
+            "notes": "Potential $50k write-down"
+          }
+        ],
+        "IntegrationPlan": [
+          {
+            "id": "intp_acme_phase1",
+            "deal_id": "deal_acme_boltco",
+            "phase": "Phase1",
+            "estimated_cost": 50000,
+            "estimated_timeline": "3 months post-closing",
+            "notes": "Initial integration of sales teams"
+          },
+          {
+            "id": "intp_acme_phase2",
+            "deal_id": "deal_acme_boltco",
+            "phase": "Phase2",
+            "estimated_cost": 100000,
+            "estimated_timeline": "6 months post-closing",
+            "notes": "Consolidate manufacturing facilities"
+          }
+        ]
+      }
+    },
+    "CMCC_ToEMM_VentureCapital": {
+      "depends_on": [
+        "CMCC_ToEMM_Finance",
+        "CMCC_ToEMM_Economics"
+      ],
+      "version": "v2.0",
+      "nickname": "venturecapital",
+      "meta": {
+        "title": "Venture Capital ToE Meta-Model",
+        "subtitle": "A Declarative Schema for Startup Funding, Term Sheets, and Equity Splits",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This Venture Capital extension of the CMCC (Conceptual Model Completeness Conjecture) expands on the Finance and Economics models to capture the unique aspects of startup funding, equity structures, and term sheets. All rules—like pre-money valuations, cap tables, liquidation preferences—are stored as aggregator fields, ensuring one snapshot-consistent environment for all venture deals.",
+        "executive_summary": {
+          "key_points": [
+            "Encodes common VC concepts (pre-money/post-money valuation, convertible notes, SAFEs, etc.) via aggregator logic tied to existing Finance/Economics data.",
+            "Tracks term sheets, funding rounds, cap tables, and liquidation preferences with purely declarative constraints and formulas.",
+            "Automatically reflects changes in economic indicators (e.g. interest rates, inflation) or corporate finances (from CMCC_ToEMM_Finance) on startup valuations, runway, etc.",
+            "Facilitates cross-domain expansions: link advanced synergy from M&A or even devops cost modeling for a deeper analysis of startup burn rates."
+          ],
+          "implications": [
+            "Removes the typical code sprawl for custom update logic in venture deals—aggregator fields keep valuations, ownership percentages, and liquidation waterfalls consistent at each commit.",
+            "Allows large-scale scenario testing: e.g. changes in macro conditions or a series of funding events instantly reflow into updated cap tables or runway forecasts.",
+            "Brings a single source of truth for funding data, bridging the gap between typical pitch-deck estimates and real transaction logs from the Finance/Economics models."
+          ],
+          "narrative": [
+            {
+              "title": "CMCC Venture Capital Extension",
+              "content": [
+                "Venture capital introduces specialized complexities like SAFE notes, convertible debt, cap table expansions, and multiple funding rounds. By placing these under the same aggregator-based logic that drives Finance and Economics, each new or amended term sheet triggers an immediate recalculation of ownership distributions, valuations, and potential outcomes in a single snapshot.",
+                "That synergy means no more partial states where new shares are created but not reflected in the company's total equity, or a convertible note triggers messy manual cap table updates. Instead, aggregator constraints unify all data and keep the entire environment consistent. Cross-domain expansions are trivial—for instance, referencing devops cost data to refine the startup's burn rate or hooking in M&A logic for partial acquisitions or strategic investments."
+              ]
+            }
+          ]
+        }
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "Startup",
+            "description": "Represents an early-stage company seeking venture funding. Extends the Finance Company concept with additional aggregator fields for typical startup metrics.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "company_id",
+                "type": "lookup",
+                "target_entity": "CMCC_ToEMM_Finance.Company",
+                "foreign_key": true,
+                "description": "Links to the base finance 'Company' record for standard financial aggregator fields."
+              },
+              {
+                "name": "founding_date",
+                "type": "scalar",
+                "datatype": "datetime"
+              },
+              {
+                "name": "primary_focus",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g., 'SaaS', 'BioTech', 'Marketplaces'."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "burn_rate",
+                "type": "rollup",
+                "formula": "ComputeBurnRate(company_id, monthly_expenses, revenue_trend)",
+                "description": "Conceptual aggregator referencing expenses vs. revenue to estimate monthly negative cash flow."
+              },
+              {
+                "name": "runway_months",
+                "type": "rollup",
+                "formula": "IF(burn_rate>0, (company_id.total_assets / burn_rate), null)",
+                "description": "Approx how many months until assets run out, ignoring new revenue or additional financing."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "FundingRound",
+            "description": "Represents a single round of venture funding (Seed, Series A, etc.) referencing valuations, amounts, new shares, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "startup_id",
+                "type": "lookup",
+                "target_entity": "Startup",
+                "foreign_key": true
+              },
+              {
+                "name": "round_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g. 'Seed','Series A','Series B', etc."
+              },
+              {
+                "name": "pre_money_valuation",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Valuation prior to the investment."
+              },
+              {
+                "name": "amount_raised",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Cash invested in this round."
+              },
+              {
+                "name": "new_shares_issued",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "How many new shares or tokens are created for this round."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "post_money_valuation",
+                "type": "rollup",
+                "formula": "pre_money_valuation + amount_raised",
+                "description": "Naive aggregator for post-money = pre-money + new capital."
+              },
+              {
+                "name": "investor_ownership_percent",
+                "type": "rollup",
+                "formula": "IF(post_money_valuation>0, (amount_raised / post_money_valuation)*100, 0)",
+                "description": "Fraction of the startup that new investors own from this round."
+              },
+              {
+                "name": "price_per_share",
+                "type": "rollup",
+                "formula": "IF(new_shares_issued>0, (amount_raised / new_shares_issued), null)",
+                "description": "How much each share effectively costs in this round."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "close_round",
+                "parameters": [],
+                "formula": "startup_id.company_id.total_assets += amount_raised; // simplistic approach, ignoring liabilities or partial uses.",
+                "description": "Applies the raised amount to the startup's assets. Implementation conceptual."
+              }
+            ],
+            "constraints": [
+              {
+                "name": "non_negative_valuations",
+                "formula": "(pre_money_valuation >= 0) AND (amount_raised >= 0)",
+                "error_message": "Valuations and raise amounts cannot be negative."
+              }
+            ]
+          },
+          {
+            "name": "CapTable",
+            "description": "Tracks ownership distribution for each stakeholder (founders, employees, investors) across multiple rounds.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "startup_id",
+                "type": "lookup",
+                "target_entity": "Startup",
+                "foreign_key": true
+              },
+              {
+                "name": "stakeholder_id",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "Could reference a 'Person' or 'Investor' record, or just store text ID."
+              },
+              {
+                "name": "shares_owned",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "stakeholder_percentage",
+                "type": "rollup",
+                "formula": "IF( SUM( FOR ALL c in CapTable WHERE c.startup_id=this.startup_id => c.shares_owned ) > 0, ( shares_owned / SUM( FOR ALL c in CapTable WHERE c.startup_id=this.startup_id => c.shares_owned ) )*100, 0 )",
+                "description": "Percentage stake in the startup. Summation references all shares for that same startup."
+              },
+              {
+                "name": "total_shares_in_startup",
+                "type": "rollup",
+                "formula": "SUM( FOR ALL c in CapTable WHERE c.startup_id=this.startup_id => c.shares_owned )",
+                "description": "For convenience, how many shares exist in total for the same startup."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "adjust_shares_after_round",
+                "parameters": [
+                  "funding_round_id"
+                ],
+                "formula": "Distribute new_shares_issued from the FundingRound among relevant stakeholders. // Implementation conceptual",
+                "description": "Updates or adds entries to reflect newly issued shares from a round."
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "ConvertibleNote",
+            "description": "Represents a convertible note or SAFE instrument that can convert into equity upon a future funding round or trigger event.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "startup_id",
+                "type": "lookup",
+                "target_entity": "Startup",
+                "foreign_key": true
+              },
+              {
+                "name": "principal_amount",
+                "type": "scalar",
+                "datatype": "float"
+              },
+              {
+                "name": "discount_rate",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "E.g. 20% discount on next round’s price."
+              },
+              {
+                "name": "valuation_cap",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "If next round’s valuation is too high, the note uses this as a max. Null if none."
+              },
+              {
+                "name": "conversion_trigger_round",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g. 'Series A'. If no round name, triggers upon any equity financing over a threshold."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "implied_equity_shares",
+                "type": "rollup",
+                "formula": "ComputeConvertibleShares(principal_amount, discount_rate, valuation_cap, NextFundingRoundPreMoneyValuation, NextFundingRoundPricePerShare)",
+                "description": "When triggered, how many shares does this note convert into? Implementation conceptual, referencing next round aggregator fields."
+              },
+              {
+                "name": "convertible_ownership_percent",
+                "type": "rollup",
+                "formula": "IF(implied_equity_shares>0, (implied_equity_shares / (CapTable.total_shares_in_startup + implied_equity_shares))*100, 0)",
+                "description": "Approx percent after conversion if the note is triggered now."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "trigger_conversion",
+                "parameters": [
+                  "funding_round_id"
+                ],
+                "formula": "shares = implied_equity_shares; Add to CapTable with stakeholder=holder_of_note. // conceptual",
+                "description": "Upon next round or condition, finalize the note’s conversion into equity. Implementation conceptual."
+              }
+            ],
+            "constraints": [
+              {
+                "name": "non_negative_principal",
+                "formula": "principal_amount >= 0",
+                "error_message": "Convertible note principal cannot be negative."
+              },
+              {
+                "name": "valid_discount",
+                "formula": "(discount_rate >= 0) AND (discount_rate <= 100)",
+                "error_message": "Discount rate must be between 0% and 100% (toy assumption)."
+              }
+            ]
+          }
+        ]
+      },
+      "data": {
+        "Startup": [
+          {
+            "id": "startup_greenbot",
+            "company_id": "company_xyz",
+            "founding_date": "2023-05-15T00:00:00Z",
+            "primary_focus": "SaaS for robotics analytics",
+            "notes": "Spun out from local university lab"
+          }
+        ],
+        "FundingRound": [
+          {
+            "id": "rnd_greenbot_seed",
+            "startup_id": "startup_greenbot",
+            "round_name": "Seed",
+            "pre_money_valuation": 2000000,
+            "amount_raised": 500000,
+            "new_shares_issued": 100000,
+            "notes": "Initial seed to build MVP"
+          }
+        ],
+        "CapTable": [
+          {
+            "id": "ct_founder1",
+            "startup_id": "startup_greenbot",
+            "stakeholder_id": "founder_alice",
+            "shares_owned": 300000,
+            "notes": "Founder Alice's initial stake"
+          },
+          {
+            "id": "ct_founder2",
+            "startup_id": "startup_greenbot",
+            "stakeholder_id": "founder_bob",
+            "shares_owned": 200000,
+            "notes": "Founder Bob's stake"
+          }
+        ],
+        "ConvertibleNote": [
+          {
+            "id": "note_seed_safe",
+            "startup_id": "startup_greenbot",
+            "principal_amount": 100000,
+            "discount_rate": 20,
+            "valuation_cap": 3000000,
+            "conversion_trigger_round": "Series A",
+            "notes": "Simple SAFE note with discount and valuation cap"
+          }
+        ]
+      }
+    },
+    "CMCC_ToEMM_DevOps": {
+      "depends_on": [
+        "CMCC_ToEMM_Finance",
+        "CMCC_ToEMM_Economics"
+      ],
+      "version": "v2.0",
+      "nickname": "devops",
+      "meta": {
+        "title": "DevOps ToE Meta-Model",
+        "subtitle": "A Declarative Schema for CI/CD Pipelines, Resource Usage, and Operational Cost",
+        "authors": [
+          {
+            "name": "EJ Alexandra",
+            "contact": "start@anabstractlevel.com",
+            "affiliations": [
+              "SSoT.me",
+              "EffortlessAPI.com"
+            ]
+          }
+        ],
+        "date": "March 2025",
+        "abstract": "This DevOps extension of the CMCC (Conceptual Model Completeness Conjecture) maps software deployment, continuous integration, and resource usage data to aggregator-based logic, ensuring snapshot-consistent insights into operational cost, release pipelines, and infrastructure reliability. By integrating with Finance and Economics meta-models, DevOps cost or capacity constraints can adapt automatically to macro or corporate financial changes—no sidecar scripts required.",
+        "executive_summary": {
+          "key_points": [
+            "Provides a purely declarative structure for pipeline definitions, deployments, resource usage, and environment states under DevOps workflows.",
+            "Automates cost calculations by cross-referencing corporate or market data from Finance/Economics (e.g., cloud cost rates, labor costs).",
+            "Tracks success/failure rates, concurrency of builds, and environment statuses using aggregator fields, removing the need for imperative updates.",
+            "Permits cross-domain synergy—like adjusting run frequency of pipeline steps if the Finance domain indicates budget constraints, or if M&A synergy requires consolidated DevOps processes."
+          ],
+          "implications": [
+            "Eliminates manual “update” code for pipeline scheduling or cost monitoring: aggregator constraints unify the entire process snapshot.",
+            "Enables real-time scenario analysis—like concurrency spikes or new features driving resource usage—instantly reflected in cost aggregator fields.",
+            "Allows expansions into advanced scheduling or auto-scaling by referencing overall corporate budgets (Finance) or macro labor rates (Economics)."
+          ],
+          "narrative": [
+            {
+              "title": "CMCC DevOps Extension",
+              "content": [
+                "DevOps processes typically rely on scattered scripts and ephemeral states—build logs, environment configurations, ad-hoc cost tracking. By moving to the CMCC aggregator model, each pipeline step, resource pool, or environment is a record, with aggregator fields that compute concurrency usage, system reliability, or real-time cost. These feed directly into Finance or Economics data, so if, for instance, interest rates rise or new M&A deals happen, the cost constraints or resource allowances in DevOps can respond automatically.",
+                "This fosters a robust, single-source-of-truth approach: no partial states, no manual ‘update pipeline capacity’ function calls. Instead, each environment or pipeline references the relevant aggregator fields to ensure consistency in build/test usage, cost, or availability. Changes commit transactionally—if data is contradictory, it’s blocked. The result is streamlined, auditable DevOps management that’s fully integrated with the rest of the business model."
+              ]
+            }
+          ]
+        }
+      },
+      "schema": {
+        "entities": [
+          {
+            "name": "Pipeline",
+            "description": "Represents a CI/CD pipeline with multiple stages (build, test, deploy). Stores aggregator fields for concurrency, success rates, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "pipeline_name",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "description",
+                "type": "scalar",
+                "datatype": "string"
+              },
+              {
+                "name": "associated_company_id",
+                "type": "lookup",
+                "target_entity": "CMCC_ToEMM_Finance.Company",
+                "foreign_key": false,
+                "description": "Optional link to a corporate entity if relevant to cost/budget constraints."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [
+              {
+                "name": "stages",
+                "type": "one_to_many",
+                "target_entity": "PipelineStage",
+                "join_condition": "PipelineStage.pipeline_id = this.id"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "total_runs",
+                "type": "rollup",
+                "formula": "SUM(stages.run_count)",
+                "description": "Sum of runs across all stages in this pipeline."
+              },
+              {
+                "name": "success_ratio",
+                "type": "rollup",
+                "formula": "IF(total_runs>0, (SUM(stages.success_count) / total_runs), null)",
+                "description": "Fraction of stage runs that succeed."
+              },
+              {
+                "name": "concurrency_peak",
+                "type": "rollup",
+                "formula": "MAX(stages.max_concurrent_runs)",
+                "description": "Highest concurrency across the pipeline’s stages."
+              },
+              {
+                "name": "estimated_pipeline_cost",
+                "type": "rollup",
+                "formula": "SUM(stages.stage_cost)",
+                "description": "Naive aggregator adding each stage's cost for an overall pipeline cost estimate."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "trigger_pipeline",
+                "parameters": [],
+                "formula": "FOR each s in stages => s.trigger_stage_run()",
+                "description": "Conceptual aggregator or lambda that triggers all pipeline stages. Implementation conceptual."
+              }
+            ],
+            "constraints": []
+          },
+          {
+            "name": "PipelineStage",
+            "description": "A stage of the pipeline, e.g. 'Build', 'Test', 'Deploy'. Tracks concurrency, success metrics, usage cost, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "pipeline_id",
+                "type": "lookup",
+                "target_entity": "Pipeline",
+                "foreign_key": true
+              },
+              {
+                "name": "stage_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g. 'Build','Test','Deploy'."
+              },
+              {
+                "name": "run_count",
+                "type": "scalar",
+                "datatype": "int",
+                "description": "How many times this stage has been run."
+              },
+              {
+                "name": "success_count",
+                "type": "scalar",
+                "datatype": "int",
+                "description": "How many of those runs succeeded."
+              },
+              {
+                "name": "max_concurrent_runs",
+                "type": "scalar",
+                "datatype": "int",
+                "description": "Peak concurrency observed. Toy example."
+              },
+              {
+                "name": "avg_runtime_seconds",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Average execution time per run."
+              },
+              {
+                "name": "resource_profile_id",
+                "type": "lookup",
+                "target_entity": "ResourceProfile",
+                "foreign_key": false,
+                "description": "References a resource usage pattern (CPU, memory) if modeling cost, capacity, etc."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "stage_cost",
+                "type": "rollup",
+                "formula": "IF(resource_profile_id != null, ( run_count * resource_profile_id.cost_per_run ), 0)",
+                "description": "Naive aggregator: cost per run from ResourceProfile times how many runs."
+              },
+              {
+                "name": "failure_count",
+                "type": "rollup",
+                "formula": "run_count - success_count",
+                "description": "Simply run_count minus success_count."
+              },
+              {
+                "name": "failure_rate",
+                "type": "rollup",
+                "formula": "IF(run_count>0, (failure_count / run_count), 0)",
+                "description": "Fraction of runs that fail."
+              },
+              {
+                "name": "utilized_compute_hours",
+                "type": "rollup",
+                "formula": "( run_count * (avg_runtime_seconds / 3600.0) )",
+                "description": "Total compute hours consumed by this stage (toy aggregator ignoring concurrency details)."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "trigger_stage_run",
+                "parameters": [],
+                "formula": "run_count +=1; // Implementation conceptual; aggregator-based approach would update concurrency if needed.",
+                "description": "Example snippet incrementing run_count. In practice, a data insertion event would cause aggregator recalculations."
+              }
+            ],
+            "constraints": [
+              {
+                "name": "non_negative_runs",
+                "formula": "(run_count >=0) AND (success_count >=0) AND (max_concurrent_runs >=0)",
+                "error_message": "Run metrics cannot be negative."
+              }
+            ]
+          },
+          {
+            "name": "ResourceProfile",
+            "description": "Captures resource usage patterns (CPU, memory, container usage) for a given pipeline stage or environment, enabling cost aggregator fields.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "profile_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "E.g. 'High-CPU Build', 'Standard Testing Env'."
+              },
+              {
+                "name": "cpu_cores",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Number of CPU cores allocated per run (toy)."
+              },
+              {
+                "name": "memory_gb",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Memory in GB allocated per run."
+              },
+              {
+                "name": "cost_per_run",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Approx cost in currency for each run under this profile."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "cpu_memory_ratio",
+                "type": "rollup",
+                "formula": "IF(memory_gb>0, ( cpu_cores / memory_gb ), null)",
+                "description": "Naive aggregator for ratio of CPU to memory usage."
+              }
+            ],
+            "lambdas": [],
+            "constraints": [
+              {
+                "name": "non_negative_resource",
+                "formula": "(cpu_cores >=0) AND (memory_gb >=0) AND (cost_per_run >=0)",
+                "error_message": "Resource usage or cost cannot be negative."
+              }
+            ]
+          },
+          {
+            "name": "DeploymentEnvironment",
+            "description": "A named environment (e.g., Staging, Production) with aggregator logic for active services, resource usage, etc.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "env_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "e.g. 'staging','production','test-lab'."
+              },
+              {
+                "name": "associated_company_id",
+                "type": "lookup",
+                "target_entity": "CMCC_ToEMM_Finance.Company",
+                "foreign_key": false,
+                "description": "Optional if we want to track environment cost under a specific corporate entity."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [
+              {
+                "name": "active_services",
+                "type": "one_to_many",
+                "target_entity": "ServiceInstance",
+                "join_condition": "ServiceInstance.environment_id = this.id"
+              }
+            ],
+            "aggregations": [
+              {
+                "name": "total_env_cost",
+                "type": "rollup",
+                "formula": "SUM(active_services.service_cost)",
+                "description": "Naive aggregator summing each running service’s cost in this environment."
+              },
+              {
+                "name": "service_count",
+                "type": "rollup",
+                "formula": "COUNT(active_services)",
+                "description": "Number of distinct services currently active."
+              }
+            ],
+            "lambdas": [],
+            "constraints": []
+          },
+          {
+            "name": "ServiceInstance",
+            "description": "Represents a running service or container in a specific environment, with aggregator fields for uptime, cost, or usage metrics.",
+            "fields": [
+              {
+                "name": "id",
+                "type": "scalar",
+                "datatype": "string",
+                "primary_key": true
+              },
+              {
+                "name": "environment_id",
+                "type": "lookup",
+                "target_entity": "DeploymentEnvironment",
+                "foreign_key": true
+              },
+              {
+                "name": "service_name",
+                "type": "scalar",
+                "datatype": "string",
+                "description": "e.g. 'web-frontend','database','message-broker'."
+              },
+              {
+                "name": "resource_profile_id",
+                "type": "lookup",
+                "target_entity": "ResourceProfile",
+                "foreign_key": false
+              },
+              {
+                "name": "uptime_hours",
+                "type": "scalar",
+                "datatype": "float",
+                "description": "Cumulative service uptime in hours."
+              },
+              {
+                "name": "notes",
+                "type": "scalar",
+                "datatype": "string"
+              }
+            ],
+            "lookups": [],
+            "aggregations": [
+              {
+                "name": "service_cost",
+                "type": "rollup",
+                "formula": "IF(resource_profile_id != null, (resource_profile_id.cost_per_run * (uptime_hours / 24)), 0)",
+                "description": "Toy aggregator for cost: if cost_per_run is daily, then cost = cost_per_run * (uptime_hours/24)."
+              }
+            ],
+            "lambdas": [
+              {
+                "name": "restart_service",
+                "parameters": [],
+                "formula": "uptime_hours=0; // conceptual snippet resetting uptime. aggregator ensures environment sees changes.",
+                "description": "Implementation conceptual—just an example of changing uptime. Real logic handled in data commits."
+              }
+            ],
+            "constraints": [
+              {
+                "name": "non_negative_uptime",
+                "formula": "uptime_hours >=0",
+                "error_message": "Service uptime cannot be negative."
+              }
+            ]
+          }
+        ]
+      },
+      "data": {
+        "Pipeline": [
+          {
+            "id": "pipeline_build_deploy_webapp",
+            "pipeline_name": "Build & Deploy WebApp",
+            "description": "CI/CD for web application repo",
+            "associated_company_id": "company_abc",
+            "notes": "Runs on push to main branch"
+          }
+        ],
+        "PipelineStage": [
+          {
+            "id": "ps_build",
+            "pipeline_id": "pipeline_build_deploy_webapp",
+            "stage_name": "Build",
+            "run_count": 50,
+            "success_count": 48,
+            "max_concurrent_runs": 2,
+            "avg_runtime_seconds": 300,
+            "resource_profile_id": null,
+            "notes": "Using Docker for build"
+          },
+          {
+            "id": "ps_test",
+            "pipeline_id": "pipeline_build_deploy_webapp",
+            "stage_name": "Test",
+            "run_count": 50,
+            "success_count": 45,
+            "max_concurrent_runs": 3,
+            "avg_runtime_seconds": 600,
+            "resource_profile_id": null,
+            "notes": "Automated unit/integration tests"
+          },
+          {
+            "id": "ps_deploy",
+            "pipeline_id": "pipeline_build_deploy_webapp",
+            "stage_name": "Deploy",
+            "run_count": 20,
+            "success_count": 20,
+            "max_concurrent_runs": 1,
+            "avg_runtime_seconds": 120,
+            "resource_profile_id": null,
+            "notes": "Deployment to staging environment"
+          }
+        ],
+        "ResourceProfile": [
+          {
+            "id": "rp_high_cpu_build",
+            "profile_name": "High-CPU Build",
+            "cpu_cores": 4,
+            "memory_gb": 8,
+            "cost_per_run": 2.5,
+            "notes": "Extra CPU for faster build stage"
+          }
+        ],
+        "DeploymentEnvironment": [
+          {
+            "id": "env_staging",
+            "env_name": "staging",
+            "associated_company_id": "company_abc",
+            "notes": "Pre-production environment for final QA"
+          }
+        ],
+        "ServiceInstance": [
+          {
+            "id": "svc_staging_web_frontend",
+            "environment_id": "env_staging",
+            "service_name": "web-frontend",
+            "resource_profile_id": "rp_high_cpu_build",
+            "uptime_hours": 240,
+            "notes": "Container for staging web front-end"
           }
         ]
       }
