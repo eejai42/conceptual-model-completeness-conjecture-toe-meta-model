@@ -72,6 +72,26 @@ Encapsulates machine learning, neural networks, training datasets, reinforcement
 
 A computational model for economic agents, markets, transactions, and supply-demand constraints.. Read more about the [economics](economics/README.md) CMCC Complete Meta-Model.
 
+### Finance ToE Meta-Model
+**Finance ToE Meta-Model**
+
+A computational model for financial assets, corporate finance, risk management, capital structure, etc.. Read more about the [finance](finance/README.md) CMCC Complete Meta-Model.
+
+### Mergers & Acquisitions ToE Meta-Model
+**Mergers & Acquisitions ToE Meta-Model**
+
+A computational model for M&A deals, synergy analysis, due diligence, purchase agreements, etc.. Read more about the [mna](mna/README.md) CMCC Complete Meta-Model.
+
+### Venture Capital ToE Meta-Model
+**Venture Capital ToE Meta-Model**
+
+A computational model for startup funding, term sheets, cap tables, equity splits, etc.. Read more about the [venturecapital](venturecapital/README.md) CMCC Complete Meta-Model.
+
+### DevOps ToE Meta-Model
+**DevOps ToE Meta-Model**
+
+A computational model for development operations, CI/CD pipelines, resource usage, etc.. Read more about the [devops](devops/README.md) CMCC Complete Meta-Model.
+
 ### Astronomy ToE Meta-Model
 **Astronomy ToE Meta-Model**
 

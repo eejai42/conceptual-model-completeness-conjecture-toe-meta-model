@@ -454,6 +454,34 @@
       "nickname": "economics"
     },
     {
+      "id": "CMCC_ToEMM_Finance",
+      "fullname": "Finance ToE Meta-Model",
+      "name": "Finance ToE Meta-Model",
+      "description": "A computational model for financial assets, corporate finance, risk management, capital structure, etc.",
+      "nickname": "finance"
+    },
+    {
+      "id": "CMCC_ToEMM_MergersAndAcquisitions",
+      "fullname": "Mergers & Acquisitions ToE Meta-Model",
+      "name": "Mergers & Acquisitions ToE Meta-Model",
+      "description": "A computational model for M&A deals, synergy analysis, due diligence, purchase agreements, etc.",
+      "nickname": "mna"
+    },
+    {
+      "id": "CMCC_ToEMM_VentureCapital",
+      "fullname": "Venture Capital ToE Meta-Model",
+      "name": "Venture Capital ToE Meta-Model",
+      "description": "A computational model for startup funding, term sheets, cap tables, equity splits, etc.",
+      "nickname": "venturecapital"
+    },
+    {
+      "id": "CMCC_ToEMM_DevOps",
+      "fullname": "DevOps ToE Meta-Model",
+      "name": "DevOps ToE Meta-Model",
+      "description": "A computational model for development operations, CI/CD pipelines, resource usage, etc.",
+      "nickname": "devops"
+    },
+    {
       "id": "CMCC_ToEMM_Astronomy",
       "fullname": "Astronomy ToE Meta-Model",
       "name": "Astronomy ToE Meta-Model",

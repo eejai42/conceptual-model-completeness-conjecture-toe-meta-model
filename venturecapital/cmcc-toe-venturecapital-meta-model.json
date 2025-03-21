@@ -1,15 +1,15 @@
 {
-    "id": "CMCC_ToEMM_Climate",    
+    "id": "CMCC_ToEMM_VentureCapital",    
         "meta-model": {
-  "id": "CMCC_ToEMM_Climate",
-  "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
-  "name": "Climate Science ToE Meta-Model",
-  "description": "A unified meta-model that captures the foundational elements of climate science and environmental modeling—including climate variables, ecosystems, pollution sources, and environmental measurements—and supports predictive modeling and ecological forecasts using a declarative, Snapshot-Consistent framework.",
-  "nickname": "climate",
+  "depends_on": [
+    "CMCC_ToEMM_Finance",
+    "CMCC_ToEMM_Economics"
+  ],
   "version": "v2.0",
+  "nickname": "venturecapital",
   "meta": {
-    "title": "Climate Science and Environmental Modeling ToE Meta-Model",
-    "subtitle": "A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts",
+    "title": "Venture Capital ToE Meta-Model",
+    "subtitle": "A Declarative Schema for Startup Funding, Term Sheets, and Equity Splits",
     "authors": [
       {
         "name": "EJ Alexandra",
@@ -21,453 +21,358 @@
       }
     ],
     "date": "March 2025",
-    "abstract": "This meta-model represents climate science and environmental systems using five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields—within an Snapshot-Consistent environment. It supports the modeling of climate variables, ecosystems, and pollution sources while enabling predictive climate models and ecological forecasts.",
+    "abstract": "This Venture Capital extension of the CMCC (Conceptual Model Completeness Conjecture) expands on the Finance and Economics models to capture the unique aspects of startup funding, equity structures, and term sheets. All rules—like pre-money valuations, cap tables, liquidation preferences—are stored as aggregator fields, ensuring one snapshot-consistent environment for all venture deals.",
     "executive_summary": {
       "key_points": [
-        "Declarative capture of environmental variables, ecosystems, and pollutant sources.",
-        "Integration of atmospheric, oceanographic, and biodiversity data.",
-        "Built-in support for predictive models and ecological forecasts via in-entity lambdas.",
-        "A unified, syntax-free representation of environmental semantics."
+        "Encodes common VC concepts (pre-money/post-money valuation, convertible notes, SAFEs, etc.) via aggregator logic tied to existing Finance/Economics data.",
+        "Tracks term sheets, funding rounds, cap tables, and liquidation preferences with purely declarative constraints and formulas.",
+        "Automatically reflects changes in economic indicators (e.g. interest rates, inflation) or corporate finances (from CMCC_ToEMM_Finance) on startup valuations, runway, etc.",
+        "Facilitates cross-domain expansions: link advanced synergy from M&A or even devops cost modeling for a deeper analysis of startup burn rates."
       ],
       "implications": [
-        "Enables rapid, no-code adjustments for environmental simulations.",
-        "Improves consistency and integration across diverse environmental datasets.",
-        "Supports scalable predictive modeling for climate and ecological systems."
+        "Removes the typical code sprawl for custom update logic in venture deals—aggregator fields keep valuations, ownership percentages, and liquidation waterfalls consistent at each commit.",
+        "Allows large-scale scenario testing: e.g. changes in macro conditions or a series of funding events instantly reflow into updated cap tables or runway forecasts.",
+        "Brings a single source of truth for funding data, bridging the gap between typical pitch-deck estimates and real transaction logs from the Finance/Economics models."
+      ],
+      "narrative": [
+        {
+          "title": "CMCC Venture Capital Extension",
+          "content": [
+            "Venture capital introduces specialized complexities like SAFE notes, convertible debt, cap table expansions, and multiple funding rounds. By placing these under the same aggregator-based logic that drives Finance and Economics, each new or amended term sheet triggers an immediate recalculation of ownership distributions, valuations, and potential outcomes in a single snapshot.",
+            "That synergy means no more partial states where new shares are created but not reflected in the company's total equity, or a convertible note triggers messy manual cap table updates. Instead, aggregator constraints unify all data and keep the entire environment consistent. Cross-domain expansions are trivial—for instance, referencing devops cost data to refine the startup's burn rate or hooking in M&A logic for partial acquisitions or strategic investments."
+          ]
+        }
       ]
     }
   },
   "schema": {
     "entities": [
       {
-        "name": "ClimateVariable",
-        "description": "Represents a measured climate variable (e.g., temperature, humidity, CO₂ levels).",
+        "name": "Startup",
+        "description": "Represents an early-stage company seeking venture funding. Extends the Finance Company concept with additional aggregator fields for typical startup metrics.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the climate variable."
+            "primary_key": true
           },
           {
-            "name": "name",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the climate variable."
-          },
-          {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of what the variable measures."
-          },
-          {
-            "name": "unit",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Unit of measurement (e.g., °C, %, ppm)."
-          },
-          {
-            "name": "current_value",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "The most recent recorded value."
-          },
-          {
-            "name": "measurement_date",
-            "type": "scalar",
-            "datatype": "date",
-            "description": "Date of the latest measurement."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "average_value",
-            "type": "rollup",
-            "formula": "AVERAGE(historical_values)",
-            "description": "Average value from historical measurements."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "predict_future_value",
-            "parameters": [],
-            "description": "Generates a predictive forecast for the variable based on historical data.",
-            "formula": "ForecastModel(current_value, measurement_date, historical_values)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "Ecosystem",
-        "description": "Represents an ecosystem or environmental region with its characteristic species and features.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ecosystem identifier."
-          },
-          {
-            "name": "name",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the ecosystem."
-          },
-          {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of the ecosystem."
-          },
-          {
-            "name": "region",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Geographic region or location."
-          },
-          {
-            "name": "dominant_species",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "List of dominant species in the ecosystem."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "biodiversity_records",
-            "target_entity": "BiodiversityRecord",
-            "type": "one_to_many",
-            "join_condition": "BiodiversityRecord.ecosystem_id = this.id",
-            "description": "Biodiversity records associated with this ecosystem."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "habitat_quality",
-            "type": "rollup",
-            "formula": "AssessHabitatQuality(biodiversity_records)",
-            "description": "Evaluates the quality of the habitat based on biodiversity metrics."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "assess_habitat_health",
-            "parameters": [],
-            "description": "Generates an ecological forecast for the ecosystem.",
-            "formula": "EcologicalForecast(biodiversity_records, environmental_factors)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "PollutionSource",
-        "description": "Represents a source of pollution impacting the environment.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique pollution source identifier."
-          },
-          {
-            "name": "name",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the pollution source."
-          },
-          {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of the pollution source."
-          },
-          {
-            "name": "pollutant_type",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Type of pollutant emitted."
-          },
-          {
-            "name": "emission_rate",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "Rate of pollutant emission."
-          },
-          {
-            "name": "location",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the source."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "total_emissions",
-            "type": "rollup",
-            "formula": "SUM(emission_rate)",
-            "description": "Total emissions calculated from multiple readings."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "classify_pollutant",
-            "parameters": [],
-            "description": "Classifies the pollutant based on type and emission characteristics.",
-            "formula": "PollutantClassifier(pollutant_type, emission_rate)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "AtmosphericData",
-        "description": "Represents a set of atmospheric measurements for a climate variable.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the atmospheric data record."
-          },
-          {
-            "name": "variable_id",
+            "name": "company_id",
             "type": "lookup",
-            "target_entity": "ClimateVariable",
+            "target_entity": "CMCC_ToEMM_Finance.Company",
             "foreign_key": true,
-            "description": "Reference to the associated climate variable."
+            "description": "Links to the base finance 'Company' record for standard financial aggregator fields."
           },
           {
-            "name": "measurement_value",
+            "name": "founding_date",
             "type": "scalar",
-            "datatype": "float",
-            "description": "Recorded measurement value."
+            "datatype": "datetime"
           },
           {
-            "name": "measurement_time",
+            "name": "primary_focus",
             "type": "scalar",
-            "datatype": "datetime",
-            "description": "Timestamp of the measurement."
+            "datatype": "string",
+            "description": "E.g., 'SaaS', 'BioTech', 'Marketplaces'."
           },
           {
-            "name": "location",
+            "name": "notes",
             "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the measurement."
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "average_atmospheric_value",
+            "name": "burn_rate",
             "type": "rollup",
-            "formula": "AVERAGE(measurement_value)",
-            "description": "Average value over a set of measurements."
-          }
-        ],
-        "lambdas": [
+            "formula": "ComputeBurnRate(company_id, monthly_expenses, revenue_trend)",
+            "description": "Conceptual aggregator referencing expenses vs. revenue to estimate monthly negative cash flow."
+          },
           {
-            "name": "aggregate_atmospheric_data",
-            "parameters": [],
-            "description": "Aggregates multiple measurements to produce a summary statistic.",
-            "formula": "AggregateMeasurements(measurement_value, measurement_time)"
+            "name": "runway_months",
+            "type": "rollup",
+            "formula": "IF(burn_rate>0, (company_id.total_assets / burn_rate), null)",
+            "description": "Approx how many months until assets run out, ignoring new revenue or additional financing."
           }
         ],
+        "lambdas": [],
         "constraints": []
       },
       {
-        "name": "OceanographicMeasurement",
-        "description": "Represents measurements taken from oceanographic sensors.",
+        "name": "FundingRound",
+        "description": "Represents a single round of venture funding (Seed, Series A, etc.) referencing valuations, amounts, new shares, etc.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the oceanographic measurement."
+            "primary_key": true
           },
           {
-            "name": "variable_id",
+            "name": "startup_id",
             "type": "lookup",
-            "target_entity": "ClimateVariable",
-            "foreign_key": true,
-            "description": "Reference to the related climate variable (e.g., sea temperature)."
+            "target_entity": "Startup",
+            "foreign_key": true
           },
           {
-            "name": "measurement_value",
+            "name": "round_name",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "E.g. 'Seed','Series A','Series B', etc."
+          },
+          {
+            "name": "pre_money_valuation",
             "type": "scalar",
             "datatype": "float",
-            "description": "Recorded measurement value."
+            "description": "Valuation prior to the investment."
           },
           {
-            "name": "measurement_time",
-            "type": "scalar",
-            "datatype": "datetime",
-            "description": "Timestamp of the measurement."
-          },
-          {
-            "name": "location",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the measurement."
-          },
-          {
-            "name": "depth",
+            "name": "amount_raised",
             "type": "scalar",
             "datatype": "float",
-            "description": "Depth at which the measurement was taken (in meters)."
+            "description": "Cash invested in this round."
+          },
+          {
+            "name": "new_shares_issued",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "How many new shares or tokens are created for this round."
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "average_ocean_value",
+            "name": "post_money_valuation",
             "type": "rollup",
-            "formula": "AVERAGE(measurement_value)",
-            "description": "Average oceanographic measurement value."
+            "formula": "pre_money_valuation + amount_raised",
+            "description": "Naive aggregator for post-money = pre-money + new capital."
+          },
+          {
+            "name": "investor_ownership_percent",
+            "type": "rollup",
+            "formula": "IF(post_money_valuation>0, (amount_raised / post_money_valuation)*100, 0)",
+            "description": "Fraction of the startup that new investors own from this round."
+          },
+          {
+            "name": "price_per_share",
+            "type": "rollup",
+            "formula": "IF(new_shares_issued>0, (amount_raised / new_shares_issued), null)",
+            "description": "How much each share effectively costs in this round."
           }
         ],
         "lambdas": [
           {
-            "name": "predict_ocean_trend",
+            "name": "close_round",
             "parameters": [],
-            "description": "Forecasts trends in ocean measurements based on historical data.",
-            "formula": "OceanTrendModel(measurement_value, measurement_time)"
+            "formula": "startup_id.company_id.total_assets += amount_raised; // simplistic approach, ignoring liabilities or partial uses.",
+            "description": "Applies the raised amount to the startup's assets. Implementation conceptual."
           }
         ],
-        "constraints": []
+        "constraints": [
+          {
+            "name": "non_negative_valuations",
+            "formula": "(pre_money_valuation >= 0) AND (amount_raised >= 0)",
+            "error_message": "Valuations and raise amounts cannot be negative."
+          }
+        ]
       },
       {
-        "name": "BiodiversityRecord",
-        "description": "Represents a record of species observation and population data within an ecosystem.",
+        "name": "CapTable",
+        "description": "Tracks ownership distribution for each stakeholder (founders, employees, investors) across multiple rounds.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique biodiversity record identifier."
+            "primary_key": true
           },
           {
-            "name": "ecosystem_id",
+            "name": "startup_id",
             "type": "lookup",
-            "target_entity": "Ecosystem",
-            "foreign_key": true,
-            "description": "Reference to the associated ecosystem."
+            "target_entity": "Startup",
+            "foreign_key": true
           },
           {
-            "name": "species_name",
+            "name": "stakeholder_id",
             "type": "scalar",
             "datatype": "string",
-            "description": "Name of the species."
+            "description": "Could reference a 'Person' or 'Investor' record, or just store text ID."
           },
           {
-            "name": "population_count",
+            "name": "shares_owned",
             "type": "scalar",
-            "datatype": "integer",
-            "description": "Observed population count."
+            "datatype": "float"
           },
           {
-            "name": "observation_date",
+            "name": "notes",
             "type": "scalar",
-            "datatype": "date",
-            "description": "Date of the observation."
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "total_species_count",
+            "name": "stakeholder_percentage",
             "type": "rollup",
-            "formula": "COUNT(species_name)",
-            "description": "Total number of species recorded in the ecosystem."
+            "formula": "IF( SUM( FOR ALL c in CapTable WHERE c.startup_id=this.startup_id => c.shares_owned ) > 0, ( shares_owned / SUM( FOR ALL c in CapTable WHERE c.startup_id=this.startup_id => c.shares_owned ) )*100, 0 )",
+            "description": "Percentage stake in the startup. Summation references all shares for that same startup."
+          },
+          {
+            "name": "total_shares_in_startup",
+            "type": "rollup",
+            "formula": "SUM( FOR ALL c in CapTable WHERE c.startup_id=this.startup_id => c.shares_owned )",
+            "description": "For convenience, how many shares exist in total for the same startup."
           }
         ],
         "lambdas": [
           {
-            "name": "forecast_population_change",
-            "parameters": [],
-            "description": "Predicts future population changes for the species based on historical observations.",
-            "formula": "PopulationForecast(population_count, observation_date)"
+            "name": "adjust_shares_after_round",
+            "parameters": [
+              "funding_round_id"
+            ],
+            "formula": "Distribute new_shares_issued from the FundingRound among relevant stakeholders. // Implementation conceptual",
+            "description": "Updates or adds entries to reflect newly issued shares from a round."
           }
         ],
         "constraints": []
+      },
+      {
+        "name": "ConvertibleNote",
+        "description": "Represents a convertible note or SAFE instrument that can convert into equity upon a future funding round or trigger event.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "startup_id",
+            "type": "lookup",
+            "target_entity": "Startup",
+            "foreign_key": true
+          },
+          {
+            "name": "principal_amount",
+            "type": "scalar",
+            "datatype": "float"
+          },
+          {
+            "name": "discount_rate",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "E.g. 20% discount on next round’s price."
+          },
+          {
+            "name": "valuation_cap",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "If next round’s valuation is too high, the note uses this as a max. Null if none."
+          },
+          {
+            "name": "conversion_trigger_round",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "E.g. 'Series A'. If no round name, triggers upon any equity financing over a threshold."
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "implied_equity_shares",
+            "type": "rollup",
+            "formula": "ComputeConvertibleShares(principal_amount, discount_rate, valuation_cap, NextFundingRoundPreMoneyValuation, NextFundingRoundPricePerShare)",
+            "description": "When triggered, how many shares does this note convert into? Implementation conceptual, referencing next round aggregator fields."
+          },
+          {
+            "name": "convertible_ownership_percent",
+            "type": "rollup",
+            "formula": "IF(implied_equity_shares>0, (implied_equity_shares / (CapTable.total_shares_in_startup + implied_equity_shares))*100, 0)",
+            "description": "Approx percent after conversion if the note is triggered now."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "trigger_conversion",
+            "parameters": [
+              "funding_round_id"
+            ],
+            "formula": "shares = implied_equity_shares; Add to CapTable with stakeholder=holder_of_note. // conceptual",
+            "description": "Upon next round or condition, finalize the note’s conversion into equity. Implementation conceptual."
+          }
+        ],
+        "constraints": [
+          {
+            "name": "non_negative_principal",
+            "formula": "principal_amount >= 0",
+            "error_message": "Convertible note principal cannot be negative."
+          },
+          {
+            "name": "valid_discount",
+            "formula": "(discount_rate >= 0) AND (discount_rate <= 100)",
+            "error_message": "Discount rate must be between 0% and 100% (toy assumption)."
+          }
+        ]
       }
     ]
   },
   "data": {
-    "ClimateVariable": [
+    "Startup": [
       {
-        "id": "cv_001",
-        "name": "Air Temperature",
-        "description": "Ambient air temperature measured in degrees Celsius.",
-        "unit": "°C",
-        "current_value": 22.5,
-        "measurement_date": "2025-03-10"
+        "id": "startup_greenbot",
+        "company_id": "company_xyz",
+        "founding_date": "2023-05-15T00:00:00Z",
+        "primary_focus": "SaaS for robotics analytics",
+        "notes": "Spun out from local university lab"
       }
     ],
-    "Ecosystem": [
+    "FundingRound": [
       {
-        "id": "eco_001",
-        "name": "Tropical Rainforest",
-        "description": "A biodiverse tropical rainforest ecosystem.",
-        "region": "Amazon Basin",
-        "dominant_species": [
-          "Jaguar",
-          "Macaw",
-          "Capuchin Monkey"
-        ]
+        "id": "rnd_greenbot_seed",
+        "startup_id": "startup_greenbot",
+        "round_name": "Seed",
+        "pre_money_valuation": 2000000,
+        "amount_raised": 500000,
+        "new_shares_issued": 100000,
+        "notes": "Initial seed to build MVP"
       }
     ],
-    "PollutionSource": [
+    "CapTable": [
       {
-        "id": "ps_001",
-        "name": "Industrial Plant A",
-        "description": "A manufacturing facility emitting chemical pollutants.",
-        "pollutant_type": "NOx",
-        "emission_rate": 150,
-        "location": {
-          "lat": -3.4653,
-          "lon": -62.2159
-        }
+        "id": "ct_founder1",
+        "startup_id": "startup_greenbot",
+        "stakeholder_id": "founder_alice",
+        "shares_owned": 300000,
+        "notes": "Founder Alice's initial stake"
+      },
+      {
+        "id": "ct_founder2",
+        "startup_id": "startup_greenbot",
+        "stakeholder_id": "founder_bob",
+        "shares_owned": 200000,
+        "notes": "Founder Bob's stake"
       }
     ],
-    "AtmosphericData": [
+    "ConvertibleNote": [
       {
-        "id": "atmo_001",
-        "variable_id": "cv_001",
-        "measurement_value": 22.5,
-        "measurement_time": "2025-03-10T08:00:00Z",
-        "location": {
-          "lat": 0,
-          "lon": 0
-        }
-      }
-    ],
-    "OceanographicMeasurement": [
-      {
-        "id": "ocean_001",
-        "variable_id": "cv_001",
-        "measurement_value": 18.2,
-        "measurement_time": "2025-03-10T09:00:00Z",
-        "location": {
-          "lat": -15,
-          "lon": 120
-        },
-        "depth": 50
-      }
-    ],
-    "BiodiversityRecord": [
-      {
-        "id": "bio_001",
-        "ecosystem_id": "eco_001",
-        "species_name": "Toucan",
-        "population_count": 120,
-        "observation_date": "2025-03-09"
+        "id": "note_seed_safe",
+        "startup_id": "startup_greenbot",
+        "principal_amount": 100000,
+        "discount_rate": 20,
+        "valuation_cap": 3000000,
+        "conversion_trigger_round": "Series A",
+        "notes": "Simple SAFE note with discount and valuation cap"
       }
     ]
   }

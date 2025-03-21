@@ -1,15 +1,15 @@
 {
-    "id": "CMCC_ToEMM_Climate",    
+    "id": "CMCC_ToEMM_MergersAndAcquisitions",    
         "meta-model": {
-  "id": "CMCC_ToEMM_Climate",
-  "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
-  "name": "Climate Science ToE Meta-Model",
-  "description": "A unified meta-model that captures the foundational elements of climate science and environmental modeling—including climate variables, ecosystems, pollution sources, and environmental measurements—and supports predictive modeling and ecological forecasts using a declarative, Snapshot-Consistent framework.",
-  "nickname": "climate",
+  "depends_on": [
+    "CMCC_ToEMM_Finance",
+    "CMCC_ToEMM_Economics"
+  ],
   "version": "v2.0",
+  "nickname": "mna",
   "meta": {
-    "title": "Climate Science and Environmental Modeling ToE Meta-Model",
-    "subtitle": "A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts",
+    "title": "Mergers & Acquisitions ToE Meta-Model",
+    "subtitle": "A Declarative Schema for Corporate Deals, Synergy, and Integration",
     "authors": [
       {
         "name": "EJ Alexandra",
@@ -21,453 +21,449 @@
       }
     ],
     "date": "March 2025",
-    "abstract": "This meta-model represents climate science and environmental systems using five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields—within an Snapshot-Consistent environment. It supports the modeling of climate variables, ecosystems, and pollution sources while enabling predictive climate models and ecological forecasts.",
+    "abstract": "This M&A extension of CMCC (Conceptual Model Completeness Conjecture) leverages the aggregator-based logic from Finance and Economics to capture the entire lifecycle of mergers, acquisitions, and corporate restructurings. Deals, valuations, synergy projections, and post-merger integration steps are modeled as data plus aggregator fields, ensuring fully snapshot-consistent transitions with no imperative code.",
     "executive_summary": {
       "key_points": [
-        "Declarative capture of environmental variables, ecosystems, and pollutant sources.",
-        "Integration of atmospheric, oceanographic, and biodiversity data.",
-        "Built-in support for predictive models and ecological forecasts via in-entity lambdas.",
-        "A unified, syntax-free representation of environmental semantics."
+        "Encodes the M&A process—target identification, deal term sheets, synergy models—via purely declarative aggregator fields.",
+        "Automatically updates synergy or valuations whenever macro data (Economics) or company balance sheets (Finance) change.",
+        "Supports cross-domain expansions: synergy might link to DevOps, biology, or advanced AI cost modeling in a single environment.",
+        "Eliminates disjoint logic for purchase agreements or post-merger ownership: aggregator constraints keep snapshots consistent."
       ],
       "implications": [
-        "Enables rapid, no-code adjustments for environmental simulations.",
-        "Improves consistency and integration across diverse environmental datasets.",
-        "Supports scalable predictive modeling for climate and ecological systems."
+        "Minimizes the risk of contradictory data: e.g. synergy claims that don’t match actual financial statements.",
+        "Offers real-time scenario testing: changing interest rates or valuations auto-updates the M&A aggregator fields.",
+        "Enables strategic expansions: partial or complete acquisitions, LBO structures, or cross-border deals linking to macro indicators."
+      ],
+      "narrative": [
+        {
+          "title": "CMCC M&A Extension",
+          "content": [
+            "M&A can be chaotic—negotiations, deal financing, synergy forecasts, compliance, you name it. By translating every step into aggregator fields and references, we unify that chaos under the same snapshot-consistent environment used by Finance and Economics. This ensures synergy projections or purchase prices always tie back to the underlying data from each company’s aggregator-based financials, as well as relevant macro or policy conditions.",
+            "As a result, deals become transparent and maintainable: if interest rates spike or the target’s balance sheet changes, synergy and final valuations recalc automatically, preventing partial or inconsistent states. Integrate with DevOps or advanced AI modules if you want to factor in technical overhead or ML-based synergy predictions in the same environment."
+          ]
+        }
       ]
     }
   },
   "schema": {
     "entities": [
       {
-        "name": "ClimateVariable",
-        "description": "Represents a measured climate variable (e.g., temperature, humidity, CO₂ levels).",
+        "name": "MADeal",
+        "description": "Represents a proposed or finalized merger/acquisition transaction, referencing buyer/seller companies.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the climate variable."
+            "primary_key": true
           },
           {
-            "name": "name",
+            "name": "deal_name",
             "type": "scalar",
             "datatype": "string",
-            "description": "Name of the climate variable."
+            "description": "Short label for the deal, e.g. 'Acme acquires BoltCo'."
           },
           {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of what the variable measures."
-          },
-          {
-            "name": "unit",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Unit of measurement (e.g., °C, %, ppm)."
-          },
-          {
-            "name": "current_value",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "The most recent recorded value."
-          },
-          {
-            "name": "measurement_date",
-            "type": "scalar",
-            "datatype": "date",
-            "description": "Date of the latest measurement."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "average_value",
-            "type": "rollup",
-            "formula": "AVERAGE(historical_values)",
-            "description": "Average value from historical measurements."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "predict_future_value",
-            "parameters": [],
-            "description": "Generates a predictive forecast for the variable based on historical data.",
-            "formula": "ForecastModel(current_value, measurement_date, historical_values)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "Ecosystem",
-        "description": "Represents an ecosystem or environmental region with its characteristic species and features.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ecosystem identifier."
-          },
-          {
-            "name": "name",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the ecosystem."
-          },
-          {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of the ecosystem."
-          },
-          {
-            "name": "region",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Geographic region or location."
-          },
-          {
-            "name": "dominant_species",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "List of dominant species in the ecosystem."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "biodiversity_records",
-            "target_entity": "BiodiversityRecord",
-            "type": "one_to_many",
-            "join_condition": "BiodiversityRecord.ecosystem_id = this.id",
-            "description": "Biodiversity records associated with this ecosystem."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "habitat_quality",
-            "type": "rollup",
-            "formula": "AssessHabitatQuality(biodiversity_records)",
-            "description": "Evaluates the quality of the habitat based on biodiversity metrics."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "assess_habitat_health",
-            "parameters": [],
-            "description": "Generates an ecological forecast for the ecosystem.",
-            "formula": "EcologicalForecast(biodiversity_records, environmental_factors)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "PollutionSource",
-        "description": "Represents a source of pollution impacting the environment.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique pollution source identifier."
-          },
-          {
-            "name": "name",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the pollution source."
-          },
-          {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of the pollution source."
-          },
-          {
-            "name": "pollutant_type",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Type of pollutant emitted."
-          },
-          {
-            "name": "emission_rate",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "Rate of pollutant emission."
-          },
-          {
-            "name": "location",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the source."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "total_emissions",
-            "type": "rollup",
-            "formula": "SUM(emission_rate)",
-            "description": "Total emissions calculated from multiple readings."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "classify_pollutant",
-            "parameters": [],
-            "description": "Classifies the pollutant based on type and emission characteristics.",
-            "formula": "PollutantClassifier(pollutant_type, emission_rate)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "AtmosphericData",
-        "description": "Represents a set of atmospheric measurements for a climate variable.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the atmospheric data record."
-          },
-          {
-            "name": "variable_id",
+            "name": "acquirer_company_id",
             "type": "lookup",
-            "target_entity": "ClimateVariable",
-            "foreign_key": true,
-            "description": "Reference to the associated climate variable."
+            "target_entity": "CMCC_ToEMM_Finance.Company",
+            "foreign_key": false
           },
           {
-            "name": "measurement_value",
+            "name": "target_company_id",
+            "type": "lookup",
+            "target_entity": "CMCC_ToEMM_Finance.Company",
+            "foreign_key": false
+          },
+          {
+            "name": "deal_status",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "E.g. 'proposed','in_progress','closed','terminated'."
+          },
+          {
+            "name": "deal_value",
             "type": "scalar",
             "datatype": "float",
-            "description": "Recorded measurement value."
+            "description": "Headline transaction price. Could reflect equity purchase or enterprise value."
           },
           {
-            "name": "measurement_time",
+            "name": "transaction_date",
             "type": "scalar",
             "datatype": "datetime",
-            "description": "Timestamp of the measurement."
+            "description": "When the deal is expected to close or has closed."
           },
           {
-            "name": "location",
+            "name": "notes",
             "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the measurement."
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "average_atmospheric_value",
+            "name": "enterprise_value",
             "type": "rollup",
-            "formula": "AVERAGE(measurement_value)",
-            "description": "Average value over a set of measurements."
+            "formula": "target_company_id.total_assets - target_company_id.total_liabilities + synergy_estimate",
+            "description": "Toy aggregator for EV: assets - liabilities + synergy. In reality, synergy is separate, but we keep it simple."
+          },
+          {
+            "name": "synergy_estimate",
+            "type": "rollup",
+            "formula": "ComputeSynergy(acquirer_company_id, target_company_id)",
+            "description": "Stub aggregator referencing synergy logic, e.g. cost savings or revenue enhancements."
+          },
+          {
+            "name": "price_to_equity_ratio",
+            "type": "rollup",
+            "formula": "IF(target_company_id.shareholders_equity>0, ( deal_value / target_company_id.shareholders_equity ), null)",
+            "description": "Naive aggregator: transaction price / target’s equity, ignoring net debt or synergy."
+          },
+          {
+            "name": "is_leveraged_buyout",
+            "type": "rollup",
+            "formula": "IF( deal_value> (acquirer_company_id.shareholders_equity + acquirer_company_id.total_liabilities ), true, false )",
+            "description": "Toy check if the deal value is bigger than acquirer’s entire capital structure => likely LBO or heavy debt-based."
+          },
+          {
+            "name": "post_merger_equity",
+            "type": "rollup",
+            "formula": "(acquirer_company_id.shareholders_equity + target_company_id.shareholders_equity + synergy_estimate) - new_debt_issued",
+            "description": "Projected new equity after combining both, plus synergy, minus any additional acquisition debt. (Toy model.)"
+          },
+          {
+            "name": "new_debt_issued",
+            "type": "rollup",
+            "formula": "ComputeAcquisitionDebt(acquirer_company_id, deal_value)",
+            "description": "References a function that calculates how much new debt the acquirer must raise. Implementation conceptual."
+          },
+          {
+            "name": "inflation_adjusted_deal_value",
+            "type": "rollup",
+            "formula": "IF( acquirer_company_id.scenario_id != null, deal_value / (1 + (LOOKUP(acquirer_company_id.scenario_id.linked_indicators WHERE indicator_name='InflationRate').indicator_value / 100)), deal_value )",
+            "description": "Adjust the raw purchase price by the scenario’s inflation rate, if available."
           }
         ],
         "lambdas": [
           {
-            "name": "aggregate_atmospheric_data",
+            "name": "finalize_deal",
             "parameters": [],
-            "description": "Aggregates multiple measurements to produce a summary statistic.",
-            "formula": "AggregateMeasurements(measurement_value, measurement_time)"
+            "formula": "deal_status='closed'; transaction_date=NOW();",
+            "description": "Transitions the deal to 'closed' state. Conceptual snippet—no code run, purely a data-based formula."
+          },
+          {
+            "name": "abort_deal",
+            "parameters": [],
+            "formula": "deal_status='terminated'",
+            "description": "Sets the deal status to 'terminated'."
           }
         ],
-        "constraints": []
+        "constraints": [
+          {
+            "name": "positive_deal_value",
+            "formula": "deal_value >= 0",
+            "error_message": "Deal value cannot be negative."
+          },
+          {
+            "name": "distinct_companies",
+            "formula": "acquirer_company_id != target_company_id",
+            "error_message": "A company cannot acquire itself."
+          }
+        ]
       },
       {
-        "name": "OceanographicMeasurement",
-        "description": "Represents measurements taken from oceanographic sensors.",
+        "name": "TermSheet",
+        "description": "High-level summary of M&A deal terms, e.g. payment method, synergy breakdown, reps & warranties placeholders.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the oceanographic measurement."
+            "primary_key": true
           },
           {
-            "name": "variable_id",
+            "name": "deal_id",
             "type": "lookup",
-            "target_entity": "ClimateVariable",
-            "foreign_key": true,
-            "description": "Reference to the related climate variable (e.g., sea temperature)."
+            "target_entity": "MADeal",
+            "foreign_key": true
           },
           {
-            "name": "measurement_value",
+            "name": "payment_structure",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "E.g. 'cash','stock','mixed'."
+          },
+          {
+            "name": "stock_exchange_ratio",
             "type": "scalar",
             "datatype": "float",
-            "description": "Recorded measurement value."
+            "description": "If paying with acquirer shares, how many shares per target share? Null if all-cash."
           },
           {
-            "name": "measurement_time",
+            "name": "earnout_provisions",
             "type": "scalar",
-            "datatype": "datetime",
-            "description": "Timestamp of the measurement."
+            "datatype": "string",
+            "description": "Text or param-based specs for performance-based payouts."
           },
           {
-            "name": "location",
+            "name": "representations_and_warranties",
             "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the measurement."
+            "datatype": "string",
+            "description": "Simplified placeholder for legal text references."
           },
           {
-            "name": "depth",
+            "name": "termination_clause",
             "type": "scalar",
-            "datatype": "float",
-            "description": "Depth at which the measurement was taken (in meters)."
+            "datatype": "string",
+            "description": "Simplified placeholder describing how/when the deal can be called off."
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "average_ocean_value",
+            "name": "cash_portion_estimated",
             "type": "rollup",
-            "formula": "AVERAGE(measurement_value)",
-            "description": "Average oceanographic measurement value."
+            "formula": "IF(payment_structure='cash', LOOKUP(deal_id).deal_value, IF(payment_structure='mixed', 0.5 * LOOKUP(deal_id).deal_value, 0))",
+            "description": "Naive aggregator: if it's 'cash' => entire deal_value, if mixed => half, else zero."
+          },
+          {
+            "name": "stock_portion_estimated",
+            "type": "rollup",
+            "formula": "IF(payment_structure='stock', LOOKUP(deal_id).deal_value, IF(payment_structure='mixed', 0.5 * LOOKUP(deal_id).deal_value, 0))",
+            "description": "Naive aggregator: if 'stock' => entire deal_value, if mixed => half, else zero."
+          },
+          {
+            "name": "post_deal_ownership",
+            "type": "rollup",
+            "formula": "ComputePostDealOwnership(deal_id, stock_exchange_ratio)",
+            "description": "Conceptual aggregator to calculate new ownership distribution if paying in stock."
           }
         ],
         "lambdas": [
           {
-            "name": "predict_ocean_trend",
+            "name": "generate_purchase_agreement",
             "parameters": [],
-            "description": "Forecasts trends in ocean measurements based on historical data.",
-            "formula": "OceanTrendModel(measurement_value, measurement_time)"
+            "formula": "ConstructPurchaseAgreementDraft(this, LOOKUP(deal_id))",
+            "description": "Would create a doc referencing the key terms. Implementation conceptual."
           }
         ],
-        "constraints": []
+        "constraints": [
+          {
+            "name": "valid_payment_structure",
+            "formula": "payment_structure IN ['cash','stock','mixed']",
+            "error_message": "Payment structure must be 'cash','stock', or 'mixed'."
+          }
+        ]
       },
       {
-        "name": "BiodiversityRecord",
-        "description": "Represents a record of species observation and population data within an ecosystem.",
+        "name": "DueDiligenceRecord",
+        "description": "Tracks the buyer’s diligence findings on the target, referencing any flagged issues, synergy validations, or asset quality checks.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique biodiversity record identifier."
+            "primary_key": true
           },
           {
-            "name": "ecosystem_id",
+            "name": "deal_id",
             "type": "lookup",
-            "target_entity": "Ecosystem",
-            "foreign_key": true,
-            "description": "Reference to the associated ecosystem."
+            "target_entity": "MADeal",
+            "foreign_key": true
           },
           {
-            "name": "species_name",
+            "name": "issue_type",
             "type": "scalar",
             "datatype": "string",
-            "description": "Name of the species."
+            "description": "E.g. 'financial','legal','technical'."
           },
           {
-            "name": "population_count",
+            "name": "description",
             "type": "scalar",
-            "datatype": "integer",
-            "description": "Observed population count."
+            "datatype": "string",
+            "description": "What was found? E.g. 'pending lawsuit', 'old equipment'."
           },
           {
-            "name": "observation_date",
+            "name": "risk_level",
             "type": "scalar",
-            "datatype": "date",
-            "description": "Date of the observation."
+            "datatype": "string",
+            "description": "Naive enumerations: 'low','medium','high'."
+          },
+          {
+            "name": "resolution_plan",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "How to mitigate or fix the issue."
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "total_species_count",
+            "name": "overall_dd_risk",
             "type": "rollup",
-            "formula": "COUNT(species_name)",
-            "description": "Total number of species recorded in the ecosystem."
+            "formula": "ComputeAggregateDiligenceRisk( deal_id )",
+            "description": "Naive aggregator that scans all issues for a given deal and assigns an overall risk rating."
           }
         ],
         "lambdas": [
           {
-            "name": "forecast_population_change",
+            "name": "escalate_issue",
             "parameters": [],
-            "description": "Predicts future population changes for the species based on historical observations.",
-            "formula": "PopulationForecast(population_count, observation_date)"
+            "formula": "risk_level='high'",
+            "description": "Upgrades an issue to high risk."
           }
         ],
         "constraints": []
+      },
+      {
+        "name": "IntegrationPlan",
+        "description": "Post-merger integration plan with aggregator fields for synergy execution steps, cost or timeline estimates.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "deal_id",
+            "type": "lookup",
+            "target_entity": "MADeal",
+            "foreign_key": true
+          },
+          {
+            "name": "phase",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "e.g. 'Phase1','Phase2','FinalIntegration'."
+          },
+          {
+            "name": "estimated_cost",
+            "type": "scalar",
+            "datatype": "float"
+          },
+          {
+            "name": "estimated_timeline",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "Rough timeline descriptor, e.g. '3 months', 'by Q4'."
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "projected_synergy_gain",
+            "type": "rollup",
+            "formula": "ComputeIntegrationSynergyGain(deal_id, phase)",
+            "description": "Partial synergy realized by each integration phase. Implementation conceptual."
+          },
+          {
+            "name": "total_integration_cost",
+            "type": "rollup",
+            "formula": "SUM( FOR ALL records in IntegrationPlan WHERE deal_id=this.deal_id => estimated_cost )",
+            "description": "Sum of all phases’ costs for the same deal."
+          },
+          {
+            "name": "synergy_to_cost_ratio",
+            "type": "rollup",
+            "formula": "IF( projected_synergy_gain>0, ( projected_synergy_gain / estimated_cost ), null)",
+            "description": "How cost-effective this phase is in synergy terms (toy measure)."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "execute_integration_phase",
+            "parameters": [],
+            "formula": "phase='completed'; synergy_to_cost_ratio => finalize synergy. // conceptual placeholder",
+            "description": "Marks an integration phase as done, triggers synergy realization logic. Implementation conceptual."
+          }
+        ],
+        "constraints": [
+          {
+            "name": "non_negative_cost",
+            "formula": "estimated_cost >= 0",
+            "error_message": "Integration cost must be non-negative."
+          }
+        ]
       }
     ]
   },
   "data": {
-    "ClimateVariable": [
+    "MADeal": [
       {
-        "id": "cv_001",
-        "name": "Air Temperature",
-        "description": "Ambient air temperature measured in degrees Celsius.",
-        "unit": "°C",
-        "current_value": 22.5,
-        "measurement_date": "2025-03-10"
+        "id": "deal_acme_boltco",
+        "deal_name": "Acme acquires BoltCo",
+        "acquirer_company_id": "company_abc",
+        "target_company_id": "company_xyz",
+        "deal_status": "in_progress",
+        "deal_value": 1500000,
+        "transaction_date": null,
+        "notes": "Negotiations ongoing"
       }
     ],
-    "Ecosystem": [
+    "TermSheet": [
       {
-        "id": "eco_001",
-        "name": "Tropical Rainforest",
-        "description": "A biodiverse tropical rainforest ecosystem.",
-        "region": "Amazon Basin",
-        "dominant_species": [
-          "Jaguar",
-          "Macaw",
-          "Capuchin Monkey"
-        ]
+        "id": "ts_acme_boltco",
+        "deal_id": "deal_acme_boltco",
+        "payment_structure": "mixed",
+        "stock_exchange_ratio": 1.2,
+        "earnout_provisions": "Extra $300k if BoltCo hits $2M revenue in 12 months",
+        "representations_and_warranties": "Standard representations, no known lawsuits beyond normal course.",
+        "termination_clause": "Either party can terminate if not closed by year-end.",
+        "notes": "Draft terms"
       }
     ],
-    "PollutionSource": [
+    "DueDiligenceRecord": [
       {
-        "id": "ps_001",
-        "name": "Industrial Plant A",
-        "description": "A manufacturing facility emitting chemical pollutants.",
-        "pollutant_type": "NOx",
-        "emission_rate": 150,
-        "location": {
-          "lat": -3.4653,
-          "lon": -62.2159
-        }
+        "id": "dd_legal_1",
+        "deal_id": "deal_acme_boltco",
+        "issue_type": "legal",
+        "description": "BoltCo has a pending trademark dispute",
+        "risk_level": "medium",
+        "resolution_plan": "Assess settlement or rename product line",
+        "notes": "Likely non-critical"
+      },
+      {
+        "id": "dd_financial_1",
+        "deal_id": "deal_acme_boltco",
+        "issue_type": "financial",
+        "description": "Receivables not fully collected, some overdue >90 days",
+        "risk_level": "medium",
+        "resolution_plan": "Increase reserve or discount to finalize",
+        "notes": "Potential $50k write-down"
       }
     ],
-    "AtmosphericData": [
+    "IntegrationPlan": [
       {
-        "id": "atmo_001",
-        "variable_id": "cv_001",
-        "measurement_value": 22.5,
-        "measurement_time": "2025-03-10T08:00:00Z",
-        "location": {
-          "lat": 0,
-          "lon": 0
-        }
-      }
-    ],
-    "OceanographicMeasurement": [
+        "id": "intp_acme_phase1",
+        "deal_id": "deal_acme_boltco",
+        "phase": "Phase1",
+        "estimated_cost": 50000,
+        "estimated_timeline": "3 months post-closing",
+        "notes": "Initial integration of sales teams"
+      },
       {
-        "id": "ocean_001",
-        "variable_id": "cv_001",
-        "measurement_value": 18.2,
-        "measurement_time": "2025-03-10T09:00:00Z",
-        "location": {
-          "lat": -15,
-          "lon": 120
-        },
-        "depth": 50
-      }
-    ],
-    "BiodiversityRecord": [
-      {
-        "id": "bio_001",
-        "ecosystem_id": "eco_001",
-        "species_name": "Toucan",
-        "population_count": 120,
-        "observation_date": "2025-03-09"
+        "id": "intp_acme_phase2",
+        "deal_id": "deal_acme_boltco",
+        "phase": "Phase2",
+        "estimated_cost": 100000,
+        "estimated_timeline": "6 months post-closing",
+        "notes": "Consolidate manufacturing facilities"
       }
     ]
   }

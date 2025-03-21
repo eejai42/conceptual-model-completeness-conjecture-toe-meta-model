@@ -56,6 +56,42 @@ Below is a list of domains included in the CMCC Complete Theory-of-Everything Me
 
 
 
+## NAME: Finance ToE Meta-Model
+
+**ID**: CMCC_ToEMM_Finance  
+**Full Name**: Finance ToE Meta-Model  
+**Description**: A computational model for financial assets, corporate finance, risk management, capital structure, etc.  
+**Nickname**: finance
+
+
+
+## NAME: Mergers & Acquisitions ToE Meta-Model
+
+**ID**: CMCC_ToEMM_MergersAndAcquisitions  
+**Full Name**: Mergers & Acquisitions ToE Meta-Model  
+**Description**: A computational model for M&A deals, synergy analysis, due diligence, purchase agreements, etc.  
+**Nickname**: mna
+
+
+
+## NAME: Venture Capital ToE Meta-Model
+
+**ID**: CMCC_ToEMM_VentureCapital  
+**Full Name**: Venture Capital ToE Meta-Model  
+**Description**: A computational model for startup funding, term sheets, cap tables, equity splits, etc.  
+**Nickname**: venturecapital
+
+
+
+## NAME: DevOps ToE Meta-Model
+
+**ID**: CMCC_ToEMM_DevOps  
+**Full Name**: DevOps ToE Meta-Model  
+**Description**: A computational model for development operations, CI/CD pipelines, resource usage, etc.  
+**Nickname**: devops
+
+
+
 ## NAME: Astronomy ToE Meta-Model
 
 **ID**: CMCC_ToEMM_Astronomy  

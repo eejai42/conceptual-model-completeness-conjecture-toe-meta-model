@@ -1,15 +1,14 @@
 {
-    "id": "CMCC_ToEMM_Climate",    
+    "id": "CMCC_ToEMM_Finance",    
         "meta-model": {
-  "id": "CMCC_ToEMM_Climate",
-  "fullname": "Climate Science and Environmental Modeling ToE Meta-Model",
-  "name": "Climate Science ToE Meta-Model",
-  "description": "A unified meta-model that captures the foundational elements of climate science and environmental modeling—including climate variables, ecosystems, pollution sources, and environmental measurements—and supports predictive modeling and ecological forecasts using a declarative, Snapshot-Consistent framework.",
-  "nickname": "climate",
+  "depends_on": [
+    "CMCC_ToEMM_Economics"
+  ],
   "version": "v2.0",
+  "nickname": "finance",
   "meta": {
-    "title": "Climate Science and Environmental Modeling ToE Meta-Model",
-    "subtitle": "A Declarative Framework for Environmental Data, Ecosystem Modeling, and Climate Forecasts",
+    "title": "Finance ToE Meta-Model",
+    "subtitle": "A Unified Declarative Schema for Corporate Structures, Securities, and Valuations",
     "authors": [
       {
         "name": "EJ Alexandra",
@@ -21,453 +20,400 @@
       }
     ],
     "date": "March 2025",
-    "abstract": "This meta-model represents climate science and environmental systems using five fundamental primitives—Schema, Data, Lookups, Aggregations, and Lambda Calculated Fields—within an Snapshot-Consistent environment. It supports the modeling of climate variables, ecosystems, and pollution sources while enabling predictive climate models and ecological forecasts.",
+    "abstract": "This Finance extension of the CMCC (Conceptual Model Completeness Conjecture) builds on top of Economics with aggregator-based logic to capture corporate structures, financial instruments, valuations, and cash flow statements. All domain rules—from net-present-value discounting to balance-sheet consistency—are expressed in a purely declarative, snapshot-consistent format, cross-linking with macro or policy fields from the Economics model.",
     "executive_summary": {
       "key_points": [
-        "Declarative capture of environmental variables, ecosystems, and pollutant sources.",
-        "Integration of atmospheric, oceanographic, and biodiversity data.",
-        "Built-in support for predictive models and ecological forecasts via in-entity lambdas.",
-        "A unified, syntax-free representation of environmental semantics."
+        "Encodes company balance sheets, cash flows, financial instruments (equity, debt, derivatives) using aggregator constraints for net worth, leverage, etc.",
+        "Enables advanced valuations (DCF, comparables) purely via formula fields referencing economics data (interest rates, inflation).",
+        "Provides a consistent approach to transaction logging, merging micro-level corporate events with the macro indicators from CMCC_ToEMM_Economics.",
+        "Allows for flexible cross-domain expansions—like linking M&A, venture capital, or devops cost modeling—under the same snapshot-consistent environment."
       ],
       "implications": [
-        "Enables rapid, no-code adjustments for environmental simulations.",
-        "Improves consistency and integration across diverse environmental datasets.",
-        "Supports scalable predictive modeling for climate and ecological systems."
+        "Enables direct synergy between corporate finance data and broader economic policy or market conditions.",
+        "Eliminates domain-specific update code: aggregator fields handle discounting, ratio analysis, and so on automatically.",
+        "Facilitates large-scale compliance or scenario testing—like stress tests or credit analyses—in the same environment."
+      ],
+      "narrative": [
+        {
+          "title": "CMCC Finance Extension",
+          "content": [
+            "Finance typically deals with enterprise-level details—balance sheets, instruments, valuations—while also depending on macro indicators (e.g., interest or inflation rates). This model unifies them in a single data-driven environment, ensuring that any changes in macro data (from CMCC_ToEMM_Economics) automatically update all valuations or ratio computations here in the Finance domain.",
+            "Because everything is purely declarative, new aggregator fields—like advanced risk metrics or updated IFRS/GAAP rules—can be added without rewriting imperative code. This fosters a frictionless integration across multiple sub-fields, e.g. M&A or corporate treasury, all referencing the same universal snapshot."
+          ]
+        }
       ]
     }
   },
   "schema": {
     "entities": [
       {
-        "name": "ClimateVariable",
-        "description": "Represents a measured climate variable (e.g., temperature, humidity, CO₂ levels).",
+        "name": "Company",
+        "description": "Represents a corporate entity with basic financial fields (assets, liabilities, equity). Can cross-reference scenario data from Economics.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the climate variable."
+            "primary_key": true
           },
           {
-            "name": "name",
+            "name": "company_name",
             "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the climate variable."
+            "datatype": "string"
           },
           {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of what the variable measures."
-          },
-          {
-            "name": "unit",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Unit of measurement (e.g., °C, %, ppm)."
-          },
-          {
-            "name": "current_value",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "The most recent recorded value."
-          },
-          {
-            "name": "measurement_date",
-            "type": "scalar",
-            "datatype": "date",
-            "description": "Date of the latest measurement."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "average_value",
-            "type": "rollup",
-            "formula": "AVERAGE(historical_values)",
-            "description": "Average value from historical measurements."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "predict_future_value",
-            "parameters": [],
-            "description": "Generates a predictive forecast for the variable based on historical data.",
-            "formula": "ForecastModel(current_value, measurement_date, historical_values)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "Ecosystem",
-        "description": "Represents an ecosystem or environmental region with its characteristic species and features.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique ecosystem identifier."
-          },
-          {
-            "name": "name",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the ecosystem."
-          },
-          {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of the ecosystem."
-          },
-          {
-            "name": "region",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Geographic region or location."
-          },
-          {
-            "name": "dominant_species",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "List of dominant species in the ecosystem."
-          }
-        ],
-        "lookups": [
-          {
-            "name": "biodiversity_records",
-            "target_entity": "BiodiversityRecord",
-            "type": "one_to_many",
-            "join_condition": "BiodiversityRecord.ecosystem_id = this.id",
-            "description": "Biodiversity records associated with this ecosystem."
-          }
-        ],
-        "aggregations": [
-          {
-            "name": "habitat_quality",
-            "type": "rollup",
-            "formula": "AssessHabitatQuality(biodiversity_records)",
-            "description": "Evaluates the quality of the habitat based on biodiversity metrics."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "assess_habitat_health",
-            "parameters": [],
-            "description": "Generates an ecological forecast for the ecosystem.",
-            "formula": "EcologicalForecast(biodiversity_records, environmental_factors)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "PollutionSource",
-        "description": "Represents a source of pollution impacting the environment.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique pollution source identifier."
-          },
-          {
-            "name": "name",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the pollution source."
-          },
-          {
-            "name": "description",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Description of the pollution source."
-          },
-          {
-            "name": "pollutant_type",
-            "type": "scalar",
-            "datatype": "string",
-            "description": "Type of pollutant emitted."
-          },
-          {
-            "name": "emission_rate",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "Rate of pollutant emission."
-          },
-          {
-            "name": "location",
-            "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the source."
-          }
-        ],
-        "lookups": [],
-        "aggregations": [
-          {
-            "name": "total_emissions",
-            "type": "rollup",
-            "formula": "SUM(emission_rate)",
-            "description": "Total emissions calculated from multiple readings."
-          }
-        ],
-        "lambdas": [
-          {
-            "name": "classify_pollutant",
-            "parameters": [],
-            "description": "Classifies the pollutant based on type and emission characteristics.",
-            "formula": "PollutantClassifier(pollutant_type, emission_rate)"
-          }
-        ],
-        "constraints": []
-      },
-      {
-        "name": "AtmosphericData",
-        "description": "Represents a set of atmospheric measurements for a climate variable.",
-        "fields": [
-          {
-            "name": "id",
-            "type": "scalar",
-            "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the atmospheric data record."
-          },
-          {
-            "name": "variable_id",
+            "name": "scenario_id",
             "type": "lookup",
-            "target_entity": "ClimateVariable",
-            "foreign_key": true,
-            "description": "Reference to the associated climate variable."
+            "target_entity": "CMCC_ToEMM_Economics.FinancialScenarioRecord",
+            "foreign_key": false,
+            "description": "Optional cross-reference to an Economics scenario for macro variables."
           },
           {
-            "name": "measurement_value",
+            "name": "total_assets",
+            "type": "scalar",
+            "datatype": "float"
+          },
+          {
+            "name": "total_liabilities",
+            "type": "scalar",
+            "datatype": "float"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
+          }
+        ],
+        "lookups": [],
+        "aggregations": [
+          {
+            "name": "shareholders_equity",
+            "type": "rollup",
+            "formula": "total_assets - total_liabilities",
+            "description": "Basic formula for equity = assets - liabilities."
+          },
+          {
+            "name": "leverage_ratio",
+            "type": "rollup",
+            "formula": "IF(shareholders_equity>0, total_liabilities / shareholders_equity, null)",
+            "description": "Debt-to-equity ratio."
+          },
+          {
+            "name": "inflation_adjusted_assets",
+            "type": "rollup",
+            "formula": "IF( scenario_id != null AND scenario_id.linked_indicators != null, ( total_assets / (1 + (LOOKUP(scenario_id.linked_indicators WHERE indicator_name='InflationRate').indicator_value / 100)) ), total_assets )",
+            "description": "Adjusts the company's assets by the scenario’s inflation rate, if available."
+          }
+        ],
+        "lambdas": [
+          {
+            "name": "apply_economic_shock",
+            "parameters": [
+              "shock_percentage"
+            ],
+            "formula": "total_assets *= (1 - shock_percentage); total_liabilities *= (1 - 0.5 * shock_percentage)",
+            "description": "Toy function to simulate a partial meltdown in asset values. Liabilities also drop but less proportionally."
+          }
+        ],
+        "constraints": [
+          {
+            "name": "non_negative_assets",
+            "formula": "total_assets >= 0",
+            "error_message": "Company assets cannot be negative."
+          },
+          {
+            "name": "non_negative_liabilities",
+            "formula": "total_liabilities >= 0",
+            "error_message": "Company liabilities cannot be negative."
+          }
+        ]
+      },
+      {
+        "name": "FinancialInstrument",
+        "description": "Represents an equity share class, bond, or derivative referencing a Company. Could store coupon rate, maturity, or other fields.",
+        "fields": [
+          {
+            "name": "id",
+            "type": "scalar",
+            "datatype": "string",
+            "primary_key": true
+          },
+          {
+            "name": "instrument_type",
+            "type": "scalar",
+            "datatype": "string",
+            "description": "E.g., 'equity','bond','convertible','derivative'."
+          },
+          {
+            "name": "company_id",
+            "type": "lookup",
+            "target_entity": "Company",
+            "foreign_key": false,
+            "description": "Which company issued this instrument?"
+          },
+          {
+            "name": "face_value",
             "type": "scalar",
             "datatype": "float",
-            "description": "Recorded measurement value."
+            "description": "Nominal or face amount (for bonds, etc.)."
           },
           {
-            "name": "measurement_time",
+            "name": "coupon_rate",
+            "type": "scalar",
+            "datatype": "float",
+            "description": "If this is a bond, the annual coupon percentage. Else 0 or null."
+          },
+          {
+            "name": "maturity_date",
             "type": "scalar",
             "datatype": "datetime",
-            "description": "Timestamp of the measurement."
+            "description": "If it's a bond or note, when it matures."
           },
           {
-            "name": "location",
+            "name": "notes",
             "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the measurement."
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "average_atmospheric_value",
+            "name": "annual_coupon_payment",
             "type": "rollup",
-            "formula": "AVERAGE(measurement_value)",
-            "description": "Average value over a set of measurements."
+            "formula": "face_value * (coupon_rate/100)",
+            "description": "Naive aggregator for annual coupon in currency units."
+          },
+          {
+            "name": "accrued_interest",
+            "type": "rollup",
+            "formula": "ComputeAccruedInterest(face_value, coupon_rate, maturity_date)",
+            "description": "Toy aggregator referencing a function for day-count or yield-based interest."
+          },
+          {
+            "name": "implied_equity_percentage",
+            "type": "rollup",
+            "formula": "IF(instrument_type='equity', face_value / ( company_id.shareholders_equity + 0.0001 ), null)",
+            "description": "Toy fraction of equity if 'equity' type. This is simplistic; real valuations differ."
           }
         ],
         "lambdas": [
           {
-            "name": "aggregate_atmospheric_data",
+            "name": "redeem_instrument",
             "parameters": [],
-            "description": "Aggregates multiple measurements to produce a summary statistic.",
-            "formula": "AggregateMeasurements(measurement_value, measurement_time)"
+            "formula": "If instrument_type='bond' => payoff = face_value + accrued_interest; else payoff=0",
+            "description": "Conceptual formula for paying off a bond at maturity."
           }
         ],
         "constraints": []
       },
       {
-        "name": "OceanographicMeasurement",
-        "description": "Represents measurements taken from oceanographic sensors.",
+        "name": "CashFlowRecord",
+        "description": "A discrete cash flow linked to a company or a financial instrument, referencing an amount and date, plus discounting formulas.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique identifier for the oceanographic measurement."
+            "primary_key": true
           },
           {
-            "name": "variable_id",
+            "name": "company_id",
             "type": "lookup",
-            "target_entity": "ClimateVariable",
-            "foreign_key": true,
-            "description": "Reference to the related climate variable (e.g., sea temperature)."
+            "target_entity": "Company",
+            "foreign_key": false
           },
           {
-            "name": "measurement_value",
-            "type": "scalar",
-            "datatype": "float",
-            "description": "Recorded measurement value."
+            "name": "instrument_id",
+            "type": "lookup",
+            "target_entity": "FinancialInstrument",
+            "foreign_key": false
           },
           {
-            "name": "measurement_time",
+            "name": "amount",
             "type": "scalar",
-            "datatype": "datetime",
-            "description": "Timestamp of the measurement."
+            "datatype": "float"
           },
           {
-            "name": "location",
+            "name": "cashflow_date",
             "type": "scalar",
-            "datatype": "json",
-            "description": "Geographic location of the measurement."
+            "datatype": "datetime"
           },
           {
-            "name": "depth",
+            "name": "notes",
             "type": "scalar",
-            "datatype": "float",
-            "description": "Depth at which the measurement was taken (in meters)."
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "average_ocean_value",
+            "name": "discounted_value",
             "type": "rollup",
-            "formula": "AVERAGE(measurement_value)",
-            "description": "Average oceanographic measurement value."
+            "formula": "IF( company_id.scenario_id != null, ( amount / POW(1 + (LOOKUP(company_id.scenario_id.linked_indicators WHERE indicator_name='InterestRate').indicator_value / 100), YearFraction(NOW(), cashflow_date)) ), amount )",
+            "description": "Discounts this cash flow by the scenario’s 'InterestRate' from Economics. If none, returns raw amount."
           }
         ],
-        "lambdas": [
+        "lambdas": [],
+        "constraints": [
           {
-            "name": "predict_ocean_trend",
-            "parameters": [],
-            "description": "Forecasts trends in ocean measurements based on historical data.",
-            "formula": "OceanTrendModel(measurement_value, measurement_time)"
+            "name": "non_negative_amount",
+            "formula": "amount >= 0",
+            "error_message": "Cash flow record cannot have negative amount (toy assumption)."
           }
-        ],
-        "constraints": []
+        ]
       },
       {
-        "name": "BiodiversityRecord",
-        "description": "Represents a record of species observation and population data within an ecosystem.",
+        "name": "BalanceSheet",
+        "description": "Represents a snapshot of a company's financial position at a given date, often referencing the same fields as Company but more granularly itemized.",
         "fields": [
           {
             "name": "id",
             "type": "scalar",
             "datatype": "string",
-            "primary_key": true,
-            "description": "Unique biodiversity record identifier."
+            "primary_key": true
           },
           {
-            "name": "ecosystem_id",
+            "name": "company_id",
             "type": "lookup",
-            "target_entity": "Ecosystem",
-            "foreign_key": true,
-            "description": "Reference to the associated ecosystem."
+            "target_entity": "Company",
+            "foreign_key": false
           },
           {
-            "name": "species_name",
+            "name": "balance_date",
             "type": "scalar",
-            "datatype": "string",
-            "description": "Name of the species."
+            "datatype": "datetime"
           },
           {
-            "name": "population_count",
+            "name": "cash_and_equivalents",
             "type": "scalar",
-            "datatype": "integer",
-            "description": "Observed population count."
+            "datatype": "float"
           },
           {
-            "name": "observation_date",
+            "name": "property_plant_equipment",
             "type": "scalar",
-            "datatype": "date",
-            "description": "Date of the observation."
+            "datatype": "float"
+          },
+          {
+            "name": "long_term_debt",
+            "type": "scalar",
+            "datatype": "float"
+          },
+          {
+            "name": "short_term_liabilities",
+            "type": "scalar",
+            "datatype": "float"
+          },
+          {
+            "name": "notes",
+            "type": "scalar",
+            "datatype": "string"
           }
         ],
         "lookups": [],
         "aggregations": [
           {
-            "name": "total_species_count",
+            "name": "total_assets_bs",
             "type": "rollup",
-            "formula": "COUNT(species_name)",
-            "description": "Total number of species recorded in the ecosystem."
-          }
-        ],
-        "lambdas": [
+            "formula": "cash_and_equivalents + property_plant_equipment",
+            "description": "Toy aggregator summing major asset categories."
+          },
           {
-            "name": "forecast_population_change",
-            "parameters": [],
-            "description": "Predicts future population changes for the species based on historical observations.",
-            "formula": "PopulationForecast(population_count, observation_date)"
+            "name": "total_liabilities_bs",
+            "type": "rollup",
+            "formula": "long_term_debt + short_term_liabilities",
+            "description": "Toy aggregator summing major liability categories."
+          },
+          {
+            "name": "equity_bs",
+            "type": "rollup",
+            "formula": "total_assets_bs - total_liabilities_bs",
+            "description": "Balance sheet's derived equity."
+          },
+          {
+            "name": "consistency_check_vs_company",
+            "type": "rollup",
+            "formula": "IF(company_id != null, (ABS( (company_id.total_assets - total_assets_bs ) + (company_id.total_liabilities - total_liabilities_bs )) < 0.001 ), false)",
+            "description": "Checks if the company’s aggregator-based totals roughly match the itemized balance sheet."
           }
         ],
-        "constraints": []
+        "lambdas": [],
+        "constraints": [
+          {
+            "name": "non_negative_categories",
+            "formula": "(cash_and_equivalents >=0) AND (property_plant_equipment >=0) AND (long_term_debt >=0) AND (short_term_liabilities >=0)",
+            "error_message": "Cannot have negative financial categories in the balance sheet (toy assumption)."
+          }
+        ]
       }
     ]
   },
   "data": {
-    "ClimateVariable": [
+    "Company": [
       {
-        "id": "cv_001",
-        "name": "Air Temperature",
-        "description": "Ambient air temperature measured in degrees Celsius.",
-        "unit": "°C",
-        "current_value": 22.5,
-        "measurement_date": "2025-03-10"
+        "id": "company_abc",
+        "company_name": "ABC Corporation",
+        "scenario_id": "scenario_baseline_2025",
+        "total_assets": 500000,
+        "total_liabilities": 300000,
+        "notes": "Mid-sized manufacturing firm"
+      },
+      {
+        "id": "company_xyz",
+        "company_name": "XYZ Tech Inc",
+        "scenario_id": null,
+        "total_assets": 2000000,
+        "total_liabilities": 1200000,
+        "notes": "Fast-growing software company"
       }
     ],
-    "Ecosystem": [
+    "FinancialInstrument": [
       {
-        "id": "eco_001",
-        "name": "Tropical Rainforest",
-        "description": "A biodiverse tropical rainforest ecosystem.",
-        "region": "Amazon Basin",
-        "dominant_species": [
-          "Jaguar",
-          "Macaw",
-          "Capuchin Monkey"
-        ]
+        "id": "bond_abc_2028",
+        "instrument_type": "bond",
+        "company_id": "company_abc",
+        "face_value": 100000,
+        "coupon_rate": 5,
+        "maturity_date": "2028-12-31T00:00:00Z",
+        "notes": "5% 5-year bond"
+      },
+      {
+        "id": "equity_xyz_common",
+        "instrument_type": "equity",
+        "company_id": "company_xyz",
+        "face_value": 500000,
+        "coupon_rate": 0,
+        "maturity_date": null,
+        "notes": "Common shares in XYZ Tech Inc"
       }
     ],
-    "PollutionSource": [
+    "CashFlowRecord": [
       {
-        "id": "ps_001",
-        "name": "Industrial Plant A",
-        "description": "A manufacturing facility emitting chemical pollutants.",
-        "pollutant_type": "NOx",
-        "emission_rate": 150,
-        "location": {
-          "lat": -3.4653,
-          "lon": -62.2159
-        }
+        "id": "cf_abc_interest_2025",
+        "company_id": "company_abc",
+        "instrument_id": "bond_abc_2028",
+        "amount": 5000,
+        "cashflow_date": "2025-12-31T00:00:00Z",
+        "notes": "Annual coupon payment for ABC bond"
+      },
+      {
+        "id": "cf_xyz_dividend_2026",
+        "company_id": "company_xyz",
+        "instrument_id": "equity_xyz_common",
+        "amount": 10000,
+        "cashflow_date": "2026-06-30T00:00:00Z",
+        "notes": "Projected dividend from XYZ"
       }
     ],
-    "AtmosphericData": [
+    "BalanceSheet": [
       {
-        "id": "atmo_001",
-        "variable_id": "cv_001",
-        "measurement_value": 22.5,
-        "measurement_time": "2025-03-10T08:00:00Z",
-        "location": {
-          "lat": 0,
-          "lon": 0
-        }
-      }
-    ],
-    "OceanographicMeasurement": [
-      {
-        "id": "ocean_001",
-        "variable_id": "cv_001",
-        "measurement_value": 18.2,
-        "measurement_time": "2025-03-10T09:00:00Z",
-        "location": {
-          "lat": -15,
-          "lon": 120
-        },
-        "depth": 50
-      }
-    ],
-    "BiodiversityRecord": [
-      {
-        "id": "bio_001",
-        "ecosystem_id": "eco_001",
-        "species_name": "Toucan",
-        "population_count": 120,
-        "observation_date": "2025-03-09"
+        "id": "bs_abc_2025",
+        "company_id": "company_abc",
+        "balance_date": "2025-12-31T00:00:00Z",
+        "cash_and_equivalents": 100000,
+        "property_plant_equipment": 400000,
+        "long_term_debt": 250000,
+        "short_term_liabilities": 50000,
+        "notes": "Year-end snapshot for ABC"
       }
     ]
   }
